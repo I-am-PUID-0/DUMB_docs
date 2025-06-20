@@ -4,18 +4,18 @@ title: PostgreSQL FAQ
 
 # PostgreSQL FAQ
 
-Below are common questions and explanations related to **PostgreSQL**, which is the primary database engine used by DMB.
+Below are common questions and explanations related to **PostgreSQL**, which is the primary database engine used by DUMB.
 
 ---
 
-## 🗃️ How PostgreSQL is used in DMB
+## 🗃️ How PostgreSQL is used in DUMB
 
 PostgreSQL is used to **store persistent data** for the following services:
 
 - **Riven Backend** – stores indexed content, metadata, scraped results, job states, and user settings.
 - **Zilean** – stores hash lookups, metadata cache, and processing history.
 
-Each service has its **own database**, created automatically when DMB starts:
+Each service has its **own database**, created automatically when DUMB starts:
 
 | Service        | Database Name |
 |----------------|----------------|
@@ -23,7 +23,7 @@ Each service has its **own database**, created automatically when DMB starts:
 | Zilean         | `zilean`       |
 | pgAdmin (optional) | `pgadmin`   |
 
-The database storage path is configured using the `postgres_data` path in `dmb_config.json`, defaulting to `/postgres_data`.
+The database storage path is configured using the `postgres_data` path in `dumb_config.json`, defaulting to `/postgres_data`.
 
 ---
 
@@ -60,10 +60,10 @@ Alternatively, use **pgAdmin 4** (if enabled) to drop individual databases manua
 
 ## 🔐 What are the default credentials?
 
-- **Username**: `DMB`
+- **Username**: `DUMB`
 - **Password**: `postgres`
 - **Port**: `5432`
-- These values can be customized in the `postgres` section of `dmb_config.json`.
+- These values can be customized in the `postgres` section of `dumb_config.json`.
 
 ---
 
@@ -71,7 +71,7 @@ Alternatively, use **pgAdmin 4** (if enabled) to drop individual databases manua
 
 Yes — by default, PostgreSQL binds to `127.0.0.1`. If you want to connect from an external app (like DBeaver or pgAdmin on your host machine), you'll need to:
 
-1. Change `host` in the `postgres` section of `dmb_config.json` to `0.0.0.0`
+1. Change `host` in the `postgres` section of `dumb_config.json` to `0.0.0.0`
 2. Add a port binding (e.g., `5432:5432`) to your container
 3. Optionally secure with a firewall or password change
 
@@ -90,4 +90,4 @@ When in doubt, make a backup first!
 - [pgAdmin Service Guide](../services/pgadmin.md)
 - [Riven Backend](../services/riven-backend.md)
 - [Zilean](../services/zilean.md)
-- [DMB Configuration](../features/configuration.md)
+- [DUMB Configuration](../features/configuration.md)

@@ -4,15 +4,17 @@ hide:
   - navigation
 ---
 
-## 🤝 Contributing to DMB
+## 🤝 Contributing to DUMB
 
-Thank you for your interest in contributing to **Debrid Media Bridge (DMB)**!
+Thank you for your interest in contributing to **Debrid Unlimited Media Bridge (DUMB)**!
 
 We welcome all forms of contributions — not just code.
 
-DMB is an open-source, community-driven project. 
+DUMB is an open-source, community-driven project. 
 
 Whether you're a developer, power user, or just someone passionate about improving media automation, your help is always appreciated!
+
+Thank you for helping make DUMB better for everyone!
 
 ---
 
@@ -21,18 +23,18 @@ Whether you're a developer, power user, or just someone passionate about improvi
 Want to help develop new features, fix bugs, or improve performance?
 
 ### Recommended Setup
-The easiest way to contribute code is through the **DMB Dev Container**, which includes all the required tools:
+The easiest way to contribute code is through the **DUMB Dev Container**, which includes all the required tools:
 
-- Based on: `iampuid0/dmb:latest`
+- Based on: `iampuid0/dumb:latest`
 - Python with Black autoformatter
 - Port forwarding for common services
 - Preconfigured workspace mounts
 
-You can find the [devcontainer setup file](https://github.com/I-am-PUID-0/DMB/tree/master/.devcontainer/devcontainer.json) in the repo.
+You can find the [devcontainer setup file](https://github.com/I-am-PUID-0/DUMB/tree/master/.devcontainer/devcontainer.json) in the repo.
 
 ### How to Get Started
 
-1. Fork the [DMB repository](https://github.com/I-am-PUID-0/DMB)
+1. Fork the [DUMB repository](https://github.com/I-am-PUID-0/DUMB)
 2. Clone your fork locally
 3. Open in **VS Code** using **Dev Containers**
 4. Make your changes, format with `black`, and submit a pull request
@@ -46,11 +48,10 @@ You can find the [devcontainer setup file](https://github.com/I-am-PUID-0/DMB/tr
 Even if you don't write code, there are **plenty of ways** to help!
 
 ### ⭐ Star the Repo
-A quick way to show support is by starring the project on GitHub:  
-[github.com/I-am-PUID-0/DMB](https://github.com/I-am-PUID-0/DMB)
+A quick way to show support is by starring the project on GitHub:  [github.com/I-am-PUID-0/DUMB](https://github.com/I-am-PUID-0/DUMB)
 
 ### 🗣️ Join the Community
-- Ask questions or help others in the **[DMB Discord server](https://discord.gg/8dqKUBtbp5)**
+- Ask questions or help others in the **[DUMB Discord server](https://discord.gg/8dqKUBtbp5)**
 - Boost the server if you find it helpful 🙌
 - Share your setups and improvements
 
@@ -62,8 +63,7 @@ A quick way to show support is by starring the project on GitHub:
 
 ## 🧾 Monetary Contributions?
 
-DMB does **not accept or request monetary donations**.  
-While the gesture is genuinely appreciated, **your involvement is far more valuable**.
+- Sponsor the Dev through [GitHub Sponsors](https://github.com/sponsors/I-am-PUID-0)
 
 ---
 
@@ -71,10 +71,9 @@ While the gesture is genuinely appreciated, **your involvement is far more valua
 
 If you have ideas, feature requests, or feedback:
 
-- Create a [GitHub Issue](https://github.com/I-am-PUID-0/DMB/issues)
+- Create a [GitHub Issue](https://github.com/I-am-PUID-0/DUMB/issues)
 
 - Discuss in the community before starting larger PRs
 
 ---
 
-Thank you for helping make DMB better for everyone!

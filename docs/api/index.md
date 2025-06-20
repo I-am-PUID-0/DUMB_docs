@@ -1,17 +1,17 @@
 ---
-title: DMB API Overview
+title: DUMB API Overview
 ---
 
-# ⚙️ DMB API
+# ⚙️ DUMB API
 
-DMB includes a built-in REST API and WebSocket server to allow programmatic control of services, logging, and system state.
+DUMB includes a built-in REST API and WebSocket server to allow programmatic control of services, logging, and system state.
 
-The API is enabled and configured using the `dmb_config.json` under the `dmb.api_service` section. For example:
+The API is enabled and configured using the `dumb_config.json` under the `dumb.api_service` section. For example:
 
 ```json
 "api_service": {
   "enabled": true,
-  "process_name": "DMB API",
+  "process_name": "DUMB API",
   "log_level": "INFO",
   "host": "127.0.0.1",
   "port": 8000
@@ -33,7 +33,7 @@ The API is enabled and configured using the `dmb_config.json` under the `dmb.api
 
 | Method | Path                   | Description                          |
 |--------|------------------------|--------------------------------------|
-| GET    | `/processes`          | List all services in `dmb_config.json` |
+| GET    | `/processes`          | List all services in `dumb_config.json` |
 | POST   | `/start-service`      | Start a specific service             |
 | POST   | `/stop-service`       | Stop a specific service              |
 | POST   | `/restart-service`    | Restart a specific service           |
@@ -43,14 +43,14 @@ The API is enabled and configured using the `dmb_config.json` under the `dmb.api
 ---
 
 ## 🗂️ Directory Structure
-The DMB API is split into the following modules:
+The DUMB API is split into the following modules:
 
 | File | Purpose |
 |------|---------|
 | `api_service.py` | Initializes and launches the FastAPI app |
 | `api_state.py` | Tracks and updates service runtime state |
 | `connection_manager.py` | Manages WebSocket client connections |
-| `config.py` | Endpoints for working with `dmb_config.json` and service configs |
+| `config.py` | Endpoints for working with `dumb_config.json` and service configs |
 | `health.py` | Health check endpoint for validating API status |
 | `logs.py` | REST endpoint for reading historical logs |
 | `websocket_logs.py` | WebSocket server for streaming real-time logs to frontend |
@@ -60,7 +60,7 @@ The DMB API is split into the following modules:
 
 ## 🧭 API Documentation
 
-DMB provides built-in API documentation through two convenient endpoints:
+DUMB provides built-in API documentation through two convenient endpoints:
 
 - **FastAPI Swagger UI**  
   Accessible at:  
@@ -70,14 +70,14 @@ DMB provides built-in API documentation through two convenient endpoints:
 - **Scalar (ReDoc-style) Docs**  
   Accessible at:  
   `http://<host>:<port>/scalar`  
-  A clean, read-only view of the full OpenAPI schema for the DMB API.
+  A clean, read-only view of the full OpenAPI schema for the DUMB API.
 
-These are helpful for development, debugging, and integrating external systems with DMB.
+These are helpful for development, debugging, and integrating external systems with DUMB.
 
 --- 
 
 ## 📚 Next Steps
-Click on any of the modules in the sidebar to explore endpoint structure, usage examples, and development guidelines for extending the DMB API:
+Click on any of the modules in the sidebar to explore endpoint structure, usage examples, and development guidelines for extending the DUMB API:
 
 - [Health Check](health.md)
 - [Logs](logs.md)

@@ -44,9 +44,9 @@ jobs:
         uses: actions/cache@v4
         with:
           path: ~/.cache/pip
-          key: dmb-docs-${{ runner.os }}-${{ hashFiles('**/poetry.lock') }}
+          key: dumb-docs-${{ runner.os }}-${{ hashFiles('**/poetry.lock') }}
           restore-keys: |
-            dmb-docs-${{ runner.os }}-
+            dumb-docs-${{ runner.os }}-
 
       - name: Extract version 
         id: setup_env_vars
@@ -66,10 +66,10 @@ jobs:
       - name: Deploy to DMB_Docs gh-pages
         run: poetry run mkdocs gh-deploy --force
 
-      - name: Mirror to DMB gh-pages branch
+      - name: Mirror to DUMB gh-pages branch
         uses: peaceiris/actions-gh-pages@v3
         with:
-          external_repository: I-am-PUID-0/DMB
+          external_repository: I-am-PUID-0/DUMB
           personal_token: ${{ secrets.DMB_MIRROR_TOKEN }}
           publish_dir: ./site
           publish_branch: gh-pages

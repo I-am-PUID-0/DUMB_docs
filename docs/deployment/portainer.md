@@ -2,9 +2,9 @@
 title: Deploy with Portainer
 ---
 
-## 🚢 Deploying DMB with Portainer
+## 🚢 Deploying DUMB with Portainer
 
-Portainer provides a user-friendly web interface for managing Docker containers and stacks. This guide walks you through deploying **Debrid Media Bridge (DMB)** using Portainer's stack deployment feature.
+Portainer provides a user-friendly web interface for managing Docker containers and stacks. This guide walks you through deploying **Debrid Unlimited Media Bridge (DUMB)** using Portainer's stack deployment feature.
 
 ---
 
@@ -13,7 +13,7 @@ Portainer provides a user-friendly web interface for managing Docker containers 
 Before you begin:
 
 - 🐳 Docker and Portainer must be installed and running
-- 🌐 Internet access (to pull the DMB image)
+- 🌐 Internet access (to pull the DUMB image)
 - 🛠️ Mounted host directories for persistent data storage
 
 ---
@@ -46,9 +46,9 @@ Click the **+ Add stack** button at the top-right.
 
 Enter the following:
 
-- **Name**: `dmb`
+- **Name**: `dumb`
 - **Build method**: Select `Web editor`
-- **Web editor**: Paste the DMB `docker-compose` content (see below)
+- **Web editor**: Paste the DUMB `docker-compose` content (see below)
 
 ![Create Stack](../assets/images/portainer/create_stack.PNG)
 
@@ -61,7 +61,7 @@ Enter the following:
 
 ### 5. Deploy the Stack
 
-Click **Deploy the stack** to launch DMB.
+Click **Deploy the stack** to launch DUMB.
 
 ![Deploy the Stack](../assets/images/portainer/deploy_the_stack.PNG)
 
@@ -69,18 +69,18 @@ Click **Deploy the stack** to launch DMB.
 
 ## 🎉 That’s It!
 
-Once deployed, DMB will initialize and make its services available at their respective ports (e.g., DMB Frontend at `:3005`, API at `:8000`, etc.).
+Once deployed, DUMB will initialize and make its services available at their respective ports (e.g., DUMB Frontend at `:3005`, API at `:8000`, etc.).
 
-You can now manage DMB entirely through the **[DMB Frontend](../services/dmb-frontend.md)**, or explore the [Configuration](../features/configuration.md) docs to adjust settings as needed.
+You can now manage DUMB entirely through the **[DUMB Frontend](../services/dumb-frontend.md)**, or explore the [Configuration](../features/configuration.md) docs to adjust settings as needed.
 
 ---
 
-## 📄 Viewing Logs for DMB
+## 📄 Viewing Logs for DUMB
 
-Once your stack is deployed, you can view logs for the DMB container:
+Once your stack is deployed, you can view logs for the DUMB container:
 
 1. Navigate to **Containers** from the left sidebar.
-2. Click on the **DMB** container name.
+2. Click on the **DUMB** container name.
 3. Go to the **Logs** tab.
 4. Logs will stream live by default. You can scroll or refresh for updates.
 
@@ -92,7 +92,7 @@ Once your stack is deployed, you can view logs for the DMB container:
 
 To view live output or run interactive commands:
 
-1. From the **Containers** page, click on the **DMB** container.
+1. From the **Containers** page, click on the **DUMB** container.
 2. Click the **Attach Console** button (⚙️ icon or from the top bar).
 3. Choose a shell (e.g., `sh`, `bash`, or `/venv/bin/python`) and click **Connect**.
 
@@ -104,7 +104,7 @@ To view live output or run interactive commands:
 
 You can also use the **Console** option to access the container shell:
 
-1. From the **Containers** tab, click on **DMB**.
+1. From the **Containers** tab, click on **DUMB**.
 2. Click the **Console** tab.
 3. Choose the shell you wish to run.
 4. Click **Connect**.

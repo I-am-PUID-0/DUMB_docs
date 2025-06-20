@@ -2,15 +2,15 @@
 title: Introduction
 ---
 
-# 🚀 Getting Started with DMB
+# 🚀 Getting Started with DUMB
 
-Welcome to **DMB – Debrid Media Bridge**: a unified media management and automation tool designed for users who want to streamline their content discovery, acquisition, and playback using services like **Plex**, **Real-Debrid**, **Trakt**, **Overseerr**, and more.
+Welcome to **DUMB – Debrid Unlimited Media Bridge**: a unified media management and automation tool designed for users who want to streamline their content discovery, acquisition, and playback using services like **Plex**, **Real-Debrid**, **Trakt**, **Overseerr**, and more.
 
 ---
 
-## 🔍 What Is DMB?
+## 🔍 What Is DUMB?
 
-DMB combines multiple backend services into a single containerized system to provide:
+DUMB combines multiple backend services into a single containerized system to provide:
 
 - 🔎 **Search and discovery** using Trakt, Plex Watchlists, Overseerr, etc.
 - ⚡ **Real-Debrid integration** for content fetching via Zurg
@@ -23,7 +23,7 @@ DMB combines multiple backend services into a single containerized system to pro
 
 ## 🧩 Is This for You?
 
-DMB is ideal if you:
+DUMB is ideal if you:
 
 - Have a Plex, Jellyfin, or Emby or server and want to auto-fill your library from your Overseerr/Jellyseerr, Trakt, Plex Watchlists, Mdblist, or Listrr
 - Want a plug-and-play solution that works with Debrid services
@@ -35,7 +35,7 @@ DMB is ideal if you:
 
 ## 🖼️ Architecture at a Glance
 
-![DMB Flow Diagram](../assets/images/under_construction.png)
+![DUMB Flow Diagram](../assets/images/under_construction.png)
 
 !!! note  "For details on each service, visit the [Services Overview](../services/index.md)."
 

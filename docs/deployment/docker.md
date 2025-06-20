@@ -3,9 +3,9 @@ title: Deploy with Docker
 ---
 
 
-## 📦 Deploying DMB with Docker
+## 📦 Deploying DUMB with Docker
 
-This guide will walk you through every step, from installing Docker to setting up and running the DMB container. 
+This guide will walk you through every step, from installing Docker to setting up and running the DUMB container. 
 
 Whether you're new to Docker or just need a quick refresher, you'll be up and running in no time.
 
@@ -46,7 +46,7 @@ docker compose version
 ```
 2. If the output is similar to the below, then docker and docker compose were successfully installed:
 ```bash
-ubuntu@DMB:~$ docker compose version
+ubuntu@DUMB:~$ docker compose version
 Docker Compose version v2.24.2
 ```
 
@@ -60,9 +60,9 @@ Docker Compose version v2.24.2
 cd ~ && mkdir docker && cd docker
 ```
 
-2. Create the DMB directories.
+2. Create the DUMB directories.
 ```bash
-mkdir -p DMB/config DMB/log DMB/Zurg/RD DMB/Zurg/mnt DMB/Riven/data DMB/Riven/mnt DMB/PostgreSQL/data DMB/pgAdmin4/data DMB/Zilean/data
+mkdir -p DUMB/config DUMB/log DUMB/Zurg/RD DUMB/Zurg/mnt DUMB/Riven/data DUMB/Riven/mnt DUMB/PostgreSQL/data DUMB/pgAdmin4/data DUMB/Zilean/data
 ```
 
 
@@ -72,12 +72,12 @@ mkdir -p DMB/config DMB/log DMB/Zurg/RD DMB/Zurg/mnt DMB/Riven/data DMB/Riven/mn
 
 1. Download the latest docker-compose.yml from the GitHub repository with the following:
 ```bash
-curl -O https://raw.githubusercontent.com/I-am-PUID-0/DMB/master/docker-compose.yml
+curl -O https://raw.githubusercontent.com/I-am-PUID-0/DUMB/master/docker-compose.yml
 ```
 
 2. Run the following command to update the paths in the `docker-compose.yml`
 ```bash
-sed -i "s|/home/username/docker/DMB|$HOME/docker/DMB|g" docker-compose.yml
+sed -i "s|/home/username/docker/DUMB|$HOME/docker/DUMB|g" docker-compose.yml
 ```
 
 3. Run the following command to update the `docker-compose.yml`
@@ -126,10 +126,10 @@ sudo docker compose up -d
 
 Example output:
 ```bash
-ubuntu@DMB:~/docker$ sudo docker compose up -d
+ubuntu@DUMB:~/docker$ sudo docker compose up -d
 [+] Running 1/2
  ⠋ Network docker_default  Created                                                                                                                                                       1.1s 
- ✔ Container DMB       Started  
+ ✔ Container DUMB       Started  
 ```
 
 ✅ Once started, the container will run in the background.
@@ -137,9 +137,9 @@ ubuntu@DMB:~/docker$ sudo docker compose up -d
 
 ## 🎉 That’s It!
 
-Once deployed, DMB will initialize and make its services available at their respective ports (e.g., DMB Frontend at `:3005`, API at `:8000`, etc.).
+Once deployed, DUMB will initialize and make its services available at their respective ports (e.g., DUMB Frontend at `:3005`, API at `:8000`, etc.).
 
-You can now manage DMB entirely through the **[DMB Frontend](../services/dmb-frontend.md)**, or explore the [Configuration](../features/configuration.md) docs to adjust settings as needed.
+You can now manage DUMB entirely through the **[DUMB Frontend](../services/dumb-frontend.md)**, or explore the [Configuration](../features/configuration.md) docs to adjust settings as needed.
 
 ---
 
@@ -149,7 +149,7 @@ You can now manage DMB entirely through the **[DMB Frontend](../services/dmb-fro
 ### ▶️ Attach to the Running Container
 
 ```bash
-sudo docker attach DMB
+sudo docker attach DUMB
 ```
 
 ### 🔄 Detach Without Stopping the Container
@@ -176,14 +176,14 @@ This sequence sends a signal to Docker to detach from the container while leavin
 To view the container logs, enter the following:
 
 ```bash
-sudo docker container logs DMB
+sudo docker container logs DUMB
 ```
 
 Alternatively, use -f to follow the logs in real-time. 
 !!! note "You can exit with Ctrl + C (this does not stop the container)."
 
 ```bash
-sudo docker logs -f DMB
+sudo docker logs -f DUMB
 ```
 
 ### 🧯 Shutdown Docker Compose
@@ -194,8 +194,8 @@ sudo docker compose down
 
 Example output:
 ```bash
-ubuntu@DMB:~/docker$ sudo docker compose down
+ubuntu@DUMB:~/docker$ sudo docker compose down
 [+] Running 2/2
-✔ Container DMB       Removed                                                                                                                                                      10.4s 
+✔ Container DUMB       Removed                                                                                                                                                      10.4s 
 ✔ Network docker_default  Removed     
 ```

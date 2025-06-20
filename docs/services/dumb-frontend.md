@@ -1,13 +1,13 @@
-The **DMB Frontend** is a web-based user interface designed to enhance the management and monitoring of the Debrid Media Bridge (DMB) ecosystem. It offers features such as real-time service logs, filtering options, and service control functionalities, providing users with an intuitive platform to interact with DMB services.
+The **DUMB Frontend** is a web-based user interface designed to enhance the management and monitoring of the Debrid Unlimited Media Bridge (DUMB) ecosystem. It offers features such as real-time service logs, filtering options, and service control functionalities, providing users with an intuitive platform to interact with DUMB services.
 
 ---
 
-## ⚙️ Configuration Settings in `dmb_config.json`
+## ⚙️ Configuration Settings in `dumb_config.json`
 
 ```json
 "frontend": {
     "enabled": true,
-    "process_name": "DMB Frontend",
+    "process_name": "DUMB Frontend",
     "repo_owner": "nicocapalbo",
     "repo_name": "dmbdb",
     "release_version_enabled": false,
@@ -27,14 +27,14 @@ The **DMB Frontend** is a web-based user interface designed to enhance the manag
     "exclude_dirs": [],
     "platforms": ["pnpm"],
     "command": ["node",".output/server/index.mjs"],
-    "config_dir": "/dmb/frontend",
+    "config_dir": "/dumb/frontend",
     "env": {}            
 }
 ```
 
 ### 🔍 Configuration Key Descriptions
 
-- **`enabled`**: Determines whether the DMB Frontend service is active.
+- **`enabled`**: Determines whether the DUMB Frontend service is active.
 - **`process_name`**: Name used in logs and process tracking.
 - **`repo_owner`** / **`repo_name`**: Specifies the GitHub repository to clone for the frontend.
 - **`release_version_enabled`** / **`release_version`**: Indicates if a specific release version should be used.
@@ -62,7 +62,7 @@ You can control which version or branch of the frontend is deployed by setting:
 
 ---
 
-## 🚪 Accessing the DMB Frontend
+## 🚪 Accessing the DUMB Frontend
 - Navigate to: `http://<host>:<port>`
     - default port `3005`
 
@@ -87,11 +87,11 @@ The **Real-Time Logs** section allows for:
 
 ### Viewing and Modifying Configurations
 
-#### Edit DMB Config
+#### Edit DUMB Config
 
-![Edit DMB Config](../assets/images/dmb_frontend/edit_dmb_config.PNG)
+![Edit DUMB Config](../assets/images/dmb_frontend/edit_dmb_config.PNG)
 
-For each listed service, users can **view and modify** the `dmb_config.json` configuration. Changes can be applied **temporarily** (saved in memory) or **permanently** (saved to file).
+For each listed service, users can **view and modify** the `dumb_config.json` configuration. Changes can be applied **temporarily** (saved in memory) or **permanently** (saved to file).
 
 #### Edit Service Config
 
@@ -120,5 +120,5 @@ For services with log files, this view allows:
 
 ## 📚 Resources
 
-- [DMB Frontend GitHub Repository](https://github.com/nicocapalbo/dmbdb)
-- [DMB Frontend CHANGELOG](https://github.com/nicocapalbo/dmbdb/blob/main/CHANGELOG.md)
+- [DUMB Frontend GitHub Repository](https://github.com/nicocapalbo/dmbdb)
+- [DUMB Frontend CHANGELOG](https://github.com/nicocapalbo/dmbdb/blob/main/CHANGELOG.md)

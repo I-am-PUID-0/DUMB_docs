@@ -2,11 +2,11 @@
 
 The **Riven Frontend** is the web-based interface for interacting with the Riven Backend. It allows users to manage settings, content, and integrations from a clean and modern UI.
 
-DMB handles automatic installation and updates of the frontend, including versioning and branch targeting. It is served by a lightweight web server and preconfigured to communicate with the backend at startup.
+DUMB handles automatic installation and updates of the frontend, including versioning and branch targeting. It is served by a lightweight web server and preconfigured to communicate with the backend at startup.
 
 ---
 
-## ⚙️ Configuration Settings in `dmb_config.json`
+## ⚙️ Configuration Settings in `dumb_config.json`
 
 ```json
 "riven_frontend": {
@@ -81,7 +81,7 @@ You can control which version or branch of the frontend is deployed by setting:
 ---
 
 ## 🧠 Tips
-- The frontend depends on the backend being reachable at `http://<host>:<port>` defined in the `dmb_config.json` for the [Riven Backend](../services/riven-backend.md)
+- The frontend depends on the backend being reachable at `http://<host>:<port>` defined in the `dumb_config.json` for the [Riven Backend](../services/riven-backend.md)
 - Use Docker port mappings if needed to expose the frontend
 - Check `PORT` and `ORIGIN` values if the UI fails to load
 

@@ -2,7 +2,7 @@
 
 The **CLI Battery** is a Flask-based companion application required by CLI Debrid. It provides metadata services and background processing, integrating with Trakt and exposing a lightweight web API for managing movies and TV shows. This service must be running for CLI Debrid to operate properly.
 
-## Configuration Settings in `dmb_config.json`
+## Configuration Settings in `dumb_config.json`
 
 ```json
 "cli_battery": {
@@ -32,7 +32,7 @@ The **CLI Battery** is a Flask-based companion application required by CLI Debri
 
 * **`enabled`**: Enables the CLI Battery service.
 * **`process_name`**: Display name in logs and process manager.
-* **`suppress_logging`**: Suppresses CLI Battery logs in the main DMB output.
+* **`suppress_logging`**: Suppresses CLI Battery logs in the main DUMB output.
 * **`log_level`**: Controls verbosity of logging.
 * **`port`**: CLI Battery service port.
 * **`command`**: How the service is started.

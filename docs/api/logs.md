@@ -4,7 +4,7 @@ title: Logs API
 
 # Logs API
 
-The **Logs API** allows clients to retrieve recent logs captured by DMB and served through the API.
+The **Logs API** allows clients to retrieve recent logs captured by DUMB and served through the API.
 
 ---
 
@@ -50,7 +50,7 @@ Returns a JSON array of log entries:
 ---
 
 ## ⚠️ Notes
-- This endpoint provides logs captured by DMB's internal logger and may not reflect stdout/stderr of subprocesses unless specifically routed.
+- This endpoint provides logs captured by DUMB's internal logger and may not reflect stdout/stderr of subprocesses unless specifically routed.
 - Filtering by `name` is useful to narrow down issues with a specific subprocess.
 
 ---

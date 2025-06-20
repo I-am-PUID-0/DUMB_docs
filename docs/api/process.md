@@ -4,7 +4,7 @@ title: Process Management API
 
 # ⚙️ Process Management API
 
-The **Process Management** endpoints handle the launching, stopping, restarting, and tracking of subprocesses managed by DMB.
+The **Process Management** endpoints handle the launching, stopping, restarting, and tracking of subprocesses managed by DUMB.
 
 ---
 
@@ -32,7 +32,7 @@ Returns a list of currently running processes.
 ---
 
 ### `POST /process/start`
-Starts a specific process using its name as defined in `dmb_config.json`.
+Starts a specific process using its name as defined in `dumb_config.json`.
 
 #### 🔧 Request Body:
 ```json
@@ -86,11 +86,11 @@ Gets the current status of a process
 
 ## 🧠 Notes
 
-- All process names are matched against the entries defined in `dmb_config.json`.
+- All process names are matched against the entries defined in `dumb_config.json`.
 - Most process commands are defined as arrays and are managed with subprocess handling inside Python.
 
 ---
 
 ## 📎 Related Files
-- [`process.py`](https://github.com/I-am-PUID-0/DMB/blob/master/api/routers/process.py)
+- [`process.py`](https://github.com/I-am-PUID-0/DUMB/blob/master/api/routers/process.py)
 - [`Configuration`](config.md)

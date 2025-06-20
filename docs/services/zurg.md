@@ -1,6 +1,6 @@
 # Zurg
 
-Zurg is the debrid content fetcher that powers file discovery and caching for DMB. It mounts content made available by debrid services like Real-Debrid and exposes them over WebDAV for rclone to access. Zurg is designed to run quietly in the background and can be configured to run multiple instances.
+Zurg is the debrid content fetcher that powers file discovery and caching for DUMB. It mounts content made available by debrid services like Real-Debrid and exposes them over WebDAV for rclone to access. Zurg is designed to run quietly in the background and can be configured to run multiple instances.
 
 !!! note "Current Debrid Support"
     As of this posting, **Zurg only supports Real-Debrid**. Additional debrid services may be supported in future updates.
@@ -11,14 +11,14 @@ Zurg is the debrid content fetcher that powers file discovery and caching for DM
 
 There are **two official Zurg repositories**:
 
-- **[`zurg-testing`](https://github.com/debridmediamanager/zurg-testing)** – The **default** public repo used by DMB. It contains stable builds accessible to all users.
-- **[`zurg`](https://github.com/debridmediamanager/zurg)** – The **sponsored-only** repo that includes the latest features, nightly builds, and premium support. DMB can access it by setting the `DMB_GITHUB_TOKEN` and changing the `repo_name` to `zurg`.
+- **[`zurg-testing`](https://github.com/debridmediamanager/zurg-testing)** – The **default** public repo used by DUMB. It contains stable builds accessible to all users.
+- **[`zurg`](https://github.com/debridmediamanager/zurg)** – The **sponsored-only** repo that includes the latest features, nightly builds, and premium support. DUMB can access it by setting the `DMB_GITHUB_TOKEN` and changing the `repo_name` to `zurg`.
 
 !!! note "See [Integration Tokens & Credentials](../features/configuration.md/#-integration-tokens--credentials) section for details on setting up the `DMB_GITHUB_TOKEN`"
 
 ---
 
-## ⚙️ Configuration in `dmb_config.json`
+## ⚙️ Configuration in `dumb_config.json`
 
 Zurg is configured using the `instances` model to support multiple debrid services (e.g., RealDebrid, AllDebrid, Premiumize).
 
@@ -156,4 +156,4 @@ Example:
 ## 📚 Resources
 - [Zurg Testing (default repo)](https://github.com/debridmediamanager/zurg-testing)
 - [Zurg (premium repo)](https://github.com/debridmediamanager/zurg)
-- [DMB GitHub Token Setup](https://github.com/I-am-PUID-0/DMB#environment-variables)
+- [DUMB GitHub Token Setup](https://github.com/I-am-PUID-0/DUMB#environment-variables)

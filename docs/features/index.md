@@ -4,8 +4,8 @@ title: Features Overview
 
 # Features Overview
 
-## 🚀 What is DMB?
-DMB (Debrid Media Bridge) is an all-in-one media management solution designed to streamline the process of **finding, downloading, organizing, and streaming media content**. It integrates multiple services into a **single Docker image**, providing automation and efficiency for managing media libraries.
+## 🚀 What is DUMB?
+DUMB (Debrid Unlimited Media Bridge) is an all-in-one media management solution designed to streamline the process of **finding, downloading, organizing, and streaming media content**. It integrates multiple services into a **single Docker image**, providing automation and efficiency for managing media libraries.
 
 ### 🔑 Key Features
 
@@ -13,13 +13,19 @@ DMB (Debrid Media Bridge) is an all-in-one media management solution designed to
 - **Automated Content Management** – Uses **Debrid Services**, **Plex Discover Watchlists**, **Trakt lists**, and **Overseerr** to automate media retrieval.
 - **Integrated Web UI** – Control and manage services through a simple **web-based interface**.
 - **Modular Design** – Each service (Riven, Zurg, Zilean, etc.) is independently configurable and upgradable.
-- **Advanced Logging & Monitoring** – View and filter service logs directly from the [DMB Frontend](../services/dmb-frontend.md).
+- **Advanced Logging & Monitoring** – View and filter service logs directly from the [DUMB Frontend](../services/dumb-frontend.md).
 
 ## 🛠️ Core Components
-DMB integrates the following projects to create a seamless media experience:
+DUMB integrates the following projects to create a seamless media experience:
 
 ### 🎞️ **Riven**  
 [Riven](https://github.com/rivenmedia/riven) is responsible for content management, handling **search queries, downloading, and organizing media** for streaming.
+
+### 🎞️ **CLI Debrid**  
+[CLI Debrid](https://github.com/godver3/cli_debrid) is one of multiple options responsible for content management, handling **search queries, downloading, and organizing media** for streaming.
+
+### 🎞️ **Decypharr**  
+[Decypharr](https://github.com/sirrobot01/decypharr) is one of multiple options responsible for content management, handling **search queries, downloading, and organizing media** for streaming.
 
 ### 🤖 **Zurg**  
 [Zurg](https://github.com/debridmediamanager/zurg-testing) acts as the automation engine that interacts with **Real-Debrid** to fetch media files.
@@ -36,7 +42,7 @@ DMB integrates the following projects to create a seamless media experience:
 
 ## 🔍 How Does It Work?
 
-DMB simplifies the media management workflow by:
+DUMB simplifies the media management workflow by:
 
 1. **Scanning User Watchlists** (Plex, Trakt, Overseerr, etc.).
 2. **Fetching Media from Debrid Services** (Real-Debrid, AllDebrid, etc.).
@@ -45,4 +51,4 @@ DMB simplifies the media management workflow by:
 5. **Allowing Streaming via Plex & Other Clients** by mounting content with rclone.
 
 ## 📌 Next Steps
-Explore the [Configuration](../features/configuration.md) section to understand how to set up and customize DMB according to your needs.
+Explore the [Configuration](../features/configuration.md) section to understand how to set up and customize DUMB according to your needs.

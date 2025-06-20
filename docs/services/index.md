@@ -4,7 +4,7 @@
 
 # Services Overview
 
-DMB is composed of multiple services that work together to provide a complete automated media management system. Each service can be configured, updated, and monitored independently, and serves a specific function within the DMB ecosystem.
+DUMB is composed of multiple services that work together to provide a complete automated media management system. Each service can be configured, updated, and monitored independently, and serves a specific function within the DUMB ecosystem.
 
 Below is a summary of the available services:
 
@@ -12,15 +12,15 @@ Below is a summary of the available services:
 
 ## 🧩 How the Services Work Together
 
-DMB is built as a collection of microservices, each fulfilling a specific role in the pipeline:
+DUMB is built as a collection of microservices, each fulfilling a specific role in the pipeline:
 
 1. **User Interaction**
 
-    - 🖥️ **DMB Frontend** provides a graphical interface for managing all services.
+    - 🖥️ **DUMB Frontend** provides a graphical interface for managing all services.
 
 2. **API & Coordination**
 
-    * 🔌 **DMB API** acts as a centralized endpoint for frontend communication and coordinating actions between services.
+    * 🔌 **DUMB API** acts as a centralized endpoint for frontend communication and coordinating actions between services.
 
 3. **Metadata Management & Discovery**
 
@@ -53,7 +53,7 @@ DMB is built as a collection of microservices, each fulfilling a specific role i
 
 ## 🧱 Core Service Summaries
 
-### 🔌 DMB API
+### 🔌 DUMB API
 
 Coordinates service startup and exposes FastAPI endpoints.
 
@@ -62,7 +62,7 @@ Coordinates service startup and exposes FastAPI endpoints.
 
 ---
 
-### 🖥️ DMB Frontend
+### 🖥️ DUMB Frontend
 
 User interface for managing service state, logs, and updates.
 
@@ -72,7 +72,7 @@ User interface for managing service state, logs, and updates.
 
 ### 📊 pgAdmin 4
 
-Database admin UI connected to DMB's PostgreSQL backend.
+Database admin UI connected to DUMB's PostgreSQL backend.
 
 - Port: `5050`
 - Data Dir: `/pgadmin/data`
@@ -163,8 +163,8 @@ Optional distributed metadata backend using Hyperswarm.
 
 Click on any of the service names in the sidebar or below to explore how to configure and use them:
 
-* [DMB API](api.md)
-* [DMB Frontend](dmb-frontend.md)
+* [DUMB API](api.md)
+* [DUMB Frontend](dumb-frontend.md)
 * [pgAdmin 4](pgadmin.md)
 * [PostgreSQL](postgres.md)
 * [rclone](rclone.md)

@@ -4,7 +4,7 @@ title: Health Check API
 
 # 🌊 Health Check API
 
-The **Health Check API** provides a simple mechanism to verify that the DMB container and core services are operational.
+The **Health Check API** provides a simple mechanism to verify that the DUMB container and core services are operational.
 
 ---
 
@@ -35,7 +35,7 @@ This route executes a background health check script in the container:
 ```bash
 /healthcheck.py
 ```
-It runs within the same virtual environment as DMB and ensures all critical files, paths, and subprocesses are functional.
+It runs within the same virtual environment as DUMB and ensures all critical files, paths, and subprocesses are functional.
 
 ---
 

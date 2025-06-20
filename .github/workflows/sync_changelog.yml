@@ -22,7 +22,7 @@ jobs:
             echo '  - navigation'
             echo '---'
             echo ''
-            curl --fail --show-error https://raw.githubusercontent.com/I-am-PUID-0/DMB/master/CHANGELOG.md
+            curl --fail --show-error https://raw.githubusercontent.com/I-am-PUID-0/DUMB/master/CHANGELOG.md
           } > docs/changelog.md
 
       - name: Commit and Push Changes

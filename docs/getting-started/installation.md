@@ -4,7 +4,7 @@ title: Installation
 
 # 🛠️ Installation & Prerequisites
 
-Before you deploy DMB, make sure your environment and accounts are ready.
+Before you deploy DUMB, make sure your environment and accounts are ready.
 
 ---
 
@@ -17,13 +17,13 @@ Before you deploy DMB, make sure your environment and accounts are ready.
 
 
 !!! warning "Docker Desktop" 
-    Docker Desktop **CANNOT** be used to run DMB. 
+    Docker Desktop **CANNOT** be used to run DUMB. 
 
     Docker Desktop does not support the [mount propagation](https://docs.docker.com/storage/bind-mounts/#configure-bind-propagation) required for rclone mounts.
 
     ![image](../assets/images/docker_desktop.png)
 
-    See the [deployment options](https://i-am-puid-0.github.io/DMB/deployment/wsl) to run DMB on Windows through WSL2.
+    See the [deployment options](https://i-am-puid-0.github.io/DUMB/deployment/wsl) to run DUMB on Windows through WSL2.
 ---
 
 ## 🔐 Required Credentials

@@ -1,5 +1,5 @@
 document.addEventListener("DOMContentLoaded", async () => {
-  const repo = "I-am-PUID-0/DMB";
+  const repo = "I-am-PUID-0/DUMB";
 
   try {
     const [repoRes, releaseRes] = await Promise.all([

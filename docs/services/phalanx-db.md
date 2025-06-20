@@ -2,7 +2,7 @@
 
 **Phalanx DB** is an optional decentralized metadata service that can enhance CLI Debrid by providing distributed data capabilities through Hyperswarm. It runs independently and is not required for CLI Debrid to function.
 
-## Configuration Settings in `dmb_config.json`
+## Configuration Settings in `dumb_config.json`
 
 ```json
 "phalanx_db": {

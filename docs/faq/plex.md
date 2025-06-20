@@ -4,7 +4,7 @@ title: Plex FAQ
 
 # Plex FAQ
 
-Below are some common questions and solutions related to when using **Plex** alongside **DMB** with services like Zurg and Rclone.
+Below are some common questions and solutions related to when using **Plex** alongside **DUMB** with services like Zurg and Rclone.
 
 ---
 ## ❓ Frequently Asked Questions (FAQ)
@@ -32,7 +32,7 @@ This is often caused by the lack of caching when streaming large files from clou
 #### ✅ Recommended Solution
 Enable **VFS (Virtual File System) cache** in your `rclone` configuration.
 
-When using DMB, set the following environment variables:
+When using DUMB, set the following environment variables:
 ```bash
 RCLONE_VFS_CACHE_MODE=full
 RCLONE_VFS_CACHE_MAX_SIZE=100G

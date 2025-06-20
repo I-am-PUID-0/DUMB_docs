@@ -4,15 +4,15 @@ title: pgAdmin FAQ
 
 # pgAdmin FAQ
 
-Below are common questions and helpful usage tips for working with **pgAdmin** in DMB.
+Below are common questions and helpful usage tips for working with **pgAdmin** in DUMB.
 
 ---
 
 ## ❓ Frequently Asked Questions (FAQ)
 
-### What is pgAdmin used for in DMB?
+### What is pgAdmin used for in DUMB?
 
-pgAdmin is a web-based GUI for managing PostgreSQL. In the context of DMB, it connects to the PostgreSQL instance used by services like Riven and Zilean.
+pgAdmin is a web-based GUI for managing PostgreSQL. In the context of DUMB, it connects to the PostgreSQL instance used by services like Riven and Zilean.
 
 You can use it to:
 
@@ -123,11 +123,11 @@ To create a backup of any database using the pgAdmin interface:
 
 pgAdmin comes with **pgAgent**, which lets you create recurring jobs.
 
-> This is entirely optional and not required to use DMB.
+> This is entirely optional and not required to use DUMB.
 
 ## 💾 Example: Scheduled Backups with pgAgent
 
-1. Navigate to `pgAgent Jobs` under your connected DMB server.
+1. Navigate to `pgAgent Jobs` under your connected DUMB server.
 2. Right-click → `Create → pgAgent Job`
 
     ![Create Job](../assets/images/pgadmin/pgadmin-create-job.png)
@@ -144,8 +144,8 @@ pgAdmin comes with **pgAgent**, which lets you create recurring jobs.
 6. Enter a step name, set `Kind` = `Batch`, and paste your backup command in the **Code** tab:
 
     ```sql
-    pg_dump --username=DMB --dbname=riven --clean --file=/pgadmin/data/riven_backup-`date +%Y-%m-%d-%H-%M-%S`.sql
-    pg_dump --username=DMB --dbname=zilean --clean --file=/pgadmin/data/zilean_backup-`date +%Y-%m-%d-%H-%M-%S`.sql
+    pg_dump --username=DUMB --dbname=riven --clean --file=/pgadmin/data/riven_backup-`date +%Y-%m-%d-%H-%M-%S`.sql
+    pg_dump --username=DUMB --dbname=zilean --clean --file=/pgadmin/data/zilean_backup-`date +%Y-%m-%d-%H-%M-%S`.sql
     ```
 
     ![Step Code](../assets/images/pgadmin/pgadmin-backup-step-code.png)

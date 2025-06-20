@@ -2,9 +2,9 @@ Zilean is a service that enables users to search for content sourced by [Debrid 
 
 ---
 
-## ⚙️ Configuration Settings in `dmb_config.json`
+## ⚙️ Configuration Settings in `dumb_config.json`
 
-Below is a sample configuration for Zilean within the `dmb_config.json` file:
+Below is a sample configuration for Zilean within the `dumb_config.json` file:
 
 ```json
 "zilean": {
@@ -90,7 +90,7 @@ You can control which version or branch of Zilean is deployed by setting:
 
 ## 🧠 Tips
 - The first-time run of Zilean can take a long time; see the [Zilean FAQ](../faq/zilean.md#why-is-zilean-spamming-my-logs) for more info.
-- Logs from Zilean can be accessed via DMB’s Frontend or directly from `/log/zilean.log`.
+- Logs from Zilean can be accessed via DUMB’s Frontend or directly from `/log/zilean.log`.
 - If Zilean fails to bind, check for existing services on port `8182`.
 - Use the `clear_on_update` and `exclude_dirs` settings to preserve persistent data.
 

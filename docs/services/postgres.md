@@ -4,13 +4,13 @@ title: PostgreSQL
 
 # PostgreSQL
 
-PostgreSQL is the core database system used by DMB to store metadata and internal configuration for services like Riven, Zilean, and pgAdmin. 
+PostgreSQL is the core database system used by DUMB to store metadata and internal configuration for services like Riven, Zilean, and pgAdmin. 
 
 It is pre-installed and automatically initialized during container startup.
 
 ---
 
-## ⚙️ Configuration Settings in `dmb_config.json`
+## ⚙️ Configuration Settings in `dumb_config.json`
 ```json
 "postgres": {
   "enabled": false,
@@ -30,7 +30,7 @@ It is pre-installed and automatically initialized during container startup.
   "config_dir": "/postgres_data",
   "config_file": "/postgres_data/postgresql.conf",
   "initdb_args": "--data-checksums",
-  "user": "DMB",
+  "user": "DUMB",
   "password": "postgres",
   "shared_buffers": "128MB",
   "max_connections": 100,
@@ -65,7 +65,7 @@ It is pre-installed and automatically initialized during container startup.
 
 ## 🚪 Access & Credentials
 - Default Port: `5432`
-- Default User: `DMB`
+- Default User: `DUMB`
 - Default Password: `postgres`
 - Default Databases:
     - `postgres`
@@ -90,13 +90,13 @@ It is pre-installed and automatically initialized during container startup.
 
 ### 📦 Run SQL Command Directly (one-liner)
 ```bash
-docker exec -it DMB psql -U DMB -d riven -c 'SELECT COUNT(*) FROM media;'
+docker exec -it DUMB psql -U DUMB -d riven -c 'SELECT COUNT(*) FROM media;'
 ```
 
 ### 🧭 Enter the Container & PostgreSQL Shell
 ```bash
-docker exec -it DMB /bin/bash
-psql -U DMB -d riven
+docker exec -it DUMB /bin/bash
+psql -U DUMB -d riven
 ```
 
 ### 🗑️ Drop the Riven Database
@@ -104,13 +104,13 @@ psql -U DMB -d riven
 
 From the host (one-liner):
 ```bash
-docker exec -it DMB psql -U DMB -c 'DROP DATABASE riven;'
+docker exec -it DUMB psql -U DUMB -c 'DROP DATABASE riven;'
 ```
 
 From inside the container:
 ```bash
-docker exec -it DMB /bin/bash
-psql -U DMB
+docker exec -it DUMB /bin/bash
+psql -U DUMB
 DROP DATABASE riven;
 ```
 

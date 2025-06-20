@@ -1,9 +1,9 @@
-site_name: DMB
-site_description: DMB Documentation
-site_author: DMB Team
-site_url: "https://I-am-PUID-0.github.io/docs"
-repo_name: "I-am-PUID-0/DMB"
-repo_url: "https://github.com/I-am-PUID-0/DMB"
+site_name: DUMB
+site_description: DUMB Documentation
+site_author: DUMB Team
+site_url: "https://I-am-PUID-0.github.io/DUMB"
+repo_name: "I-am-PUID-0/DUMB"
+repo_url: "https://github.com/I-am-PUID-0/DUMB"
 
 
 nav:
@@ -17,8 +17,9 @@ nav:
       - Installation: getting-started/installation.md
   - Services:
       - Overview: services/index.md
-      - DMB API: services/api.md
-      - DMB Frontend: services/dmb-frontend.md
+      - DUMB API: services/api.md
+      - DUMB Frontend: services/dumb-frontend.md
+      - Decypharr: services/decypharr.md      
       - CLI Debrid: services/cli-debrid.md
       - CLI Battery: services/cli-battery.md
       - Phalanx DB: services/phalanx-db.md
@@ -50,7 +51,8 @@ nav:
       - Real-Time WebSocket Logs: api/websocket_logs.md
   - FAQ: 
       - General: faq/general.md
-      - DMB: faq/dmb.md
+      - DUMB: faq/dumb.md
+      - Decypharr: faq/decypharr.md      
       - CLI Debrid: faq/cli-debrid.md
       - Plex: faq/plex.md
       - Plex Debrid: faq/plex-debrid.md
@@ -66,7 +68,7 @@ nav:
 
 theme:
   name: material
-  logo: assets/images/DMB.png
+  logo: assets/images/DUMB.png
   favicon: assets/images/favicon.ico
   features:
     - navigation.tabs

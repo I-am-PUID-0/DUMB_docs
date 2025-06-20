@@ -4,7 +4,7 @@ title: Zilean FAQ
 
 # Zilean FAQ
 
-Below are some common questions and solutions related to Zilean when used with **DMB**.
+Below are some common questions and solutions related to Zilean when used with **DUMB**.
 
 ---
 

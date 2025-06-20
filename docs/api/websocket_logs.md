@@ -4,7 +4,7 @@ title: WebSocket Logs API
 
 # WebSocket Logs API
 
-The WebSocket Logs API provides a real-time streaming interface for receiving logs from all DMB-managed subprocesses. It is primarily used by the DMB Frontend to power the live log viewer.
+The WebSocket Logs API provides a real-time streaming interface for receiving logs from all DUMB-managed subprocesses. It is primarily used by the DUMB Frontend to power the live log viewer.
 
 ---
 
@@ -47,7 +47,7 @@ The server pushes all logs to connected clients. It is up to the client to filte
 - **Log Level**
 - **Search Term**
 
-The DMB Frontend implements dropdowns and search bars for this purpose.
+The DUMB Frontend implements dropdowns and search bars for this purpose.
 
 ---
 
@@ -79,7 +79,7 @@ asyncio.run(consume_logs())
 ---
 
 ## 📎 Related Modules
-- [`websocket_logs.py`](https://github.com/I-am-PUID-0/DMB/blob/master/api/routers/websocket_logs.py)
+- [`websocket_logs.py`](https://github.com/I-am-PUID-0/DUMB/blob/master/api/routers/websocket_logs.py)
 - [Logs API](logs.md) for historical log file access
-- [Frontend Log Viewer](../services/dmb-frontend.md#real-time-logs)
+- [Frontend Log Viewer](../services/dumb-frontend.md#real-time-logs)
 

@@ -1,5 +1,5 @@
 {
-    "name": "DMB-Docs Dev Container",
+    "name": "DUMB-Docs Dev Container",
     "image": "mcr.microsoft.com/devcontainers/python:3.11",
     "workspaceFolder": "/workspace",
     "customizations": {
@@ -16,8 +16,8 @@
         "source=${localWorkspaceFolder},target=/workspace,type=bind"
     ],
     "runArgs": [
-        "--name=dmb_docs",
-        "--hostname=dmb_docs",
+        "--name=dumb_docs",
+        "--hostname=dumb_docs",
         "--dns=8.8.8.8",
         "--dns=8.8.4.4"
     ],

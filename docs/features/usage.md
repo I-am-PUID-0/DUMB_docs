@@ -4,18 +4,18 @@ title: Usage
 
 # Usage
 
-## 🚀 Running DMB
-DMB automatically starts the services defined in `dmb_config.json` in the proper order. Each service can also be managed independently using the [DMB Frontend](../services/dmb-frontend.md/) or by directly modifying the configuration.
+## 🚀 Running DUMB
+DUMB automatically starts the services defined in `dumb_config.json` in the proper order. Each service can also be managed independently using the [DUMB Frontend](../services/dumb-frontend.md/) or by directly modifying the configuration.
 !!! important "Important: Configure API Key Before Startup"
-    DMB is preset to start all services on the first startup.  
+    DUMB is preset to start all services on the first startup.  
     As such, please ensure `ZURG_INSTANCES_REALDEBRID_API_KEY` is configured with your RealDebrid API Key in the compose **before starting the container**.
 
 
 ### 🔄 Automatic Service Start
 All services with `"enabled": true` in the config will be started on container launch. These typically include:
 
-- DMB API
-- DMB Frontend
+- DUMB API
+- DUMB Frontend
 - PostgreSQL
 - pgAdmin 4
 - rclone
@@ -30,7 +30,7 @@ If a service fails to start, check its log file in the `/log` directory (or wher
 ## 🔃 Managing Updates
 
 ### 🛠️ Manual Updates
-Each service can be updated by modifying the configuration file or using the [DMB Frontend](../services/dmb-frontend.md). 
+Each service can be updated by modifying the configuration file or using the [DUMB Frontend](../services/dumb-frontend.md). 
 
 Updates include:
 
@@ -50,7 +50,7 @@ Enable by setting:
 
 Services supporting auto-updates:
 
-- DMB Frontend
+- DUMB Frontend
 - Riven Backend
 - Riven Frontend
 - Zilean
@@ -59,7 +59,7 @@ Services supporting auto-updates:
 ---
 
 ## ⚡ Shutdown Handling
-DMB handles graceful shutdown of all services. 
+DUMB handles graceful shutdown of all services. 
 
 This includes:
 
@@ -76,7 +76,7 @@ docker-compose:
 ---
 
 ## 📌 Tips
-- Always monitor `/log/*.log` files for troubleshooting.
+- Always monitor `/log/*.log` files for troubleshooting or monitor the logs from the **DUMB Frontend**.
 - Ensure PostgreSQL is running before launching services that depend on it.
 - If using Real-Debrid, ensure `api_key` is provided in rclone or Zurg instances.
 - Logs can be colored if `color_log` is enabled in the config.

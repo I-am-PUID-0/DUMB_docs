@@ -4,7 +4,7 @@ title: Zurg FAQ
 
 # Zurg FAQ
 
-Below are some common questions and solutions related to Zurg when used with **DMB**.
+Below are some common questions and solutions related to Zurg when used with **DUMB**.
 
 ---
 

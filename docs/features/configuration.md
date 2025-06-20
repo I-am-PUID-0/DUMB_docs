@@ -5,30 +5,30 @@ title: Configuration
 # Configuration
 
 ## 📑 Overview
-DMB relies on a **centralized configuration file**, `dmb_config.json`, to control its services, logging, API settings, and more. This file allows you to customize the behavior of DMB without modifying the source code.
+DUMB relies on a **centralized configuration file**, `dumb_config.json`, to control its services, logging, API settings, and more. This file allows you to customize the behavior of DUMB without modifying the source code.
 
-DMB also supports **environment variables, .env files, and Docker secrets**. If the same setting is defined in multiple places, the **precedence is as follows:**
+DUMB also supports **environment variables, .env files, and Docker secrets**. If the same setting is defined in multiple places, the **precedence is as follows:**
 
 1. **Environment Variables** (highest priority)
 2. **.env File**
 3. **Docker Secrets**
-4. **`dmb_config.json`** (lowest priority)
+4. **`dumb_config.json`** (lowest priority)
 
 ## 🛠️ Configuration File Structure
 
-!!! caution "Be Careful When Modifying `dmb_config.json`"
-    While DMB is highly configurable via `dmb_config.json`,  
+!!! caution "Be Careful When Modifying `dumb_config.json`"
+    While DUMB is highly configurable via `dumb_config.json`,  
     some changes can cause failures during startup.  
     As such, it is **not recommended** to make modifications unless you fully understand their impact.
     
-Below is the **general structure** of `dmb_config.json`:
+Below is the **general structure** of `dumb_config.json`:
 
 ```json
 {
     "puid": 1000,
     "pgid": 1000,
     "tz": "",
-    "dmb": { ... },
+    "dumb": { ... },
     "postgres": { ... },
     "pgadmin": { ... },
     "rclone": { ... },
@@ -61,10 +61,10 @@ Below is a breakdown of some of the sections:
 ---
 
 ## 📜 Logging Settings
-Located in `dmb`:
+Located in `dumb`:
 ```json
 "log_level": "INFO",
-"log_name": "DMB",
+"log_name": "DUMB",
 "log_dir": "/log",
 "log_count": 2,
 "log_size": "10M",
@@ -80,7 +80,7 @@ Located in `dmb`:
 ---
 
 ## 🔐 Integration Tokens & Credentials
-Located in the `dmb` section of `dmb_config.json`:
+Located in the `dumb` section of `dumb_config.json`:
 
 ```json
 "plex_token": "",
@@ -113,18 +113,20 @@ To create a GitHub token:
     ![GitHub Token](../assets/images/github_token_scope.png)
     
 4. Click **Generate token** and **copy the token** — it will only be shown once
-5. Add the token to your `.env` file or docker compose with `DMB_GITHUB_TOKEN=`, or `dmb_config.json` under `"github_token"`
+5. Add the token to your `.env` file or docker compose with `DMB_GITHUB_TOKEN=`, or `dumb_config.json` under `"github_token"`
 
 ---
 
 ## 🔌 Service Configuration
 
-Each DMB-integrated service is configured within its own section of `dmb_config.json`.
+Each DUMB-integrated service is configured within its own section of `dumb_config.json`.
 
 See the individual service pages for in-depth configuration details:
 
-- [DMB API](../services/api.md)
-- [DMB Frontend](../services/dmb-frontend.md)
+- [DUMB API](../services/api.md)
+- [DUMB Frontend](../services/dumb-frontend.md)
+- [Decypharr](../services/decypharr.md)
+- [CLI Debrid](../services/cli-debrid.md)
 - [pgAdmin 4](../services/pgadmin.md)
 - [PostgreSQL](../services/postgres.md)
 - [rclone](../services/rclone.md)
@@ -135,6 +137,6 @@ See the individual service pages for in-depth configuration details:
 
 
 ## 📌 Next Steps
-1. Review and modify `dmb_config.json` as needed.
+1. Review and modify `dumb_config.json` as needed.
 2. Review the [Usage](usage.md) page. 
 3. For a deep dive into individual services, see the [Services](../services/index.md) section.

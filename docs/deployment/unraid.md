@@ -2,9 +2,9 @@
 title: unRAID Deployment
 ---
 
-## 🧱 Deploying DMB on unRAID
+## 🧱 Deploying DUMB on unRAID
 
-This guide will walk you through deploying **Debrid Media Bridge (DMB)** on **unRAID** using the Community Applications plugin and Docker.
+This guide will walk you through deploying **Debrid Unlimited Media Bridge (DUMB)** on **unRAID** using the Community Applications plugin and Docker.
 
 ---
 
@@ -13,7 +13,7 @@ Before proceeding, ensure you have the following:
 
 - A running **unRAID server** with Docker enabled.
 - The **Community Applications** plugin installed.
-- At least one unRAID **share** for persistent storage (e.g., `/mnt/user/appdata/DMB`).
+- At least one unRAID **share** for persistent storage (e.g., `/mnt/user/appdata/DUMB`).
 - An understanding of basic Docker container and volume mapping in unRAID.
 
 Optional but recommended:
@@ -25,9 +25,9 @@ Optional but recommended:
 
 ## 🚀 Quick Start
 
-### 1. **Install the DMB Template**
+### 1. **Install the DUMB Template**
 - Navigate to the **Apps** tab in unRAID.
-- Search for `DMB` and select the **Debrid Media Bridge** template.
+- Search for `DUMB` and select the **Debrid Unlimited Media Bridge** template.
 - Click **Install**.
 
 ### 2. **Path and Variable Configuration**
@@ -43,11 +43,11 @@ Ensure your **paths and environment variables** are set correctly:
 
 #### Terminal Method:
 ```bash
-chown -R 99:100 /mnt/user/appdata/DMB
+chown -R 99:100 /mnt/user/appdata/DUMB
 ```
 
 #### WebUI Method:
-1. Go to **Shares** > locate your DMB share.
+1. Go to **Shares** > locate your DUMB share.
 2. Click the `+` to expand.
 3. Under **Owner**, set to `nobody` (user ID 99).
 
@@ -60,9 +60,9 @@ chown -R 99:100 /mnt/user/appdata/DMB
 
 ## 🔁 Matching Paths in Plex, Jellyfin, Emby
 
-Your **Media Server (Plex, Jellyfin, or Emby)** must have the same paths as DMB:
+Your **Media Server (Plex, Jellyfin, or Emby)** must have the same paths as DUMB:
 
-- DMB mounts:
+- DUMB mounts:
   - `/mnt` (contains both Riven and Zurg content)
 - In your media server:
   - Mount `/mnt` to `/mnt` as well.
@@ -74,15 +74,15 @@ Your **Media Server (Plex, Jellyfin, or Emby)** must have the same paths as DMB:
 
 ## 📷 Example Screenshots
 
-- DMB Docker setup:
+- DUMB Docker setup:
 
-![unraid-dmb-setup-1](https://github.com/user-attachments/assets/c11f95fa-710f-4b1d-af07-be0a81dbface)
-![unraid-dmb-setup-2](https://github.com/user-attachments/assets/cb0a02b9-c986-4de8-9751-f615d48c2716)
+![unraid-dumb-setup-1](https://github.com/user-attachments/assets/c11f95fa-710f-4b1d-af07-be0a81dbface)
+![unraid-dumb-setup-2](https://github.com/user-attachments/assets/cb0a02b9-c986-4de8-9751-f615d48c2716)
 
 
 - Plex Docker container setup:
 
-![plex-dmb-paths](https://github.com/user-attachments/assets/0f3a9286-f81d-4d24-ab9a-5cf9a5bcee25)
+![plex-dumb-paths](https://github.com/user-attachments/assets/0f3a9286-f81d-4d24-ab9a-5cf9a5bcee25)
 
 
 - Plex UI Library paths:
@@ -107,11 +107,11 @@ To enable features like watchlist syncing, you may need your Plex token:
 
 To troubleshoot permissions or inspect mounts:
 ```bash
-docker exec -w /mnt/movies dmb ls -Rl
+docker exec -w /mnt/movies dumb ls -Rl
 ```
 To enter the container interactively:
 ```bash
-docker exec -it dmb sh
+docker exec -it dumb sh
 ```
 Install Midnight Commander (optional):
 ```bash
@@ -122,7 +122,7 @@ apk add mc && mc
 
 ## 🧪 Jellyfin and Emby Notes
 
-Both **Jellyfin** and **Emby** can work with DMB:
+Both **Jellyfin** and **Emby** can work with DUMB:
 
 - Map `/mnt` into the containers.
 - Add **only the Riven subpaths** (`/mnt/movies`, `/mnt/shows`) as libraries.
@@ -130,9 +130,9 @@ Both **Jellyfin** and **Emby** can work with DMB:
 ---
 
 ## 🧰 Troubleshooting
-- Check logs via **Docker tab** > select DMB > **Logs**.
+- Check logs via **Docker tab** > select DUMB > **Logs**.
 - Use `docker exec` or Midnight Commander to inspect file/folder structure.
 - Common issues:
   - Wrong `PUID/PGID`
-  - Paths not matching between DMB and your media server
+  - Paths not matching between DUMB and your media server
   - Invalid Plex token

@@ -4,7 +4,7 @@ title: Configuration API
 
 # Configuration API
 
-The Configuration API is responsible for exposing endpoints that manage and manipulate DMB's configuration settings (`dmb_config.json`). These endpoints provide tools for loading, updating, saving, and validating configuration data for all DMB services.
+The Configuration API is responsible for exposing endpoints that manage and manipulate DUMB's configuration settings (`dumb_config.json`). These endpoints provide tools for loading, updating, saving, and validating configuration data for all DUMB services.
 
 ---
 
@@ -41,7 +41,7 @@ curl -X POST http://localhost:8000/config \
 
 ### `POST /config/save`
 **Description:**
-Saves the current in-memory config to the `dmb_config.json` file.
+Saves the current in-memory config to the `dumb_config.json` file.
 
 **Usage Example:**
 ```bash
@@ -66,7 +66,7 @@ curl -X POST http://localhost:8000/config/validate \
 ## 🧪 Developer Notes
 
 - The config is held in memory for fast access and allows the user to experiment or preview changes before committing them to file.
-- Validation uses internal DMB schema checks to ensure required keys and structure.
+- Validation uses internal DUMB schema checks to ensure required keys and structure.
 - Routes include error handling for malformed config data.
 
 ---

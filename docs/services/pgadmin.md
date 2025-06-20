@@ -6,11 +6,11 @@ title: pgAdmin 4
 
 pgAdmin 4 is a web-based administration tool for managing PostgreSQL databases. 
 
-DMB includes pgAdmin pre-installed and configured to work out of the box, allowing you to inspect, query, and back up your databases directly from a browser.
+DUMB includes pgAdmin pre-installed and configured to work out of the box, allowing you to inspect, query, and back up your databases directly from a browser.
 
 ---
 
-## ⚙️ Configuration Settings in `dmb_config.json`
+## ⚙️ Configuration Settings in `dumb_config.json`
 ```json
 "pgadmin": {
     "enabled": true,
@@ -20,7 +20,7 @@ DMB includes pgAdmin pre-installed and configured to work out of the box, allowi
     "log_file": "/pgadmin/data/pgadmin4.log",
     "port": 5050,
     "default_server": "0.0.0.0",
-    "setup_email": "DMB@DMB.DMB",
+    "setup_email": "DUMB@DUMB.DUMB",
     "setup_password": "postgres",
     "command": []
 },
@@ -45,7 +45,7 @@ DMB includes pgAdmin pre-installed and configured to work out of the box, allowi
     - default port `5055`
 - Login using the credentials set via environment variables:
   - `PGADMIN_SETUP_EMAIL` 
-    - default: `DMB@DMB.DMB`
+    - default: `DUMB@DUMB.DUMB`
   - `PGADMIN_SETUP_PASSWORD` 
     - default: `postgres`
 
@@ -56,7 +56,7 @@ DMB includes pgAdmin pre-installed and configured to work out of the box, allowi
 ---
 
 ## 🔐 Server Configuration
-- pgAdmin is preconfigured with a server connection named **DMB**.
+- pgAdmin is preconfigured with a server connection named **DUMB**.
 - On first login, you must enter the password for the PostgreSQL server connection.
     - Default password: `postgres`
     - Or, use the value of `POSTGRES_PASSWORD` if set in your environment.
@@ -66,7 +66,7 @@ DMB includes pgAdmin pre-installed and configured to work out of the box, allowi
 ---
 
 ## ⚙️ Extensions
-The following PostgreSQL extensions are included in the DMB image:
+The following PostgreSQL extensions are included in the DUMB image:
 
 ### 📈 `system_stats`
 Provides system performance statistics inside PostgreSQL.
@@ -99,7 +99,7 @@ A job scheduler for PostgreSQL. Useful for:
 | Setting                | Value                |
 |------------------------|----------------------|
 | UI Address             | `http://<host>:5050` |
-| Default Email/Username| `DMB@DMB.DMB`         |
+| Default Email/Username| `DUMB@DUMB.DUMB`         |
 | Default Password       | `postgres`           |
 | Data Directory         | `/pgadmin/data`      |
 | Config File            | `/pgadmin/data/config_local.py` |

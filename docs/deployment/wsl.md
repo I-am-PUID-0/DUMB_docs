@@ -2,12 +2,12 @@
 title: Deploy with WSL
 ---
 
-## 🖥️ Deploying DMB on Windows Setup Guide (Docker/WSL)
+## 🖥️ Deploying DUMB on Windows Setup Guide (Docker/WSL)
 
 !!! warning "Docker Desktop"
     Ensure that Docker Desktop is not installed; if so, uninstall and reboot before proceeding.
 
-This guide will walk you through setting up DMB on a Windows system using a **lightweight Docker + WSL2 setup**, without relying on Docker Desktop. 
+This guide will walk you through setting up DUMB on a Windows system using a **lightweight Docker + WSL2 setup**, without relying on Docker Desktop. 
 
 ----
 
@@ -167,4 +167,4 @@ For more, see the [Portainer Deployment Guide](./portainer.md).
 
 ---
 
-Now you’re ready to run DMB inside WSL2 with full Docker support — no Docker Desktop required!
+Now you’re ready to run DUMB inside WSL2 with full Docker support — no Docker Desktop required!

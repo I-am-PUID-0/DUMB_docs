@@ -2,14 +2,14 @@
 
 **CLI Debrid** is a lightweight, Python-based downloader (streaming link creator) and media automation system designed to integrate tightly with Real-Debrid, Trakt, Plex, and various scraping services. It manages media collection intelligently, seeking out higher quality versions of existing content, and automating upgrades based on a defined set of rules and content sources.
 
-It operates within the **DMB** ecosystem and relies on:
+It operates within the **DUMB** ecosystem and relies on:
 
 * [CLI Battery](./cli-battery.md) (required) for metadata services and background processing
 * [Phalanx DB](./phalanx-db.md) (optional) for decentralized metadata storage and sharing 
 
 ---
 
-## 📦 Configuration in `dmb_config.json`
+## 📦 Configuration in `dumb_config.json`
 
 ```json
 "cli_debrid": {
@@ -49,7 +49,7 @@ It operates within the **DMB** ecosystem and relies on:
 
 ### 🔍 Key Configuration Fields
 
-* `enabled`: Toggle to run CLI Debrid via DMB.
+* `enabled`: Toggle to run CLI Debrid via DUMB.
 * `process_name`: Used for display and logs.
 * `repo_owner`, `repo_name`: GitHub repo to use for updates.
 * `release_version_enabled`, `branch_enabled`: Target a specific tag or branch.
@@ -170,7 +170,7 @@ As such, it's important to ensure you select the appropriate option for your dep
 
 ## 🚀 Zilean Built-in!
 
-With [Zilean](./zilean.md) enabled in DMB, you can also leverage it with CLI Debrid
+With [Zilean](./zilean.md) enabled in DUMB, you can also leverage it with CLI Debrid
 
 ![Add A Scraper](../assets/images/cli_debrid/clid_add_a_scraper_zilean.png)
 

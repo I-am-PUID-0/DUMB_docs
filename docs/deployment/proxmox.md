@@ -2,9 +2,9 @@
 title: Deploying on Proxmox
 ---
 
-## 🧱 Deploying DMB on Proxmox (LXC Container)
+## 🧱 Deploying DUMB on Proxmox (LXC Container)
 
-This guide will walk you through deploying **DMB** inside a lightweight **Ubuntu-based LXC container** on **Proxmox VE**.
+This guide will walk you through deploying **DUMB** inside a lightweight **Ubuntu-based LXC container** on **Proxmox VE**.
 
 ---
 
@@ -28,7 +28,7 @@ bash -c "$(curl -fsSL https://raw.githubusercontent.com/community-scripts/Proxmo
 
 ## 🛠️ LXC Configuration for Docker + Fuse Support
 
-To ensure DMB works correctly inside your LXC container (especially with Docker, rclone, and bind mounts), you’ll need to update both the **container config**, the **Proxmox host**, and optionally configure persistence across reboots.
+To ensure DUMB works correctly inside your LXC container (especially with Docker, rclone, and bind mounts), you’ll need to update both the **container config**, the **Proxmox host**, and optionally configure persistence across reboots.
 
 ---
 
@@ -139,7 +139,7 @@ To persist the `rshared` behavior across boots:
 ---
 
 ## 👤 Add and Configure a User inside the LXC (Required) 
-!!! warning "DMB must be ran as any user other than root"
+!!! warning "DUMB must be ran as any user other than root"
 
 1. **Start/Restart the container:**
 
@@ -163,7 +163,7 @@ To persist the `rshared` behavior across boots:
     ```
 
     !!! tip
-        To find the UID and GID (needed for `PUID` and `PGID` in your DMB config):
+        To find the UID and GID (needed for `PUID` and `PGID` in your DUMB config):
         ```bash
         id ubuntu
         ```
@@ -173,7 +173,7 @@ To persist the `rshared` behavior across boots:
         uid=1000(ubuntu) gid=1000(ubuntu)
         ```
 
-        Use these values in your `dmb_config.json` or docker-compose:
+        Use these values in your `dumb_config.json` or docker-compose:
         ```json
         "puid": 1000,
         "pgid": 1000,
@@ -197,9 +197,9 @@ To persist the `rshared` behavior across boots:
     cd ~ && mkdir docker && cd docker
     ```
 
-3. Create the DMB directories.
+3. Create the DUMB directories.
     ```bash
-    mkdir -p DMB/config DMB/log DMB/Zurg/RD DMB/Riven/data DMB/Riven/mnt DMB/PostgreSQL/data DMB/pgAdmin4/data DMB/Zilean/data
+    mkdir -p DUMB/config DUMB/log DUMB/Zurg/RD DUMB/Riven/data DUMB/Riven/mnt DUMB/PostgreSQL/data DUMB/pgAdmin4/data DUMB/Zilean/data
     ```
 
 
@@ -265,11 +265,11 @@ For more, see the [Portainer Deployment Guide](./portainer.md).
 
 ## 🐳 Update Docker Bind Mount (Important)
 
-When launching DMB or your media server, make sure the following mount is used:
+When launching DUMB or your media server, make sure the following mount is used:
 
 Replace:
 ```yaml
-- /home/username/docker/DMB/Zurg/mnt:/data:shared
+- /home/username/docker/DUMB/Zurg/mnt:/data:shared
 ```
 
 With:
@@ -284,7 +284,7 @@ With:
 ## 🚀 Next Steps
 Now that Docker (and optionally Portainer) are installed, continue with:
 
-- [Deploy DMB via Docker Compose](./docker.md)
+- [Deploy DUMB via Docker Compose](./docker.md)
 - [Configure your stack with Portainer](./portainer.md)
 
 

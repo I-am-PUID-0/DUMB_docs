@@ -4,7 +4,7 @@ title: Deployment
 
 # 🚀 Deployment Overview
 
-DMB can be deployed across a variety of platforms and environments. Whether you're using **Docker**, **Portainer**, **Unraid**, **WSL2**, or other systems like **TrueNAS**, **Synology**, or **QNAP**, this section will guide you through the available options to get DMB up and running.
+DUMB can be deployed across a variety of platforms and environments. Whether you're using **Docker**, **Portainer**, **Unraid**, **WSL2**, or other systems like **TrueNAS**, **Synology**, or **QNAP**, this section will guide you through the available options to get DUMB up and running.
 
 All deployment methods provide access to the same integrated services and configurations, with slight differences in how the container is started and managed.
 
@@ -33,7 +33,7 @@ Deploy using the Unraid Community Applications plugin and container template.
 - [Deploy with Unraid](unraid.md)
 
 ### 💻 WSL2 (Windows Subsystem for Linux)
-Deploy DMB in a WSL2 environment on Windows 11.
+Deploy DUMB in a WSL2 environment on Windows 11.
 
 - [Deploy with WSL](wsl.md)
 
@@ -62,13 +62,13 @@ Deploy on TrueNAS SCALE using Docker or native Apps.
 
 ## 🔐 Additional Notes
 
-- All methods rely on a valid and accessible `dmb_config.json` file for configuring services.
+- All methods rely on a valid and accessible `dumb_config.json` file for configuring services.
 - It is strongly recommended to bind-mount a local `config` directory to persist user data.
 
 Example:
 ```yaml
-dmb:
-  image: iampuid0/dmb:latest
+dumb:
+  image: iampuid0/dumb:latest
   volumes:
     - ./config:/config
 ```

@@ -1,17 +1,17 @@
 ---
-title: DMB API
+title: DUMB API
 ---
 
-# DMB API
-The **DMB API** is the central communication layer between the DMB Frontend and the backend service. It handles requests for logs, service management (start/stop), configuration updates, and health checks.
+# DUMB API
+The **DUMB API** is the central communication layer between the DUMB Frontend and the backend service. It handles requests for logs, service management (start/stop), configuration updates, and health checks.
 
 ---
 
-## ⚙️ Configuration Settings in `dmb_config.json`
-Located in `dmb.api_service`:
+## ⚙️ Configuration Settings in `dumb_config.json`
+Located in `dumb.api_service`:
 ```json
 "enabled": true,
-"process_name": "DMB API",
+"process_name": "DUMB API",
 "log_level": "INFO",
 "host": "127.0.0.1",
 "port": 8000
