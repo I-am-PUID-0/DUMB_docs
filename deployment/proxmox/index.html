@@ -6,13 +6,13 @@
       <meta charset="utf-8">
       <meta name="viewport" content="width=device-width,initial-scale=1">
       
-        <meta name="description" content="DMB Documentation">
+        <meta name="description" content="DUMB Documentation">
       
       
-        <meta name="author" content="DMB Team">
+        <meta name="author" content="DUMB Team">
       
       
-        <link rel="canonical" href="https://I-am-PUID-0.github.io/docs/deployment/proxmox/">
+        <link rel="canonical" href="https://I-am-PUID-0.github.io/DUMB/deployment/proxmox/">
       
       
         <link rel="prev" href="../wsl/">
@@ -26,7 +26,7 @@
     
     
       
-        <title>Deploying on Proxmox - DMB</title>
+        <title>Deploying on Proxmox - DUMB</title>
       
     
     
@@ -80,7 +80,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#-deploying-dmb-on-proxmox-lxc-container" class="md-skip">
+        <a href="#-deploying-dumb-on-proxmox-lxc-container" class="md-skip">
           Skip to content
         </a>
       
@@ -94,9 +94,9 @@
 
 <header class="md-header" data-md-component="header">
   <nav class="md-header__inner md-grid" aria-label="Header">
-    <a href="../.." title="DMB" class="md-header__button md-logo" aria-label="DMB" data-md-component="logo">
+    <a href="../.." title="DUMB" class="md-header__button md-logo" aria-label="DUMB" data-md-component="logo">
       
-  <img src="../../assets/images/DMB.png" alt="logo">
+  <img src="../../assets/images/DUMB.png" alt="logo">
 
     </a>
     <label class="md-header__button md-icon" for="__drawer">
@@ -107,7 +107,7 @@
       <div class="md-header__ellipsis">
         <div class="md-header__topic">
           <span class="md-ellipsis">
-            DMB
+            DUMB
           </span>
         </div>
         <div class="md-header__topic" data-md-component="header-topic">
@@ -192,13 +192,13 @@
     
     
       <div class="md-header__source">
-        <a href="https://github.com/I-am-PUID-0/DMB" title="Go to repository" class="md-source" data-md-component="source">
+        <a href="https://github.com/I-am-PUID-0/DUMB" title="Go to repository" class="md-source" data-md-component="source">
   <div class="md-source__icon md-icon">
     
     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.7.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2024 Fonticons, Inc.--><path d="M439.55 236.05 244 40.45a28.87 28.87 0 0 0-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 0 1-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 0 0 0 40.81l195.61 195.6a28.86 28.86 0 0 0 40.8 0l194.69-194.69a28.86 28.86 0 0 0 0-40.81"/></svg>
   </div>
   <div class="md-source__repository">
-    I-am-PUID-0/DMB
+    I-am-PUID-0/DUMB
   </div>
 </a>
       </div>
@@ -417,22 +417,22 @@
 
 <nav class="md-nav md-nav--primary md-nav--lifted" aria-label="Navigation" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
-    <a href="../.." title="DMB" class="md-nav__button md-logo" aria-label="DMB" data-md-component="logo">
+    <a href="../.." title="DUMB" class="md-nav__button md-logo" aria-label="DUMB" data-md-component="logo">
       
-  <img src="../../assets/images/DMB.png" alt="logo">
+  <img src="../../assets/images/DUMB.png" alt="logo">
 
     </a>
-    DMB
+    DUMB
   </label>
   
     <div class="md-nav__source">
-      <a href="https://github.com/I-am-PUID-0/DMB" title="Go to repository" class="md-source" data-md-component="source">
+      <a href="https://github.com/I-am-PUID-0/DUMB" title="Go to repository" class="md-source" data-md-component="source">
   <div class="md-source__icon md-icon">
     
     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.7.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2024 Fonticons, Inc.--><path d="M439.55 236.05 244 40.45a28.87 28.87 0 0 0-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 0 1-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 0 0 0 40.81l195.61 195.6a28.86 28.86 0 0 0 40.8 0l194.69-194.69a28.86 28.86 0 0 0 0-40.81"/></svg>
   </div>
   <div class="md-source__repository">
-    I-am-PUID-0/DMB
+    I-am-PUID-0/DUMB
   </div>
 </a>
     </div>
@@ -740,7 +740,7 @@
         
   
   <span class="md-ellipsis">
-    DMB API
+    DUMB API
     
   </span>
   
@@ -758,11 +758,33 @@
   
   
     <li class="md-nav__item">
-      <a href="../../services/dmb-frontend/" class="md-nav__link">
+      <a href="../../services/dumb-frontend/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
-    DMB Frontend
+    DUMB Frontend
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../services/decypharr/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Decypharr
     
   </span>
   
@@ -1229,9 +1251,9 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#-deploying-dmb-on-proxmox-lxc-container" class="md-nav__link">
+  <a href="#-deploying-dumb-on-proxmox-lxc-container" class="md-nav__link">
     <span class="md-ellipsis">
-      🧱 Deploying DMB on Proxmox (LXC Container)
+      🧱 Deploying DUMB on Proxmox (LXC Container)
     </span>
   </a>
   
@@ -1729,11 +1751,33 @@
   
   
     <li class="md-nav__item">
-      <a href="../../faq/dmb/" class="md-nav__link">
+      <a href="../../faq/dumb/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
-    DMB
+    DUMB
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../faq/decypharr/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Decypharr
     
   </span>
   
@@ -2037,9 +2081,9 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#-deploying-dmb-on-proxmox-lxc-container" class="md-nav__link">
+  <a href="#-deploying-dumb-on-proxmox-lxc-container" class="md-nav__link">
     <span class="md-ellipsis">
-      🧱 Deploying DMB on Proxmox (LXC Container)
+      🧱 Deploying DUMB on Proxmox (LXC Container)
     </span>
   </a>
   
@@ -2204,8 +2248,8 @@
 
   <h1>Proxmox</h1>
 
-<h2 id="-deploying-dmb-on-proxmox-lxc-container">🧱 Deploying DMB on Proxmox (LXC Container)<a class="headerlink" href="#-deploying-dmb-on-proxmox-lxc-container" title="Permanent link">#</a></h2>
-<p>This guide will walk you through deploying <strong>DMB</strong> inside a lightweight <strong>Ubuntu-based LXC container</strong> on <strong>Proxmox VE</strong>.</p>
+<h2 id="-deploying-dumb-on-proxmox-lxc-container">🧱 Deploying DUMB on Proxmox (LXC Container)<a class="headerlink" href="#-deploying-dumb-on-proxmox-lxc-container" title="Permanent link">#</a></h2>
+<p>This guide will walk you through deploying <strong>DUMB</strong> inside a lightweight <strong>Ubuntu-based LXC container</strong> on <strong>Proxmox VE</strong>.</p>
 <hr />
 <h2 id="-prerequisites">✅ Prerequisites<a class="headerlink" href="#-prerequisites" title="Permanent link">#</a></h2>
 <ul>
@@ -2223,7 +2267,7 @@
 </div>
 <hr />
 <h2 id="-lxc-configuration-for-docker--fuse-support">🛠️ LXC Configuration for Docker + Fuse Support<a class="headerlink" href="#-lxc-configuration-for-docker--fuse-support" title="Permanent link">#</a></h2>
-<p>To ensure DMB works correctly inside your LXC container (especially with Docker, rclone, and bind mounts), you’ll need to update both the <strong>container config</strong>, the <strong>Proxmox host</strong>, and optionally configure persistence across reboots.</p>
+<p>To ensure DUMB works correctly inside your LXC container (especially with Docker, rclone, and bind mounts), you’ll need to update both the <strong>container config</strong>, the <strong>Proxmox host</strong>, and optionally configure persistence across reboots.</p>
 <hr />
 <h3 id="-update-the-lxc-config-file">🔧 Update the LXC Config File<a class="headerlink" href="#-update-the-lxc-config-file" title="Permanent link">#</a></h3>
 <div class="admonition note">
@@ -2327,7 +2371,7 @@ systemctl<span class="w"> </span><span class="nb">enable</span><span class="w"> 
 <hr />
 <h2 id="-add-and-configure-a-user-inside-the-lxc-required">👤 Add and Configure a User inside the LXC (Required)<a class="headerlink" href="#-add-and-configure-a-user-inside-the-lxc-required" title="Permanent link">#</a></h2>
 <div class="admonition warning">
-<p class="admonition-title">DMB must be ran as any user other than root</p>
+<p class="admonition-title">DUMB must be ran as any user other than root</p>
 </div>
 <ol>
 <li>
@@ -2351,13 +2395,13 @@ chmod 440 /etc/sudoers.d/ubuntu
 </code></pre></div></p>
 <div class="admonition tip">
 <p class="admonition-title">Tip</p>
-<p>To find the UID and GID (needed for <code>PUID</code> and <code>PGID</code> in your DMB config):
+<p>To find the UID and GID (needed for <code>PUID</code> and <code>PGID</code> in your DUMB config):
 <div class="highlight"><pre><span></span><code>id<span class="w"> </span>ubuntu
 </code></pre></div></p>
 <p>Example output:
 <div class="highlight"><pre><span></span><code><span class="nv">uid</span><span class="o">=</span><span class="m">1000</span><span class="o">(</span>ubuntu<span class="o">)</span><span class="w"> </span><span class="nv">gid</span><span class="o">=</span><span class="m">1000</span><span class="o">(</span>ubuntu<span class="o">)</span>
 </code></pre></div></p>
-<p>Use these values in your <code>dmb_config.json</code> or docker-compose:
+<p>Use these values in your <code>dumb_config.json</code> or docker-compose:
 <div class="highlight"><pre><span></span><code><span class="nt">&quot;puid&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">1000</span><span class="p">,</span>
 <span class="nt">&quot;pgid&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">1000</span><span class="p">,</span>
 </code></pre></div></p>
@@ -2382,8 +2426,8 @@ chmod 440 /etc/sudoers.d/ubuntu
 </code></pre></div></p>
 </li>
 <li>
-<p>Create the DMB directories.
-    <div class="highlight"><pre><span></span><code>mkdir<span class="w"> </span>-p<span class="w"> </span>DMB/config<span class="w"> </span>DMB/log<span class="w"> </span>DMB/Zurg/RD<span class="w"> </span>DMB/Riven/data<span class="w"> </span>DMB/Riven/mnt<span class="w"> </span>DMB/PostgreSQL/data<span class="w"> </span>DMB/pgAdmin4/data<span class="w"> </span>DMB/Zilean/data
+<p>Create the DUMB directories.
+    <div class="highlight"><pre><span></span><code>mkdir<span class="w"> </span>-p<span class="w"> </span>DUMB/config<span class="w"> </span>DUMB/log<span class="w"> </span>DUMB/Zurg/RD<span class="w"> </span>DUMB/Riven/data<span class="w"> </span>DUMB/Riven/mnt<span class="w"> </span>DUMB/PostgreSQL/data<span class="w"> </span>DUMB/pgAdmin4/data<span class="w"> </span>DUMB/Zilean/data
 </code></pre></div></p>
 </li>
 </ol>
@@ -2444,9 +2488,9 @@ You might need to restart the container if it timed out. </p>
 <p>For more, see the <a href="../portainer/">Portainer Deployment Guide</a>.</p>
 <hr />
 <h2 id="-update-docker-bind-mount-important">🐳 Update Docker Bind Mount (Important)<a class="headerlink" href="#-update-docker-bind-mount-important" title="Permanent link">#</a></h2>
-<p>When launching DMB or your media server, make sure the following mount is used:</p>
+<p>When launching DUMB or your media server, make sure the following mount is used:</p>
 <p>Replace:
-<div class="highlight"><pre><span></span><code><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">/home/username/docker/DMB/Zurg/mnt:/data:shared</span>
+<div class="highlight"><pre><span></span><code><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">/home/username/docker/DUMB/Zurg/mnt:/data:shared</span>
 </code></pre></div></p>
 <p>With:
 <div class="highlight"><pre><span></span><code><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">/mnt/docker-mounts:/data:rshared</span>
@@ -2458,7 +2502,7 @@ You might need to restart the container if it timed out. </p>
 <h2 id="-next-steps">🚀 Next Steps<a class="headerlink" href="#-next-steps" title="Permanent link">#</a></h2>
 <p>Now that Docker (and optionally Portainer) are installed, continue with:</p>
 <ul>
-<li><a href="../docker/">Deploy DMB via Docker Compose</a></li>
+<li><a href="../docker/">Deploy DUMB via Docker Compose</a></li>
 <li><a href="../portainer/">Configure your stack with Portainer</a></li>
 </ul>
 
