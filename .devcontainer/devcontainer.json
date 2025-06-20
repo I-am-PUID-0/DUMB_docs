@@ -1,0 +1,26 @@
+{
+    "name": "DMB-Docs Dev Container",
+    "image": "mcr.microsoft.com/devcontainers/python:3.11",
+    "workspaceFolder": "/workspace",
+    "customizations": {
+        "vscode": {
+            "extensions": [
+                "ms-python.python"
+            ]
+        }
+    },
+    "forwardPorts": [
+        8100
+    ],
+    "mounts": [
+        "source=${localWorkspaceFolder},target=/workspace,type=bind"
+    ],
+    "runArgs": [
+        "--name=dmb_docs",
+        "--hostname=dmb_docs",
+        "--dns=8.8.8.8",
+        "--dns=8.8.4.4"
+    ],
+    "postCreateCommand": "pip install mkdocs-material",
+    "remoteUser": "vscode"
+}

@@ -1,0 +1,138 @@
+site_name: DMB
+site_description: DMB Documentation
+site_author: DMB Team
+site_url: "https://I-am-PUID-0.github.io/docs"
+repo_name: "I-am-PUID-0/DMB"
+repo_url: "https://github.com/I-am-PUID-0/DMB"
+
+
+nav:
+  - Home: index.md
+  - Features:
+      - Overview: features/index.md
+      - Configuration: features/configuration.md
+      - Usage: features/usage.md  
+  - Getting Started:
+      - Introduction: getting-started/index.md
+      - Installation: getting-started/installation.md
+  - Services:
+      - Overview: services/index.md
+      - DMB API: services/api.md
+      - DMB Frontend: services/dmb-frontend.md
+      - CLI Debrid: services/cli-debrid.md
+      - CLI Battery: services/cli-battery.md
+      - Phalanx DB: services/phalanx-db.md
+      - Plex Debrid: services/plex-debrid.md
+      - pgAdmin: services/pgadmin.md
+      - PostgreSQL: services/postgres.md
+      - rclone: services/rclone.md
+      - Riven Backend: services/riven-backend.md      
+      - Riven Frontend: services/riven-frontend.md
+      - Zilean: services/zilean.md
+      - Zurg: services/zurg.md
+  - Deployment:
+      - Overview: deployment/index.md
+      - Docker: deployment/docker.md
+      - Portainer: deployment/portainer.md 
+      - Unraid: deployment/unraid.md     
+      - WSL: deployment/wsl.md
+      - Proxmox: deployment/proxmox.md
+      - Synology: deployment/synology.md
+      - QNAP: deployment/qnap.md
+      - TrueNAS: deployment/truenas.md
+      - Dockge: deployment/dockge.md
+  - API:
+      - Overview: api/index.md
+      - Health: api/health.md
+      - Process Management: api/process.md
+      - Configuration: api/config.md
+      - Logs: api/logs.md
+      - Real-Time WebSocket Logs: api/websocket_logs.md
+  - FAQ: 
+      - General: faq/general.md
+      - DMB: faq/dmb.md
+      - CLI Debrid: faq/cli-debrid.md
+      - Plex: faq/plex.md
+      - Plex Debrid: faq/plex-debrid.md
+      - pgAdmin: faq/pgadmin.md
+      - PostgreSQL: faq/postgres.md
+      - rclone: faq/rclone.md
+      - Riven: faq/riven.md
+      - Zilean: faq/zilean.md
+      - Zurg: faq/zurg.md
+  - Changelog: changelog.md
+  - Contributing: contributing.md
+  - About: about.md
+
+theme:
+  name: material
+  logo: assets/images/DMB.png
+  favicon: assets/images/favicon.ico
+  features:
+    - navigation.tabs
+    - navigation.sections
+    - navigation.instant
+    - navigation.tracking
+    - search.suggest
+    - search.highlight
+    - content.code.copy
+    - content.code.annotate 
+  palette:
+    - media: "(prefers-color-scheme: light)"
+      scheme: default
+      toggle:
+        icon: material/weather-night
+        name: Switch to dark mode
+
+    - media: "(prefers-color-scheme: dark)"
+      scheme: slate
+      toggle:
+        icon: material/weather-sunny
+        name: Switch to light mode
+
+
+extra:
+  generator: false
+
+extra_javascript:
+  - https://cdn.jsdelivr.net/npm/medium-zoom@1.1.0/dist/medium-zoom.min.js
+  - assets/js/zoom.js
+  - assets/js/github-meta.js
+
+extra_css:
+  - assets/css/main.css
+
+markdown_extensions:
+  - attr_list
+  - md_in_html
+  - admonition
+  - tables
+  - codehilite:
+      linenums: false
+  - toc:
+      permalink: true
+      toc_depth: 2
+  - pymdownx.emoji:
+      emoji_index: !!python/name:material.extensions.emoji.twemoji
+      emoji_generator: !!python/name:material.extensions.emoji.to_svg
+  - pymdownx.details
+  - pymdownx.superfences:
+      custom_fences:
+        - name: mermaid
+          class: mermaid
+          format: !!python/name:pymdownx.superfences.fence_code_format
+  - pymdownx.tabbed:
+      alternate_style: true
+      combine_header_slug: true
+      slugify: !!python/object/apply:pymdownx.slugs.slugify
+        kwds:
+          case: lower
+  # - pymdownx.blocks.admonition
+  - pymdownx.magiclink
+  - pymdownx.smartsymbols
+  - pymdownx.tilde
+  - pymdownx.mark
+  - pymdownx.keys 
+  - markdown.extensions.toc:
+      slugify: !!python/object/apply:pymdownx.slugs.slugify {kwds: {case: lower}}
+      permalink: "#"  
