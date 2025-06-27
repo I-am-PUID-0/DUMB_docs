@@ -70,6 +70,7 @@ theme:
   name: material
   logo: assets/images/DUMB.png
   favicon: assets/images/favicon.ico
+  custom_dir: docs/overrides
   features:
     - navigation.tabs
     - navigation.sections
