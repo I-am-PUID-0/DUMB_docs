@@ -1,6 +1,7 @@
 name: Sync Changelog
 
 on:
+  workflow_dispatch:  
   schedule:
     - cron: '0 0 * * *'
   pull_request:
@@ -35,3 +36,16 @@ jobs:
           git commit -m "Update Changelog" || echo "No changes to commit"
           git remote set-url origin https://x-access-token:${GITHUB_TOKEN}@github.com/${{ github.repository }}.git
           git push
+
+      - name: Check for changes
+        id: check_diff
+        run: |
+          git fetch origin master
+          git diff --exit-code origin/master -- docs/changelog.md || echo "changed=true" >> $GITHUB_OUTPUT
+
+      - name: Trigger deploy if changed
+        if: steps.check_diff.outputs.changed == 'true'
+        uses: benc-uk/workflow-dispatch@v1
+        with:
+          workflow: Deploy MkDocs with Poetry  
+          token: ${{ secrets.GITHUB_TOKEN }}
