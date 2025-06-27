@@ -23,6 +23,7 @@ nav:
       - CLI Debrid: services/cli-debrid.md
       - CLI Battery: services/cli-battery.md
       - Phalanx DB: services/phalanx-db.md
+      - Plex Media Server: services/plex-media-server.md
       - Plex Debrid: services/plex-debrid.md
       - pgAdmin: services/pgadmin.md
       - PostgreSQL: services/postgres.md

@@ -7,21 +7,13 @@ title: Usage
 ## 🚀 Running DUMB
 DUMB automatically starts the services defined in `dumb_config.json` in the proper order. Each service can also be managed independently using the [DUMB Frontend](../services/dumb-frontend.md/) or by directly modifying the configuration.
 !!! important "Important: Configure API Key Before Startup"
-    DUMB is preset to start all services on the first startup.  
-    As such, please ensure `ZURG_INSTANCES_REALDEBRID_API_KEY` is configured with your RealDebrid API Key in the compose **before starting the container**.
+    DUMB is preset to disable all services, other than the API and Frontend on the first startup. 
+    An Onboarding process is currently in development for the Frontend. 
+    As an interim solution, please see the [API: Start Core Service](../api/process.md#post-processstart-core-service) for info on using the API to preconfigure and start services. 
 
 
 ### 🔄 Automatic Service Start
-All services with `"enabled": true` in the config will be started on container launch. These typically include:
-
-- DUMB API
-- DUMB Frontend
-- PostgreSQL
-- pgAdmin 4
-- rclone
-- Riven Backend & Frontend
-- Zilean
-- Zurg
+All services with `"enabled": true` in the config will be started on container launch.
 
 If a service fails to start, check its log file in the `/log` directory (or wherever `log_dir` is set).
 
@@ -51,8 +43,11 @@ Enable by setting:
 Services supporting auto-updates:
 
 - DUMB Frontend
-- Riven Backend
-- Riven Frontend
+- Plex Media Server (Future release)
+- Riven Backend and Frontend
+- Decypharr
+- CLI Debrid
+- Plex Debrid
 - Zilean
 - Zurg
 
