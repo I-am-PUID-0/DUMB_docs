@@ -36,12 +36,16 @@ jobs:
           git commit -m "Update Changelog" || echo "No changes to commit"
           git remote set-url origin https://x-access-token:${GITHUB_TOKEN}@github.com/${{ github.repository }}.git
           git push
-
+          
       - name: Check for changes
         id: check_diff
         run: |
           git fetch origin master
-          git diff --exit-code origin/master -- docs/changelog.md || echo "changed=true" >> $GITHUB_OUTPUT
+          if git diff --quiet origin/master -- docs/changelog.md; then
+            echo "changed=false" >> $GITHUB_OUTPUT
+          else
+            echo "changed=true" >> $GITHUB_OUTPUT
+          fi
 
       - name: Trigger deploy if changed
         if: steps.check_diff.outputs.changed == 'true'
