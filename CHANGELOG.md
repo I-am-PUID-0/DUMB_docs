@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.2.1](https://github.com/I-am-PUID-0/DUMB_docs/compare/1.2.0...1.2.1) (2025-07-24)
+
+
+### 📖 Documentation
+
+* **deployment:** update Docker and WSL guides with additional notes for sharing mounts ([f1f6ecf](https://github.com/I-am-PUID-0/DUMB_docs/commit/f1f6ecff1b77c43445d00a7a50b4e330e8616104))
+
 ## [1.2.0](https://github.com/I-am-PUID-0/DUMB_docs/compare/1.1.0...1.2.0) (2025-06-27)
 
 
