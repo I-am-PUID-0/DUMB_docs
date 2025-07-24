@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.2.2](https://github.com/I-am-PUID-0/DUMB_docs/compare/1.2.1...1.2.2) (2025-07-24)
+
+
+### 📖 Documentation
+
+* Add Decypharr service documentation ([19c8c50](https://github.com/I-am-PUID-0/DUMB_docs/commit/19c8c5078845956d066117b18dd09a6f1042dc21))
+
 ## [1.2.1](https://github.com/I-am-PUID-0/DUMB_docs/compare/1.2.0...1.2.1) (2025-07-24)
 
 
