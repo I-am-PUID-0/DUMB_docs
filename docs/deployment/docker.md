@@ -62,7 +62,7 @@ cd ~ && mkdir docker && cd docker
 
 2. Create the DUMB directories.
 ```bash
-mkdir -p DUMB/config DUMB/log DUMB/Zurg/RD DUMB/Zurg/mnt DUMB/Riven/data DUMB/Riven/mnt DUMB/PostgreSQL/data DUMB/pgAdmin4/data DUMB/Zilean/data
+mkdir -p DUMB/config DUMB/log DUMB/Zurg/RD DUMB/Riven/data DUMB/PostgreSQL/data DUMB/pgAdmin4/data DUMB/Zilean/data DUMB/plex_debrid DUMB/plex DUMB/decypharr DUMB/cli_debrid DUMB/phalanx_db DUMB/mnt/debrid
 ```
 
 
@@ -84,21 +84,13 @@ sed -i "s|/home/username/docker/DUMB|$HOME/docker/DUMB|g" docker-compose.yml
 !!! note "timezone"
     The bellow command defaults to `TZ=UTC`, update while running the command if desired
 
-!!! note "Riven Frontend Origin"  
-    The `RIVEN_FRONTEND_ENV_ORIGIN` must be in the format `http://<IP-or-Hostname>:<port>`.  
-    This should match the exact address you use to access the Riven Frontend from your browser.
-
 
 ```bash
 read -p "Enter your timezone [UTC]: " TZ && TZ=${TZ:-UTC} && \
-read -p "Enter your RealDebrid API key: " RD_KEY && \
-read -p "Enter your Riven Frontend Origin (e.g., http://0.0.0.0:3000): " RIVEN_ORIGIN && \
 sed -i \
   -e "s|TZ=|TZ=$TZ|" \
   -e "s|PUID=|PUID=$(id -u)|" \
   -e "s|PGID=|PGID=$(id -g)|" \
-  -e "s|ZURG_INSTANCES_REALDEBRID_API_KEY=|ZURG_INSTANCES_REALDEBRID_API_KEY=$RD_KEY|" \
-  -e "s|RIVEN_FRONTEND_ENV_ORIGIN=.*|RIVEN_FRONTEND_ENV_ORIGIN=$RIVEN_ORIGIN|" \
   docker-compose.yml
 
 ```

@@ -33,6 +33,9 @@ This guide will walk you through setting up DUMB on a Windows system using a **l
 
 6. From the Windows app menu, start **Ubuntu 22.04**, then paste the following inside the terminal:
 
+    !!! note
+        This step is only required if sharing the mount outside of the container - e.g., to another media server, etc. 
+
     ```bash
     sudo apt update
     sudo apt upgrade -y
@@ -58,6 +61,9 @@ This guide will walk you through setting up DUMB on a Windows system using a **l
 ----
 
 ### 📂 Accessing the Mount on Windows
+
+!!! note
+    These steps are only required if sharing the mount outside of the container - e.g., to another media server, etc. 
 
 1. From the Ubuntu terminal, open File Explorer in the current directory:
 
