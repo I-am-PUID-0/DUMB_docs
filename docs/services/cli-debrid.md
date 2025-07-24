@@ -13,37 +13,39 @@ It operates within the **DUMB** ecosystem and relies on:
 
 ```json
 "cli_debrid": {
-  "enabled": false,
-  "process_name": "CLI Debrid",
-  "repo_owner": "godver3",
-  "repo_name": "cli_debrid",
-  "release_version_enabled": false,
-  "release_version": "v0.6.07",
-  "branch_enabled": false,
-  "branch": "main",
-  "suppress_logging": false,
-  "log_level": "INFO",
-  "port": 5000,
-  "auto_update": false,
-  "auto_update_interval": 24,
-  "clear_on_update": true,
-  "exclude_dirs": [
-    "/cli_debrid/data"
-  ],
-  "platforms": ["python"],
-  "command": [
-    "/cli_debrid/venv/bin/python",
-    "main.py"
-  ],
-  "config_dir": "/cli_debrid",
-  "config_file": "/cli_debrid/data/config/config.json",
-  "log_file": "/cli_debrid/data/logs/debug.log",
-  "env": {
-    "USER_CONFIG": "/cli_debrid/data/config/",
-    "USER_LOGS": "/cli_debrid/data/logs/",
-    "USER_DB_CONTENT": "/cli_debrid/data/db_content/",
-    "CLI_DEBRID_PORT": "{port}"
-  }
+    "enabled": false,
+    "process_name": "CLI Debrid",
+    "repo_owner": "godver3",
+    "repo_name": "cli_debrid",
+    "release_version_enabled": false,
+    "release_version": "v0.6.07",
+    "branch_enabled": false,
+    "branch": "main",
+    "suppress_logging": false,
+    "log_level": "INFO",
+    "port": 5000,
+    "auto_update": false,
+    "auto_update_interval": 24,
+    "clear_on_update": true,
+    "exclude_dirs": [
+        "/cli_debrid/data"
+    ],
+    "platforms": [
+        "python"
+    ],
+    "command": [
+        "/cli_debrid/venv/bin/python",
+        "main.py"
+    ],
+    "config_dir": "/cli_debrid",
+    "config_file": "/cli_debrid/data/config/config.json",
+    "log_file": "/cli_debrid/data/logs/debug.log",
+    "env": {
+        "USER_CONFIG": "/cli_debrid/data/config/",
+        "USER_LOGS": "/cli_debrid/data/logs/",
+        "USER_DB_CONTENT": "/cli_debrid/data/db_content/",
+        "CLI_DEBRID_PORT": "{port}"
+    }
 },
 ```
 
@@ -87,25 +89,28 @@ It operates within the **DUMB** ecosystem and relies on:
 
 ```json
 "cli_battery": {
-  "enabled": false,
-  "process_name": "CLI Battery",
-  "suppress_logging": false,
-  "log_level": "INFO",
-  "port": 5001,
-  "platforms": ["python"],
-  "command": [
-    "/cli_debrid/venv/bin/python",
-    "cli_battery/main.py"
-  ],
-  "config_dir": "/cli_debrid",
-  "config_file": "/cli_debrid/data/config/settings.json",
-  "log_file": "/cli_debrid/data/logs/battery_debug.log",
-  "env": {
-    "USER_CONFIG": "/cli_debrid/data/config/",
-    "USER_LOGS": "/cli_debrid/data/logs/",
-    "USER_DB_CONTENT": "/cli_debrid/data/db_content/",
-    "CLI_DEBRID_BATTERY_PORT": "{port}"
-  }
+    "enabled": false,
+    "process_name": "CLI Battery",
+    "suppress_logging": false,
+    "log_level": "INFO",
+    "port": 5001,
+    "platforms": [
+        "python"
+    ],
+    "command": [
+        "/cli_debrid/venv/bin/python",
+        "cli_battery/main.py"
+    ],
+    "config_dir": "/cli_debrid",
+    "config_file": "/cli_debrid/data/config/settings.json",
+    "log_file": "/cli_debrid/data/logs/battery_debug.log",
+    "env": {
+        "PYTHONPATH": "/cli_debrid",
+        "USER_CONFIG": "/cli_debrid/data/config/",
+        "USER_LOGS": "/cli_debrid/data/logs/",
+        "USER_DB_CONTENT": "/cli_debrid/data/db_content/",
+        "CLI_DEBRID_BATTERY_PORT": "{port}"
+    }
 },
 ```
 
@@ -118,27 +123,32 @@ CLI Battery provides local metadata storage and Trakt integration, acting as the
 
 ```json
 "phalanx_db": {
-  "enabled": false,
-  "process_name": "Phalanx DB",
-  "repo_owner": "godver3",
-  "repo_name": "phalanx_db_hyperswarm",
-  "release_version_enabled": false,
-  "release_version": "v0.50",
-  "branch_enabled": false,
-  "branch": "main",
-  "suppress_logging": false,
-  "log_level": "INFO",
-  "port": 8888,
-  "auto_update": false,
-  "auto_update_interval": 24,
-  "clear_on_update": true,
-  "exclude_dirs": [
-    "/phalanx_db/data"
-  ],
-  "platforms": ["pnpm"],
-  "command": ["node", "phalanx_db_rest.js"],
-  "config_dir": "/phalanx_db",
-  "env": {}
+    "enabled": false,
+    "process_name": "Phalanx DB",
+    "repo_owner": "godver3",
+    "repo_name": "phalanx_db_hyperswarm",
+    "release_version_enabled": false,
+    "release_version": "v0.50",
+    "branch_enabled": false,
+    "branch": "main",
+    "suppress_logging": false,
+    "log_level": "INFO",
+    "port": 8888,
+    "auto_update": false,
+    "auto_update_interval": 24,
+    "clear_on_update": true,
+    "exclude_dirs": [
+        "/phalanx_db/data"
+    ],
+    "platforms": [
+        "pnpm"
+    ],
+    "command": [
+        "node",
+        "phalanx_db_rest.js"
+    ],
+    "config_dir": "/phalanx_db",
+    "env": {}
 },
 ```
 
