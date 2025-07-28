@@ -46,7 +46,6 @@ DUMB is ideal if you:
 - 🐳 Docker or a compatible runtime
 - ⚙️ Linux (recommended) or Windows (WSL)
 - 🔒 Real-Debrid
-- 🎞️ A running Plex, Jellyfin, or Emby Server (if used for integration)
 
 ---
 

@@ -128,4 +128,4 @@ sudo systemctl status make-rshared.service
 
 
 ## 📎 Related Pages
-- [Rclone Configuration](../services/rclone.md)
+- [Rclone Configuration](../services/dependent/rclone.md)

@@ -81,5 +81,5 @@ asyncio.run(consume_logs())
 ## 📎 Related Modules
 - [`websocket_logs.py`](https://github.com/I-am-PUID-0/DUMB/blob/master/api/routers/websocket_logs.py)
 - [Logs API](logs.md) for historical log file access
-- [Frontend Log Viewer](../services/dumb-frontend.md#real-time-logs)
+- [Frontend Log Viewer](../services/dumb/dumb-frontend.md#real-time-logs)
 

@@ -19,7 +19,7 @@ You can use it to:
 - Explore and modify database tables and data
 - Run SQL queries manually using the **Query Tool**
 - Schedule tasks using **pgAgent** (optional tool inside pgAdmin)
-- View the [System Stats](../services/pgadmin.md#-system_stats) inside PostgreSQL
+- View the [System Stats](../services/optional/pgadmin.md#-system_stats) inside PostgreSQL
 ---
 
 ## 🧪 Using pgAdmin’s Query Tool
@@ -167,5 +167,5 @@ pgAdmin comes with **pgAgent**, which lets you create recurring jobs.
 ## 📎 Related Pages
 
 - [PostgreSQL FAQ](postgres.md)
-- [Zilean](../services/zilean.md)
-- [Riven Backend](../services/riven-backend.md)
+- [Zilean](../services/optional/zilean.md)
+- [Riven Backend](../services/core/riven-backend.md)

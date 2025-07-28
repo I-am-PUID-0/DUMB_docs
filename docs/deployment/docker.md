@@ -131,7 +131,7 @@ ubuntu@DUMB:~/docker$ sudo docker compose up -d
 
 Once deployed, DUMB will initialize and make its services available at their respective ports (e.g., DUMB Frontend at `:3005`, API at `:8000`, etc.).
 
-You can now manage DUMB entirely through the **[DUMB Frontend](../services/dumb-frontend.md)**, or explore the [Configuration](../features/configuration.md) docs to adjust settings as needed.
+You can now manage DUMB entirely through the **[DUMB Frontend](../services/dumb/dumb-frontend.md)**, or explore the [Configuration](../features/configuration.md) docs to adjust settings as needed.
 
 ---
 

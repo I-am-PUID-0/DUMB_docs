@@ -23,4 +23,4 @@ See the [rclone FAQ](../faq/rclone.md#i-think-i-might-be-rate-limited-by-the-deb
 ---
 
 ## 📎 Related Pages
-- [Zurg Configuration](../services/zurg.md)
+- [Zurg Configuration](../services/dependent/zurg.md)

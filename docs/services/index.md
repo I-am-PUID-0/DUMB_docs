@@ -4,174 +4,84 @@ title: Services Overview
 
 # Services Overview
 
-DUMB is composed of multiple services that work together to provide a complete automated media management system. Each service can be configured, updated, and monitored independently, and serves a specific function within the DUMB ecosystem.
+DUMB is composed of multiple services that work together to provide a complete automated media management system. Services are categorized into:
 
-Below is a summary of the available services:
-
----
-
-## 🧩 How the Services Work Together
-
-DUMB is built as a collection of microservices, each fulfilling a specific role in the pipeline:
-
-1. **User Interaction**
-
-    - 🖥️ **DUMB Frontend** provides a graphical interface for managing all services.
-
-2. **API & Coordination**
-
-    * 🔌 **DUMB API** acts as a centralized endpoint for frontend communication and coordinating actions between services.
-
-3. **Metadata Management & Discovery**
-
-    * 🧠 **Riven Backend** searches and indexes content, initiates downloads, and maintains integration with media platforms (Trakt, Overseerr, Plex).
-    * 🧲 **CLI Debrid** automates discovery, upgrading, content management, and maintains integration with media platforms (Trakt, Overseerr, Plex).
-    * 🎨 **Riven Frontend** interfaces directly with the backend to manage searches, downloads, and settings.
-
-    !!! note "See the [Riven Wiki](https://rivenmedia.github.io/wiki/) and [CLI Debrid GitHub](https://github.com/godver3/cli_debrid) for more details"
-
-4. **Metadata Caching**
-
-    * 🔋 **CLI Battery** provides local metadata storage and Trakt integration, caching frequently accessed metadata.
-    * 🌐 **Phalanx DB** offers an optional decentralized metadata store powered by Hyperswarm.
-    * 🧠 **Zilean** caches metadata (e.g., hashes, content names) and serves repeated requests to reduce lookup time for indexed content.
-
-    !!! note "See the [Zilean Wiki](https://ipromknight.github.io/zilean/getting-started.html) and [CLI Debrid GitHub](https://github.com/godver3/cli_debrid) for more details "
-
-5. **Content Acquisition**
-
-    * ⚡ **Zurg** interfaces with Real-Debrid to manage content on the debrid service.
-
-6. **Cloud Storage Mounting**
-
-    * ☁️ **rclone** mounts debrid storage (via WebDAV or similar) inside the container, making downloaded content available to other services.
-
-7. **Persistent Storage and Management**
-
-    * 🗃️ **PostgreSQL** provides the primary database layer for Zilean, Riven, and pgAdmin.
-    * 📊 **pgAdmin 4** gives users a web-based interface for inspecting and managing PostgreSQL.
-
-## 🧱 Core Service Summaries
-
-### 🔌 DUMB API
-
-Coordinates service startup and exposes FastAPI endpoints.
-
-- Default Port: `8000`
-- Logs: `/log`
+* [DUMB Services](../services/dumb/index.md): Required for system orchestration and user interaction
+* [Core Services](../services/core/index.md): Manage Debrid content orchestration or media playback
+* [Dependent Services](../services/dependent/index.md): Required by one or more core services to function
+* [Optional Services](../services/optional/index.md): Enhance or simplify workflows but are not required
 
 ---
 
-### 🖥️ DUMB Frontend
+## 🧹 How the Services Work Together
 
-User interface for managing service state, logs, and updates.
+DUMB is built as a collection of microservices that communicate over internal APIs and shared paths. Below is an example flow:
 
-- Default Port: `3005`
+1. **Platform Infrastructure**
 
----
+    * 🔐 **DUMB API** coordinates and manages all service interactions
+    * 🗃️ **DUMB Frontend** provides the web interface for managing and viewing services
 
-### 📊 pgAdmin 4
+2. **Debrid Orchestration & Content Management**
 
-Database admin UI connected to DUMB's PostgreSQL backend.
+    * 🧠 **Riven Backend**, 🧲 **CLI Debrid**, 🚁 **Plex Debrid**, and 🌐 **Decypharr** each serve as a Debrid orchestrator: requesting, managing, and monitoring content acquisition workflows
+    * These core services integrate with providers like Trakt, Overseerr, and Debrid APIs to manage what content gets fetched
 
-- Port: `5050`
-- Data Dir: `/pgadmin/data`
+3. **Media Playback**
 
----
+    * 🎥 **Plex** is the core service that hosts and serves collected content to users
+        * It relies on symlinked or mounted content made available through rclone/Zurg from the other core services
 
-### 🗃️ PostgreSQL
+4. **Storage & Retrieval**
 
-Primary database for Riven, Zilean, and pgAdmin.
+    * 📁 **rclone** mounts remote Debrid storage for local access
+    * ⚡ **Zurg** provides WebDAV access to debrid downloads
 
-* Port: `5432`
-* Databases: `postgres`, `pgadmin`, `zilean`, `riven`
+5. **Metadata & Caching**
 
----
+    * 🛢 **CLI Battery** and 🌐 **Phalanx DB** serve as local or distributed metadata stores
+    * 🛢 **Zilean** caches metadata and exposes a Torznab-compatible indexer for scraping optimization
 
-### ☁️ rclone
+6. **Database Layer**
 
-Mounts Real-Debrid or cloud storage via WebDAV.
-
-* Mount Dir: `/data`
-* Config Dir: `/config`
-
----
-
-### 🧠 Riven Backend
-
-Handles scraping, symlinking, and service integrations.
-
-* Port: `8080`
-* Config: `/riven/backend/data/settings.json`
+    * 📂 **PostgreSQL** stores metadata for Riven, Zilean, and pgAdmin
+    * 📊 **pgAdmin** is a GUI for exploring PostgreSQL databases
 
 ---
 
-### 🎨 Riven Frontend
+## 🧱 Quick Reference
 
-UI for monitoring and controlling the Riven backend.
-
-* Port: `3000`
-
----
-
-### 🧠 Zilean
-
-Caches hashes and metadata to improve scraper efficiency.
-
-* Port: `8182`
-* Config: `/zilean/app/data/settings.json`
-
----
-
-### ⚡ Zurg
-
-Fetches and repairs Real-Debrid links. Supports multi-instance mode.
-
-* Port: `9090`
-* Config: `/zurg/RD/config.yml`
+| Service                                                  | Type      | Key Role                                                  |
+| -------------------------------------------------------- | --------- | --------------------------------------------------------- |
+| [DUMB API](../services/dumb/index.md)                    | DUMB      | Centralized orchestration                                 |
+| [DUMB Frontend](../services/dumb/index.md)               | DUMB      | Web-based control panel                                   |
+| [Riven Backend](../services/core/riven-backend.md)       | Core      | Debrid orchestrator (searching, scraping, automation)     |
+| [CLI Debrid](../services/core/cli-debrid.md)             | Core      | Debrid orchestrator (list scanning, upgrades, Plex watch) |
+| [Plex Debrid](../services/core/plex-debrid.md)           | Core      | Debrid orchestrator (direct scraping and playback prep)   |
+| [Decypharr](../services/core/decypharr.md)               | Core      | Debrid orchestrator for Arrs via torrent API integration  |
+| [Plex](../services/core/plex-media-server.md)            | Core      | Media server for hosting and playing content              |
+| [rclone](../services/dependent/rclone.md)                | Dependent | Mount Debrid storage                                      |
+| [Zurg](../services/dependent/zurg.md)                    | Dependent | Serve Debrid content via WebDAV                           |
+| [PostgreSQL](../services/dependent/postgres.md)          | Dependent | Persistent metadata database                              |
+| [CLI Battery](../services/dependent/cli-battery.md)      | Dependent | Metadata service for CLI Debrid                           |
+| [Phalanx DB](../services/dependent/phalanx-db.md)        | Dependent | Distributed metadata storage                              |
+| [Zilean](../services/optional/zilean.md)                 | Optional  | Metadata cache and scraping backend                       |
+| [pgAdmin](../services/optional/pgadmin.md)               | Optional  | PostgreSQL GUI                                            |
+| [Riven Frontend](../services/optional/riven-frontend.md) | Optional  | UI for Riven Backend                                      |
 
 ---
 
-### 🧲 CLI Debrid
+## 🧠 Tips
 
-Searches, downloads, and upgrades media from Debrid services.
-
-* Port: `5000`
-* Config: `/cli_debrid/data/config/config.json`
-
----
-
-### 🔋 CLI Battery
-
-Metadata caching and Trakt integration backend for CLI Debrid.
-
-* Port: `5001`
-* Config: `/cli_debrid/data/config/settings.json`
+* Use the onboarding UI to enable only the services you need
+* Services will auto-start in dependency order
+* Logs and errors can be viewed in the DUMB Frontend
 
 ---
 
-### 🌐 Phalanx DB
+## 📚 Service Categories
 
-Optional distributed metadata backend using Hyperswarm.
-
-* Port: `8888`
-* Config Dir: `/phalanx_db`
-
----
-
-## 📎 Next Steps
-
-Click on any of the service names in the sidebar or below to explore how to configure and use them:
-
-* [DUMB API](api.md)
-* [DUMB Frontend](dumb-frontend.md)
-* [pgAdmin 4](pgadmin.md)
-* [PostgreSQL](postgres.md)
-* [rclone](rclone.md)
-* [Riven Backend](riven-backend.md)
-* [Riven Frontend](riven-frontend.md)
-* [Zilean](zilean.md)
-* [Zurg](zurg.md)
-* [CLI Debrid](cli-debrid.md)
-* [CLI Battery](cli-battery.md)
-* [Phalanx DB](phalanx-db.md)
+* [DUMB Services](../services/dumb/index.md)
+* [Core Services](../services/core/index.md)
+* [Dependent Services](../services/dependent/index.md)
+* [Optional Services](../services/optional/index.md)

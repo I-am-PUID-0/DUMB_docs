@@ -29,6 +29,12 @@ Below is the **general structure** of `dumb_config.json`:
     "pgid": 1000,
     "tz": "",
     "dumb": { ... },
+    "cli_debrid": { ... },
+    "cli_battery": { ... },
+    "decypharr": { ... },
+    "phalanx_db": { ... },
+    "plex": { ... },
+    "plex_debrid": { ... },
     "postgres": { ... },
     "pgadmin": { ... },
     "rclone": { ... },
@@ -93,7 +99,7 @@ Located in the `dumb` section of `dumb_config.json`:
 - **`plex_token`** – This token is used by Riven backend for interacting with your Plex account. It allows features such as using watchlists and sending library scan requests to the Plex server.
 - **`plex_address`** – The internal or external URL of your Plex server (e.g., `http://127.0.0.1:32400`).
 
-These values are used automatically by Riven when setting up the [Riven Backend](../services/riven-backend.md).
+These values are used automatically by Riven when setting up the [Riven Backend](../services/core/riven-backend.md).
 
 ---
 
@@ -123,18 +129,18 @@ Each DUMB-integrated service is configured within its own section of `dumb_confi
 
 See the individual service pages for in-depth configuration details:
 
-- [DUMB API](../services/api.md)
-- [DUMB Frontend](../services/dumb-frontend.md)
-- [Decypharr](../services/decypharr.md)
-- [CLI Debrid](../services/cli-debrid.md)
-- [Plex Media Server](../services/plex-media-server.md)
-- [pgAdmin 4](../services/pgadmin.md)
-- [PostgreSQL](../services/postgres.md)
-- [rclone](../services/rclone.md)
-- [Riven Backend](../services/riven-backend.md)
-- [Riven Frontend](../services/riven-frontend.md)
-- [Zilean](../services/zilean.md)
-- [Zurg](../services/zurg.md)
+- [DUMB API](../services/dumb/api.md)
+- [DUMB Frontend](../services/dumb/dumb-frontend.md)
+- [Decypharr](../services/core/decypharr.md)
+- [CLI Debrid](../services/core/cli-debrid.md)
+- [Plex Media Server](../services/core/plex-media-server.md)
+- [pgAdmin 4](../services/optional/pgadmin.md)
+- [PostgreSQL](../services/dependent/postgres.md)
+- [rclone](../services/dependent/rclone.md)
+- [Riven Backend](../services/core/riven-backend.md)
+- [Riven Frontend](../services/optional/riven-frontend.md)
+- [Zilean](../services/optional/zilean.md)
+- [Zurg](../services/dependent/zurg.md)
 
 
 ## 📌 Next Steps

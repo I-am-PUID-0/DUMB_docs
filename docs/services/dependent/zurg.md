@@ -14,7 +14,7 @@ There are **two official Zurg repositories**:
 - **[`zurg-testing`](https://github.com/debridmediamanager/zurg-testing)** – The **default** public repo used by DUMB. It contains stable builds accessible to all users.
 - **[`zurg`](https://github.com/debridmediamanager/zurg)** – The **sponsored-only** repo that includes the latest features, nightly builds, and premium support. DUMB can access it by setting the `DMB_GITHUB_TOKEN` and changing the `repo_name` to `zurg`.
 
-!!! note "See [Integration Tokens & Credentials](../features/configuration.md/#-integration-tokens--credentials) section for details on setting up the `DMB_GITHUB_TOKEN`"
+!!! note "See [Integration Tokens & Credentials](../../features/configuration.md/#-integration-tokens--credentials) section for details on setting up the `DMB_GITHUB_TOKEN`"
 
 ---
 

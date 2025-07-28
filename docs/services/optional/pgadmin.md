@@ -51,7 +51,7 @@ DUMB includes pgAdmin pre-installed and configured to work out of the box, allow
 
 !!! tip "The email is used as the username. It does not need to be a real email address."
 
-![Login Screen](../assets/images/pgadmin/pgadmin-login.png)
+![Login Screen](../../assets/images/pgadmin/pgadmin-login.png)
 
 ---
 
@@ -61,7 +61,7 @@ DUMB includes pgAdmin pre-installed and configured to work out of the box, allow
     - Default password: `postgres`
     - Or, use the value of `POSTGRES_PASSWORD` if set in your environment.
 
-![Server View](../assets/images/pgadmin/pgadmin-server-view.png)
+![Server View](../../assets/images/pgadmin/pgadmin-server-view.png)
 
 ---
 
@@ -73,7 +73,7 @@ Provides system performance statistics inside PostgreSQL.
 
 - Find it in the pgAdmin dashboard under the connected database (e.g., `pgadmin` or `riven`).
 
-![System Stats](../assets/images/pgadmin/pgadmin-system-stats.png)
+![System Stats](../../assets/images/pgadmin/pgadmin-system-stats.png)
 
 ### 📅 `pgAgent`
 A job scheduler for PostgreSQL. Useful for:
@@ -81,13 +81,13 @@ A job scheduler for PostgreSQL. Useful for:
 - Scheduling backups
 - Routine maintenance
 
-![pgAgent Jobs](../assets/images/pgadmin/pgadmin-pgagent-jobs.png)
+![pgAgent Jobs](../../assets/images/pgadmin/pgadmin-pgagent-jobs.png)
 
 ---
 
 ## 📚 More Info
 
-- [pgAdmin FAQ](../faq/pgadmin.md)
+- [pgAdmin FAQ](../../faq/pgadmin.md)
 
 - [pgAdmin Docs](https://www.pgadmin.org/docs/pgadmin4/latest/index.html)
 
@@ -99,7 +99,7 @@ A job scheduler for PostgreSQL. Useful for:
 | Setting                | Value                |
 |------------------------|----------------------|
 | UI Address             | `http://<host>:5050` |
-| Default Email/Username| `DUMB@DUMB.DUMB`         |
+| Default Email/Username | `DUMB@DUMB.DUMB`     |
 | Default Password       | `postgres`           |
 | Data Directory         | `/pgadmin/data`      |
 | Config File            | `/pgadmin/data/config_local.py` |

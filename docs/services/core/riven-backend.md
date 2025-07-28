@@ -7,7 +7,7 @@ The **Riven Backend** is the core component responsible for data handling, autom
 
 ```json
 "riven_backend": {
-    "enabled": true,
+    "enabled": false,
     "process_name": "Riven Backend",
     "repo_owner": "rivenmedia",
     "repo_name": "riven",
@@ -21,7 +21,7 @@ The **Riven Backend** is the core component responsible for data handling, autom
     "port": 8080,
     "auto_update": false,
     "auto_update_interval": 24,
-    "symlink_library_path": "/mnt",
+    "symlink_library_path": "/mnt/debrid/riven_symlinks",
     "clear_on_update": true,
     "exclude_dirs": [
         "/riven/backend/data"
@@ -40,9 +40,9 @@ The **Riven Backend** is the core component responsible for data handling, autom
         "{port}"
     ],
     "config_dir": "/riven/backend",
-    "config_file": "/riven/backend/data/settings.json",        
+    "config_file": "/riven/backend/data/settings.json",
     "env": {},
-    "wait_for_dir": "/data/rclone_RD/__all__"
+    "wait_for_dir": ""
 },
 ```
 
@@ -85,7 +85,7 @@ You can control which version or branch of the backend is deployed by setting:
 
 Before Riven Backend can be used, **initial configuration is required**.
 
-After starting DUMB, navigate to the **Riven Frontend** and open the `Settings` page. The following sections should be reviewed and updated:
+After completing the DUMB onboarding, navigate to the **Riven Frontend** and open the `Settings` page. The following sections should be reviewed and updated:
 
 ### 🔧 Required Configuration
 At a minimum, **enable at least one Content source** under the `Content` section. Without this, Riven cannot function.
@@ -98,123 +98,6 @@ At a minimum, **enable at least one Content source** under the `Content` section
 - **Ranking** – Customize how results are scored and filtered.
 
 !!! note "📝 Once complete, Riven will begin processing requests based on the selected sources and configurations."
-
----
-
-## 🧵 Symlink Mounts & Media Server Integration
-
-One of the most common issues when setting up DUMB with your **Media Server (Plex, Jellyfin, or Emby)** is improper **path mapping** between containers. Since **Riven creates symlinks** to Zurg-mounted content, the following paths must be shared **identically across containers**.
-
-In your Docker or Compose setup for both DUMB and your Media Server container, ensure the following:
-
-### ✅ Example: Correct Volume Mapping
-
-```yaml
-# rclone/Zurg mount from DUMB container
-- /home/username/docker/DUMB/Zurg/mnt:/data
-
-# Riven symlink mount from DUMB container
-- /home/username/docker/DUMB/Riven/mnt:/mnt
-```
-
-In this case:
-
-- `/data` is the mount point used by `rclone` and `Zurg` **inside** the DUMB container.
-- `/mnt` is where Riven places cleaned-up symlinks to that content.
-- These **container-side paths (`:/data`, `:/mnt`) must be the same** in your media server container.
-
-!!! note "📌 *The host path (`/home/username/docker/...`) can differ—it’s the container paths that must match.*"
-
----
-
-### 🔁 Why This Matters
-
-- Riven creates symlinks in `/mnt` that **point to files inside `/data`** (or your configured `mount_dir`).
-- If the Media Server doesn’t share these exact mount paths, the symlinks will **break or point to invalid locations**.
-- Avoid adding `/data` to your media library — instead, add `/mnt` to ensure only cleaned and processed content is indexed.
-
-!!! tip "✅ **Best Practice:**" 
-    Use the same mount paths across DUMB and Media Server containers — even if the host paths differ.
-
----
-
-
-### Host-Based Media Server: Mount Path Consistency
-
-If your media server (such as Plex) runs **directly on the host** (not in Docker), it will access media files using the host's file system. In this setup, any symlinks created inside the DUMB container must resolve correctly **on the host**. This means the media paths inside the container must exactly match the paths used by the host.
-
-Symlink resolution is based on absolute paths. If those paths don't exist or don't match outside the container, the symlinks will be broken or unusable by the media server.
-
-#### Example: Riven Media Directory
-
-Suppose your media is mounted on the host at:
-
-```
-/docker/DUMB/Riven/mnt
-```
-
-Since Plex (or another media server) and the DUMB container need to both access this path and resolve symlinks, your Docker bind mount must look like:
-
-```yaml
-/docker/DUMB/Riven/mnt:/docker/DUMB/Riven/mnt
-```
-
-Then, inside the `dumb_config.json`, make sure you define:
-
-```json
-"riven_backend": {
-  "symlink_library_path": "/docker/DUMB/Riven/mnt",
-}
-```
-
-This ensures that any symlinks Riven creates will remain valid on the host.
-
-#### Example: Zurg Media Directory
-
-For media processed by Zurg and symlinked by Riven:
-
-```
-/docker/DUMB/Zurg/mnt
-```
-
-Use the following bind mount:
-
-```yaml
-/docker/DUMB/Zurg/mnt:/docker/DUMB/Zurg/mnt:shared
-```
-
-And configure the `dumb_config.json` as follows:
-
-```json
-"rclone": {
-  "mount_dir": "/docker/DUMB/Zurg/mnt",
-}
-```
-
-
-#### Simplified Approach Using Standard Paths
-
-To simplify configuration and reduce the need to hardcode deep paths, you can instead use standard directory mounts like `/mnt` and `/data`.
-
-Docker Compose example:
-
-```yaml
-/mnt:/mnt
-/data:/data:shared
-```
-
-And then update the configuration:
-
-```json
-"riven_backend": {
-  "symlink_library_path": "/mnt",
-},
-"rclone": {
-  "mount_dir": "/data",
-}
-```
-
-Using standardized top-level paths makes your setup more portable and ensures symlinks will resolve correctly regardless of the underlying directory structure.
 
 ---
 
@@ -231,7 +114,7 @@ The `.env.example` file includes:
 - `API_KEY`: Custom static API key.
 - `WORKERS`: Number of indexing workers.
 
-Each Riven env can also be set within DUMB, either through the **"env"** section of the "riven_backend" within the `dumb_config.json`, or buy utilizing methods defined in the [Configuration](../features/configuration.md) section of the docs.
+Each Riven env can also be set within DUMB, either through the **"env"** section of the "riven_backend" within the `dumb_config.json`, or buy utilizing methods defined in the [Configuration](../../features/configuration.md) section of the docs.
 
 
 

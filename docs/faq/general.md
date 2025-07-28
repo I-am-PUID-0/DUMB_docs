@@ -14,13 +14,13 @@ Below are some common questions and solutions related to **DUMB** that apply acr
 
 That depends on how you configure it. Most services (like Zurg and Rclone) operate by streaming content from the debrid service, so **very little is permanently stored** on your local system — unless you're using `rclone` with VFS caching enabled.
 
-If you're using VFS cache (recommended for Plex), ensure that the cache size is managed appropriately. See the [rclone configuration](../services/rclone.md) for more.
+If you're using VFS cache (recommended for Plex), ensure that the cache size is managed appropriately. See the [rclone configuration](../services/dependent/rclone.md) for more.
 
 ---
 
 ### 🧱 Do I need to install every service?
 
-No — DUMB is modular. You can enable or disable services in `dumb_config.json` under each service section. Some services (like `riven_backend` or `zurg`) provide core functionality, but others (like `pgadmin`) are optional tools to help you manage your setup.
+No — DUMB is modular. You can enable or disable services in `dumb_config.json` under each service section. Some [core services](../services/core/index.md) (like `riven_backend`, `cli_debrid`, etc.) provide core functionality and have required [dependent services](../services/dependent/index.md) (like `zurg`, `rclone`, `postgres`, etc.), but others (like `pgadmin`) are [optional service](../services/optional/index.md) tools to help you manage your setup.
 
 ---
 
@@ -32,7 +32,9 @@ Most DUMB services interact with external APIs (e.g., Real-Debrid, Plex, Trakt, 
 
 ### 🔄 What happens when I update DUMB?
 
-DUMB includes **auto-update** functionality for most services. Depending on your configuration (`auto_update` and `auto_update_interval`), the system will check for new versions of services like Zurg, Riven, Zilean, etc.
+The image maintained for DUMB is automatically updated when one of the embedded services (like `riven_backend`, `cli_debrid`, etc.) have a new release available; thus, reducing the need to update to the latest release inside the container. For more info, see the [DUMB FAQ](../faq/dumb.md#does-the-dumb-image-have-the-latest-version-of-x) regarding finding what versions are built into the image. 
+
+Alternatively, DUMB also includes **auto-update** functionality for most [services](../services/index.md). Depending on your configuration (`auto_update` and `auto_update_interval`), the system will check for new versions of services like Zurg, Riven, Zilean, etc.
 
 You can configure update frequency and behavior in each service’s section of `dumb_config.json`.
 
@@ -59,12 +61,12 @@ Yes — you can point most services to a custom branch or fork by editing the `r
 Absolutely. The most important files to back up are:
 
 - `dumb_config.json`
-- Any data directories (e.g., `/riven/backend/data`, `/zilean/app/data`, `/pgadmin/data`, `postgres_data`)
+- Any data directories (e.g., `/riven/backend/data`, `/zilean/app/data`, `/pgadmin/data`, `postgres_data`, `plex`, etc)
 
 Regularly backing these up allows you to quickly restore your environment.
 
 !!! warning "Exclude mounted paths from your backup" 
-    Be sure to exclude any mounted paths (e.g., /data/rclone_RD) when backing up. 
+    Be sure to exclude any mounted paths (e.g., /mnt/debrid) when backing up. 
     Otherwise, you’ll unintentionally download and archive the entire contents of your debrid services, which can be massive and unnecessary.
 
     Don’t believe me? Just ask Mr. Krabs.
@@ -77,7 +79,7 @@ Yes — the DUMB Frontend shows real-time logs, service logs, service status, an
 
 ---
 
-### 🔗 What’s the difference between using rclone/Zurg mounts vs. symlinks (Riven, etc.) in my media server?
+### 🔗 What’s the difference between using rclone/Zurg mounts vs. symlinks (Riven, CLI Debrid, Decypharr, etc.) in my media server?
 
 DUMB supports **two methods of exposing content to your media server**, each with its own use case:
 
@@ -99,11 +101,11 @@ Mounting the WebDAV or remote storage directly using `rclone` (which often conne
 - Can lead to **Plex/Emby/Jellyfin misidentification**
 - Media scanners may perform poorly due to large, unorganized libraries
 
-#### 2. **Symlinked Mount (via Riven)**
+#### 2. **Symlinked Mount (via Riven as an example)**
 
-Riven creates cleanly named **symlinks** pointing to content in the underlying Zurg/rclone mount (usually in a shared directory like `/data`). 
+Riven creates cleanly named **symlinks** pointing to content in the underlying Zurg/rclone mount (usually in a shared directory like `/mnt/debrid/riven`). 
 
-These symlinks are stored in a separate directory (like `/mnt`) and represent only **curated content** Riven has identified and processed.
+These symlinks are stored in a separate directory (like `/mnt/debrid/riven_symlinks`) and represent only **curated content** Riven has identified and processed.
 
 **✅ Pros:**
 
@@ -118,7 +120,7 @@ These symlinks are stored in a separate directory (like `/mnt`) and represent on
 - Requires Riven to stay running and correctly configured
 - If Riven settings are misconfigured, some content may not appear
 - If Riven's database is lost or reset, all content must be scraped and added again
-- Symlinks add complexity by requiring your media server to share the same exact container paths as defined in DUMB's `dumb_config.json` — e.g., `/mnt` & `/data` must exist **exactly** the same inside your media server container or on the host when the media server is not containerized  
+- Symlinks add complexity by requiring your media server to share the same exact container paths as defined in DUMB's `dumb_config.json` — e.g., `/mnt/debrid` must exist **exactly** the same inside your media server container or on the host when the media server is not containerized  
 
 ---
 
@@ -127,6 +129,6 @@ These symlinks are stored in a separate directory (like `/mnt`) and represent on
 
 - [Configuration Guide](../features/configuration.md)
 - [Service Overview](../services/index.md)
-- [DUMB Frontend](../services/dumb-frontend.md)
+- [DUMB Frontend](../services/dumb/dumb-frontend.md)
 - [Deployment](../deployment/index.md)
 

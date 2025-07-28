@@ -1,11 +1,21 @@
-# CLI Debrid Configuration
+---
+title: CLI Debrid
+---
 
-**CLI Debrid** is a lightweight, Python-based downloader (streaming link creator) and media automation system designed to integrate tightly with Real-Debrid, Trakt, Plex, and various scraping services. It manages media collection intelligently, seeking out higher quality versions of existing content, and automating upgrades based on a defined set of rules and content sources.
+# CLI Debrid (Core Service)
 
-It operates within the **DUMB** ecosystem and relies on:
+**CLI Debrid** is a core content orchestrator in the DUMB ecosystem. It automates media collection and upgrading through Debrid services (e.g. Real-Debrid), working alongside Trakt, Plex, Overseerr, and various scrapers. CLI Debrid can either monitor your Plex libraries or generate symlinks for organized media delivery to Plex or similar servers.
 
-* [CLI Battery](./cli-battery.md) (required) for metadata services and background processing
-* [Phalanx DB](./phalanx-db.md) (optional) for decentralized metadata storage and sharing 
+---
+
+## 🔗 Service Relationships
+
+| Classification | Role                                                                                                       |
+| -------------- | ---------------------------------------------------------------------------------------------------------- |
+| Core Service   | Debrid Orchestrator                                                                                        |
+| Depends On     | [CLI Battery](../dependent/cli-battery.md), [rclone](../dependent/rclone.md), [Zurg](../dependent/zurg.md) |
+| Optional       | [Phalanx DB](../dependent/phalanx-db.md), [Zilean](../optional/zilean.md)                                  |
+| Exposes UI     | Yes (Flask app on port 5000)                                                                               |
 
 ---
 
@@ -151,6 +161,9 @@ CLI Battery provides local metadata storage and Trakt integration, acting as the
     "env": {}
 },
 ```
+!!! note "While listed as optional, the onboarding process will treat it as a dependent service and enable it by default. You can disable it from the [DUMB Frontend](../dumb/dumb-frontend.md) if desired"
+
+
 
 Phalanx DB provides distributed metadata storage via Hyperswarm. It is optional but can enhance metadata resilience and syncing.
 
@@ -165,24 +178,24 @@ In both cases, ensure the appropriate path for the rclone or zurg mount is used 
 
     Example: If the rclone `mount_dir` is set to `/data`, the rclone `mount_name` is set to `rclone_RD`, and you're using `zurg_enabled: true` for rclone, then you would enter:  
 
-    ![Original Files Path](../assets/images/cli_debrid/clid_original_files_path.png)
+    ![Original Files Path](../../assets/images/cli_debrid/clid_original_files_path.png)
 
 As mentioned, CLI Debrid also monitors either the created symlinks or the Plex libraries for completed items.
 
 As such, it's important to ensure you select the appropriate option for your deployment. 
 !!! note "`Symlinked/Local` will create symlinks in the user defined path, whereas `Plex` will monitor the Plex Libraries defined and not create symlinks"
 
-    ![File Collection Management](../assets/images/cli_debrid/clid_file_collection_management.png)
-    ![Symlinked Files Path](../assets/images/cli_debrid/clid_symlinked_files_path.png)
+    ![File Collection Management](../../assets/images/cli_debrid/clid_file_collection_management.png)
+    ![Symlinked Files Path](../../assets/images/cli_debrid/clid_symlinked_files_path.png)
 
 
 ---
 
 ## 🚀 Zilean Built-in!
 
-With [Zilean](./zilean.md) enabled in DUMB, you can also leverage it with CLI Debrid
+With [Zilean](../optional/zilean.md) enabled in DUMB, you can also leverage it with CLI Debrid
 
-![Add A Scraper](../assets/images/cli_debrid/clid_add_a_scraper_zilean.png)
+![Add A Scraper](../../assets/images/cli_debrid/clid_add_a_scraper_zilean.png)
 
 
 ## 🧠 Queues & Processing (Behind the Scenes)
@@ -238,8 +251,10 @@ You can control which version or branch is deployed by setting:
 ---
 
 ## 🌐 Access
+
 - Navigate to: `http://<host>:<port>` 
-    - default port `5000`
+
+- default port `5000`
 
 ---
 

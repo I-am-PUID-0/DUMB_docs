@@ -11,13 +11,12 @@ Before you deploy DUMB, make sure your environment and accounts are ready.
 ## ✅ System Requirements
 
 - **Docker or Docker-compatible environment**
-- Linux system (WSL on Windows)
+- Linux system (WSL on Windows when using `rshared`)
 - Minimum 2 vCPU, 2GB RAM, SSD recommended
-- External media server such as **Plex, Jellyfin, or Emby** (optional but recommended)
 
 
 !!! warning "Docker Desktop" 
-    Docker Desktop **CANNOT** be used to run DUMB. 
+    Docker Desktop **CANNOT** be used to run DUMB when using `rshared` mount propagation. 
 
     Docker Desktop does not support the [mount propagation](https://docs.docker.com/storage/bind-mounts/#configure-bind-propagation) required for rclone mounts.
 
@@ -46,20 +45,25 @@ You’ll need to bind mount the following volumes when running the container:
 |`/config`                   | Location for configuration files                  |
 |`/log`                      | Location for logs                                 |
 |`/zurg/RD`                  | Location for Zurg RealDebrid active configuration | 
-|`/data:shared`              | Location for rclone mount to host                 |
 |`/riven/backend/data`       | Location for Riven Backend data                   |
-|`/mnt`                      | Location for Riven symlinks                       |
 |`/postgres_data`            | Location for PostgreSQL databases                 |
 |`/pgadmin/data`             | Location for pgAdmin 4 data                       |
 |`/zilean/app/data`          | Location for Zilean data                          |
+|`/plex_debrid/config`       | Location for plex_debrid data                     |
+|`/cli_debrid/data`          | Location for cli_debrid data                      |
+|`/phalanx_db/data`          | Location for phalanx_db data                      |
+|`/decypharr`                | Location for decypharr data                       |
+|`/plex`                     | Location for Plex Media Server data               |
+|`/mnt/debrid`               | Location for raw debrid files/links and symlinks  |
 
 
 !!! note "/config"
     If a Zurg config.yml and/or Zurg app is placed here, it will be used to override the default configuration and/or app used at startup
 
-!!! note "/data:shared"    
-    The `:shared` must be included in order to support [mount propagation](https://docs.docker.com/storage/bind-mounts/#configure-bind-propagation) for rclone to the host
+!!! note "/mnt/debrid:rshared"    
+    The `:rshared` must be included in order to support [mount propagation](https://docs.docker.com/storage/bind-mounts/#configure-bind-propagation) for rclone to the host when exposing the raw debrid files/links to an external container; e.g., the arrs or a media server.
 
+    `:rshared` is not required when using the default configuration leveraging the internal media server or when not utilizing [Decypharr](../services/core/decypharr.md)
 ---
 
 ## 🧰 Preparation Checklist

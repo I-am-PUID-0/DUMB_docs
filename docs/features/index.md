@@ -15,7 +15,7 @@ DUMB (Debrid Unlimited Media Bridge) is an all-in-one media management solution 
 * **Automated Content Management** – Uses **Debrid Services**, **Plex Discover Watchlists**, **Trakt lists**, and **Overseerr** to automate media retrieval.
 * **Integrated Web UI** – Control and manage services through a simple **web-based interface**.
 * **Modular Design** – Each service (Riven, Zurg, Zilean, etc.) is independently configurable and upgradable.
-* **Advanced Logging & Monitoring** – View and filter service logs directly from the [DUMB Frontend](../services/dumb-frontend.md).
+* **Advanced Logging & Monitoring** – View and filter service logs directly from the [DUMB Frontend](../services/dumb/dumb-frontend.md).
 
 ## 🛠️ Core Components
 

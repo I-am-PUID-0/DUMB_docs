@@ -52,7 +52,7 @@ Yes — stopping the stack, deleting the `postgres_data` directory, and starting
 
 Alternatively, use **pgAdmin 4** (if enabled) to drop individual databases manually.
 
-> See the [PostgreSQL Useful Commands](../services/postgres.md/#-useful-commands) section.
+> See the [PostgreSQL Useful Commands](../services/dependent/postgres.md/#-useful-commands) section.
 
 > Alternatively, See the [pgAdmin FAQ](pgadmin.md/#-drop-a-database-or-create-a-manual-backup-in-pgadmin) section.
 
@@ -87,7 +87,7 @@ When in doubt, make a backup first!
 
 ## 📎 Related Pages
 
-- [pgAdmin Service Guide](../services/pgadmin.md)
-- [Riven Backend](../services/riven-backend.md)
-- [Zilean](../services/zilean.md)
+- [pgAdmin Service Guide](../services/optional/pgadmin.md)
+- [Riven Backend](../services/core/riven-backend.md)
+- [Zilean](../services/optional/zilean.md)
 - [DUMB Configuration](../features/configuration.md)

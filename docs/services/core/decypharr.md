@@ -1,14 +1,85 @@
-# Decypharr Setup Guide
+---
+title: Decypharr
+---
 
-Decypharr is a self-hosted, open-source torrent client with integrated support for multiple Debrid services. It provides a familiar interface for torrent management that mimics Qbittorrent, while offering native compatibility with Sonarr, Radarr, and other \*Arr applications. Written in Go, it includes powerful tools for automation, organization, and repair.
+# Decypharr (Core Service)
+
+**Decypharr** is a self-hosted, Go-based torrent manager and content orchestrator that integrates multiple Debrid services and acts as a mock Qbittorrent client for Arr applications like Sonarr and Radarr. It is a core component in DUMB for automating torrent-based downloads with native Debrid support and seamless library linking.
 
 ---
 
-## 💡 What is Decypharr?
+## 🔗 Service Relationships
 
-Decypharr combines the power of Qbittorrent with the flexibility of Debrid services to streamline your media automation workflow. It provides a mock Qbittorrent API that can be consumed by Sonarr, Radarr, Lidarr, and similar apps, making it a drop-in replacement for torrent clients.
+| Classification | Role                                                           |
+| -------------- | -------------------------------------------------------------- |
+| Core Service   | Debrid Torrent Orchestrator                                    |
+| Depends On     | [rclone](../dependent/rclone.md)                               |
+| Optional       | None                                                           |
+| Exposes UI     | Yes (Web UI)                                                   |
 
-### Key Features
+
+---
+
+## 📦 Configuration in `dumb_config.json`
+
+```json
+"decypharr": {
+    "enabled": false,
+    "process_name": "Decypharr",
+    "repo_owner": "sirrobot01",
+    "repo_name": "decypharr",
+    "release_version_enabled": false,
+    "release_version": "v1.0.0",
+    "branch_enabled": false,
+    "branch": "main",
+    "suppress_logging": false,
+    "log_level": "INFO",
+    "port": 8282,
+    "auto_update": false,
+    "auto_update_interval": 24,
+    "clear_on_update": false,
+    "exclude_dirs": [],
+    "command": [
+        "/decypharr/decypharr",
+        "--config",
+        "/decypharr"
+    ],
+    "config_dir": "/decypharr",
+    "config_file": "/decypharr/config.json",
+    "log_file": "/decypharr/logs/decypharr.log",
+    "env": {},
+    "debrid_service": "",
+    "api_key": ""
+},
+```
+
+### 🔍 Key Configuration Fields
+
+* `enabled`: Toggle to run CLI Debrid via DUMB.
+* `process_name`: Used for display and logs.
+* `repo_owner`, `repo_name`: GitHub repo to use for updates.
+* `release_version_enabled`, `branch_enabled`: Target a specific tag or branch.
+* `log_level`, `suppress_logging`: Logging controls.
+* `port`: Flask web interface port.
+* `env`: Environment variable configuration used by CLI Debrid.
+* `clear_on_update`, `exclude_dirs`: Clean old files during update while protecting data dirs.
+
+---
+
+## ⚙️ What Decypharr does
+
+
+### 🧠 How It Works
+
+Decypharr acts as both a torrent manager and a renaming/organizing engine:
+
+* Handles torrent links via Debrid services
+* Mimics Qbittorrent API for seamless \*Arr integration
+* Renames and organizes files into structured symlink folders
+* Provides a Web UI and WebDAV endpoints for remote management
+* Ensures all changes propagate cleanly between containers using `rshared`/`rslave`
+
+### 🎛️ Supported Features
 
 * ✅ Mock Qbittorrent API for Sonarr, Radarr, Lidarr, etc.
 * 🖥 Full-featured UI for managing torrents
@@ -70,17 +141,6 @@ In Plex, add the Decypharr symlink folders as library sources:
 
 > This ensures Plex indexes files processed and renamed by Decypharr, enabling clean and consistent playback.
 
----
-
-## 🧠 How It Works
-
-Decypharr acts as both a torrent manager and a renaming/organizing engine:
-
-* Handles torrent links via Debrid services
-* Mimics Qbittorrent API for seamless \*Arr integration
-* Renames and organizes files into structured symlink folders
-* Provides a Web UI and WebDAV endpoints for remote management
-* Ensures all changes propagate cleanly between containers using `rshared`/`rslave`
 
 ---
 

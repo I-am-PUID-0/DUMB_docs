@@ -5,11 +5,11 @@ title: Usage
 # Usage
 
 ## 🚀 Running DUMB
-DUMB automatically starts the services defined in `dumb_config.json` in the proper order. Each service can also be managed independently using the [DUMB Frontend](../services/dumb-frontend.md/) or by directly modifying the configuration.
-!!! important "Important: Configure API Key Before Startup"
+DUMB automatically starts the services defined in `dumb_config.json` in the proper order. Each service can also be managed independently using the [DUMB Frontend](../services/dumb/dumb-frontend.md/) or by directly modifying the configuration.
+!!! important "Onboarding"
     DUMB is preset to disable all services, other than the API and Frontend on the first startup. 
-    An Onboarding process is currently in development for the Frontend. 
-    As an interim solution, please see the [API: Start Core Service](../api/process.md#post-processstart-core-service) for info on using the API to preconfigure and start services. 
+
+    On first launch of the [DUMB Frontend](../services/dumb/dumb-frontend.md), you will be directed to the Onboarding process.  
 
 
 ### 🔄 Automatic Service Start
@@ -22,7 +22,7 @@ If a service fails to start, check its log file in the `/log` directory (or wher
 ## 🔃 Managing Updates
 
 ### 🛠️ Manual Updates
-Each service can be updated by modifying the configuration file or using the [DUMB Frontend](../services/dumb-frontend.md). 
+Each service can be updated by modifying the configuration file or using the [DUMB Frontend](../services/dumb/dumb-frontend.md). 
 
 Updates include:
 
@@ -72,8 +72,6 @@ docker-compose:
 
 ## 📌 Tips
 - Always monitor `/log/*.log` files for troubleshooting or monitor the logs from the **DUMB Frontend**.
-- Ensure PostgreSQL is running before launching services that depend on it.
-- If using Real-Debrid, ensure `api_key` is provided in rclone or Zurg instances.
 - Logs can be colored if `color_log` is enabled in the config.
 
 ---

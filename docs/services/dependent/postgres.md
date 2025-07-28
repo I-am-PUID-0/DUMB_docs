@@ -119,7 +119,7 @@ DROP DATABASE riven;
 ## 🧠 Tips
 - Always restart the container after modifying config files in `/postgres_data`.
 - Ensure you mount `/postgres_data` if you want persistent databases.
-- [pgAdmin](../services/pgadmin.md) is the easiest way to visually explore and manage PostgreSQL.
+- [pgAdmin](../optional/pgadmin.md) is the easiest way to visually explore and manage PostgreSQL.
 
 ---
 

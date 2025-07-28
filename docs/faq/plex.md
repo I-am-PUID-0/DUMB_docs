@@ -44,10 +44,10 @@ These flags ensure that:
 - Plex can smoothly read data without constant remote fetches.
 
 > See [rclone docs](https://rclone.org/docs/#environment-variables)  
-> or refer to [rclone Flags via Environment Variables](../services/rclone.md#-rclone-flags-via-environment-variables) for examples and formatting guidance.
+> or refer to [rclone Flags via Environment Variables](../services/dependent/rclone.md#-rclone-flags-via-environment-variables) for examples and formatting guidance.
 
 
 ## 📎 Related Pages
 - [Zurg FAQ](../faq/zurg.md)
-- [Rclone Configuration](../services/rclone.md)
+- [Rclone Configuration](../services/dependent/rclone.md)
 
