@@ -10,30 +10,32 @@ DUMB handles automatic installation and updates of the frontend, including versi
 
 ```json
 "riven_frontend": {
-  "enabled": false,
-  "process_name": "Riven Frontend",
-  "repo_owner": "rivenmedia",
-  "repo_name": "riven-frontend",
-  "release_version_enabled": false,
-  "release_version": "v0.17.0",
-  "branch_enabled": false,
-  "branch": "release-please--branches--main",
-  "suppress_logging": false,
-  "log_level": "INFO",
-  "host": "127.0.0.1",
-  "port": 3001,
-  "auto_update": false,
-  "auto_update_interval": 24,
-  "clear_on_update": true,
-  "exclude_dirs": [],
-  "platforms": ["pnpm"],
-  "command": ["node", "build"],
-  "config_dir": "/riven/frontend",
-  "env": {
-    "ORIGIN": "http://0.0.0.0:{port}",
-    "PORT": "{port}",
-    "HOST": "{host}"
-  }
+    "enabled": false,
+    "process_name": "Riven Frontend",
+    "repo_owner": "rivenmedia",
+    "repo_name": "riven-frontend",
+    "release_version_enabled": false,
+    "release_version": "v0.17.0",
+    "branch_enabled": false,
+    "branch": "release-please--branches--main",
+    "suppress_logging": false,
+    "log_level": "INFO",
+    "host": "0.0.0.0",
+    "port": 3000,
+    "auto_update": false,
+    "auto_update_interval": 24,
+    "origin": "",
+    "clear_on_update": true,
+    "exclude_dirs": [],
+    "platforms": [
+        "pnpm"
+    ],
+    "command": [
+        "node",
+        "build"
+    ],
+    "config_dir": "/riven/frontend",
+    "env": {}
 },
 ```
 
@@ -50,6 +52,7 @@ DUMB handles automatic installation and updates of the frontend, including versi
 - **`port`**: Port the frontend is served on.
 - **`auto_update`**: Enables automatic self-updates.
 - **`auto_update_interval`**: How often (in hours) to check for updates.
+- **`origin`**: CORS origin for the service. 
 - **`clear_on_update`**: Clears build artifacts or cache during updates.
 - **`exclude_dirs`**: Prevents specific directories from being affected by updates when using `clear_on_update`
 - **`platforms`**: Expected runtime environment (e.g., `pnpm`).
@@ -60,7 +63,7 @@ DUMB handles automatic installation and updates of the frontend, including versi
 ---
 
 ## 🔧 ORIGIN Variable
-The `ORIGIN` environment variable must match the public-facing URL used to access the frontend. This is particularly important when using a reverse proxy like Traefik or Nginx. It ensures correct behavior for authentication, saving settings, and API communication.
+The `ORIGIN` key must match the public-facing URL used to access the frontend. It ensures correct behavior for authentication, saving settings, and API communication.
 
 ---
 
