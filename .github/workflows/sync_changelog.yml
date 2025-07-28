@@ -72,6 +72,6 @@ jobs:
         if: success() && steps.extract_pr.outputs.pull_request_number != ''
         run: |
           pr_number=${{ steps.extract_pr.outputs.pull_request_number }}
-          gh pr merge "$pr_number" --merge --auto
+          gh pr merge "$pr_number" --squash --auto
         env:
           GH_TOKEN: ${{ secrets.RELEASE_PLEASE_TOKEN }}
