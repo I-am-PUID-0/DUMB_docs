@@ -1,5 +1,14 @@
 # Changelog
 
+## [1.2.4](https://github.com/I-am-PUID-0/DUMB_docs/compare/1.2.3...1.2.4) (2025-07-28)
+
+
+### 🐛 Bug Fixes
+
+* **docs:** update rclone configuration and enhance key descriptions ([5ebc920](https://github.com/I-am-PUID-0/DUMB_docs/commit/5ebc920913bb62b6392843187e2f5bdfdc6e64cc))
+* **docs:** update riven_frontend configuration and add origin key description ([8306b07](https://github.com/I-am-PUID-0/DUMB_docs/commit/8306b071bc07e3182dbf4c477ed341c43fd09169))
+* **docs:** update troubleshooting tips for hardware transcoding and onboarding process ([e4c8922](https://github.com/I-am-PUID-0/DUMB_docs/commit/e4c89224b093c14154c739021983657dabc6066c))
+
 ## [1.2.3](https://github.com/I-am-PUID-0/DUMB_docs/compare/1.2.2...1.2.3) (2025-07-28)
 
 
