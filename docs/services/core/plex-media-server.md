@@ -119,12 +119,12 @@ When a video is playing:
 !!! tip "Troubleshooting"
 If hardware transcoding does not activate:
 
-```
+
 * Ensure your hardware supports it (Intel iGPU, NVIDIA GPU with driver support, etc.)
 * Check if `/dev/dri` exists and is mounted into the container
 * Review container logs and Plex logs for errors related to transcoding
 * Confirm Plex Pass is active and the account used in Plex is signed in and authorized
-```
+
 
 ---
 
@@ -133,7 +133,7 @@ If hardware transcoding does not activate:
 
 #### Utilize the onboarding process
 
-!!! note "The onboarding process can be re-launched from the DUMB Frontend settings menu"
+!!! tip "The onboarding process can be re-launched from the DUMB Frontend settings menu"
 
   1. Onboarding will prompt for the Plex Claim Token.
   2. Onboarding will optionally prompt for your Plex Token. If provided, this enables:
