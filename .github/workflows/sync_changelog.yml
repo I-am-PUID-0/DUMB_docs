@@ -7,10 +7,18 @@ on:
   pull_request:
     types:
       - closed
+    branches:
+      - master
+    paths:
+      - 'pyproject.toml'      
 
 jobs:
   update-changelog:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+
     steps:
       - name: Checkout MkDocs Repo
         uses: actions/checkout@v3
@@ -35,21 +43,28 @@ jobs:
             echo "changed=true" >> $GITHUB_OUTPUT
           fi
 
-      - name: Commit and Push Changes
+      - name: Create Pull Request
         if: steps.check_changes.outputs.changed == 'true'
-        env:
-          GITHUB_TOKEN: ${{ secrets.RELEASE_PLEASE_TOKEN }}
-        run: |
-          git config user.name "I-am-PUID-0"
-          git config user.email "36779668+I-am-PUID-0@users.noreply.github.com"
-          git add docs/changelog.md
-          git commit -m "Update Changelog"
-          git remote set-url origin https://x-access-token:${GITHUB_TOKEN}@github.com/${{ github.repository }}.git
-          git push
-
-      - name: Trigger deploy if changed
-        if: steps.check_changes.outputs.changed == 'true'
-        uses: benc-uk/workflow-dispatch@v1
+        id: cpr
+        uses: peter-evans/create-pull-request@v5
         with:
-          workflow: Deploy MkDocs with Poetry  
           token: ${{ secrets.RELEASE_PLEASE_TOKEN }}
+          commit-message: "Update Changelog"
+          branch: changelog-update
+          title: "Automated Changelog Update"
+          body: "This PR updates the changelog from the upstream repo."
+          delete-branch: true
+
+      - name: Auto Approve PR
+        if: steps.cpr.outputs.pull-request-operation == 'created'
+        uses: hmarr/auto-approve-action@v3
+        with:
+          github-token: ${{ secrets.RELEASE_PLEASE_TOKEN }}
+
+      - name: Enable Auto-Merge via gh CLI
+        if: steps.cpr.outputs.pull-request-operation == 'created'
+        run: |
+          pr_number=$(echo "${{ steps.cpr.outputs.pull-request-url }}" | awk -F/ '{print $NF}')
+          gh pr merge "$pr_number" --merge --auto
+        env:
+          GH_TOKEN: ${{ secrets.RELEASE_PLEASE_TOKEN }}
