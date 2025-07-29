@@ -1,5 +1,17 @@
 # Changelog
 
+## [1.3.0](https://github.com/I-am-PUID-0/DUMB_docs/compare/1.2.4...1.3.0) (2025-07-29)
+
+
+### ✨ Features
+
+* **docs:** add Plex Media Server migration instructions and hardware transcoding setup ([d58ad52](https://github.com/I-am-PUID-0/DUMB_docs/commit/d58ad52eb491cf8d1b351283d43215813795a775))
+
+
+### 📖 Documentation
+
+* Update CLI Debrid documentation ([288e49b](https://github.com/I-am-PUID-0/DUMB_docs/commit/288e49b43a2eb394e4fd3f2ed88616a550a587d3)), closes [#12](https://github.com/I-am-PUID-0/DUMB_docs/issues/12)
+
 ## [1.2.4](https://github.com/I-am-PUID-0/DUMB_docs/compare/1.2.3...1.2.4) (2025-07-28)
 
 
