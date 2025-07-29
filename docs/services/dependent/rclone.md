@@ -307,7 +307,7 @@ This naming convention makes it easy to identify and separate raw debrid mounts 
 !!! note "/mnt/debrid:rshared"    
     The `:rshared` must be included in order to support [mount propagation](https://docs.docker.com/storage/bind-mounts/#configure-bind-propagation) for rclone to the host when exposing the raw debrid files/links to an external container; e.g., the arrs or a media server.
 
-    `:rshared` is not required when using the default configuration leveraging the internal media server or when not utilizing [Decypharr](../services/core/decypharr.md)
+    `:rshared` is not required when using the default configuration leveraging the internal media server or when not utilizing [Decypharr](../core/decypharr.md)
 
 Mount propagation controls how mount events (like new mounts created inside the container) are shared between the host and the container.
 

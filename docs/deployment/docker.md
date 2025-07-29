@@ -19,8 +19,7 @@ Before you begin, make sure you have the following:
 - An active internet connection  
 - Basic familiarity with using the **terminal**
 
-!!! tip
-    This guide assumes you're installing Docker on a fresh Ubuntu setup. If you're on Windows, refer to the [Windows Setup Guide (Docker/WSL)](wsl.md).
+!!! tip "This guide assumes you're installing Docker on a fresh Ubuntu setup. If you're on Windows, refer to the [Windows Setup Guide (Docker/WSL)](wsl.md)."
 
 
 ## 🐳 Install Docker
@@ -30,7 +29,7 @@ curl -fsSL https://get.docker.com -o get-docker.sh
 sh get-docker.sh
 ```
 
-!!! note 
+!!! note "WSL DETECTED"
     If you receive the following prompt during the Docker install, then follow the steps here: [Windows Setup Guide (Docker/WSL)](wsl.md)
     ```bash
     WSL DETECTED: We recommend using Docker Desktop for Windows.
@@ -52,8 +51,7 @@ Docker Compose version v2.24.2
 
 ## 📁 Define the Directory Structure
 
-!!! note
-    If you already have a directory structure you'd like to use, then you can skip this step.
+!!! note "If you already have a directory structure you'd like to use, then you can skip this step."
 
 1. Create a directory for docker in your user directory and change directories to docker.
 ```bash
@@ -67,8 +65,7 @@ mkdir -p DUMB/config DUMB/log DUMB/Zurg/RD DUMB/Riven/data DUMB/PostgreSQL/data 
 
 
 ## ✏️ Download and Edit the docker-compose.yml
-!!! important 
-    The docker-compose.yml file will need to be edited to include the necessary environment variable values.
+!!! important "The docker-compose.yml file will need to be edited to include the necessary environment variable values."
 
 1. Download the latest docker-compose.yml from the GitHub repository with the following:
 ```bash
@@ -100,7 +97,7 @@ sed -i \
 
 ## 🚀 Start up the Docker Compose
 
-!!! note 
+!!! tip "Docker Compose"
     The following command starts Docker Compose in detached mode, meaning it runs in the background and frees up your terminal.
 
     If you **omit the `-d` flag**, Docker Compose will run in the **foreground**, streaming all container logs directly to your terminal. 
@@ -151,10 +148,9 @@ Press Ctrl + P followed by Ctrl + Q.
 
 This sequence sends a signal to Docker to detach from the container while leaving it running in the background.
 
-!!! important 
-    Use this sequence rather than simply closing the terminal window or using Ctrl + C, as those actions might stop the container.
+!!! important "Use this sequence rather than simply closing the terminal window or using Ctrl + C, as those actions might stop the container."
 
-!!! note
+!!! note "Ctrl + P + Ctrl + Q"
     Remember, Ctrl + P + Ctrl + Q must be pressed in quick succession.
 
     You press Ctrl + P first, and while holding Ctrl, press Q.
