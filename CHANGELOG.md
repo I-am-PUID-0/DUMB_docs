@@ -1,5 +1,17 @@
 # Changelog
 
+## [1.3.1](https://github.com/I-am-PUID-0/DUMB_docs/compare/1.3.0...1.3.1) (2025-07-29)
+
+
+### 🐛 Bug Fixes
+
+* **rclone:** corrects link to decypharr page ([7e25b02](https://github.com/I-am-PUID-0/DUMB_docs/commit/7e25b021535873697f405d469aa28195b31d7afe))
+
+
+### 📖 Documentation
+
+* **docker:** Improves the Docker deployment guide by refining notes and tips for clarity. ([7e25b02](https://github.com/I-am-PUID-0/DUMB_docs/commit/7e25b021535873697f405d469aa28195b31d7afe))
+
 ## [1.3.0](https://github.com/I-am-PUID-0/DUMB_docs/compare/1.2.4...1.3.0) (2025-07-29)
 
 
