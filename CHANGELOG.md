@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.3.3](https://github.com/I-am-PUID-0/DUMB_docs/compare/1.3.2...1.3.3) (2025-07-31)
+
+
+### 🐛 Bug Fixes
+
+* **docs:** correct punctuation in tip regarding mount structure and propagation ([14255b3](https://github.com/I-am-PUID-0/DUMB_docs/commit/14255b3b24c8855f2ece396b4f10f4f5de3bc767))
+
 ## [1.3.2](https://github.com/I-am-PUID-0/DUMB_docs/compare/1.3.1...1.3.2) (2025-07-31)
 
 
