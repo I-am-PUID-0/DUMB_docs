@@ -124,6 +124,67 @@ These symlinks are stored in a separate directory (like `/mnt/debrid/riven_symli
 
 ---
 
+### Host-Based Media Server: Mount Path Consistency
+
+If your media server (such as Plex) runs **directly on the host** (not in Docker), it will access media files using the host's file system. In this setup, any symlinks created inside the DUMB container must resolve correctly **on the host**. This means the media paths inside the container must exactly match the paths used by the host.
+
+Symlink resolution is based on absolute paths. If those paths don't exist or don't match outside the container, the symlinks will be broken or unusable by the media server.
+
+#### Example: Using Riven's Symlink Media Directory
+
+Suppose your media is mounted on the host at:
+
+```
+/docker/DUMB/mnt/debrid
+```
+
+Since Plex (or another media server) and the DUMB container need to both access this path and resolve symlinks, your Docker bind mount must look like:
+
+```yaml
+/docker/DUMB/mnt/debrid:/docker/DUMB/mnt/debrid
+```
+
+!!! note "This differs from the the default `/docker/DUMB/mnt/debrid:/mnt/debrid` internal path for the container by prepending `/docker/DUMB` or whatever the host side absolute path is for the `/mnt/debrid` directory"
+
+
+Then, inside the `dumb_config.json`, you would also need to make sure you define the updated internal path for symlinks:
+
+```json
+"riven_backend": {
+  "symlink_library_path": "/docker/DUMB/mnt/debrid/riven_symlinks",
+}
+```
+
+
+This ensures that any symlinks Riven creates will remain valid on the host.
+
+
+#### Simplified Approach Using Standard Paths
+
+To simplify configuration and reduce the need to hardcode deep paths, you can instead use standard directory mounts like `/mnt`.
+
+Docker Compose example:
+
+```yaml
+/mnt/debrid:/mnt/debrid
+```
+
+And then update the configuration:
+
+!!! note "The below is the default path used in the container when configured through the onboarding process"
+
+```json
+"riven_backend": {
+  "symlink_library_path": "/mnt/debrid/riven_symlinks",
+}
+```
+
+Using standardized top-level paths makes your setup more portable and ensures symlinks will resolve correctly regardless of the underlying directory structure.
+
+
+!!! tip "also review the [Default Mount Structure](../services/dependent/rclone.md#-default-mount-structure) and [Mount Propagation](../services/dependent/rclone.md#-mount-propagation) sections for additional details!
+
+---
 
 ## 📎 Related Pages
 
