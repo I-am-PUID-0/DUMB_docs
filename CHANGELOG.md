@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.3.2](https://github.com/I-am-PUID-0/DUMB_docs/compare/1.3.1...1.3.2) (2025-07-31)
+
+
+### 📖 Documentation
+
+* Add guidance for host-based media server mount path consistency ([3babdaf](https://github.com/I-am-PUID-0/DUMB_docs/commit/3babdaf8821af088c6079062fd4a037c25f07a4a))
+
 ## [1.3.1](https://github.com/I-am-PUID-0/DUMB_docs/compare/1.3.0...1.3.1) (2025-07-29)
 
 
