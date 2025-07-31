@@ -182,7 +182,7 @@ And then update the configuration:
 Using standardized top-level paths makes your setup more portable and ensures symlinks will resolve correctly regardless of the underlying directory structure.
 
 
-!!! tip "also review the [Default Mount Structure](../services/dependent/rclone.md#-default-mount-structure) and [Mount Propagation](../services/dependent/rclone.md#-mount-propagation) sections for additional details!
+!!! tip "also review the [Default Mount Structure](../services/dependent/rclone.md#-default-mount-structure) and [Mount Propagation](../services/dependent/rclone.md#-mount-propagation) sections for additional details!"
 
 ---
 
