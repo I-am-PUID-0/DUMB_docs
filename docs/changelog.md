@@ -5,6 +5,21 @@ hide:
 
 # Changelog
 
+## [1.6.0](https://github.com/I-am-PUID-0/DUMB/compare/1.5.0...1.6.0) (2025-07-31)
+
+
+### ✨ Features
+
+* **config:** add data_root to dumb_config and schema; enhance symlink migration logic ([33dbadb](https://github.com/I-am-PUID-0/DUMB/commit/33dbadb5a37769df9bc580cb2078db40ee47b09e))
+
+## [1.5.0](https://github.com/I-am-PUID-0/DUMB/compare/1.4.3...1.5.0) (2025-07-31)
+
+
+### ✨ Features
+
+* **bind-mounts:** consolidates bind mounts ([39f30e4](https://github.com/I-am-PUID-0/DUMB/commit/39f30e4c894195f30d35c5f63908d9b8f088a6c7))
+* **migrate_and_symlink:** enable symlink support in data migration ([d1f5ee3](https://github.com/I-am-PUID-0/DUMB/commit/d1f5ee301b850a7c624f4f595e08eb3296cb59fa))
+
 ## [1.4.3](https://github.com/I-am-PUID-0/DUMB/compare/1.4.2...1.4.3) (2025-07-28)
 
 
