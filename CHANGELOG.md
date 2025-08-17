@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.3.4](https://github.com/I-am-PUID-0/DUMB_docs/compare/1.3.3...1.3.4) (2025-08-17)
+
+
+### 🐛 Bug Fixes
+
+* update decypharr ([3c115a3](https://github.com/I-am-PUID-0/DUMB_docs/commit/3c115a3e3c1b70509605042075fc7e0d76374ff1))
+
 ## [1.3.3](https://github.com/I-am-PUID-0/DUMB_docs/compare/1.3.2...1.3.3) (2025-07-31)
 
 
