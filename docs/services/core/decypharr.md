@@ -101,7 +101,7 @@ In both your `DUMB` and `arrs` docker-compose files, include the following bind 
 **DUMB Compose**:
 
 ```yaml
-tmpfs:
+volumes:
   - .../DUMB/mnt/debrid:/mnt/debrid:rshared
 ```
 
