@@ -60,7 +60,7 @@ cd ~ && mkdir docker && cd docker
 
 2. Create the DUMB directories.
 ```bash
-mkdir -p DUMB/config DUMB/log DUMB/Zurg/RD DUMB/Riven/data DUMB/PostgreSQL/data DUMB/pgAdmin4/data DUMB/Zilean/data DUMB/plex_debrid DUMB/plex DUMB/decypharr DUMB/cli_debrid DUMB/phalanx_db DUMB/mnt/debrid
+mkdir -p DUMB/config DUMB/log DUMB/data DUMB/mnt/debrid
 ```
 
 
