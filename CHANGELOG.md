@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.3.5](https://github.com/I-am-PUID-0/DUMB_docs/compare/1.3.4...1.3.5) (2025-08-18)
+
+
+### 📖 Documentation
+
+* update docker.md ([9bd9e5f](https://github.com/I-am-PUID-0/DUMB_docs/commit/9bd9e5ff203709f97d6487cd39520206faa0a7ca))
+
 ## [1.3.4](https://github.com/I-am-PUID-0/DUMB_docs/compare/1.3.3...1.3.4) (2025-08-17)
 
 
