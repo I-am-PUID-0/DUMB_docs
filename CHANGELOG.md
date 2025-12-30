@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.4.0](https://github.com/I-am-PUID-0/DUMB_docs/compare/1.3.5...1.4.0) (2025-12-30)
+
+
+### ✨ Features
+
+* update documentation for core services and integrations ([efa285c](https://github.com/I-am-PUID-0/DUMB_docs/commit/efa285ce177981aaf26fd65966879fbb1649ea77))
+
 ## [1.3.5](https://github.com/I-am-PUID-0/DUMB_docs/compare/1.3.4...1.3.5) (2025-08-18)
 
 
