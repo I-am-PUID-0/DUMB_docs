@@ -19,8 +19,6 @@ It is pre-installed and automatically initialized during container startup.
   "log_level": "INFO",
   "host": "127.0.0.1",
   "port": 5432,
-  "shared_buffers": "128MB",
-  "max_connections": 100,
   "databases": [
     { "name": "postgres", "enabled": true },
     { "name": "pgadmin", "enabled": true },

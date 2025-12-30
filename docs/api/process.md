@@ -1,10 +1,10 @@
 ---
-
-## title: Process Management API
+title: Process Management API
+---
 
 # ⚙️ Process Management API
 
-The **Process Management** endpoints handle the launching, stopping, restarting, and tracking of subprocesses managed by DUMB.
+The **Process Management** endpoints handle launching, stopping, restarting, and tracking subprocesses managed by DUMB.
 
 ---
 
@@ -12,7 +12,7 @@ The **Process Management** endpoints handle the launching, stopping, restarting,
 
 ### `GET /process/processes`
 
-Returns a list of all configured processes, including both running and stopped services. This includes metadata like enabled status, version, and repository URL.
+Returns all configured processes, including enabled status, version, repo URL, and sponsorship URL.
 
 #### ✅ Example Response:
 
@@ -23,21 +23,12 @@ Returns a list of all configured processes, including both running and stopped s
       "name": "rclone w/ RealDebrid",
       "process_name": "rclone w/ RealDebrid",
       "enabled": true,
-      "config": { "enabled": true, ... },
+      "config": { "enabled": true, "...": "..." },
       "version": "1.65.1",
       "key": "rclone",
       "config_key": "rclone",
-      "repo_url": "https://rclone.org"
-    },
-    {
-      "name": "Zurg w/ RealDebrid",
-      "process_name": "Zurg w/ RealDebrid",
-      "enabled": false,
-      "config": { "enabled": false, ... },
-      "version": "0.5.2",
-      "key": "zurg",
-      "config_key": "zurg",
-      "repo_url": "https://github.com/I-am-PUID-0/DUMB"
+      "repo_url": "https://rclone.org",
+      "sponsorship_url": "https://rclone.org/sponsor/"
     }
   ]
 }
@@ -47,7 +38,7 @@ Returns a list of all configured processes, including both running and stopped s
 
 ### `GET /process`
 
-Fetch details about a specific process including the config block, version, and config key.
+Fetch details about a specific process.
 
 #### ⚠️ Required Query Parameter:
 
@@ -58,7 +49,7 @@ Fetch details about a specific process including the config block, version, and 
 ```json
 {
   "process_name": "rclone w/ RealDebrid",
-  "config": { "enabled": true, ... },
+  "config": { "enabled": true, "...": "..." },
   "version": "1.65.1",
   "config_key": "rclone"
 }
@@ -66,9 +57,9 @@ Fetch details about a specific process including the config block, version, and 
 
 ---
 
-### `POST /process/start`
+### `POST /process/start-service`
 
-Starts a specific process using its name as defined in `dumb_config.json`.
+Starts a specific process.
 
 #### 🔧 Request Body:
 
@@ -89,7 +80,7 @@ Starts a specific process using its name as defined in `dumb_config.json`.
 
 ---
 
-### `POST /process/stop`
+### `POST /process/stop-service`
 
 Stops a running process.
 
@@ -103,7 +94,7 @@ Stops a running process.
 
 ---
 
-### `POST /process/restart`
+### `POST /process/restart-service`
 
 Restarts a running process.
 
@@ -119,7 +110,7 @@ Restarts a running process.
 
 ### `GET /process/service-status`
 
-Gets the current status of a process
+Gets the current status of a process.
 
 #### ✅ Example Response:
 
@@ -134,22 +125,23 @@ Gets the current status of a process
 
 ### `POST /process/start-core-service`
 
-Starts one or more **core services** and all required dependencies, optionally starting **optional services** as well.
-This endpoint is primarily used during the **onboarding** process by the DUMB frontend to prepare services like Riven, Decypharr, or Plex Debrid.
+Starts one or more core services and all required dependencies. This is used during onboarding.
+
+The `core_services` field can be a single object or an array. The `name` can be the config key (e.g., `riven_backend`) or a display name (e.g., `Riven`).
 
 #### 🔧 Request Body Examples:
 
-**Riven Backend**
+**Riven**
 
 ```json
 {
   "core_services": {
-    "name": "Riven Backend",
+    "name": "riven_backend",
     "debrid_service": "RealDebrid",
     "debrid_key": "abc123",
     "service_options": {}
   },
-  "optional_services": ["zilean","pgadmin", "riven_frontend"]
+  "optional_services": ["zilean", "pgadmin", "riven_frontend"]
 }
 ```
 
@@ -158,10 +150,12 @@ This endpoint is primarily used during the **onboarding** process by the DUMB fr
 ```json
 {
   "core_services": {
-    "name": "Decypharr",
+    "name": "decypharr",
     "debrid_service": "RealDebrid",
     "debrid_key": "abc123",
-    "service_options": {}
+    "service_options": {
+      "decypharr": { "use_embedded_rclone": true }
+    }
   },
   "optional_services": []
 }
@@ -172,7 +166,7 @@ This endpoint is primarily used during the **onboarding** process by the DUMB fr
 ```json
 {
   "core_services": {
-    "name": "CLI Debrid",
+    "name": "cli_debrid",
     "debrid_service": "RealDebrid",
     "debrid_key": "abc123",
     "service_options": {
@@ -185,10 +179,10 @@ This endpoint is primarily used during the **onboarding** process by the DUMB fr
 
 **Plex Debrid**
 
-````json
+```json
 {
   "core_services": {
-    "name": "Plex Debrid",
+    "name": "plex_debrid",
     "debrid_service": "RealDebrid",
     "debrid_key": "abc123",
     "service_options": {
@@ -198,23 +192,15 @@ This endpoint is primarily used during the **onboarding** process by the DUMB fr
   },
   "optional_services": []
 }
-```json
-
-````
-
-The `core_services` field can be a single object or an array. Each core service will:
-
-* Automatically provision any missing dependency instances (e.g. rclone/zurg).
-* Apply any `service_options` overrides (e.g. log levels, ports).
-* Start in the correct order, verifying success.
+```
 
 #### ✅ Example Response:
 
 ```json
 {
   "results": [
-    {"service": "Riven Backend", "status": "started"},
-    {"service": "Decypharr", "status": "started"}
+    {"service": "riven_backend", "status": "started"},
+    {"service": "decypharr", "status": "started"}
   ],
   "errors": []
 }
@@ -222,11 +208,23 @@ The `core_services` field can be a single object or an array. Each core service 
 
 #### ℹ️ Notes:
 
-* Dependencies like Zurg or Rclone will be created using templates and attached to the calling core service.
-* Optional services such as `pgadmin` or `zilean` are only started if included and configured.
-* `debrid_key` is injected into Zurg if required.
+* Dependencies like Zurg or rclone are created using templates and attached to the calling core service.
+* Optional services such as `pgadmin` or `zilean` are started only if included.
+* `debrid_key` is injected into Zurg or Decypharr as needed.
 * `service_options` can override config values such as `log_level`, `port`, or `enabled`.
-* Any startup errors will appear in the `errors` list with detailed messages.
+* Any startup errors appear in the `errors` list.
+
+---
+
+### `GET /process/core-services`
+
+Returns the available core services, their dependencies, and default service options (used by onboarding).
+
+---
+
+### `GET /process/optional-services`
+
+Returns optional services. You can pass `core_service` and `optional_services` query params to tailor the list.
 
 ---
 
@@ -240,4 +238,4 @@ The `core_services` field can be a single object or an array. Each core service 
 ## 📌 Related Files
 
 * [`process.py`](https://github.com/I-am-PUID-0/DUMB/blob/master/api/routers/process.py)
-* [`Configuration`](config.md)
+* [Configuration](config.md)

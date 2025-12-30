@@ -46,8 +46,16 @@ Services supporting auto-updates:
 - Plex Media Server (Future release)
 - Riven Backend and Frontend
 - Decypharr
+- NzbDAV
+- Jellyfin
+- Emby
 - CLI Debrid
 - Plex Debrid
+- Sonarr
+- Radarr
+- Lidarr
+- Prowlarr
+- Whisparr
 - Zilean
 - Zurg
 

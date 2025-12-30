@@ -13,7 +13,7 @@ DUMB includes pgAdmin pre-installed and configured to work out of the box, allow
 ## ⚙️ Configuration Settings in `dumb_config.json`
 ```json
 "pgadmin": {
-    "enabled": true,
+    "enabled": false,
     "process_name": "pgAdmin4",
     "config_dir": "/pgadmin/data",
     "config_file": "/pgadmin/data/config_local.py",
@@ -22,7 +22,7 @@ DUMB includes pgAdmin pre-installed and configured to work out of the box, allow
     "default_server": "0.0.0.0",
     "setup_email": "DUMB@DUMB.DUMB",
     "setup_password": "postgres",
-    "command": []
+    "command": ""
 },
 ```    
 
@@ -42,7 +42,7 @@ DUMB includes pgAdmin pre-installed and configured to work out of the box, allow
 
 ## 🚪 Accessing pgAdmin
 - Navigate to: `http://<host>:<port>` 
-    - default port `5055`
+    - default port `5050`
 - Login using the credentials set via environment variables:
   - `PGADMIN_SETUP_EMAIL` 
     - default: `DUMB@DUMB.DUMB`

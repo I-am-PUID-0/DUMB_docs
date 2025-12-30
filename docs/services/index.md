@@ -25,12 +25,16 @@ DUMB is built as a collection of microservices that communicate over internal AP
 2. **Debrid Orchestration & Content Management**
 
     * 🧠 **Riven Backend**, 🧲 **CLI Debrid**, 🚁 **Plex Debrid**, and 🌐 **Decypharr** each serve as a Debrid orchestrator: requesting, managing, and monitoring content acquisition workflows
-    * These core services integrate with providers like Trakt, Overseerr, and Debrid APIs to manage what content gets fetched
+    * These core services integrate with providers like Trakt, Seerr, and Debrid APIs to manage what content gets fetched
+    * 📥 **NzbDAV** provides a WebDAV endpoint and download client integration for NZB workflows
+    * 📚 **Sonarr/Radarr/Lidarr/Whisparr** manage media queues and organize content from download clients
+    * 🧭 **Prowlarr** manages indexers and syncs them to the Arrs
 
 3. **Media Playback**
 
     * 🎥 **Plex** is the core service that hosts and serves collected content to users
         * It relies on symlinked or mounted content made available through rclone/Zurg from the other core services
+    * 🍿 **Jellyfin** and **Emby** can be used as alternatives to Plex for library playback
 
 4. **Storage & Retrieval**
 
@@ -59,7 +63,15 @@ DUMB is built as a collection of microservices that communicate over internal AP
 | [CLI Debrid](../services/core/cli-debrid.md)             | Core      | Debrid orchestrator (list scanning, upgrades, Plex watch) |
 | [Plex Debrid](../services/core/plex-debrid.md)           | Core      | Debrid orchestrator (direct scraping and playback prep)   |
 | [Decypharr](../services/core/decypharr.md)               | Core      | Debrid orchestrator for Arrs via torrent API integration  |
+| [NzbDAV](../services/core/nzbdav.md)                     | Core      | WebDAV gateway for NZB + Arr download client workflows    |
 | [Plex](../services/core/plex-media-server.md)            | Core      | Media server for hosting and playing content              |
+| [Jellyfin](../services/core/jellyfin.md)                 | Core      | Media server for hosting and playing content              |
+| [Emby](../services/core/emby.md)                         | Core      | Media server for hosting and playing content              |
+| [Sonarr](../services/core/sonarr.md)                     | Core      | TV automation and organization                            |
+| [Radarr](../services/core/radarr.md)                     | Core      | Movie automation and organization                         |
+| [Lidarr](../services/core/lidarr.md)                     | Core      | Music automation and organization                         |
+| [Prowlarr](../services/core/prowlarr.md)                 | Core      | Indexer management for Arrs                               |
+| [Whisparr](../services/core/whisparr.md)                 | Core      | Adult content automation and organization                 |
 | [rclone](../services/dependent/rclone.md)                | Dependent | Mount Debrid storage                                      |
 | [Zurg](../services/dependent/zurg.md)                    | Dependent | Serve Debrid content via WebDAV                           |
 | [PostgreSQL](../services/dependent/postgres.md)          | Dependent | Persistent metadata database                              |

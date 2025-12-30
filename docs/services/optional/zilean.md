@@ -8,7 +8,7 @@ Below is a sample configuration for Zilean within the `dumb_config.json` file:
 
 ```json
 "zilean": {
-  "enabled": true,
+  "enabled": false,
   "process_name": "Zilean",
   "repo_owner": "iPromKnight",
   "repo_name": "zilean",

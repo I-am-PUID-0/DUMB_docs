@@ -10,9 +10,10 @@ DUMB (Debrid Unlimited Media Bridge) is an all-in-one media management solution 
 
 ### 🔑 Key Features
 
-* **Unified Deployment** – Combines multiple tools into a single, easy-to-deploy system.
-* **Built-In Media Server Integration** – Includes **Plex Media Server** (with future support for Jellyfin/Emby), fully embedded in the container to eliminate mount propagation issues.
-* **Automated Content Management** – Uses **Debrid Services**, **Plex Discover Watchlists**, **Trakt lists**, and **Overseerr** to automate media retrieval.
+* **Unified Deployment** – Combines multiple tools into a single, easy-to-deploy system with onboarding-driven setup.
+* **Built-In Media Server Integration** – Includes **Plex Media Server, Jellyfin, and Emby**, fully embedded in the container to eliminate mount propagation issues.
+* **Automated Content Management** – Uses **Debrid** and **Usenet** services alongside **Plex Discover Watchlists**, **Trakt lists**, and **Seerr** to automate media retrieval.
+* **Arr + WebDAV Workflows** – Supports **Sonarr, Radarr, Lidarr, Whisparr**, plus WebDAV-driven clients like **Decypharr** (Debrid) and **NzbDAV** (Usenet).
 * **Integrated Web UI** – Control and manage services through a simple **web-based interface**.
 * **Modular Design** – Each service (Riven, Zurg, Zilean, etc.) is independently configurable and upgradable.
 * **Advanced Logging & Monitoring** – View and filter service logs directly from the [DUMB Frontend](../services/dumb/dumb-frontend.md).
@@ -31,7 +32,19 @@ DUMB integrates the following projects to create a seamless media experience:
 
 ### 🎞️ **Decypharr**
 
-[Decypharr](https://github.com/sirrobot01/decypharr) is one of multiple options responsible for content management, handling **search queries, downloading, and organizing media** for streaming.
+[Decypharr](https://github.com/sirrobot01/decypharr) is a Debrid-focused option responsible for content management, handling **search queries, downloading, and organizing media** for streaming.
+
+### 📥 **NzbDAV**
+
+[NzbDAV](https://github.com/nzbdav-dev/nzbdav) provides an **NZB WebDAV gateway** and Arr download-client integration for **Usenet** workflows.
+
+### 🧭 **Prowlarr**
+
+[Prowlarr](https://prowlarr.com/) centralizes **indexer management** and syncs indexers across the Arr stack.
+
+### 📚 **Arrs (Sonarr/Radarr/Lidarr/Whisparr)**
+
+The Arrs handle **TV, movies, music, and adult content** automation and organization. During onboarding, selecting Decypharr or NzbDAV can wire Arr instances automatically.
 
 ### 🤖 **Zurg**
 
@@ -49,6 +62,10 @@ DUMB integrates the following projects to create a seamless media experience:
 
 [Plex](https://www.plex.tv/) is bundled directly inside DUMB, providing internal access to rclone-mounted content without needing to expose paths via external bind mounts.
 
+### 🖥️ **Jellyfin** & **Emby**
+
+[Jellyfin](https://jellyfin.org/) and [Emby](https://emby.media/) are alternative media servers supported inside the same container.
+
 ### 🗃️ **PostgreSQL** & **pgAdmin 4**
 
 * **PostgreSQL** serves as the **primary database** for storing metadata, configurations, and user preferences.
@@ -58,11 +75,12 @@ DUMB integrates the following projects to create a seamless media experience:
 
 DUMB simplifies the media management workflow by:
 
-1. **Scanning User Watchlists** (Plex, Trakt, Overseerr, etc.).
-2. **Fetching Media from Debrid Services** (Real-Debrid, AllDebrid, etc.).
-3. **Downloading & Organizing Content** using Zurg & Riven.
-4. **Providing a Web Interface** for monitoring & controlling downloads.
-5. **Allowing Streaming via Plex** using internal access to rclone-mounted media.
+1. **Run Onboarding** to select core services and auto-enable required dependencies.
+2. **Scan Lists & Requests** from Plex, Trakt, and Seerr.
+3. **Fetch From Debrid or Usenet** providers (Real-Debrid, AllDebrid, etc.).
+4. **Route Through Orchestrators** (Riven/CLI Debrid) or **Arr clients** (Decypharr/NzbDAV).
+5. **Mount & Organize Content** via Zurg + rclone and Arr-managed libraries.
+6. **Stream via Plex/Jellyfin/Emby** using internal paths and embedded media servers.
 
 ## 📌 Next Steps
 

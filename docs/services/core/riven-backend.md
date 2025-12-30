@@ -1,7 +1,7 @@
 
 # Riven Backend Configuration
 
-The **Riven Backend** is the core component responsible for data handling, automation, API integrations, and scraping within the Riven ecosystem. Proper configuration ensures seamless integration with services like Overseerr, Plex, and Trakt.
+The **Riven Backend** is the core component responsible for data handling, automation, API integrations, and scraping within the Riven ecosystem. Proper configuration ensures seamless integration with services like Seerr, Plex, and Trakt.
 
 ## Configuration Settings in `dumb_config.json`
 
@@ -93,7 +93,7 @@ At a minimum, **enable at least one Content source** under the `Content` section
 ### 🧩 Recommended Setup Areas
 - **General** – Adjust base settings like min/max files size, etc.
 - **Media Server** – Add your Plex, Jellyfin, or Emby server details for library syncing.
-- **Content** – Configure sources such as Trakt, Overseerr, or the Plex Watchlist, MDB List, Listrr.
+- **Content** – Configure sources such as Trakt, Seerr, or the Plex Watchlist, MDB List, Listrr.
 - **Scrapers** – Enable one or more scrapers (e.g., Zilean, Torrentio, Knightcrawler, Orionoid, Jackett, Mediafusion, Prowlarr, Comet).
 - **Ranking** – Customize how results are scored and filtered.
 

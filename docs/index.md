@@ -66,10 +66,10 @@ hide:
             <strong>DUMB - A Unified Media Solution</strong><br>
             <p>
                 <strong>DUMB</strong> is an all-in-one media management and streaming solution that integrates 
-                <strong>Plex Media Server, Riven, Plex Debrid, CLI Debrid, Decypharr, Zurg, Zilean, rclone, PostgreSQL, pgAdmin 4, and others</strong> into a single Docker image 
+                <strong>Plex Media Server, Jellyfin, Emby, Riven, Plex Debrid, CLI Debrid, Decypharr, NzbDAV, Sonarr, Radarr, Lidarr, Prowlarr, Whisparr, Zurg, Zilean, rclone, PostgreSQL, pgAdmin 4, and others</strong> into a single Docker image 
                 for streamlined deployment. It automates the process of 
                 <strong>finding, downloading, and organizing media content</strong> using 
-                <strong>Debrid Services, Plex Discover Watchlists, Trakt lists, Overseerr, and more</strong>, 
+                <strong>Debrid Services, Plex Discover Watchlists, Trakt lists, Seerr, and more</strong>, 
                 making content instantly available for streaming.
             </p>
         </div>
@@ -81,23 +81,31 @@ hide:
             <p>The <strong>DUMB ecosystem</strong> is built on multiple underlying projects that work together to enable <strong>Plex streaming</strong> using Debrid Services. These include:</p>
             <ul class="project-list">
                 <li>🔹 <a href="https://www.plex.tv/">Plex Media Server</a></li>
+                <li>🔹 <a href="https://jellyfin.org/">Jellyfin</a></li>
+                <li>🔹 <a href="https://emby.media/">Emby</a></li>
                 <li>🔹 <a href="https://github.com/rivenmedia/riven">Riven</a></li>
                 <li>🔹 <a href="https://github.com/I-am-PUID-0/plex_debrid">Plex Debrid</a></li>
                 <li>🔹 <a href="https://github.com/godver3/cli_debrid">CLI Debrid</a></li>
-                <li>🔹 <a href="https://github.com/sirrobot01/decypharr">Decypharr</a></li>                
+                <li>🔹 <a href="https://github.com/sirrobot01/decypharr">Decypharr</a></li>
+                <li>🔹 <a href="https://github.com/nzbdav-dev/nzbdav">NzbDAV</a></li>
+                <li>🔹 <a href="https://sonarr.tv/">Sonarr</a></li>
+                <li>🔹 <a href="https://radarr.video/">Radarr</a></li>
+                <li>🔹 <a href="https://lidarr.audio/">Lidarr</a></li>
+                <li>🔹 <a href="https://prowlarr.com/">Prowlarr</a></li>
+                <li>🔹 <a href="https://whisparr.com/">Whisparr</a></li>
                 <li>🔹 <a href="https://github.com/debridmediamanager/zurg-testing">Zurg</a></li>
                 <li>🔹 <a href="https://github.com/iPromKnight/zilean">Zilean</a></li>
                 <li>🔹 <a href="https://github.com/rclone/rclone">rclone</a></li>
                 <li>🔹 <a href="https://www.postgresql.org/">PostgreSQL</a></li>
                 <li>🔹 <a href="https://www.pgadmin.org/">pgAdmin 4</a></li>
             </ul>
-            <p>These projects work seamlessly with <strong>Plex Discover Watchlists, Trakt lists, Overseerr, and more</strong> to streamline media discovery and access.</p>
+            <p>These projects work seamlessly with <strong>Plex Discover Watchlists, Trakt lists, Seerr, and more</strong> to streamline media discovery and access.</p>
         </div>
 
         <div class="column">
             <h2>🛠️ So, what does DUMB do?</h2>
             <ul class="features">
-                <li> <strong>Unified Deployment</strong> – DUMB integrates Plex Media Server, Riven, Plex Debrid, CLI Debrid, Decypharr, Zurg, Zilean, rclone, PostgreSQL, and pgAdmin 4 into a <strong>single Docker image</strong> for <strong>faster and simplified deployment</strong>.</li>
+                <li> <strong>Unified Deployment</strong> – DUMB integrates Plex Media Server, Jellyfin, Emby, Riven, Plex Debrid, CLI Debrid, Decypharr, NzbDAV, Sonarr, Radarr, Lidarr, Prowlarr, Whisparr, Zurg, Zilean, rclone, PostgreSQL, and pgAdmin 4 into a <strong>single Docker image</strong> for <strong>faster and simplified deployment</strong>.</li>
                 <li> <strong>Automated Configuration</strong> – DUMB eliminates the need for <strong>manual setup</strong>, ensuring a smooth and efficient media management experience.</li>
                 <li> <strong>Web-Based UI</strong> – Take full control with an intuitive <strong>web interface</strong>, making it easy to <strong>manage downloads, track content, and interact with the various services</strong>.</li>
             </ul>

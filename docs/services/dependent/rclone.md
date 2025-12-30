@@ -40,7 +40,7 @@ Each `rclone` instance is defined under the `rclone.instances` section in `dumb_
 - **`process_name`**: The label used in logs and process tracking.
 - **`suppress_logging`**: If `true`, disables log output for this service.
 - **`log_level`**: Logging verbosity level (e.g., `DEBUG`, `INFO`).
-- **`key_type`**: The debrid service to use (`RealDebrid`, `AllDebrid`, etc.).
+- **`key_type`**: The debrid or WebDAV service to use (`RealDebrid`, `AllDebrid`, `NzbDAV`, etc.).
 - **`zurg_enabled`**: Whether Zurg is linked to this rclone mount.
 - **`decypharr_enabled`**: Whether Decypharr is linked to this rclone mount.
 - **`mount_dir`**: The container path where the remote drive is to be mounted.
@@ -55,6 +55,7 @@ Each `rclone` instance is defined under the `rclone.instances` section in `dumb_
 ### 🔁 API Key Behavior
 - If `zurg_enabled` & `zurg_config_file` are **set**: DUMB will configure rclone to use **Zurg's WebDAV** endpoint. The API key should be defined in the **Zurg instance**, not the rclone one.
 - If `decypharr_enabled` is **set**: DUMB will configure rclone to use **Decypharr's WebDAV** endpoint. The API key should be defined in the **Decypharr** config.
+- If `key_type` is **`NzbDAV`**: DUMB will configure rclone to use **NzbDAV's WebDAV** endpoint and read credentials from `WEBDAV_USER`/`WEBDAV_PASSWORD` (or the NzbDAV database). The rclone `api_key` field is ignored.
 - If `decypharr_enabled`, `zurg_enabled` & `zurg_config_file` are **unset or blank**: DUMB will configure rclone to **directly connect to the debrid service**, and the API key must be set in the rclone instance.
 
 ### ➕ Adding More Instances
@@ -62,7 +63,7 @@ Users can define additional rclone instances by duplicating the structure and en
 
 - Each `instance name` is **unique**
 - Each `process_name` is **unique**
-- The `key_type` must match the type of Debrid service used (e.g., `RealDebrid`, `AllDebrid`, `TorBox`, `Premiumize`)
+- The `key_type` must match the type of Debrid or WebDAV service used (e.g., `RealDebrid`, `AllDebrid`, `TorBox`, `Premiumize`, `NzbDAV`)
 
 !!! Note "The below example creates a zurg attached rclone mount and a direct debrid connection rclone mount"
 
@@ -84,6 +85,7 @@ Example:
       "cache_dir": "/cache",
       "config_dir": "/config",
       "config_file": "/config/rclone.config",
+      "log_file": "/log/rclone_w_realdebrid.log",
       "zurg_config_file": "/zurg/RD/config.yml",
       "command": [],
       "api_key": ""
@@ -102,6 +104,7 @@ Example:
       "cache_dir": "/cache",
       "config_dir": "/config",
       "config_file": "/config/rclone.config",
+      "log_file": "/log/rclone_w_alldebrid.log",
       "zurg_config_file": "",
       "command": [],
       "api_key": "YOUR DEBRID API KEY"

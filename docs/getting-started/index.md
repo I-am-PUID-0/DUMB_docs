@@ -4,7 +4,7 @@ title: Introduction
 
 # 🚀 Getting Started with DUMB
 
-Welcome to **DUMB – Debrid Unlimited Media Bridge**: a unified media management and automation tool designed for users who want to streamline their content discovery, acquisition, and playback using services like **Plex**, **Real-Debrid**, **Trakt**, **Overseerr**, and more.
+Welcome to **DUMB – Debrid Unlimited Media Bridge**: a unified media management and automation tool designed for users who want to streamline their content discovery, acquisition, and playback using services like **Plex**, **Real-Debrid**, **Trakt**, **Seerr**, and more.
 
 ---
 
@@ -12,7 +12,7 @@ Welcome to **DUMB – Debrid Unlimited Media Bridge**: a unified media managemen
 
 DUMB combines multiple backend services into a single containerized system to provide:
 
-- 🔎 **Search and discovery** using Trakt, Plex Watchlists, Overseerr, etc.
+- 🔎 **Search and discovery** using Trakt, Plex Watchlists, Seerr, etc.
 - ⚡ **Real-Debrid integration** for content fetching via Zurg
 - ☁️ **Remote mounting** of Debrid storage using rclone
 - 🧠 **Metadata caching** with Zilean
@@ -25,7 +25,7 @@ DUMB combines multiple backend services into a single containerized system to pr
 
 DUMB is ideal if you:
 
-- Have a Plex, Jellyfin, or Emby or server and want to auto-fill your library from your Overseerr/Jellyseerr, Trakt, Plex Watchlists, Mdblist, or Listrr
+- Have a Plex, Jellyfin, or Emby or server and want to auto-fill your library from your Seerr requests, Trakt, Plex Watchlists, Mdblist, or Listrr
 - Want a plug-and-play solution that works with Debrid services
 - Prefer a containerized, modular deployment
 - Want real-time log viewing, auto-updates, and one-click service control

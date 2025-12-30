@@ -77,7 +77,7 @@ You can control which version or branch of the frontend is deployed by setting:
 
 ## 🌐 Access
 - Navigate to: `http://<host>:<port>` 
-    - default port `3001`
+    - default port `3000`
 
 !!! note "🔐 If using a reverse proxy, ensure the `ORIGIN` environment variable matches the external URL."
 

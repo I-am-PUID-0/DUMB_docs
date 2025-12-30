@@ -48,20 +48,22 @@ title: Decypharr
     "config_file": "/decypharr/config.json",
     "log_file": "/decypharr/logs/decypharr.log",
     "env": {},
-    "debrid_service": "",
-    "api_key": ""
+    "use_embedded_rclone": true,
+    "api_keys": {}
 },
 ```
 
 ### 🔍 Key Configuration Fields
 
-* `enabled`: Toggle to run CLI Debrid via DUMB.
+* `enabled`: Toggle to run Decypharr via DUMB.
 * `process_name`: Used for display and logs.
 * `repo_owner`, `repo_name`: GitHub repo to use for updates.
 * `release_version_enabled`, `branch_enabled`: Target a specific tag or branch.
 * `log_level`, `suppress_logging`: Logging controls.
-* `port`: Flask web interface port.
-* `env`: Environment variable configuration used by CLI Debrid.
+* `port`: Web UI port.
+* `env`: Environment variables passed to Decypharr.
+* `use_embedded_rclone`: Enable the embedded rclone integration (recommended).
+* `api_keys`: Per-provider API keys used by Decypharr.
 * `clear_on_update`, `exclude_dirs`: Clean old files during update while protecting data dirs.
 
 ---
@@ -92,11 +94,21 @@ Decypharr acts as both a torrent manager and a renaming/organizing engine:
 
 ## 📦 Integration with DUMB
 
+### 🧭 Arr `core_service` Setting
+
+For Sonarr/Radarr/Lidarr/Whisparr instances you want wired to Decypharr, set:
+
+```json
+"core_service": "decypharr"
+```
+
+This tells DUMB to auto-configure Arr integration around Decypharr’s WebDAV and symlink workflows.
+
 To successfully run Decypharr with DUMB, the following configuration and mounting steps must be completed:
 
 ### 1. Bind Mount Setup
 
-In both your `DUMB` and `arrs` docker-compose files, include the following bind mounts (replace `...` with the full host path to your DUMB bind mount):
+If you are passing the rclone mount to an **external** Arr or media server container, include the following bind mounts in both your `DUMB` and `arrs` docker-compose files (replace `...` with the full host path to your DUMB bind mount):
 
 **DUMB Compose**:
 
@@ -112,7 +124,7 @@ volumes:
   - .../DUMB/mnt/debrid:/mnt/debrid:rslave
 ```
 
-> These mounts are required to ensure Decypharr-created symlinks are visible to the Arr containers.
+> These mounts are only required when Arrs or media servers run **outside** the DUMB container and need access to the rclone mount and Decypharr symlinks.
 
 ### 2. Configure Root Folders in Arrs
 

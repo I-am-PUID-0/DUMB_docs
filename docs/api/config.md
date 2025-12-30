@@ -9,7 +9,7 @@ The Configuration API is responsible for exposing endpoints that manage and mani
 ---
 
 ## 🧩 Module: `config.py`
-Located in: `api/routes/config.py`
+Located in: `api/routers/config.py`
 
 ---
 
@@ -17,7 +17,7 @@ Located in: `api/routes/config.py`
 
 ### `GET /config`
 **Description:**
-Returns the currently loaded in-memory configuration.
+Returns the currently loaded in-memory configuration. You can optionally pass `process_name` to fetch a single service block.
 
 **Usage Example:**
 ```bash
@@ -28,38 +28,101 @@ curl http://localhost:8000/config
 
 ### `POST /config`
 **Description:**
-Accepts an updated config object and applies it in memory.
+Updates config in memory. When `process_name` is provided, it updates only that service block and can optionally persist to disk. Without `process_name`, it performs a global update.
+
+**Request Body:**
+```json
+{
+  "process_name": "Riven Backend",
+  "updates": {
+    "log_level": "DEBUG"
+  },
+  "persist": true
+}
+```
 
 **Usage Example:**
 ```bash
 curl -X POST http://localhost:8000/config \
   -H "Content-Type: application/json" \
-  -d @updated_config.json
+  -d '{"process_name":"Riven Backend","updates":{"log_level":"DEBUG"},"persist":true}'
 ```
 
 ---
 
-### `POST /config/save`
+### `GET /config/schema`
 **Description:**
-Saves the current in-memory config to the `dumb_config.json` file.
+Returns the JSON schema used for config validation.
 
 **Usage Example:**
 ```bash
-curl -X POST http://localhost:8000/config/save
+curl http://localhost:8000/config/schema
 ```
 
 ---
 
-### `POST /config/validate`
+### `POST /config/process-config/schema`
 **Description:**
-Validates the structure and format of a provided config file (without applying changes).
+Returns the config schema subtree for a specific `process_name`.
+
+**Request Body:**
+```json
+{
+  "process_name": "Riven Backend"
+}
+```
 
 **Usage Example:**
 ```bash
-curl -X POST http://localhost:8000/config/validate \
+curl -X POST http://localhost:8000/config/process-config/schema \
   -H "Content-Type: application/json" \
-  -d @test_config.json
+  -d '{"process_name":"Riven Backend"}'
 ```
+
+---
+
+### `POST /config/service-config`
+**Description:**
+Reads or updates a service-specific config file (JSON/YAML/CONF/Python/XML). If `updates` is omitted, the raw config is returned.
+
+**Request Body:**
+```json
+{
+  "service_name": "Zurg w/ RealDebrid",
+  "updates": ""
+}
+```
+
+**Usage Example:**
+```bash
+curl -X POST http://localhost:8000/config/service-config \
+  -H "Content-Type: application/json" \
+  -d '{"service_name":"Zurg w/ RealDebrid"}'
+```
+
+---
+
+### `GET /config/service-ui`
+**Description:**
+Returns a list of enabled services with UI ports and writes a Traefik dynamic config file.
+
+---
+
+### `GET /config/onboarding-status`
+**Description:**
+Returns whether onboarding is required.
+
+---
+
+### `POST /config/onboarding-completed`
+**Description:**
+Marks onboarding as complete.
+
+---
+
+### `POST /config/reset-onboarding`
+**Description:**
+Resets onboarding to incomplete.
 
 ---
 
@@ -74,4 +137,3 @@ curl -X POST http://localhost:8000/config/validate \
 ## 📎 Related Pages
 - [Services Overview](../services/index.md)
 - [Logs](logs.md)
-

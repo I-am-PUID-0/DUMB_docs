@@ -26,7 +26,7 @@ By directly integrating the **media server itself** (e.g. Plex) within the DUMB 
 
 Unlike other solutions that focus on one piece of the puzzle, **DUMB integrates every step** of the media pipeline:
 
-* 🖥️ *Embedded Media Servers* — Plex (and in future: Jellyfin, Emby) run inside the same container, ensuring seamless access to mounted content and full internal control
+* 🖥️ *Embedded Media Servers* — Plex, Jellyfin, and Emby run inside the same container, ensuring seamless access to mounted content and full internal control
 * 🔌 *Service Coordination* — via the internal DUMB API and real-time config management
 * 📥 *Automated Acquisition* — with core services for discovery and Zurg and/or rclone for debrid content fetching
 * ☁️ *Cloud Storage Mounting* — through rclone mounts direct to debrid (e.g., Real-Debrid WebDAV) or utilizing Zurg's WebDAV
@@ -47,9 +47,9 @@ DUMB is built using a **modular, microservices** architecture, with the followin
 | **DUMB API**             | Core controller and coordination hub                                                         |
 | **DUMB Frontend**        | Graphical interface for managing services, configs, and logs                                 |
 | **Plex Media Server**    | First-class embedded media server for direct playback of collected content                   |
-| **Riven**                | Content search, acquisition, and integration with platforms like Plex, Trakt, Overseerr, etc |
-| **CLI Debrid**           | Content search, acquisition, and integration with platforms like Plex, Trakt, Overseerr, etc |
-| **Decypharr**            | Content search, acquisition, and integration with platforms like Plex, Trakt, Overseerr, etc |
+| **Riven**                | Content search, acquisition, and integration with platforms like Plex, Trakt, Seerr, etc |
+| **CLI Debrid**           | Content search, acquisition, and integration with platforms like Plex, Trakt, Seerr, etc |
+| **Decypharr**            | Content search, acquisition, and integration with platforms like Plex, Trakt, Seerr, etc |
 | **Zurg**                 | Handles Real-Debrid content interaction, file repair, and directory structuring              |
 | **rclone**               | Mounts cloud storage into the local container for access by your media server                |
 | **Zilean**               | Caches metadata and file hash lookups for performance                                        |

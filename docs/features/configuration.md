@@ -32,6 +32,14 @@ Below is the **general structure** of `dumb_config.json`:
     "cli_debrid": { ... },
     "cli_battery": { ... },
     "decypharr": { ... },
+    "nzbdav": { ... },
+    "emby": { ... },
+    "jellyfin": { ... },
+    "sonarr": { ... },
+    "radarr": { ... },
+    "lidarr": { ... },
+    "prowlarr": { ... },
+    "whisparr": { ... },
     "phalanx_db": { ... },
     "plex": { ... },
     "plex_debrid": { ... },
@@ -133,7 +141,15 @@ See the individual service pages for in-depth configuration details:
 - [DUMB Frontend](../services/dumb/dumb-frontend.md)
 - [Decypharr](../services/core/decypharr.md)
 - [CLI Debrid](../services/core/cli-debrid.md)
+- [NzbDAV](../services/core/nzbdav.md)
 - [Plex Media Server](../services/core/plex-media-server.md)
+- [Jellyfin](../services/core/jellyfin.md)
+- [Emby](../services/core/emby.md)
+- [Sonarr](../services/core/sonarr.md)
+- [Radarr](../services/core/radarr.md)
+- [Lidarr](../services/core/lidarr.md)
+- [Prowlarr](../services/core/prowlarr.md)
+- [Whisparr](../services/core/whisparr.md)
 - [pgAdmin 4](../services/optional/pgadmin.md)
 - [PostgreSQL](../services/dependent/postgres.md)
 - [rclone](../services/dependent/rclone.md)
@@ -141,6 +157,40 @@ See the individual service pages for in-depth configuration details:
 - [Riven Frontend](../services/optional/riven-frontend.md)
 - [Zilean](../services/optional/zilean.md)
 - [Zurg](../services/dependent/zurg.md)
+
+---
+
+## 🧭 `core_service` (Arr Integration)
+
+Some services (notably the Arrs) include a `core_service` field to tell DUMB which core workflow they should attach to.
+
+Allowed values:
+
+* `""` (blank): no core integration
+* `decypharr`: route Arr automation through Decypharr
+* `nzbdav`: route Arr automation through NzbDAV
+
+Examples:
+
+```json
+"sonarr": {
+  "instances": {
+    "Default": {
+      "core_service": "decypharr"
+    }
+  }
+}
+```
+
+```json
+"radarr": {
+  "instances": {
+    "Default": {
+      "core_service": "nzbdav"
+    }
+  }
+}
+```
 
 
 ## 📌 Next Steps

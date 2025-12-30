@@ -31,14 +31,18 @@ The API is enabled and configured using the `dumb_config.json` under the `dumb.a
 
 ## 🔁 Common Endpoints
 
-| Method | Path                   | Description                          |
-|--------|------------------------|--------------------------------------|
-| GET    | `/processes`          | List all services in `dumb_config.json` |
-| POST   | `/start-service`      | Start a specific service             |
-| POST   | `/stop-service`       | Stop a specific service              |
-| POST   | `/restart-service`    | Restart a specific service           |
-| GET    | `/service-status`     | Get the current status of a service  |
-| WS     | `/logs`               | Real-time log streaming              |
+| Method | Path                      | Description                                |
+|--------|---------------------------|--------------------------------------------|
+| GET    | `/health`                 | Container health check                     |
+| GET    | `/process/processes`      | List all services in `dumb_config.json`    |
+| GET    | `/process`                | Get a specific service by `process_name`   |
+| POST   | `/process/start-service`  | Start a specific service                   |
+| POST   | `/process/stop-service`   | Stop a specific service                    |
+| POST   | `/process/restart-service`| Restart a specific service                 |
+| GET    | `/process/service-status` | Get the current status of a service        |
+| POST   | `/process/start-core-service` | Start core services + dependencies     |
+| GET    | `/logs`                   | Read service log chunks                    |
+| WS     | `/ws/logs`                | Real-time log streaming                    |
 
 ---
 

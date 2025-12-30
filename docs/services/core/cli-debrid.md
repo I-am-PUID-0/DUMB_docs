@@ -4,7 +4,7 @@ title: CLI Debrid
 
 # CLI Debrid (Core Service)
 
-**CLI Debrid** is a core content orchestrator in the DUMB ecosystem. It automates media collection and upgrading through Debrid services (e.g. Real-Debrid), working alongside Trakt, Plex, Overseerr, and various scrapers. CLI Debrid can either monitor your Plex libraries or generate symlinks for organized media delivery to Plex or similar servers.
+**CLI Debrid** is a core content orchestrator in the DUMB ecosystem. It automates media collection and upgrading through Debrid services (e.g. Real-Debrid), working alongside Trakt, Plex, Seerr, and various scrapers. CLI Debrid can either monitor your Plex libraries or generate symlinks for organized media delivery to Plex or similar servers.
 
 ---
 
@@ -79,11 +79,11 @@ title: CLI Debrid
 * Monitors your Plex library or local folder structure (symlinked library)
 * Scrapes for content from various sources (Zilean, Jackett, Torrentio, Nyaa, Media Fusion)
 * Downloads new or upgraded content using Debrid providers
-* Optionally leverages webhook notifications from Overseerr or Zurg to trigger updates
+* Optionally leverages webhook notifications from Seerr or Zurg to trigger updates
 
 ### 🎛️ Supported Features
 
-* Content Sources: MDBList, Trakt, Overseerr
+* Content Sources: MDBList, Trakt, Seerr
 * Upgrading: Queue system for quality upgrades
 * Web UI: Web dashboard for real-time monitoring and control
 * Metadata: Cached locally in the `cli_battery`
@@ -247,7 +247,7 @@ All queues are managed on scheduled intervals.
 
 CLI Debrid can listen for:
 
-* **Overseerr Webhooks**: Add content when users request it
+* **Seerr Webhooks**: Add content when users request it
 * **Zurg Webhooks**: React to completed downloads (Symlink mode)
 
 Example Zurg update hook:

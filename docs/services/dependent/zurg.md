@@ -26,7 +26,8 @@ Zurg is configured using the `instances` model to support multiple debrid servic
 "zurg": {
   "instances": {
     "RealDebrid": {
-      "enabled": true,
+      "enabled": false,
+      "core_service": "",
       "process_name": "Zurg w/ RealDebrid",
       "repo_owner": "debridmediamanager",
       "repo_name": "zurg-testing",
@@ -37,7 +38,7 @@ Zurg is configured using the `instances` model to support multiple debrid servic
       "host": "127.0.0.1",
       "port": 9090,
       "auto_update": false,
-      "auto_update_interval": 1,
+      "auto_update_interval": 24,
       "clear_on_update": false,
       "exclude_dirs": ["/zurg/RD"],
       "key_type": "RealDebrid",
@@ -95,7 +96,8 @@ Example:
 "zurg": {
     "instances": {
         "RealDebrid": {
-            "enabled": true,
+            "enabled": false,
+            "core_service": "",
             "process_name": "Zurg w/ RealDebrid",
             "repo_owner": "debridmediamanager",
             "repo_name": "zurg-testing",
@@ -106,7 +108,7 @@ Example:
             "host": "127.0.0.1",
             "port": 9090,
             "auto_update": false,
-            "auto_update_interval": 1,
+            "auto_update_interval": 24,
             "clear_on_update": false,
             "exclude_dirs": ["/zurg/RD"],
             "key_type": "RealDebrid",
@@ -118,7 +120,8 @@ Example:
             "api_key": ""
         },
         "RealDebrid_2": {
-            "enabled": true,
+            "enabled": false,
+            "core_service": "",
             "process_name": "Zurg w/ RealDebrid 2",
             "repo_owner": "debridmediamanager",
             "repo_name": "zurg-testing",
@@ -129,7 +132,7 @@ Example:
             "host": "127.0.0.1",
             "port": 9091,
             "auto_update": false,
-            "auto_update_interval": 1,
+            "auto_update_interval": 24,
             "clear_on_update": false,
             "exclude_dirs": ["/zurg/RD2"],
             "key_type": "RealDebrid",

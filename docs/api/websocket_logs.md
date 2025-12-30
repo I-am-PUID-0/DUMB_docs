@@ -14,28 +14,17 @@ The WebSocket Logs API provides a real-time streaming interface for receiving lo
 /ws/logs
 ```
 
-Connect to this endpoint using a WebSocket client (e.g., browser or Python client) to receive structured log entries in JSON format.
+Connect to this endpoint using a WebSocket client (e.g., browser or Python client) to receive log lines as plain text.
 
 ---
 
 ## 🔁 Message Format
 
-Each log entry sent through the WebSocket has the following structure:
+Each log entry is sent as a plain text line formatted by DUMB’s logger, for example:
 
-```json
-{
-  "message": "[INFO] riven_backend: Startup complete",
-  "level": "INFO",
-  "process_name": "riven_backend",
-  "timestamp": "2025-04-01T12:34:56.789Z"
-}
 ```
-
-### Fields:
-- **message**: Raw log message as a string
-- **level**: Log level (`DEBUG`, `INFO`, `WARNING`, etc.)
-- **process_name**: Name of the subprocess that generated the log
-- **timestamp**: ISO 8601 formatted UTC timestamp
+Apr 12, 2025 10:04:01 - INFO - Riven Backend started
+```
 
 ---
 
@@ -56,6 +45,7 @@ The DUMB Frontend implements dropdowns and search bars for this purpose.
 - The server **broadcasts logs** to all connected WebSocket clients.
 - If the connection is dropped, reconnect using `/ws/logs`.
 - Log history is **not buffered**, so missed logs are not resent on reconnect.
+- Sending `{"type":"ping"}` will return `pong`.
 
 ---
 
@@ -70,8 +60,7 @@ async def consume_logs():
     uri = "ws://localhost:8000/ws/logs"
     async with websockets.connect(uri) as websocket:
         async for message in websocket:
-            log = json.loads(message)
-            print(f"[{log['level']}] {log['process_name']}: {log['message']}")
+            print(message)
 
 asyncio.run(consume_logs())
 ```
@@ -82,4 +71,3 @@ asyncio.run(consume_logs())
 - [`websocket_logs.py`](https://github.com/I-am-PUID-0/DUMB/blob/master/api/routers/websocket_logs.py)
 - [Logs API](logs.md) for historical log file access
 - [Frontend Log Viewer](../services/dumb/dumb-frontend.md#real-time-logs)
-

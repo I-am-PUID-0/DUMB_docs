@@ -24,10 +24,18 @@ nav:
       - Core:
         - Overview: services/core/index.md
         - CLI Debrid: services/core/cli-debrid.md
-        - Decypharr: services/core/decypharr.md        
+        - Decypharr: services/core/decypharr.md
+        - NzbDAV: services/core/nzbdav.md
         - Plex Media Server: services/core/plex-media-server.md
+        - Jellyfin: services/core/jellyfin.md
+        - Emby: services/core/emby.md
         - Plex Debrid: services/core/plex-debrid.md
         - Riven Backend: services/core/riven-backend.md
+        - Sonarr: services/core/sonarr.md
+        - Radarr: services/core/radarr.md
+        - Lidarr: services/core/lidarr.md
+        - Prowlarr: services/core/prowlarr.md
+        - Whisparr: services/core/whisparr.md
       - Dependent:
         - Overview: services/dependent/index.md
         - CLI Battery: services/dependent/cli-battery.md

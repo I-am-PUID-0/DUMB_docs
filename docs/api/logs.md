@@ -18,44 +18,46 @@ GET /logs
 
 ## 🧾 Query Parameters
 
-| Parameter | Type   | Description                                                                 |
-|-----------|--------|-----------------------------------------------------------------------------|
-| `lines`   | int    | Number of recent log lines to return (default: 100).                        |
-| `level`   | string | Optional filter by log level (e.g., `INFO`, `ERROR`, `DEBUG`).              |
-| `name`    | string | Optional filter by process or service name (e.g., `riven`, `postgres`).     |
+| Parameter      | Type   | Description                                                                 |
+|----------------|--------|-----------------------------------------------------------------------------|
+| `process_name` | string | Required process name (e.g., `Riven Backend`, `Zurg w/ RealDebrid`).        |
+| `cursor`       | int    | Last byte offset returned by the API (omit for first request).              |
+| `tail_bytes`   | int    | Initial bytes to read from the end when no cursor (default: 131072).        |
 
 ---
 
 ## 🧪 Example Request
 
 ```
-GET /logs?lines=50&level=ERROR&name=zilean
+GET /logs?process_name=Riven%20Backend
 ```
 
-This request fetches the last 50 lines of logs for the `zilean` service that have an `ERROR` log level.
+This request fetches the latest log chunk for the specified service.
 
 ---
 
 ## ✅ Response Format
 
-Returns a JSON array of log entries:
+Returns a JSON object containing the log chunk and cursor:
 
 ```json
-[
-  "2024-04-01 12:00:01 INFO rclone: Mount started successfully",
-  "2024-04-01 12:01:02 ERROR zilean: Failed to connect to database"
-]
+{
+  "process_name": "Riven Backend",
+  "cursor": 123456,
+  "chunk": "Apr 12, 2025 10:04:01 - INFO - Riven Backend started\n",
+  "reset": true,
+  "log": "Apr 12, 2025 10:04:01 - INFO - Riven Backend started\n"
+}
 ```
 
 ---
 
 ## ⚠️ Notes
-- This endpoint provides logs captured by DUMB's internal logger and may not reflect stdout/stderr of subprocesses unless specifically routed.
-- Filtering by `name` is useful to narrow down issues with a specific subprocess.
+- When `reset` is `true`, clients should replace their log buffer with `chunk`.
+- On incremental requests, pass the returned `cursor` to get only new bytes.
 
 ---
 
 ## 🧱 Related
 - [Real-Time WebSocket Logs](websocket_logs.md) for live streaming logs.
 - [Process Management](process.md) for interacting with services whose logs may be captured here.
-
