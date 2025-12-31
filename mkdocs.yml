@@ -1,4 +1,4 @@
-site_name: DUMB
+site_name: Debrid Unlimited Media Bridge
 site_description: DUMB Documentation
 site_author: DUMB Team
 site_url: "https://I-am-PUID-0.github.io/DUMB"
@@ -110,7 +110,7 @@ theme:
     code: JetBrains Mono
   palette:
     - media: "(prefers-color-scheme: light)"
-      scheme: default
+      scheme: indigo
       toggle:
         icon: lucide/sun
         name: Switch to dark mode
