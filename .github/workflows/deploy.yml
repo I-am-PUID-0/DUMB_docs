@@ -15,6 +15,7 @@ jobs:
   deploy:
     name: Deploy Documentation
     environment: 
+      name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
     if: >
       github.event_name == 'workflow_dispatch' ||
