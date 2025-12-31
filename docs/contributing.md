@@ -48,7 +48,7 @@ You can find the [devcontainer setup file](https://github.com/I-am-PUID-0/DUMB/t
 
 Even if you don't write code, there are **plenty of ways** to help!
 
-### ⭐ Star the Repo
+### Star the Repo
 A quick way to show support is by starring the project on GitHub:  [github.com/I-am-PUID-0/DUMB](https://github.com/I-am-PUID-0/DUMB)
 
 ### Join the Community

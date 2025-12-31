@@ -86,7 +86,7 @@ You’ll need to bind mount the following volumes when running the container:
 
 ---
 
-## ⏭ Next Steps
+## Next Steps
 
 -  [Explore Features](../features/index.md)
 -  [Tune Your Configuration](../features/configuration.md)
