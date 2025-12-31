@@ -27,7 +27,7 @@ If the check fails, the status will be `"unhealthy"` and include diagnostic outp
 
 ## Use Case
 - Used by orchestrators or monitoring tools to confirm container availability.
-- Can be used to gate traffic in load balancers or uptime monitoring dashboards.
+- Use in load balancers or uptime monitoring dashboards.
 
 ---
 
