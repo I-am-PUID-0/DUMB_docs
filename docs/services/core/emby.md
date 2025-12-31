@@ -8,7 +8,7 @@ title: Emby
 
 ---
 
-## 🔗 Service Relationships
+## Service Relationships
 
 | Classification | Role                               |
 | -------------- | ---------------------------------- |
@@ -19,7 +19,7 @@ title: Emby
 
 ---
 
-## 📦 Configuration in `dumb_config.json`
+## Configuration in `dumb_config.json`
 
 ```json
 "emby": {
@@ -42,7 +42,7 @@ title: Emby
 }
 ```
 
-### 🔍 Key Configuration Fields
+### Key Configuration Fields
 
 * `port`: Web UI port (default `8096`).
 * `release_version_enabled`, `release_version`: Pin to a specific Emby release.
@@ -50,20 +50,20 @@ title: Emby
 
 ---
 
-## 🌐 Accessing the UI
+## Accessing the UI
 
 * Navigate to: `http://<host>:8096`
 
 ---
 
-## 📌 Terms of Service
+## Terms of Service
 
 By enabling Emby, you confirm that you have read and agree to the Emby Terms of Service:
 https://emby.media/terms.html
 
 ---
 
-## 🔗 Resources
+## Resources
 
 * [Emby Website](https://emby.media/)
 * [Emby Releases](https://github.com/MediaBrowser/Emby.Releases)

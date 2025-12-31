@@ -80,7 +80,7 @@ making content instantly available for streaming.
 
 <div class="grid cards" markdown>
 
-- ## 🚀 So, what does all this do?
+- ## So, what does all this do?
   The **DUMB ecosystem** is built on multiple underlying projects that work together to enable **Plex streaming** using Debrid Services. These include:
   
     - <a href="https://www.plex.tv/">Plex Media Server</a>
@@ -106,11 +106,11 @@ making content instantly available for streaming.
 
 
    
-  - ##🛠️ So, what does DUMB do?
+  - ## So, what does DUMB do?
     -  **Unified Deployment** – DUMB integrates Plex Media Server, Jellyfin, Emby, Riven, Plex Debrid, CLI Debrid, Decypharr, NzbDAV, Sonarr, Radarr, Lidarr, Prowlarr, Whisparr, Zurg, Zilean, rclone, PostgreSQL, and pgAdmin 4 into a **single Docker image** for **faster and simplified deployment**.</li>
     -  **Automated Configuration** – DUMB eliminates the need for **manual setup**, ensuring a smooth and efficient media management experience.</li>
     -  **Web-Based UI** – Take full control with an intuitive **web interface**, making it easy to **manage downloads, track content, and interact with the various services**.</li>
-📌 For additional information, explore the **other sections of the docs**.
+ For additional information, explore the **other sections of the docs**.
 
 </div>
 </div>

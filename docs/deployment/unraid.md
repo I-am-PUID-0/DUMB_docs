@@ -2,13 +2,13 @@
 title: unRAID Deployment
 ---
 
-## 🧱 Deploying DUMB on unRAID
+## Deploying DUMB on unRAID
 
 This guide will walk you through deploying **Debrid Unlimited Media Bridge (DUMB)** on **unRAID** using the Community Applications plugin and Docker.
 
 ---
 
-## ✅ Prerequisites
+## Prerequisites
 Before proceeding, ensure you have the following:
 
 - A running **unRAID server** with Docker enabled.
@@ -23,7 +23,7 @@ Optional but recommended:
 
 ---
 
-## 🚀 Quick Start
+## Quick Start
 
 ### 1. **Install the DUMB Template**
 - Navigate to the **Apps** tab in unRAID.
@@ -58,7 +58,7 @@ chown -R 99:100 /mnt/user/appdata/DUMB
 
 ---
 
-## 🔁 Matching Paths in Plex, Jellyfin, Emby
+## Matching Paths in Plex, Jellyfin, Emby
 
 Your **Media Server (Plex, Jellyfin, or Emby)** must have the same paths as DUMB:
 
@@ -68,11 +68,11 @@ Your **Media Server (Plex, Jellyfin, or Emby)** must have the same paths as DUMB
   - Mount `/mnt` to `/mnt` as well.
   - Only add the **Riven path** (e.g., `/mnt/movies`, `/mnt/shows`) as libraries.
 
-> ⚠️ Do **NOT** add `/data` or Zurg’s full rclone mount as libraries. Use only the **Riven symlinked** content.
+>  Do **NOT** add `/data` or Zurg’s full rclone mount as libraries. Use only the **Riven symlinked** content.
 
 ---
 
-## 📷 Example Screenshots
+## Example Screenshots
 
 - DUMB Docker setup:
 
@@ -92,9 +92,9 @@ Your **Media Server (Plex, Jellyfin, or Emby)** must have the same paths as DUMB
 
 ---
 
-## 🛠️ Additional Configuration
+## Additional Configuration
 
-### 📺 Plex Token Setup
+### Plex Token Setup
 To enable features like watchlist syncing, you may need your Plex token:
 
 1. Visit `https://plex.tv`, login.
@@ -103,7 +103,7 @@ To enable features like watchlist syncing, you may need your Plex token:
 
 ---
 
-### 🧠 Advanced Tools
+### Advanced Tools
 
 To troubleshoot permissions or inspect mounts:
 ```bash
@@ -120,7 +120,7 @@ apk add mc && mc
 
 ---
 
-## 🧪 Jellyfin and Emby Notes
+## Jellyfin and Emby Notes
 
 Both **Jellyfin** and **Emby** can work with DUMB:
 
@@ -129,7 +129,7 @@ Both **Jellyfin** and **Emby** can work with DUMB:
 
 ---
 
-## 🧰 Troubleshooting
+## Troubleshooting
 - Check logs via **Docker tab** > select DUMB > **Logs**.
 - Use `docker exec` or Midnight Commander to inspect file/folder structure.
 - Common issues:

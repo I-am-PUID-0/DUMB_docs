@@ -8,7 +8,7 @@ title: Prowlarr
 
 ---
 
-## 🔗 Service Relationships
+## Service Relationships
 
 | Classification | Role                               |
 | -------------- | ---------------------------------- |
@@ -19,7 +19,7 @@ title: Prowlarr
 
 ---
 
-## 📦 Configuration in `dumb_config.json`
+## Configuration in `dumb_config.json`
 
 ```json
 "prowlarr": {
@@ -42,7 +42,7 @@ title: Prowlarr
 }
 ```
 
-### 🔍 Key Configuration Fields
+### Key Configuration Fields
 
 * `port`: Web UI port (default `9696`).
 * `pinned_version`: Optional version pin for Prowlarr updates.
@@ -50,12 +50,12 @@ title: Prowlarr
 
 ---
 
-## ⚙️ Integration with DUMB
+## Integration with DUMB
 
 * Connect Prowlarr to Sonarr/Radarr/Lidarr/Whisparr via their API keys and base URLs.
 * Prowlarr can share indexers across all Arr instances to keep setups consistent.
 
-### 🔄 Automated Arr Sync
+### Automated Arr Sync
 
 DUMB can auto-configure Prowlarr applications for enabled Arr instances. It reads each Arr API key from the Arr `config_file`, waits for the services to come up, and creates the matching Prowlarr app entries (full sync).
 
@@ -67,13 +67,13 @@ Requirements:
 
 ---
 
-## 🌐 Accessing the UI
+## Accessing the UI
 
 * Navigate to: `http://<host>:9696`
 
 ---
 
-## 🔗 Resources
+## Resources
 
 * [Prowlarr Website](https://prowlarr.com/)
 * [Prowlarr GitHub](https://github.com/Prowlarr/Prowlarr)

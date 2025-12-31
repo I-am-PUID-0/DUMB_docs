@@ -10,7 +10,7 @@ It is pre-installed and automatically initialized during container startup.
 
 ---
 
-## ⚙️ Configuration Settings in `dumb_config.json`
+## Configuration Settings in `dumb_config.json`
 ```json
 "postgres": {
   "enabled": false,
@@ -38,7 +38,7 @@ It is pre-installed and automatically initialized during container startup.
 },
 ```
 
-### 🔍 Configuration Key Descriptions
+### Configuration Key Descriptions
 - **`enabled`**: Whether to start the PostgreSQL service.
 - **`process_name`**: The label used in logs and process tracking.
 - **`suppress_logging`**: If `true`, disables log output for this service.
@@ -61,7 +61,7 @@ It is pre-installed and automatically initialized during container startup.
 
 ---
 
-## 🚪 Access & Credentials
+## Access & Credentials
 - Default Port: `5432`
 - Default User: `DUMB`
 - Default Password: `postgres`
@@ -71,11 +71,11 @@ It is pre-installed and automatically initialized during container startup.
     - `zilean`
     - `riven`
 
-!!! note "🔐 Override any of the above using `POSTGRES_USER`, `POSTGRES_PASSWORD`, or `POSTGRES_DB` environment variables."
+!!! note " Override any of the above using `POSTGRES_USER`, `POSTGRES_PASSWORD`, or `POSTGRES_DB` environment variables."
 
 ---
 
-## 📁 Data & Config Paths
+## Data & Config Paths
 | Purpose              | Path                      |
 |----------------------|---------------------------|
 | Data Directory       | `/postgres_data`          |
@@ -84,20 +84,20 @@ It is pre-installed and automatically initialized during container startup.
 
 ---
 
-## 🧠 Useful Commands
+## Useful Commands
 
-### 📦 Run SQL Command Directly (one-liner)
+### Run SQL Command Directly (one-liner)
 ```bash
 docker exec -it DUMB psql -U DUMB -d riven -c 'SELECT COUNT(*) FROM media;'
 ```
 
-### 🧭 Enter the Container & PostgreSQL Shell
+### Enter the Container & PostgreSQL Shell
 ```bash
 docker exec -it DUMB /bin/bash
 psql -U DUMB -d riven
 ```
 
-### 🗑️ Drop the Riven Database
+### Drop the Riven Database
 !!! warning "This will permanently delete the Riven database. Be sure you’ve backed up anything important."
 
 From the host (one-liner):
@@ -114,12 +114,12 @@ DROP DATABASE riven;
 
 ---
 
-## 🧠 Tips
+## Tips
 - Always restart the container after modifying config files in `/postgres_data`.
 - Ensure you mount `/postgres_data` if you want persistent databases.
 - [pgAdmin](../optional/pgadmin.md) is the easiest way to visually explore and manage PostgreSQL.
 
 ---
 
-## 📚 More Info
+## More Info
 - [PostgreSQL Documentation](https://www.postgresql.org/docs/)

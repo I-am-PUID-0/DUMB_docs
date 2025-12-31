@@ -8,7 +8,7 @@ Optional services enhance the DUMB ecosystem by adding scraping capabilities, da
 
 ---
 
-## 🧩 What Are Optional Services?
+## What Are Optional Services?
 
 Optional services are:
 
@@ -18,7 +18,7 @@ Optional services are:
 
 ---
 
-## 🧱 Optional Service Index
+## Optional Service Index
 
 | Service                           | Description                                                 | Used By                        |
 | --------------------------------- | ----------------------------------------------------------- | ------------------------------ |
@@ -28,7 +28,7 @@ Optional services are:
 
 ---
 
-## 🔗 How They Work
+## How They Work
 
 Optional services attach to the DUMB ecosystem dynamically:
 
@@ -41,7 +41,7 @@ These services can be disabled at any time without affecting the startup of core
 
 ---
 
-## 🧠 Tips
+## Tips
 
 * If not using Zilean, make sure other scrapers are configured in Riven and CLI Debrid.
 * pgAdmin is useful during debugging, migrations, or manual SQL work — but not required for normal operation.
@@ -49,7 +49,7 @@ These services can be disabled at any time without affecting the startup of core
 
 ---
 
-## 📚 Related Pages
+## Related Pages
 
 * [Core Services](../core/index.md)
 * [Dependent Services](../dependent/index.md)

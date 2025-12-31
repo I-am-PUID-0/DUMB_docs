@@ -8,7 +8,7 @@ title: Whisparr
 
 ---
 
-## 🔗 Service Relationships
+## Service Relationships
 
 | Classification | Role                               |
 | -------------- | ---------------------------------- |
@@ -19,7 +19,7 @@ title: Whisparr
 
 ---
 
-## 📦 Configuration in `dumb_config.json`
+## Configuration in `dumb_config.json`
 
 ```json
 "whisparr": {
@@ -43,7 +43,7 @@ title: Whisparr
 }
 ```
 
-### 🔍 Key Configuration Fields
+### Key Configuration Fields
 
 * `core_service`: Set to `decypharr` or `nzbdav` to enable DUMB integration with those services.
 * `port`: Web UI port (default `6969`).
@@ -52,7 +52,7 @@ title: Whisparr
 
 ---
 
-## ⚙️ Integration with DUMB
+## Integration with DUMB
 
 * For Decypharr integration, set `core_service` to `decypharr` and follow the [Decypharr guide](decypharr.md).
 * For NzbDAV integration, set `core_service` to `nzbdav` and follow the [NzbDAV guide](nzbdav.md).
@@ -60,13 +60,13 @@ title: Whisparr
 
 ---
 
-## 🌐 Accessing the UI
+## Accessing the UI
 
 * Navigate to: `http://<host>:6969`
 
 ---
 
-## 🔗 Resources
+## Resources
 
 * [Whisparr Website](https://whisparr.com/)
 * [Whisparr GitHub](https://github.com/Whisparr/Whisparr)

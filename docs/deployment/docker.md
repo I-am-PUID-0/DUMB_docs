@@ -3,14 +3,14 @@ title: Deploy with Docker
 ---
 
 
-## 📦 Deploying DUMB with Docker
+## Deploying DUMB with Docker
 
 This guide will walk you through every step, from installing Docker to setting up and running the DUMB container. 
 
 Whether you're new to Docker or just need a quick refresher, you'll be up and running in no time.
 
 
-## ✅ Prerequisites
+## Prerequisites
 
 Before you begin, make sure you have the following:
 
@@ -22,7 +22,7 @@ Before you begin, make sure you have the following:
 !!! tip "This guide assumes you're installing Docker on a fresh Ubuntu setup. If you're on Windows, refer to the [Windows Setup Guide (Docker/WSL)](wsl.md)."
 
 
-## 🐳 Install Docker
+## Install Docker
 1. From Ubuntu, install Docker by pasting the following into the Ubuntu Command Line Interface (CLI); follow the prompts. 
 ```bash
 curl -fsSL https://get.docker.com -o get-docker.sh
@@ -38,7 +38,7 @@ sh get-docker.sh
 
 ----
 
-### ✅ Confirm Docker Install
+### Confirm Docker Install
 1. Enter the following command:
 ```bash
 docker compose version
@@ -49,7 +49,7 @@ ubuntu@DUMB:~$ docker compose version
 Docker Compose version v2.24.2
 ```
 
-## 📁 Define the Directory Structure
+## Define the Directory Structure
 
 !!! note "If you already have a directory structure you'd like to use, then you can skip this step."
 
@@ -64,7 +64,7 @@ mkdir -p DUMB/config DUMB/log DUMB/data DUMB/mnt/debrid
 ```
 
 
-## ✏️ Download and Edit the docker-compose.yml
+## Download and Edit the docker-compose.yml
 !!! important "The docker-compose.yml file will need to be edited to include the necessary environment variable values."
 
 1. Download the latest docker-compose.yml from the GitHub repository with the following:
@@ -95,7 +95,7 @@ sed -i \
 
 ----
 
-## 🚀 Start up the Docker Compose
+## Start up the Docker Compose
 
 !!! tip "Docker Compose"
     The following command starts Docker Compose in detached mode, meaning it runs in the background and frees up your terminal.
@@ -107,7 +107,7 @@ sed -i \
     - **Pressing `Ctrl + C`** will **shut down** all running containers.
     - To **exit without stopping** the container(s), you must start Docker Compose in detached mode using `-d`.
 
-    ⚠️ There is no built-in "detach shortcut" when running in the foreground — to keep containers running after exit, always use the below command
+     There is no built-in "detach shortcut" when running in the foreground — to keep containers running after exit, always use the below command
 
 ```bash
 sudo docker compose up -d
@@ -118,13 +118,13 @@ Example output:
 ubuntu@DUMB:~/docker$ sudo docker compose up -d
 [+] Running 1/2
  ⠋ Network docker_default  Created                                                                                                                                                       1.1s 
- ✔ Container DUMB       Started  
+  Container DUMB       Started  
 ```
 
-✅ Once started, the container will run in the background.
+ Once started, the container will run in the background.
 
 
-## 🎉 That’s It!
+## That’s It!
 
 Once deployed, DUMB will initialize and make its services available at their respective ports (e.g., DUMB Frontend at `:3005`, API at `:8000`, etc.).
 
@@ -132,16 +132,16 @@ You can now manage DUMB entirely through the **[DUMB Frontend](../services/dumb/
 
 ---
 
-## 🛠️ Additional Useful Commands
+## Additional Useful Commands
 
 
-### ▶️ Attach to the Running Container
+### ▶ Attach to the Running Container
 
 ```bash
 sudo docker attach DUMB
 ```
 
-### 🔄 Detach Without Stopping the Container
+### Detach Without Stopping the Container
 
 
 Press Ctrl + P followed by Ctrl + Q.
@@ -159,7 +159,7 @@ This sequence sends a signal to Docker to detach from the container while leavin
 
 
 
-### 📜 View Docker Container Logs
+### View Docker Container Logs
 
 To view the container logs, enter the following:
 
@@ -174,7 +174,7 @@ Alternatively, use -f to follow the logs in real-time.
 sudo docker logs -f DUMB
 ```
 
-### 🧯 Shutdown Docker Compose
+### Shutdown Docker Compose
 
 ```bash
 sudo docker compose down
@@ -184,6 +184,6 @@ Example output:
 ```bash
 ubuntu@DUMB:~/docker$ sudo docker compose down
 [+] Running 2/2
-✔ Container DUMB       Removed                                                                                                                                                      10.4s 
-✔ Network docker_default  Removed     
+ Container DUMB       Removed                                                                                                                                                      10.4s 
+ Network docker_default  Removed     
 ```

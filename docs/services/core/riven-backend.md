@@ -46,7 +46,7 @@ The **Riven Backend** is the core component responsible for data handling, autom
 },
 ```
 
-### 🔍 Configuration Key Descriptions
+### Configuration Key Descriptions
 
 - **`enabled`**: Whether to start the Riven Backend service.
 - **`process_name`**: Used in logs and process tracking.
@@ -73,7 +73,7 @@ The **Riven Backend** is the core component responsible for data handling, autom
 
 ---
 
-## ⚙️ Branch / Version Targeting
+## Branch / Version Targeting
 You can control which version or branch of the backend is deployed by setting:
 
 - `branch_enabled: true` and specifying a `branch`
@@ -81,23 +81,23 @@ You can control which version or branch of the backend is deployed by setting:
 
 ---
 
-## ⚙️ Initial Setup: Riven Backend
+## Initial Setup: Riven Backend
 
 Before Riven Backend can be used, **initial configuration is required**.
 
 After completing the DUMB onboarding, navigate to the **Riven Frontend** and open the `Settings` page. The following sections should be reviewed and updated:
 
-### 🔧 Required Configuration
+### Required Configuration
 At a minimum, **enable at least one Content source** under the `Content` section. Without this, Riven cannot function.
 
-### 🧩 Recommended Setup Areas
+### Recommended Setup Areas
 - **General** – Adjust base settings like min/max files size, etc.
 - **Media Server** – Add your Plex, Jellyfin, or Emby server details for library syncing.
 - **Content** – Configure sources such as Trakt, Seerr, or the Plex Watchlist, MDB List, Listrr.
 - **Scrapers** – Enable one or more scrapers (e.g., Zilean, Torrentio, Knightcrawler, Orionoid, Jackett, Mediafusion, Prowlarr, Comet).
 - **Ranking** – Customize how results are scored and filtered.
 
-!!! note "📝 Once complete, Riven will begin processing requests based on the selected sources and configurations."
+!!! note " Once complete, Riven will begin processing requests based on the selected sources and configurations."
 
 ---
 

@@ -8,7 +8,7 @@ Below are common questions and helpful usage tips for working with **pgAdmin** i
 
 ---
 
-## ❓ Frequently Asked Questions (FAQ)
+## Frequently Asked Questions (FAQ)
 
 ### What is pgAdmin used for in DUMB?
 
@@ -22,7 +22,7 @@ You can use it to:
 - View the [System Stats](../services/optional/pgadmin.md#-system_stats) inside PostgreSQL
 ---
 
-## 🧪 Using pgAdmin’s Query Tool
+## Using pgAdmin’s Query Tool
 
 To run manual queries (e.g., inspecting or modifying blacklist entries):
 
@@ -31,7 +31,7 @@ To run manual queries (e.g., inspecting or modifying blacklist entries):
 3. Select **Query Tool**.
 4. Paste your SQL query in the top panel and run it.
 
-### 🔄 Example: View & Clear Riven's Stream Blacklist
+### Example: View & Clear Riven's Stream Blacklist
 
 ```sql
 SELECT id, media_item_id, stream_id FROM "StreamBlacklistRelation";
@@ -51,7 +51,7 @@ SELECT COUNT(*) FROM "StreamBlacklistRelation";
 ---
 
 
-## 💾 Save Queries for Later
+## Save Queries for Later
 
 Click **Save As** in the Query Tool to store frequently used queries as `.sql` files.
 
@@ -59,9 +59,9 @@ Click **Save As** in the Query Tool to store frequently used queries as `.sql` f
 
 ---
 
-## 🧹 Drop a Database or Create a Manual Backup in pgAdmin
+## Drop a Database or Create a Manual Backup in pgAdmin
 
-### 🗑️ Drop a Database
+### Drop a Database
 
 You can delete a database from within pgAdmin if you no longer need it (e.g., to reset Riven or Zilean).
 
@@ -76,7 +76,7 @@ You can delete a database from within pgAdmin if you no longer need it (e.g., to
 
 ---
 
-### 💾 Manually Create a Database Backup
+### Manually Create a Database Backup
 
 To create a backup of any database using the pgAdmin interface:
 
@@ -98,7 +98,7 @@ To create a backup of any database using the pgAdmin interface:
 
 ---
 
-### 🗂️ .backup vs .sql
+### .backup vs .sql
 
 - `.backup` (Custom Format)
 
@@ -119,13 +119,13 @@ To create a backup of any database using the pgAdmin interface:
 > For more advanced backup configuration and explanation of options, see the [pgAdmin Backup Dialog Documentation](https://www.pgadmin.org/docs/pgadmin4/latest/backup_dialog.html).
 
 
-## ⏱️ Optional: Use pgAgent to Schedule Tasks
+## ⏱ Optional: Use pgAgent to Schedule Tasks
 
 pgAdmin comes with **pgAgent**, which lets you create recurring jobs.
 
 > This is entirely optional and not required to use DUMB.
 
-## 💾 Example: Scheduled Backups with pgAgent
+## Example: Scheduled Backups with pgAgent
 
 1. Navigate to `pgAgent Jobs` under your connected DUMB server.
 2. Right-click → `Create → pgAgent Job`
@@ -164,7 +164,7 @@ pgAdmin comes with **pgAgent**, which lets you create recurring jobs.
 
 ---
 
-## 📎 Related Pages
+## Related Pages
 
 - [PostgreSQL FAQ](postgres.md)
 - [Zilean](../services/optional/zilean.md)

@@ -2,23 +2,23 @@
 title: Deploy with Portainer
 ---
 
-## 🚢 Deploying DUMB with Portainer
+## Deploying DUMB with Portainer
 
 Portainer provides a user-friendly web interface for managing Docker containers and stacks. This guide walks you through deploying **Debrid Unlimited Media Bridge (DUMB)** using Portainer's stack deployment feature.
 
 ---
 
-## ✅ Prerequisites
+## Prerequisites
 
 Before you begin:
 
-- 🐳 Docker and Portainer must be installed and running
-- 🌐 Internet access (to pull the DUMB image)
-- 🛠️ Mounted host directories for persistent data storage
+-  Docker and Portainer must be installed and running
+-  Internet access (to pull the DUMB image)
+-  Mounted host directories for persistent data storage
 
 ---
 
-## 📦 Step-by-Step Deployment
+## Step-by-Step Deployment
 
 ### 1. Log into Portainer
 
@@ -67,7 +67,7 @@ Click **Deploy the stack** to launch DUMB.
 
 ---
 
-## 🎉 That’s It!
+## That’s It!
 
 Once deployed, DUMB will initialize and make its services available at their respective ports (e.g., DUMB Frontend at `:3005`, API at `:8000`, etc.).
 
@@ -75,7 +75,7 @@ You can now manage DUMB entirely through the **[DUMB Frontend](../services/dumb/
 
 ---
 
-## 📄 Viewing Logs for DUMB
+## Viewing Logs for DUMB
 
 Once your stack is deployed, you can view logs for the DUMB container:
 
@@ -88,19 +88,19 @@ Once your stack is deployed, you can view logs for the DUMB container:
 
 ---
 
-## 🔗 Attach to the Container
+## Attach to the Container
 
 To view live output or run interactive commands:
 
 1. From the **Containers** page, click on the **DUMB** container.
-2. Click the **Attach Console** button (⚙️ icon or from the top bar).
+2. Click the **Attach Console** button ( icon or from the top bar).
 3. Choose a shell (e.g., `sh`, `bash`, or `/venv/bin/python`) and click **Connect**.
 
 !!! note "Use this for tasks like inspecting running processes, modifying configs, or testing tools inside the container."
 
 ---
 
-## 💻 Console Access
+## Console Access
 
 You can also use the **Console** option to access the container shell:
 

@@ -7,7 +7,7 @@ Zurg is the debrid content fetcher that powers file discovery and caching for DU
 
 ---
 
-## 🔀 Zurg Repositories
+## Zurg Repositories
 
 There are **two official Zurg repositories**:
 
@@ -18,7 +18,7 @@ There are **two official Zurg repositories**:
 
 ---
 
-## ⚙️ Configuration in `dumb_config.json`
+## Configuration in `dumb_config.json`
 
 Zurg is configured using the `instances` model to support multiple debrid services (e.g., RealDebrid, AllDebrid, Premiumize).
 
@@ -53,7 +53,7 @@ Zurg is configured using the `instances` model to support multiple debrid servic
 }
 ```
 
-### 🔍 Configuration Key Descriptions
+### Configuration Key Descriptions
 
 - **`enabled`**: Whether to start the Zurg instance.
 - **`process_name`**: Label used for log files and process display.
@@ -74,14 +74,14 @@ Zurg is configured using the `instances` model to support multiple debrid servic
 
 ---
 
-## ⚙️ Version Targeting
+## Version Targeting
 You can control which version of Zurg is deployed by setting:
 
 - `release_version_enabled: true` and specifying a `release_version`
 
 ---
 
-## ➕ Adding Multiple Zurg Instances
+## Adding Multiple Zurg Instances
 
 You can define additional instances in the same `zurg.instances` block by copying the structure and:
 
@@ -149,14 +149,14 @@ Example:
 
 ---
 
-## 🧠 Tips
+## Tips
 - The Zurg WebDAV endpoint will be used by rclone to mount files
 - Always set the correct `api_key` to avoid auth issues
 - Avoid using the same port or overlapping directories across instances
 
 ---
 
-## 📚 Resources
+## Resources
 - [Zurg Testing (default repo)](https://github.com/debridmediamanager/zurg-testing)
 - [Zurg (premium repo)](https://github.com/debridmediamanager/zurg)
 - [DUMB GitHub Token Setup](https://github.com/I-am-PUID-0/DUMB#environment-variables)

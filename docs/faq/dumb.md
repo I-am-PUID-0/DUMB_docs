@@ -7,7 +7,7 @@ title: DUMB FAQ
 Below are some common questions and solutions related to **DUMB**.
 
 ---
-## ❓ Frequently Asked Questions (FAQ)
+## Frequently Asked Questions (FAQ)
 
 ### Does the **DUMB** image have the latest version of `x`
 

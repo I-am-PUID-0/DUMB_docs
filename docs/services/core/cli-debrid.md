@@ -8,7 +8,7 @@ title: CLI Debrid
 
 ---
 
-## 🔗 Service Relationships
+## Service Relationships
 
 | Classification | Role                                                                                                       |
 | -------------- | ---------------------------------------------------------------------------------------------------------- |
@@ -19,7 +19,7 @@ title: CLI Debrid
 
 ---
 
-## 📦 Configuration in `dumb_config.json`
+## Configuration in `dumb_config.json`
 
 ```json
 "cli_debrid": {
@@ -59,7 +59,7 @@ title: CLI Debrid
 },
 ```
 
-### 🔍 Key Configuration Fields
+### Key Configuration Fields
 
 * `enabled`: Toggle to run CLI Debrid via DUMB.
 * `process_name`: Used for display and logs.
@@ -72,16 +72,16 @@ title: CLI Debrid
 
 ---
 
-## ⚙️ What CLI Debrid Does
+## What CLI Debrid Does
 
-### 🧠 Intelligent Automation
+### Intelligent Automation
 
 * Monitors your Plex library or local folder structure (symlinked library)
 * Scrapes for content from various sources (Zilean, Jackett, Torrentio, Nyaa, Media Fusion)
 * Downloads new or upgraded content using Debrid providers
 * Optionally leverages webhook notifications from Seerr or Zurg to trigger updates
 
-### 🎛️ Supported Features
+### Supported Features
 
 * Content Sources: MDBList, Trakt, Seerr
 * Upgrading: Queue system for quality upgrades
@@ -93,7 +93,7 @@ title: CLI Debrid
 
 ---
 
-## ⚡ Required Component: CLI Battery
+## Required Component: CLI Battery
 
 !!! warning "CLI Battery must be running for CLI Debrid to function."
 
@@ -129,7 +129,7 @@ CLI Battery provides local metadata storage and Trakt integration, acting as the
 
 ---
 
-## 🧰 Optional Utility: Phalanx DB
+## Optional Utility: Phalanx DB
 
 ```json
 "phalanx_db": {
@@ -169,7 +169,7 @@ Phalanx DB provides distributed metadata storage via Hyperswarm. It is optional 
 
 ---
 
-## 🔁 Mount Considerations
+## Mount Considerations
 
 CLI Debrid can create symlinks to be used in the media server, or if using the rclone mounts directly in the media server it can monitor the Plex libraries for completed items.
 
@@ -191,7 +191,7 @@ As such, it's important to ensure you select the appropriate option for your dep
 
 ---
 
-## 🚀 Plex Media Server Built-in!
+## Plex Media Server Built-in!
 
 With [Plex Media Server](plex-media-server.md) enabled in DUMB, you can also leverage it with CLI Debrid
 
@@ -212,14 +212,14 @@ This may cause issues if the address changes for the container, so it is suggest
 ![Plex URL](../../assets/images/cli_debrid/plex_server_url.PNG)
 
 ---
-## 🚀 Zilean Built-in!
+## Zilean Built-in!
 
 With [Zilean](../optional/zilean.md) enabled in DUMB, you can also leverage it with CLI Debrid
 
 ![Add A Scraper](../../assets/images/cli_debrid/clid_add_a_scraper_zilean.png)
 
 
-## 🧠 Queues & Processing (Behind the Scenes)
+## Queues & Processing (Behind the Scenes)
 
 * **Wanted Queue**: Items identified from your lists that need to be downloaded but haven't been processed by the scraper yet. Shows the time the item was last scraped. If within 24 hours of scraping items will remain in the Wanted queue.
 * **Scraping Queue**: Items actively being searched for download sources (torrents/magnets).
@@ -243,7 +243,7 @@ All queues are managed on scheduled intervals.
 
 ---
 
-## 📡 Webhook Support
+## Webhook Support
 
 CLI Debrid can listen for:
 
@@ -263,7 +263,7 @@ done
 echo "Webhook update complete."
 ```
 
-## ⚙️ Branch / Version Targeting
+## Branch / Version Targeting
 You can control which version or branch is deployed by setting:
 
 - `branch_enabled: true` and specifying a `branch`
@@ -271,7 +271,7 @@ You can control which version or branch is deployed by setting:
 
 ---
 
-## 🌐 Access
+## Access
 
 - Navigate to: `http://<host>:<port>` 
 

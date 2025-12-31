@@ -7,9 +7,9 @@ title: Plex FAQ
 Below are some common questions and solutions related to when using **Plex** alongside **DUMB** with services like Zurg and Rclone.
 
 ---
-## ❓ Frequently Asked Questions (FAQ)
+## Frequently Asked Questions (FAQ)
 
-### ⚙️ Recommended Library Settings
+### Recommended Library Settings
 To reduce the risk of excessive API calls to Real-Debrid (which can result in `423 Locked` errors or rate limits), the following Plex library settings should be disabled for each media library:
 
 #### Library Settings (Per Library):
@@ -26,10 +26,10 @@ These settings reduce the number of filesystem scans Plex performs, which can ot
 
 ---
 
-### ⚠️ Plex buffers a lot when playing content mounted via rclone
+### Plex buffers a lot when playing content mounted via rclone
 This is often caused by the lack of caching when streaming large files from cloud-mounted storage.
 
-#### ✅ Recommended Solution
+#### Recommended Solution
 Enable **VFS (Virtual File System) cache** in your `rclone` configuration.
 
 When using DUMB, set the following environment variables:
@@ -47,7 +47,7 @@ These flags ensure that:
 > or refer to [rclone Flags via Environment Variables](../services/dependent/rclone.md#-rclone-flags-via-environment-variables) for examples and formatting guidance.
 
 
-## 📎 Related Pages
+## Related Pages
 - [Zurg FAQ](../faq/zurg.md)
 - [Rclone Configuration](../services/dependent/rclone.md)
 

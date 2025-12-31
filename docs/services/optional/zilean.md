@@ -2,7 +2,7 @@ Zilean is a service that enables users to search for content sourced by [Debrid 
 
 ---
 
-## ⚙️ Configuration Settings in `dumb_config.json`
+## Configuration Settings in `dumb_config.json`
 
 Below is a sample configuration for Zilean within the `dumb_config.json` file:
 
@@ -47,7 +47,7 @@ Below is a sample configuration for Zilean within the `dumb_config.json` file:
 },
 ```
 
-### 🔍 Configuration Key Descriptions
+### Configuration Key Descriptions
 
 - **`enabled`**: Whether to start the Zilean service.
 - **`process_name`**: Used in logs and process tracking.
@@ -80,7 +80,7 @@ Below is a sample configuration for Zilean within the `dumb_config.json` file:
 
 ---
 
-## ⚙️ Branch / Version Targeting
+## Branch / Version Targeting
 You can control which version or branch of Zilean is deployed by setting:
 
 - `branch_enabled: true` and specifying a `branch`
@@ -88,7 +88,7 @@ You can control which version or branch of Zilean is deployed by setting:
 
 ---
 
-## 🧠 Tips
+## Tips
 - The first-time run of Zilean can take a long time; see the [Zilean FAQ](../../faq/zilean.md#why-is-zilean-spamming-my-logs) for more info.
 - Logs from Zilean can be accessed via DUMB’s Frontend or directly from `/log/zilean.log`.
 - If Zilean fails to bind, check for existing services on port `8182`.
@@ -96,5 +96,5 @@ You can control which version or branch of Zilean is deployed by setting:
 
 ---
 
-## 📚 Resources
+## Resources
 - [Zilean GitHub Repository](https://github.com/iPromKnight/zilean)

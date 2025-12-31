@@ -2,20 +2,20 @@
 title: Deploying on Proxmox
 ---
 
-## 🧱 Deploying DUMB on Proxmox (LXC Container)
+## Deploying DUMB on Proxmox (LXC Container)
 
 This guide will walk you through deploying **DUMB** inside a lightweight **Ubuntu-based LXC container** on **Proxmox VE**.
 
 ---
 
-## ✅ Prerequisites
+## Prerequisites
 - Proxmox VE installed
 - Internet access on the host
 - Basic knowledge of Proxmox shell and web UI
 
 ---
 
-## 🐧 Create an Ubuntu LXC Container
+## Create an Ubuntu LXC Container
 You can automate Ubuntu LXC creation with the following community script:
 
 ```bash
@@ -26,13 +26,13 @@ bash -c "$(curl -fsSL https://raw.githubusercontent.com/community-scripts/Proxmo
 
 ---
 
-## 🛠️ LXC Configuration for Docker + Fuse Support
+## LXC Configuration for Docker + Fuse Support
 
 To ensure DUMB works correctly inside your LXC container (especially with Docker, rclone, and bind mounts), you’ll need to update both the **container config**, the **Proxmox host**, and optionally configure persistence across reboots.
 
 ---
 
-### 🔧 Update the LXC Config File 
+### Update the LXC Config File 
 !!! note "`<CTID>` is the container ID."
 
 1. **Stop the container:**
@@ -62,7 +62,7 @@ To ensure DUMB works correctly inside your LXC container (especially with Docker
     Don't restart the LXC until the below sections have been completed. 
 ---
 
-### 📂 Configure Host Bind Mount
+### Configure Host Bind Mount
 
 1. On the **Proxmox host**, create the mount target and bind it:
 
@@ -74,7 +74,7 @@ To ensure DUMB works correctly inside your LXC container (especially with Docker
 
 ---
 
-### 💾 Make the Mount Persistent (Recommended)
+### Make the Mount Persistent (Recommended)
 
 !!! tip "This ensures the bind mount is restored after reboots."
 
@@ -138,7 +138,7 @@ To persist the `rshared` behavior across boots:
 
 ---
 
-## 👤 Add and Configure a User inside the LXC (Required) 
+## Add and Configure a User inside the LXC (Required) 
 !!! warning "DUMB must be ran as any user other than root"
 
 1. **Start/Restart the container:**
@@ -181,7 +181,7 @@ To persist the `rshared` behavior across boots:
 
 ---
 
-## 📁 Define the Directory Structure inside the LXC
+## Define the Directory Structure inside the LXC
 
 !!! note
     If you already have a directory structure you'd like to use, then you can skip this step.
@@ -205,7 +205,7 @@ To persist the `rshared` behavior across boots:
 
 --- 
 
-## 🐳 Install Docker inside the LXC
+## Install Docker inside the LXC
 
 1. Run the official Docker install script:
 
@@ -229,7 +229,7 @@ To persist the `rshared` behavior across boots:
 
 ---
 
-## 🚢 Install Portainer inside the LXC (Optional) 
+## Install Portainer inside the LXC (Optional) 
 If you want to manage Docker visually via Portainer:
 
 1. Create the Portainer data volume:
@@ -263,7 +263,7 @@ For more, see the [Portainer Deployment Guide](./portainer.md).
 
 ---
 
-## 🐳 Update Docker Bind Mount (Important)
+## Update Docker Bind Mount (Important)
 
 When launching DUMB or your media server, make sure the following mount is used:
 
@@ -281,7 +281,7 @@ With:
 
 ---
 
-## 🚀 Next Steps
+## Next Steps
 Now that Docker (and optionally Portainer) are installed, continue with:
 
 - [Deploy DUMB via Docker Compose](./docker.md)

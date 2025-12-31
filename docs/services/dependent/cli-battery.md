@@ -29,7 +29,7 @@ The **CLI Battery** is a Flask-based companion application required by CLI Debri
 },
 ```
 
-### 🔍 Configuration Key Descriptions
+### Configuration Key Descriptions
 
 * **`enabled`**: Enables the CLI Battery service.
 * **`process_name`**: Display name in logs and process manager.
@@ -43,17 +43,17 @@ The **CLI Battery** is a Flask-based companion application required by CLI Debri
 
 ---
 
-## ⚠️ Required by CLI Debrid
+## Required by CLI Debrid
 
 CLI Battery must be running **before** CLI Debrid launches, as the latter depends on it for coordination and metadata resolution.
 
 ---
 
-## 🌐 Web Interface & API
+## Web Interface & API
 
 CLI Battery is a Flask web app exposing a browser UI and REST API:
 
-### 📊 Web Dashboard
+### Web Dashboard
 
 * `/` — Home dashboard with metadata stats
 * `/debug` — Debug view of all metadata items
@@ -61,7 +61,7 @@ CLI Battery is a Flask web app exposing a browser UI and REST API:
 * `/providers` — Enable/disable metadata providers
 * `/settings` — View and update settings
 
-### 🔌 API Endpoints
+### API Endpoints
 
 * `/api/metadata/<imdb_id>` — Fetch metadata for a specific movie or show
 * `/api/seasons/<imdb_id>` — Fetch seasons for a show
@@ -70,7 +70,7 @@ CLI Battery is a Flask web app exposing a browser UI and REST API:
 
 ---
 
-## 🌐 Access
+## Access
 - Navigate to: `http://<host>:<port>` 
     - default port `5001`
 

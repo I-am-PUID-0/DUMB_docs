@@ -2,7 +2,7 @@
 title: Deploy with WSL
 ---
 
-## 🖥️ Deploying DUMB on Windows Setup Guide (Docker/WSL)
+## Deploying DUMB on Windows Setup Guide (Docker/WSL)
 
 !!! warning "Docker Desktop"
     Ensure that Docker Desktop is not installed; if so, uninstall and reboot before proceeding.
@@ -11,7 +11,7 @@ This guide will walk you through setting up DUMB on a Windows system using a **l
 
 ----
 
-### 🐧 WSL Install
+### WSL Install
 
 1. From the Microsoft Store, install **Windows Subsystem for Linux (WSL)**
 
@@ -49,7 +49,7 @@ This guide will walk you through setting up DUMB on a Windows system using a **l
 
 ----
 
-### 🐳 Docker Install
+### Docker Install
 
 1. Follow the [official Docker Engine install guide for Ubuntu](https://docs.docker.com/engine/install/ubuntu/)
 
@@ -60,7 +60,7 @@ This guide will walk you through setting up DUMB on a Windows system using a **l
 
 ----
 
-### 📂 Accessing the Mount on Windows
+### Accessing the Mount on Windows
 
 !!! note
     These steps are only required if sharing the mount outside of the container - e.g., to another media server, etc. 
@@ -88,21 +88,21 @@ This guide will walk you through setting up DUMB on a Windows system using a **l
 ---
 
 
-### 🌐 Mirrored Mode Networking
+### Mirrored Mode Networking
 
 Starting with **Windows 11 22H2**, WSL2 supports a new networking mode called **mirrored networking**, which improves compatibility and unlocks several new features by mirroring Windows' network interfaces into Linux.
 
-#### ✅ Benefits of Mirrored Networking
+#### Benefits of Mirrored Networking
 
-- 🧭 Full **IPv6** support  
-- 🔁 Access **Windows services** from WSL using `127.0.0.1`  
-- 🔒 Improved VPN support (VPNs work in both Windows and WSL)  
-- 📡 Multicast compatibility  
-- 🧷 Reach WSL directly from your **local LAN**
+-  Full **IPv6** support  
+-  Access **Windows services** from WSL using `127.0.0.1`  
+-  Improved VPN support (VPNs work in both Windows and WSL)  
+-  Multicast compatibility  
+-  Reach WSL directly from your **local LAN**
 
 ---
 
-#### 🔧 Enabling Mirrored Mode
+#### Enabling Mirrored Mode
 
 1. Open (or create) the `.wslconfig` file in your Windows home directory:
 
@@ -131,14 +131,14 @@ Starting with **Windows 11 22H2**, WSL2 supports a new networking mode called **
 
 ---
 
-#### 📌 Additional Notes
+#### Additional Notes
 
 - You can combine this with [`autoProxy=true`](https://learn.microsoft.com/en-us/windows/wsl/wsl-config#configuration-settings-for-wslconfig) if you're using a proxy.
 - This setting applies globally across all WSL2 instances.
 
 
 
-### 🌟 Extra Credit
+### Extra Credit
 
 If you want to manage Docker visually via Portainer:
 

@@ -2,13 +2,13 @@
 title: Installation
 ---
 
-# 🛠️ Installation & Prerequisites
+# Installation & Prerequisites
 
 Before you deploy DUMB, make sure your environment and accounts are ready.
 
 ---
 
-## ✅ System Requirements
+## System Requirements
 
 - **Docker or Docker-compatible environment**
 - Linux system (WSL on Windows when using `rshared`)
@@ -25,18 +25,18 @@ Before you deploy DUMB, make sure your environment and accounts are ready.
     See the [deployment options](https://i-am-puid-0.github.io/DUMB/deployment/wsl) to run DUMB on Windows through WSL2.
 ---
 
-## 🔐 Required Credentials
+## Required Credentials
 
 | Service     | Required Info                                 |
 |------------------|------------------------------------------|
 | Debrid      | API Key (Real-Debrid)                         |
 | GitHub      | Token *(if using the sponsored Zurg repo)*    |
 
-📌 See [Configuration → Integration Tokens](../features/configuration.md#-integration-tokens--credentials)
+ See [Configuration → Integration Tokens](../features/configuration.md#-integration-tokens--credentials)
 
 ---
 
-## 📂 Required Directories
+## Required Directories
 
 You’ll need to bind mount the following volumes when running the container:
 
@@ -66,7 +66,7 @@ You’ll need to bind mount the following volumes when running the container:
     `:rshared` is not required when using the default configuration leveraging the internal media server or when not utilizing [Decypharr](../services/core/decypharr.md)
 ---
 
-## 🧰 Preparation Checklist
+## Preparation Checklist
 
 - Choose your deployment method:
 
@@ -85,8 +85,8 @@ You’ll need to bind mount the following volumes when running the container:
 
 ---
 
-## ⏭️ Next Steps
+## ⏭ Next Steps
 
-- ➕ [Explore Features](../features/index.md)
-- ⚙️ [Tune Your Configuration](../features/configuration.md)
-- 🔍 [Inspect the Services](../services/index.md)
+-  [Explore Features](../features/index.md)
+-  [Tune Your Configuration](../features/configuration.md)
+-  [Inspect the Services](../services/index.md)

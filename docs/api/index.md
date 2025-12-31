@@ -2,7 +2,7 @@
 title: DUMB API Overview
 ---
 
-# ⚙️ DUMB API
+# DUMB API
 
 DUMB includes a built-in REST API and WebSocket server to allow programmatic control of services, logging, and system state.
 
@@ -20,7 +20,7 @@ The API is enabled and configured using the `dumb_config.json` under the `dumb.a
 
 --- 
 
-## ✨ Features
+## Features
 - Health checks
 - Process management (start, stop, restart services)
 - Real-time log streaming via WebSocket
@@ -29,7 +29,7 @@ The API is enabled and configured using the `dumb_config.json` under the `dumb.a
 
 ---
 
-## 🔁 Common Endpoints
+## Common Endpoints
 
 | Method | Path                      | Description                                |
 |--------|---------------------------|--------------------------------------------|
@@ -46,7 +46,7 @@ The API is enabled and configured using the `dumb_config.json` under the `dumb.a
 
 ---
 
-## 🗂️ Directory Structure
+## Directory Structure
 The DUMB API is split into the following modules:
 
 | File | Purpose |
@@ -62,7 +62,7 @@ The DUMB API is split into the following modules:
 
 ---
 
-## 🧭 API Documentation
+## API Documentation
 
 DUMB provides built-in API documentation through two convenient endpoints:
 
@@ -80,7 +80,7 @@ These are helpful for development, debugging, and integrating external systems w
 
 --- 
 
-## 📚 Next Steps
+## Next Steps
 Click on any of the modules in the sidebar to explore endpoint structure, usage examples, and development guidelines for extending the DUMB API:
 
 - [Health Check](health.md)

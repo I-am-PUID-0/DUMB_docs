@@ -2,7 +2,7 @@
 title: Deployment
 ---
 
-# 🚀 Deployment Overview
+# Deployment Overview
 
 DUMB can be deployed across a variety of platforms and environments. Whether you're using **Docker**, **Portainer**, **Unraid**, **WSL2**, or other systems like **TrueNAS**, **Synology**, or **QNAP**, this section will guide you through the available options to get DUMB up and running.
 
@@ -10,49 +10,49 @@ All deployment methods provide access to the same integrated services and config
 
 ---
 
-## 📦 Available Deployment Guides
+## Available Deployment Guides
 
-### 🐳 Docker Compose
+### Docker Compose
 Quickest way to get started using Docker CLI and `docker-compose.yml`.
 
 - [Deploy with Docker](docker.md)
 
-### 🧰 Dockge
+### Dockge
 Deploy using the lightweight Dockge container manager.
 
 - [Deploy with Dockge](dockge.md)
 
-### 📚 Portainer
+### Portainer
 Deploy using the Portainer web interface.
 
 - [Deploy with Portainer](portainer.md)
 
-### 🧯 Unraid
+### Unraid
 Deploy using the Unraid Community Applications plugin and container template.
 
 - [Deploy with Unraid](unraid.md)
 
-### 💻 WSL2 (Windows Subsystem for Linux)
+### WSL2 (Windows Subsystem for Linux)
 Deploy DUMB in a WSL2 environment on Windows 11.
 
 - [Deploy with WSL](wsl.md)
 
-### 📦 Proxmox
+### Proxmox
 Deploy inside a lightweight container or VM using Proxmox VE.
 
 - [Deploy with Proxmox](proxmox.md)
 
-### 🧠 QNAP
+### QNAP
 Deploy using Container Station or Docker on supported QNAP NAS devices.
 
 - [Deploy with QNAP](qnap.md)
 
-### 🧊 Synology
+### Synology
 Deploy using Synology Docker and DSM's GUI or CLI.
 
 - [Deploy with Synology](synology.md)
 
-### 💾 TrueNAS
+### TrueNAS
 Deploy on TrueNAS SCALE using Docker or native Apps.
 
 - [Deploy with TrueNAS](truenas.md)
@@ -60,7 +60,7 @@ Deploy on TrueNAS SCALE using Docker or native Apps.
 ---
 
 
-## 🔐 Additional Notes
+## Additional Notes
 
 - All methods rely on a valid and accessible `dumb_config.json` file for configuring services.
 - It is strongly recommended to bind-mount a local `config` directory to persist user data.
@@ -77,6 +77,6 @@ For more about configuring services, see the [Configuration](../features/configu
 
 ---
 
-## 📎 Related Pages
+## Related Pages
 - [Service Overview](../services/index.md)
 - [Features](../features/index.md)

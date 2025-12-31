@@ -30,7 +30,7 @@
 },
 ```
 
-### 🔍 Configuration Key Descriptions
+### Configuration Key Descriptions
 
 * **`enabled`**: Enables or disables Phalanx DB.
 * **`process_name`**: Label used for logging and monitoring.
@@ -49,7 +49,7 @@
 
 ---
 
-## 🧪 When to Use
+## When to Use
 
 Phalanx DB is beneficial if you want to:
 
@@ -61,7 +61,7 @@ Phalanx DB is beneficial if you want to:
 
 ---
 
-## ⚙️ Branch / Version Targeting
+## Branch / Version Targeting
 You can control which version or branch is deployed by setting:
 
 - `branch_enabled: true` and specifying a `branch`

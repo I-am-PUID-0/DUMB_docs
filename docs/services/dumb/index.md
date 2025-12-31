@@ -13,7 +13,7 @@ These services are always required and are started automatically when the contai
 
 ---
 
-## ⚙️ What Are DUMB Services?
+## What Are DUMB Services?
 
 DUMB services are:
 
@@ -23,7 +23,7 @@ DUMB services are:
 
 ---
 
-## 🧱 DUMB Service Index
+## DUMB Service Index
 
 | Service                                       | Description                                                                | Role                         |
 | --------------------------------------------- | -------------------------------------------------------------------------- | ---------------------------- |
@@ -32,7 +32,7 @@ DUMB services are:
 
 ---
 
-## 🔗 How They Work
+## How They Work
 
 * **[DUMB API](../dumb/api.md)** is the internal backend that exposes HTTP endpoints for service management, logs, onboarding, and health monitoring. It must be responsive for any service to be monitored or configured.
 * **[DUMB Frontend](../dumb/dumb-frontend.md)** connects to the DUMB API and renders a modern web interface to help users manage their instance through onboarding steps, status dashboards, log viewers, and config editors.
@@ -41,7 +41,7 @@ These services talk to each other over localhost and coordinate all other config
 
 ---
 
-## 🧠 Tips
+## Tips
 
 * Both services are auto-launched and should not be disabled.
 * If the UI does not load, check the logs for `dumb_frontend` and `dumb_api`.
@@ -49,7 +49,7 @@ These services talk to each other over localhost and coordinate all other config
 
 ---
 
-## 📚 Related Pages
+## Related Pages
 
 * [API](../../api/index.md)
 * [Core Services](../core/index.md)

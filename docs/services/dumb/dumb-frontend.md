@@ -2,7 +2,7 @@ The **DUMB Frontend** is a web-based user interface designed to enhance the mana
 
 ---
 
-## ⚙️ Configuration Settings in `dumb_config.json`
+## Configuration Settings in `dumb_config.json`
 
 ```json
 "frontend": {
@@ -32,7 +32,7 @@ The **DUMB Frontend** is a web-based user interface designed to enhance the mana
 }
 ```
 
-### 🔍 Configuration Key Descriptions
+### Configuration Key Descriptions
 
 - **`enabled`**: Determines whether the DUMB Frontend service is active.
 - **`process_name`**: Name used in logs and process tracking.
@@ -54,7 +54,7 @@ The **DUMB Frontend** is a web-based user interface designed to enhance the mana
 
 ---
 
-## ⚙️ Branch / Version Targeting
+## Branch / Version Targeting
 You can control which version or branch of the frontend is deployed by setting:
 
 - `branch_enabled: true` and specifying a `branch`
@@ -62,11 +62,11 @@ You can control which version or branch of the frontend is deployed by setting:
 
 ---
 
-## 🚪 Accessing the DUMB Frontend
+## Accessing the DUMB Frontend
 - Navigate to: `http://<host>:<port>`
     - default port `3005`
 
-## 📸 User Interface Overview
+## User Interface Overview
 
 ### Service Dashboard
 
@@ -133,14 +133,14 @@ For services with log files, this view allows:
 
 ---
 
-## 🧠 Tips
+## Tips
 
 - **Automatic Updates**: Enable `auto_update` to keep the frontend up-to-date with the latest features.
 - **Log Monitoring**: Utilize the service logs functionality for effective monitoring and troubleshooting.
 
 ---
 
-## 📚 Resources
+## Resources
 
 - [DUMB Frontend GitHub Repository](https://github.com/nicocapalbo/dmbdb)
 - [DUMB Frontend CHANGELOG](https://github.com/nicocapalbo/dmbdb/blob/main/CHANGELOG.md)
