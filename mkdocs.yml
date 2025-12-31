@@ -88,6 +88,8 @@ theme:
   name: material
   logo: assets/images/DUMB.png
   favicon: assets/images/favicon.ico
+  icon:
+    repo: fontawesome/brands/github
   custom_dir: docs/overrides
   features:
     - navigation.instant
