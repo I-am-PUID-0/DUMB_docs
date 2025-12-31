@@ -83,7 +83,7 @@ img[data-zoomable] {
 
 
 
-[data-md-color-scheme="indigo"] {
+[data-md-color-scheme="default"] {
   --md-primary-fg-color: #004263;
   --md-primary-fg-color--light: #4b9cd3;
   --md-primary-fg-color--dark: #004263;
@@ -100,17 +100,17 @@ img[data-zoomable] {
   background-color: #262b60 !important;
 }
 
-[data-md-color-scheme="indigo"] .md-header,
-[data-md-color-scheme="indigo"] .md-tabs1 {
+[data-md-color-scheme="default"] .md-header,
+[data-md-color-scheme="default"] .md-tabs1 {
   background-color: #262b60 !important;
 }
-[data-md-color-scheme="indigo"] .md-header__inner,
-[data-md-color-scheme="indigo"] .md-search__button {
+[data-md-color-scheme="default"] .md-header__inner,
+[data-md-color-scheme="default"] .md-search__button {
   color: #ffffff !important;
 }
 
-[data-md-color-scheme="indigo"] .md-search__button:before,
-[data-md-color-scheme="indigo"] .md-search__button:after {
+[data-md-color-scheme="default"] .md-search__button:before,
+[data-md-color-scheme="default"] .md-search__button:after {
   background-color: #ffffff !important;
   color: var(--md-default-fg-color) !important;
 }

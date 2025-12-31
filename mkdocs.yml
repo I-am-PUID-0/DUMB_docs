@@ -110,8 +110,15 @@ theme:
     - content.code.annotate 
 
   palette:
+    - media: "(prefers-color-scheme)"
+      toggle:
+        icon: lucide/sun-moon
+        name: Switch to light mode
+
     - media: "(prefers-color-scheme: light)"
-      scheme: indigo
+      scheme: default
+      primary: indigo
+      accent: indigo
       toggle:
         icon: lucide/sun
         name: Switch to dark mode
@@ -119,8 +126,9 @@ theme:
     - media: "(prefers-color-scheme: dark)"
       scheme: slate
       toggle:
-        icon: lucide/sun-moon
-        name: Switch to light mode
+        icon: lucide/moon-star
+        name: Switch to system preference
+    
 
 
   generator: false
