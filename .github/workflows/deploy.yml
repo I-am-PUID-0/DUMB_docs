@@ -1,4 +1,4 @@
-name: Deploy MkDocs with Poetry
+name: Deploy Docs with Zensical
 
 on:
   pull_request:
