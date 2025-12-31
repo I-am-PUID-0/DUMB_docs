@@ -4,21 +4,36 @@ hide:
   - navigation
   - toc
 ---
+<div class="md-hero hero-card" markdown>
 
-<div align="center">
-  <a href="https://github.com/I-am-PUID-0/DUMB">
-    <picture>
-      <img
-        class="hero"
-        alt="DUMB"
-        src="assets/images/DUMB.png"
-      >
-    </picture>
-  </a>
+
+<div style="display: flex; align-items: center; gap: 1rem;" markdown>
+<a href="https://github.com/I-am-PUID-0/DUMB">
+  <picture>
+    <img
+      class="hero"
+      alt="DUMB"
+      src="assets/images/DUMB.png"
+    >
+  </picture>
+</a>
+
+<div markdown>
+<h1>DUMB - A Unified Media Solution</h1>
+
+**DUMB** is an all-in-one media management and streaming solution that integrates 
+**Plex Media Server, Jellyfin, Emby, Riven, Plex Debrid, CLI Debrid, Decypharr, NzbDAV, Sonarr, Radarr, Lidarr, Prowlarr, Whisparr, Zurg, Zilean, rclone, PostgreSQL, pgAdmin 4, and others** into a single Docker image 
+for streamlined deployment. It automates the process of 
+**finding, downloading, and organizing media content** using 
+**Debrid Services, Plex Discover Watchlists, Trakt lists, Seerr, and more**, 
+making content instantly available for streaming.
+</div>
+</div>
 </div>
 
+
 <div
-  align="center"
+  text-align="center"
   style="display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; margin-top: 1em;"
 >
   <a href="https://github.com/I-am-PUID-0/DUMB/stargazers">
@@ -60,56 +75,42 @@ hide:
 </div>
 
 
-<div class="container">
-    <div class="intro-section">
-        <div class="note">
-            <strong>DUMB - A Unified Media Solution</strong><br>
-            <p>
-                <strong>DUMB</strong> is an all-in-one media management and streaming solution that integrates 
-                <strong>Plex Media Server, Jellyfin, Emby, Riven, Plex Debrid, CLI Debrid, Decypharr, NzbDAV, Sonarr, Radarr, Lidarr, Prowlarr, Whisparr, Zurg, Zilean, rclone, PostgreSQL, pgAdmin 4, and others</strong> into a single Docker image 
-                for streamlined deployment. It automates the process of 
-                <strong>finding, downloading, and organizing media content</strong> using 
-                <strong>Debrid Services, Plex Discover Watchlists, Trakt lists, Seerr, and more</strong>, 
-                making content instantly available for streaming.
-            </p>
-        </div>
-    </div>
 
-    <div class="flex-container">
-        <div class="column">
-            <h2>🚀 So, what does all this do?</h2>
-            <p>The <strong>DUMB ecosystem</strong> is built on multiple underlying projects that work together to enable <strong>Plex streaming</strong> using Debrid Services. These include:</p>
-            <ul class="project-list">
-                <li>🔹 <a href="https://www.plex.tv/">Plex Media Server</a></li>
-                <li>🔹 <a href="https://jellyfin.org/">Jellyfin</a></li>
-                <li>🔹 <a href="https://emby.media/">Emby</a></li>
-                <li>🔹 <a href="https://github.com/rivenmedia/riven">Riven</a></li>
-                <li>🔹 <a href="https://github.com/I-am-PUID-0/plex_debrid">Plex Debrid</a></li>
-                <li>🔹 <a href="https://github.com/godver3/cli_debrid">CLI Debrid</a></li>
-                <li>🔹 <a href="https://github.com/sirrobot01/decypharr">Decypharr</a></li>
-                <li>🔹 <a href="https://github.com/nzbdav-dev/nzbdav">NzbDAV</a></li>
-                <li>🔹 <a href="https://sonarr.tv/">Sonarr</a></li>
-                <li>🔹 <a href="https://radarr.video/">Radarr</a></li>
-                <li>🔹 <a href="https://lidarr.audio/">Lidarr</a></li>
-                <li>🔹 <a href="https://prowlarr.com/">Prowlarr</a></li>
-                <li>🔹 <a href="https://whisparr.com/">Whisparr</a></li>
-                <li>🔹 <a href="https://github.com/debridmediamanager/zurg-testing">Zurg</a></li>
-                <li>🔹 <a href="https://github.com/iPromKnight/zilean">Zilean</a></li>
-                <li>🔹 <a href="https://github.com/rclone/rclone">rclone</a></li>
-                <li>🔹 <a href="https://www.postgresql.org/">PostgreSQL</a></li>
-                <li>🔹 <a href="https://www.pgadmin.org/">pgAdmin 4</a></li>
-            </ul>
-            <p>These projects work seamlessly with <strong>Plex Discover Watchlists, Trakt lists, Seerr, and more</strong> to streamline media discovery and access.</p>
-        </div>
 
-        <div class="column">
-            <h2>🛠️ So, what does DUMB do?</h2>
-            <ul class="features">
-                <li> <strong>Unified Deployment</strong> – DUMB integrates Plex Media Server, Jellyfin, Emby, Riven, Plex Debrid, CLI Debrid, Decypharr, NzbDAV, Sonarr, Radarr, Lidarr, Prowlarr, Whisparr, Zurg, Zilean, rclone, PostgreSQL, and pgAdmin 4 into a <strong>single Docker image</strong> for <strong>faster and simplified deployment</strong>.</li>
-                <li> <strong>Automated Configuration</strong> – DUMB eliminates the need for <strong>manual setup</strong>, ensuring a smooth and efficient media management experience.</li>
-                <li> <strong>Web-Based UI</strong> – Take full control with an intuitive <strong>web interface</strong>, making it easy to <strong>manage downloads, track content, and interact with the various services</strong>.</li>
-            </ul>
-            <p>📌 For additional information, explore the <strong>other sections of the docs</strong>.</p>
-        </div>
-    </div>
+
+<div class="grid cards" markdown>
+
+- ## 🚀 So, what does all this do?
+  The **DUMB ecosystem** is built on multiple underlying projects that work together to enable **Plex streaming** using Debrid Services. These include:
+  
+    - <a href="https://www.plex.tv/">Plex Media Server</a>
+    - <a href="https://jellyfin.org/">Jellyfin</a>
+    - <a href="https://emby.media/">Emby</a>
+    - <a href="https://github.com/rivenmedia/riven">Riven</a>
+    - <a href="https://github.com/I-am-PUID-0/plex_debrid">Plex Debrid</a>
+    - <a href="https://github.com/godver3/cli_debrid">CLI Debrid</a>
+    - <a href="https://github.com/sirrobot01/decypharr">Decypharr</a>
+    - <a href="https://github.com/nzbdav-dev/nzbdav">NzbDAV</a>
+    - <a href="https://sonarr.tv/">Sonarr</a>
+    - <a href="https://radarr.video/">Radarr</a>
+    - <a href="https://lidarr.audio/">Lidarr</a>
+    - <a href="https://prowlarr.com/">Prowlarr</a>
+    - <a href="https://whisparr.com/">Whisparr</a>
+    - <a href="https://github.com/debridmediamanager/zurg-testing">Zurg</a>
+    - <a href="https://github.com/iPromKnight/zilean">Zilean</a>
+    - <a href="https://github.com/rclone/rclone">rclone</a>
+    - <a href="https://www.postgresql.org/">PostgreSQL</a>
+    - <a href="https://www.pgadmin.org/">pgAdmin 4</a>
+  
+    These projects work seamlessly with **Plex Discover Watchlists, Trakt lists, Seerr, and more** to streamline media discovery and access.
+
+
+   
+  - ##🛠️ So, what does DUMB do?
+    -  **Unified Deployment** – DUMB integrates Plex Media Server, Jellyfin, Emby, Riven, Plex Debrid, CLI Debrid, Decypharr, NzbDAV, Sonarr, Radarr, Lidarr, Prowlarr, Whisparr, Zurg, Zilean, rclone, PostgreSQL, and pgAdmin 4 into a **single Docker image** for **faster and simplified deployment**.</li>
+    -  **Automated Configuration** – DUMB eliminates the need for **manual setup**, ensuring a smooth and efficient media management experience.</li>
+    -  **Web-Based UI** – Take full control with an intuitive **web interface**, making it easy to **manage downloads, track content, and interact with the various services**.</li>
+📌 For additional information, explore the **other sections of the docs**.
+
+</div>
 </div>

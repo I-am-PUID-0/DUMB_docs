@@ -38,9 +38,11 @@
 }
 
 img.hero {
-    width: 100%;
-    max-width: 900px;
     height: auto;
+    width: auto;
+    max-width: 400px;
+    min-width: 220px;
+    object-fit: contain;
     border-radius: 10px;
     margin: 0 auto;
     display: block;
@@ -111,4 +113,18 @@ img[data-zoomable] {
 [data-md-color-scheme="indigo"] .md-search__button:after {
   background-color: #ffffff !important;
   color: var(--md-default-fg-color) !important;
+}
+
+.hero-card {
+  background-color: var(--md-code-bg-color);
+  border-radius: 0.5rem;
+  padding: 1rem;
+  margin: 0 0 1rem 0;
+}
+
+
+
+.hero-card p {
+  font-size: 1.0rem;
+  line-height: 1.6;
 }
