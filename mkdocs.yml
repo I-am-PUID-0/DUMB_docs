@@ -128,10 +128,6 @@ theme:
       toggle:
         icon: lucide/moon-star
         name: Switch to system preference
-    
-
-
-  generator: false
 
 extra_javascript:
   - https://cdn.jsdelivr.net/npm/medium-zoom@1.1.0/dist/medium-zoom.min.js
