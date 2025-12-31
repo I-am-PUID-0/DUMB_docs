@@ -94,7 +94,7 @@ Once your stack is deployed, you can view logs for the DUMB container:
 To view live output or run interactive commands:
 
 1. From the **Containers** page, click on the **DUMB** container.
-2. Click the **Attach Console** button (:gear: icon or from the top bar).
+2. Click the **Attach Console** button
 3. Choose a shell (e.g., `sh`, `bash`, or `/venv/bin/python`) and click **Connect**.
 
 !!! note "Use this for tasks like inspecting running processes, modifying configs, or testing tools inside the container."

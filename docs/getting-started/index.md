@@ -50,7 +50,7 @@ DUMB is ideal if you:
 
 ---
 
-## ⏭ What Next?
+## What Next?
 
 1. Head to [Installation](installation.md) to get ready.
 2. Choose your platform in [Deployment](../deployment/index.md)
