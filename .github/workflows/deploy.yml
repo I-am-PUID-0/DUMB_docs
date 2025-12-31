@@ -72,6 +72,7 @@ jobs:
         run: poetry run mkdocs gh-deploy --force
 
       - name: Mirror to DUMB gh-pages branch
+        if: github.ref_name == 'master'
         uses: peaceiris/actions-gh-pages@v3
         with:
           external_repository: I-am-PUID-0/DUMB
