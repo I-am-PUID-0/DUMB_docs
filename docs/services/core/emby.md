@@ -60,7 +60,7 @@ icon: lucide/disc
 ## Terms of Service
 
 By enabling Emby, you confirm that you have read and agree to the Emby Terms of Service:
-https://emby.media/terms.html
+* [Emby Terms of Service](https://emby.media/terms.html)
 
 ---
 
