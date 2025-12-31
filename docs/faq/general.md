@@ -88,7 +88,7 @@ DUMB supports **two methods of exposing content to your media server**, each wit
 
 Mounting the WebDAV or remote storage directly using `rclone` (which often connects to a Zurg instance) gives you full access to all files in your debrid account.
 
-** Pros:**
+**Pros:**
 
 - Access to **all debrid content**, including content not added by Riven
 - Instant visibility of new files from your debrid service
@@ -96,7 +96,7 @@ Mounting the WebDAV or remote storage directly using `rclone` (which often conne
 - Allows content orchestration with [Debrid Media Manager](https://github.com/debridmediamanager/debrid-media-manager) (DMM)
 - Less complexity when sharing mounts across the host or network
 
-** Cons:**
+**Cons:**
 
 - File/folder naming is often **inconsistent or messy**
 - Can lead to **Plex/Emby/Jellyfin misidentification**
@@ -108,14 +108,14 @@ Riven creates cleanly named **symlinks** pointing to content in the underlying Z
 
 These symlinks are stored in a separate directory (like `/mnt/debrid/riven_symlinks`) and represent only **curated content** Riven has identified and processed.
 
-** Pros:**
+**Pros:**
 
 - Only includes content that’s been properly scraped and sorted
 - Directory structure and filenames are optimized for media servers
 - More accurate **library scans** and faster detection
 - Ideal for fully automated Plex/Emby/Jellyfin setups
 
-** Cons:**
+**Cons:**
 
 - Only includes what Riven has processed — not your full debrid library
 - Requires Riven to stay running and correctly configured
