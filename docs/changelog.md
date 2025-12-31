@@ -1,4 +1,5 @@
 ---
+icon: lucide/history
 hide:
   - navigation
 ---

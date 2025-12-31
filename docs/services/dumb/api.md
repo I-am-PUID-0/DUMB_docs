@@ -1,5 +1,6 @@
 ---
 title: DUMB API
+icon: lucide/code
 ---
 
 # DUMB API

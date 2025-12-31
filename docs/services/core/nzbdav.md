@@ -1,5 +1,6 @@
 ---
 title: NzbDAV
+icon: lucide/cloud
 ---
 
 # NzbDAV (Core Service)

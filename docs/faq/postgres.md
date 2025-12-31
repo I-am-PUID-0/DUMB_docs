@@ -1,5 +1,6 @@
 ---
 title: PostgreSQL FAQ
+icon: lucide/database
 ---
 
 # PostgreSQL FAQ

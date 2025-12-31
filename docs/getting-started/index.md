@@ -1,5 +1,6 @@
 ---
 title: Introduction
+icon: lucide/rocket
 ---
 
 # Getting Started with DUMB

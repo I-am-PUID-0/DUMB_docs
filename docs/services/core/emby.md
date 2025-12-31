@@ -1,5 +1,6 @@
 ---
 title: Emby
+icon: lucide/disc
 ---
 
 # Emby (Core Service)

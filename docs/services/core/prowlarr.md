@@ -1,5 +1,6 @@
 ---
 title: Prowlarr
+icon: lucide/search
 ---
 
 # Prowlarr (Core Service)

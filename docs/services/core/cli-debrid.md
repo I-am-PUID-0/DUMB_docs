@@ -1,5 +1,6 @@
 ---
 title: CLI Debrid
+icon: lucide/terminal
 ---
 
 # CLI Debrid (Core Service)

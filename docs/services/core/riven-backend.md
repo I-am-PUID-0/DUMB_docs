@@ -1,3 +1,7 @@
+---
+title: Riven Backend
+icon: lucide/database
+---
 
 # Riven Backend Configuration
 

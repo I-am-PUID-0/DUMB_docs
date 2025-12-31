@@ -1,5 +1,6 @@
 ---
 title: DUMB FAQ
+icon: lucide/help-circle
 ---
 
 # DUMB FAQ

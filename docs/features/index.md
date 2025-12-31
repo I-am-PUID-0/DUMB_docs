@@ -1,5 +1,6 @@
 ---
 title: Features Overview
+icon: lucide/list
 ---
 
 # Features Overview

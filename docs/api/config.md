@@ -1,5 +1,6 @@
 ---
 title: Configuration API
+icon: lucide/settings
 ---
 
 # Configuration API

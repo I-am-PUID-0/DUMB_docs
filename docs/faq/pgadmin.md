@@ -1,5 +1,6 @@
 ---
 title: pgAdmin FAQ
+icon: lucide/database
 ---
 
 # pgAdmin FAQ

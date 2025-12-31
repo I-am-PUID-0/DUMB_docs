@@ -1,5 +1,6 @@
 ---
 title: Radarr
+icon: lucide/film
 ---
 
 # Radarr (Core Service)

@@ -1,5 +1,6 @@
 ---
 title: Whisparr
+icon: lucide/eye
 ---
 
 # Whisparr (Core Service)

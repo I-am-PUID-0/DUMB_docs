@@ -1,5 +1,6 @@
 ---
 title: Deploy with WSL
+icon: fontawesome/brands/windows
 ---
 
 ## Deploying DUMB on Windows Setup Guide (Docker/WSL)

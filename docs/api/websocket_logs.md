@@ -1,5 +1,6 @@
 ---
 title: WebSocket Logs API
+icon: lucide/waves
 ---
 
 # WebSocket Logs API

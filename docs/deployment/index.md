@@ -1,5 +1,6 @@
 ---
 title: Deployment
+icon: lucide/server
 ---
 
 # Deployment Overview

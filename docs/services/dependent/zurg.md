@@ -1,3 +1,8 @@
+---
+title: Zurg
+icon: lucide/zap
+---
+
 # Zurg
 
 Zurg is the debrid content fetcher that powers file discovery and caching for DUMB. It mounts content made available by debrid services like Real-Debrid and exposes them over WebDAV for rclone to access. Zurg is designed to run quietly in the background and can be configured to run multiple instances.

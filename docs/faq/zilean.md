@@ -1,5 +1,6 @@
 ---
 title: Zilean FAQ
+icon: lucide/book-open
 ---
 
 # Zilean FAQ

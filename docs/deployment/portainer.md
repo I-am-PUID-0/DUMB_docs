@@ -1,5 +1,6 @@
 ---
 title: Deploy with Portainer
+icon: simple/portainer
 ---
 
 ## Deploying DUMB with Portainer

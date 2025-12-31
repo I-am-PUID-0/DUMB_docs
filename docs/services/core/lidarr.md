@@ -1,5 +1,6 @@
 ---
 title: Lidarr
+icon: lucide/music
 ---
 
 # Lidarr (Core Service)

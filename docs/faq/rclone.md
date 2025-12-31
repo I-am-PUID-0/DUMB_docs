@@ -1,3 +1,8 @@
+---
+title: rclone FAQ
+icon: lucide/hard-drive
+---
+
 # rclone FAQ
 
 Below are some common questions and solutions related to using **rclone** with **DUMB**.

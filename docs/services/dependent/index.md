@@ -1,5 +1,6 @@
 ---
- title: Dependent Services Overview
+title: Dependent Services Overview
+icon: lucide/box
 ---
 
 # Dependent Services

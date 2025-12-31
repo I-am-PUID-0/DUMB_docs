@@ -1,5 +1,6 @@
 ---
 title: Core Services Overview
+icon: lucide/cpu
 ---
 
 # Core Services

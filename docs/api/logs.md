@@ -1,5 +1,6 @@
 ---
 title: Logs API
+icon: lucide/file-text
 ---
 
 # Logs API

@@ -1,5 +1,6 @@
 ---
 title: rclone
+icon: lucide/hard-drive
 ---
 
 rclone is a command-line tool used in DUMB to mount cloud storage—specifically Debrid services like Real-Debrid—into the container as a local file system. It works in tandem with Zurg and is configured automatically during container startup.

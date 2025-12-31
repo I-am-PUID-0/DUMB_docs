@@ -1,5 +1,6 @@
 ---
 title: Usage
+icon: lucide/play-circle
 ---
 
 # Usage

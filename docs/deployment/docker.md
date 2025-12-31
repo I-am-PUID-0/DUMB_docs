@@ -1,5 +1,6 @@
 ---
 title: Deploy with Docker
+icon: fontawesome/brands/docker
 ---
 
 

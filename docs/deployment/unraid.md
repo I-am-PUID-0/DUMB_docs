@@ -1,5 +1,6 @@
 ---
 title: unRAID Deployment
+icon: simple/unraid
 ---
 
 ## Deploying DUMB on unRAID

@@ -1,5 +1,6 @@
 ---
 title: Process Management API
+icon: lucide/cpu
 ---
 
 # Process Management API

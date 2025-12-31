@@ -1,6 +1,7 @@
 ---
 
 title: About
+icon: lucide/info
 hide:
   - navigation
 

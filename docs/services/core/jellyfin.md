@@ -1,5 +1,6 @@
 ---
 title: Jellyfin
+icon: lucide/play
 ---
 
 # Jellyfin (Core Service)

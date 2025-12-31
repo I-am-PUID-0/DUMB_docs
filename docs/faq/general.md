@@ -1,5 +1,6 @@
 ---
 title: General FAQ
+icon: lucide/help-circle
 ---
 
 # General FAQ

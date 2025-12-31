@@ -1,5 +1,6 @@
 ---
 title: Sonarr
+icon: lucide/radio
 ---
 
 # Sonarr (Core Service)

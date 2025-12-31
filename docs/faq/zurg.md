@@ -1,5 +1,6 @@
 ---
 title: Zurg FAQ
+icon: lucide/zap
 ---
 
 # Zurg FAQ

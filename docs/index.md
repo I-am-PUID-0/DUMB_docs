@@ -1,5 +1,6 @@
 ---
 title: Debrid Unlimited Media Bridge
+icon: lucide/home
 hide:
   - navigation
   - toc

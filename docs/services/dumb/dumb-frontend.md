@@ -1,3 +1,8 @@
+---
+title: DUMB Frontend
+icon: lucide/layout-dashboard
+---
+
 The **DUMB Frontend** is a web-based user interface designed to enhance the management and monitoring of the Debrid Unlimited Media Bridge (DUMB) ecosystem. It offers features such as real-time service logs, filtering options, and service control functionalities, providing users with an intuitive platform to interact with DUMB services.
 
 ---

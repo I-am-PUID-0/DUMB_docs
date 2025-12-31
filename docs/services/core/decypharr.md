@@ -1,5 +1,6 @@
 ---
 title: Decypharr
+icon: lucide/shield
 ---
 
 # Decypharr (Core Service)

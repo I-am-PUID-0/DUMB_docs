@@ -1,5 +1,6 @@
 ---
 title: Configuration
+icon: lucide/settings
 ---
 
 # Configuration

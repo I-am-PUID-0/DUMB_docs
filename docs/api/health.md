@@ -1,5 +1,6 @@
 ---
 title: Health Check API
+icon: lucide/heart-pulse
 ---
 
 # Health Check API

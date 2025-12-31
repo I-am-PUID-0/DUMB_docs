@@ -1,5 +1,6 @@
 ---
 title: pgAdmin 4
+icon: lucide/database
 ---
 
 # pgAdmin 4

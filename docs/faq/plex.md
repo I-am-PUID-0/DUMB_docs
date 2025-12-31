@@ -1,5 +1,6 @@
 ---
 title: Plex FAQ
+icon: lucide/tv
 ---
 
 # Plex FAQ

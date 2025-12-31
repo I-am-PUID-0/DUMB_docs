@@ -1,5 +1,6 @@
 ---
 title: Deploying on Proxmox
+icon: simple/proxmox
 ---
 
 ## Deploying DUMB on Proxmox (LXC Container)

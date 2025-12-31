@@ -1,3 +1,8 @@
+---
+title: CLI Battery
+icon: lucide/battery-charging
+---
+
 # CLI Battery Configuration
 
 The **CLI Battery** is a Flask-based companion application required by CLI Debrid. It provides metadata services and background processing, integrating with Trakt and exposing a lightweight web API for managing movies and TV shows. This service must be running for CLI Debrid to operate properly.

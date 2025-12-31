@@ -1,5 +1,6 @@
 ---
-Title: Plex Media Server
+title: Plex Media Server
+icon: lucide/tv
 ---
 
 # Plex Media Server (Core Service)

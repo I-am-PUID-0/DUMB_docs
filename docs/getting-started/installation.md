@@ -1,5 +1,6 @@
 ---
 title: Installation
+icon: lucide/download
 ---
 
 # Installation & Prerequisites

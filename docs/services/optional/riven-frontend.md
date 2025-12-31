@@ -1,3 +1,8 @@
+---
+title: Riven Frontend
+icon: lucide/layout-dashboard
+---
+
 # Riven Frontend
 
 The **Riven Frontend** is the web-based interface for interacting with the Riven Backend. It allows users to manage settings, content, and integrations from a clean and modern UI.

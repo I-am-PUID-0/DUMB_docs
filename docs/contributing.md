@@ -1,5 +1,6 @@
 ---
 title: Contributing
+icon: lucide/git-pull-request
 hide:
   - navigation
 ---

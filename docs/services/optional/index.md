@@ -1,5 +1,6 @@
 ---
 title: Optional Services Overview
+icon: lucide/puzzle
 ---
 
 # Optional Services
