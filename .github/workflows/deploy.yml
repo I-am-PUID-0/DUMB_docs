@@ -73,7 +73,7 @@ jobs:
         uses: actions/configure-pages@v5
 
       - name: Build Zensical
-        run: poetry run zensical build -clean
+        run: poetry run zensical build --clean
 
       - name: Upload pages
         uses: actions/upload-pages-artifact@v4
