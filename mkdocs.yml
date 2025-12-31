@@ -151,6 +151,9 @@ extra:
 plugins:
   - search
   - tags
+  - mkdocstrings
+  - typeset
+  - meta
 
 markdown_extensions:
   - abbr
