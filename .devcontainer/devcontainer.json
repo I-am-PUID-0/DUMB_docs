@@ -9,9 +9,13 @@
             ]
         }
     },
-    "forwardPorts": [
-        8100
-    ],
+    "forwardPorts": [8000],
+    "portsAttributes": {
+        "8000": {
+            "label": "Zensical",
+            "onAutoForward": "openBrowser"
+        }
+    },
     "mounts": [
         "source=${localWorkspaceFolder},target=/workspace,type=bind"
     ],
@@ -21,6 +25,6 @@
         "--dns=8.8.8.8",
         "--dns=8.8.4.4"
     ],
-    "postCreateCommand": "pip install mkdocs-material",
+    "postCreateCommand": "bash ./.devcontainer/init.sh",
     "remoteUser": "vscode"
 }
