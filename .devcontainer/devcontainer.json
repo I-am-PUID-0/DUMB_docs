@@ -26,5 +26,6 @@
         "--dns=8.8.4.4"
     ],
     "postCreateCommand": "bash ./.devcontainer/init.sh",
+    "postStartCommand": "zensical serve",
     "remoteUser": "vscode"
 }
