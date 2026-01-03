@@ -1,5 +1,6 @@
 ---
 title: Decypharr
+icon: lucide/shield
 ---
 
 # Decypharr (Core Service)
@@ -8,7 +9,7 @@ title: Decypharr
 
 ---
 
-## 🔗 Service Relationships
+## Service Relationships
 
 | Classification | Role                                                           |
 | -------------- | -------------------------------------------------------------- |
@@ -20,7 +21,7 @@ title: Decypharr
 
 ---
 
-## 📦 Configuration in `dumb_config.json`
+## Configuration in `dumb_config.json`
 
 ```json
 "decypharr": {
@@ -53,7 +54,7 @@ title: Decypharr
 },
 ```
 
-### 🔍 Key Configuration Fields
+### Key Configuration Fields
 
 * `enabled`: Toggle to run Decypharr via DUMB.
 * `process_name`: Used for display and logs.
@@ -68,10 +69,10 @@ title: Decypharr
 
 ---
 
-## ⚙️ What Decypharr does
+## What Decypharr does
 
 
-### 🧠 How It Works
+### How It Works
 
 Decypharr acts as both a torrent manager and a renaming/organizing engine:
 
@@ -81,20 +82,20 @@ Decypharr acts as both a torrent manager and a renaming/organizing engine:
 * Provides a Web UI and WebDAV endpoints for remote management
 * Ensures all changes propagate cleanly between containers using `rshared`/`rslave`
 
-### 🎛️ Supported Features
+### Supported Features
 
-* ✅ Mock Qbittorrent API for Sonarr, Radarr, Lidarr, etc.
-* 🖥 Full-featured UI for managing torrents
-* 🌐 Proxy filtering for un-cached Debrid torrents
-* 🔁 Multiple Debrid service support (Real Debrid, Torbox, Debrid Link, All Debrid)
-* 📂 WebDAV server per Debrid provider for mounting remote files
-* 🔧 Repair Worker for missing files or symlinks
+*  Mock Qbittorrent API for Sonarr, Radarr, Lidarr, etc.
+*  Full-featured UI for managing torrents
+*  Proxy filtering for un-cached Debrid torrents
+*  Multiple Debrid service support (Real Debrid, Torbox, Debrid Link, All Debrid)
+*  WebDAV server per Debrid provider for mounting remote files
+*  Repair Worker for missing files or symlinks
 
 ---
 
-## 📦 Integration with DUMB
+## Integration with DUMB
 
-### 🧭 Arr `core_service` Setting
+### Arr `core_service` Setting
 
 For Sonarr/Radarr/Lidarr/Whisparr instances you want wired to Decypharr, set:
 
@@ -156,7 +157,7 @@ In Plex, add the Decypharr symlink folders as library sources:
 
 ---
 
-## 🛠️ Troubleshooting Tips
+## Troubleshooting Tips
 
 * Ensure the bind mounts are correct and both containers see the same `/mnt/debrid` structure
 * Make sure Decypharr has permission to write to and create symlinks in the target directory
@@ -165,7 +166,7 @@ In Plex, add the Decypharr symlink folders as library sources:
 
 ---
 
-## 🌐 Supported Debrid Providers
+## Supported Debrid Providers
 
 * [Real Debrid](https://real-debrid.com)
 * [Torbox](https://www.torbox.net)
@@ -174,7 +175,7 @@ In Plex, add the Decypharr symlink folders as library sources:
 
 ---
 
-## 🔗 Resources
+## Resources
 
 * [Decypharr GitHub](https://github.com/sirrobot01/decypharr)
 * [Decypharr Docs](https://sirrobot01.github.io/decypharr/)

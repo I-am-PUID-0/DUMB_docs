@@ -1,20 +1,21 @@
 ---
 title: Process Management API
+icon: lucide/cpu
 ---
 
-# ⚙️ Process Management API
+# Process Management API
 
 The **Process Management** endpoints handle launching, stopping, restarting, and tracking subprocesses managed by DUMB.
 
 ---
 
-## 🔄 Endpoints
+## Endpoints
 
 ### `GET /process/processes`
 
 Returns all configured processes, including enabled status, version, repo URL, and sponsorship URL.
 
-#### ✅ Example Response:
+#### Example Response:
 
 ```json
 {
@@ -40,11 +41,11 @@ Returns all configured processes, including enabled status, version, repo URL, a
 
 Fetch details about a specific process.
 
-#### ⚠️ Required Query Parameter:
+#### Required Query Parameter:
 
 * `process_name` (string)
 
-#### ✅ Example Response:
+#### Example Response:
 
 ```json
 {
@@ -61,7 +62,7 @@ Fetch details about a specific process.
 
 Starts a specific process.
 
-#### 🔧 Request Body:
+#### Request Body:
 
 ```json
 {
@@ -69,7 +70,7 @@ Starts a specific process.
 }
 ```
 
-#### ✅ Example Response:
+#### Example Response:
 
 ```json
 {
@@ -84,7 +85,7 @@ Starts a specific process.
 
 Stops a running process.
 
-#### 🔧 Request Body:
+#### Request Body:
 
 ```json
 {
@@ -98,7 +99,7 @@ Stops a running process.
 
 Restarts a running process.
 
-#### 🔧 Request Body:
+#### Request Body:
 
 ```json
 {
@@ -112,7 +113,7 @@ Restarts a running process.
 
 Gets the current status of a process.
 
-#### ✅ Example Response:
+#### Example Response:
 
 ```json
 {
@@ -129,7 +130,7 @@ Starts one or more core services and all required dependencies. This is used dur
 
 The `core_services` field can be a single object or an array. The `name` can be the config key (e.g., `riven_backend`) or a display name (e.g., `Riven`).
 
-#### 🔧 Request Body Examples:
+#### Request Body Examples:
 
 **Riven**
 
@@ -194,7 +195,7 @@ The `core_services` field can be a single object or an array. The `name` can be 
 }
 ```
 
-#### ✅ Example Response:
+#### Example Response:
 
 ```json
 {
@@ -206,7 +207,7 @@ The `core_services` field can be a single object or an array. The `name` can be 
 }
 ```
 
-#### ℹ️ Notes:
+#### ℹ Notes:
 
 * Dependencies like Zurg or rclone are created using templates and attached to the calling core service.
 * Optional services such as `pgadmin` or `zilean` are started only if included.
@@ -228,14 +229,14 @@ Returns optional services. You can pass `core_service` and `optional_services` q
 
 ---
 
-## 🧐 Notes
+## Notes
 
 * All process names are matched against the entries defined in `dumb_config.json`.
 * Most process commands are defined as arrays and are managed with subprocess handling inside Python.
 
 ---
 
-## 📌 Related Files
+## Related Files
 
 * [`process.py`](https://github.com/I-am-PUID-0/DUMB/blob/master/api/routers/process.py)
 * [Configuration](config.md)

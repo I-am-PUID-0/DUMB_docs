@@ -1,5 +1,6 @@
 ---
 title: Configuration API
+icon: lucide/settings
 ---
 
 # Configuration API
@@ -8,12 +9,12 @@ The Configuration API is responsible for exposing endpoints that manage and mani
 
 ---
 
-## 🧩 Module: `config.py`
+## Module: `config.py`
 Located in: `api/routers/config.py`
 
 ---
 
-## 📘 Endpoints
+## Endpoints
 
 ### `GET /config`
 **Description:**
@@ -126,7 +127,7 @@ Resets onboarding to incomplete.
 
 ---
 
-## 🧪 Developer Notes
+## Developer Notes
 
 - The config is held in memory for fast access and allows the user to experiment or preview changes before committing them to file.
 - Validation uses internal DUMB schema checks to ensure required keys and structure.
@@ -134,6 +135,6 @@ Resets onboarding to incomplete.
 
 ---
 
-## 📎 Related Pages
+## Related Pages
 - [Services Overview](../services/index.md)
 - [Logs](logs.md)

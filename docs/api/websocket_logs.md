@@ -1,5 +1,6 @@
 ---
 title: WebSocket Logs API
+icon: lucide/waves
 ---
 
 # WebSocket Logs API
@@ -8,7 +9,7 @@ The WebSocket Logs API provides a real-time streaming interface for receiving lo
 
 ---
 
-## 📡 WebSocket Endpoint
+## WebSocket Endpoint
 
 ```
 /ws/logs
@@ -18,7 +19,7 @@ Connect to this endpoint using a WebSocket client (e.g., browser or Python clien
 
 ---
 
-## 🔁 Message Format
+## Message Format
 
 Each log entry is sent as a plain text line formatted by DUMB’s logger, for example:
 
@@ -28,7 +29,7 @@ Apr 12, 2025 10:04:01 - INFO - Riven Backend started
 
 ---
 
-## 🔍 Filtering Logs (Client-side)
+## Filtering Logs (Client-side)
 
 The server pushes all logs to connected clients. It is up to the client to filter based on:
 
@@ -40,7 +41,7 @@ The DUMB Frontend implements dropdowns and search bars for this purpose.
 
 ---
 
-## 🛑 Connection Behavior
+## Connection Behavior
 
 - The server **broadcasts logs** to all connected WebSocket clients.
 - If the connection is dropped, reconnect using `/ws/logs`.
@@ -49,7 +50,7 @@ The DUMB Frontend implements dropdowns and search bars for this purpose.
 
 ---
 
-## 🧪 Example (Python Client)
+## Example (Python Client)
 
 ```python
 import websockets
@@ -67,7 +68,7 @@ asyncio.run(consume_logs())
 
 ---
 
-## 📎 Related Modules
+## Related Modules
 - [`websocket_logs.py`](https://github.com/I-am-PUID-0/DUMB/blob/master/api/routers/websocket_logs.py)
 - [Logs API](logs.md) for historical log file access
 - [Frontend Log Viewer](../services/dumb/dumb-frontend.md#real-time-logs)

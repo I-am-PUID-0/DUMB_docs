@@ -1,5 +1,6 @@
 ---
 title: Zurg FAQ
+icon: lucide/zap
 ---
 
 # Zurg FAQ
@@ -8,9 +9,9 @@ Below are some common questions and solutions related to Zurg when used with **D
 
 ---
 
-## ❓ Frequently Asked Questions (FAQ)
+## Frequently Asked Questions (FAQ)
 
-### ⚠️ `ERROR - rclone w/ RealDebrid subprocess: : IO error: File is temporarily unavailable: 423 Locked`
+### `ERROR - rclone w/ RealDebrid subprocess: : IO error: File is temporarily unavailable: 423 Locked`
 This error generally indicates that a **rate limit is being enforced by Real-Debrid**. It often occurs during media server scans that hit the API too frequently.
 
 To mitigate this:
@@ -22,5 +23,5 @@ See the [rclone FAQ](../faq/rclone.md#i-think-i-might-be-rate-limited-by-the-deb
 
 ---
 
-## 📎 Related Pages
+## Related Pages
 - [Zurg Configuration](../services/dependent/zurg.md)

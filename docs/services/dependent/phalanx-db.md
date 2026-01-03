@@ -1,3 +1,8 @@
+---
+title: Phalanx DB
+icon: lucide/database
+---
+
 # Phalanx DB Configuration
 
 **Phalanx DB** is an optional decentralized metadata service that can enhance CLI Debrid by providing distributed data capabilities through Hyperswarm. It runs independently and is not required for CLI Debrid to function.
@@ -30,7 +35,7 @@
 },
 ```
 
-### 🔍 Configuration Key Descriptions
+### Configuration Key Descriptions
 
 * **`enabled`**: Enables or disables Phalanx DB.
 * **`process_name`**: Label used for logging and monitoring.
@@ -49,7 +54,7 @@
 
 ---
 
-## 🧪 When to Use
+## When to Use
 
 Phalanx DB is beneficial if you want to:
 
@@ -61,7 +66,7 @@ Phalanx DB is beneficial if you want to:
 
 ---
 
-## ⚙️ Branch / Version Targeting
+## Branch / Version Targeting
 You can control which version or branch is deployed by setting:
 
 - `branch_enabled: true` and specifying a `branch`

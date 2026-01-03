@@ -1,10 +1,11 @@
 ---
 title: Configuration
+icon: lucide/settings
 ---
 
 # Configuration
 
-## 📑 Overview
+## Overview
 DUMB relies on a **centralized configuration file**, `dumb_config.json`, to control its services, logging, API settings, and more. This file allows you to customize the behavior of DUMB without modifying the source code.
 
 DUMB also supports **environment variables, .env files, and Docker secrets**. If the same setting is defined in multiple places, the **precedence is as follows:**
@@ -14,7 +15,7 @@ DUMB also supports **environment variables, .env files, and Docker secrets**. If
 3. **Docker Secrets**
 4. **`dumb_config.json`** (lowest priority)
 
-## 🛠️ Configuration File Structure
+## Configuration File Structure
 
 !!! caution "Be Careful When Modifying `dumb_config.json`"
     While DUMB is highly configurable via `dumb_config.json`,  
@@ -59,7 +60,7 @@ Below is a breakdown of some of the sections:
 
 ---
 
-## 🔧 General Settings
+## General Settings
 
 ### **User & Timezone**
 ```json
@@ -74,7 +75,7 @@ Below is a breakdown of some of the sections:
 !!! warning "(puid/pgid cannot be set to `0`, aka root)"
 ---
 
-## 📜 Logging Settings
+## Logging Settings
 Located in `dumb`:
 ```json
 "log_level": "INFO",
@@ -93,7 +94,7 @@ Located in `dumb`:
 
 ---
 
-## 🔐 Integration Tokens & Credentials
+## Integration Tokens & Credentials
 Located in the `dumb` section of `dumb_config.json`:
 
 ```json
@@ -103,7 +104,7 @@ Located in the `dumb` section of `dumb_config.json`:
 "github_username": ""
 ```
 
-### 🔄 Plex Integration
+### Plex Integration
 - **`plex_token`** – This token is used by Riven backend for interacting with your Plex account. It allows features such as using watchlists and sending library scan requests to the Plex server.
 - **`plex_address`** – The internal or external URL of your Plex server (e.g., `http://127.0.0.1:32400`).
 
@@ -111,7 +112,7 @@ These values are used automatically by Riven when setting up the [Riven Backend]
 
 ---
 
-### 🧬 GitHub Integration
+### GitHub Integration
 - **`github_token`** – Used to increase GitHub API rate limits and unlock access to private/sponsored repositories such as [`zurg`](https://github.com/debridmediamanager/zurg) when associated with your GitHub account.
 - **`github_username`** – (Reserved for future use) Will support additional GitHub-sourced services and contributor personalization.
 
@@ -131,7 +132,7 @@ To create a GitHub token:
 
 ---
 
-## 🔌 Service Configuration
+## Service Configuration
 
 Each DUMB-integrated service is configured within its own section of `dumb_config.json`.
 
@@ -160,7 +161,7 @@ See the individual service pages for in-depth configuration details:
 
 ---
 
-## 🧭 `core_service` (Arr Integration)
+## `core_service` (Arr Integration)
 
 Some services (notably the Arrs) include a `core_service` field to tell DUMB which core workflow they should attach to.
 
@@ -193,7 +194,7 @@ Examples:
 ```
 
 
-## 📌 Next Steps
+## Next Steps
 1. Review and modify `dumb_config.json` as needed.
 2. Review the [Usage](usage.md) page. 
 3. For a deep dive into individual services, see the [Services](../services/index.md) section.

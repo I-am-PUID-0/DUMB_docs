@@ -1,5 +1,6 @@
 ---
 title: Radarr
+icon: lucide/film
 ---
 
 # Radarr (Core Service)
@@ -8,7 +9,7 @@ title: Radarr
 
 ---
 
-## 🔗 Service Relationships
+## Service Relationships
 
 | Classification | Role                               |
 | -------------- | ---------------------------------- |
@@ -19,7 +20,7 @@ title: Radarr
 
 ---
 
-## 📦 Configuration in `dumb_config.json`
+## Configuration in `dumb_config.json`
 
 ```json
 "radarr": {
@@ -43,7 +44,7 @@ title: Radarr
 }
 ```
 
-### 🔍 Key Configuration Fields
+### Key Configuration Fields
 
 * `core_service`: Set to `decypharr` or `nzbdav` to enable DUMB integration with those services.
 * `port`: Web UI port (default `7878`).
@@ -52,7 +53,7 @@ title: Radarr
 
 ---
 
-## ⚙️ Integration with DUMB
+## Integration with DUMB
 
 * For Decypharr integration, set `core_service` to `decypharr` and follow the [Decypharr guide](decypharr.md).
 * For NzbDAV integration, set `core_service` to `nzbdav` and follow the [NzbDAV guide](nzbdav.md).
@@ -60,13 +61,13 @@ title: Radarr
 
 ---
 
-## 🌐 Accessing the UI
+## Accessing the UI
 
 * Navigate to: `http://<host>:7878`
 
 ---
 
-## 🔗 Resources
+## Resources
 
 * [Radarr Website](https://radarr.video/)
 * [Radarr GitHub](https://github.com/Radarr/Radarr)

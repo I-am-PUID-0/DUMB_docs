@@ -1,10 +1,15 @@
+---
+title: rclone FAQ
+icon: lucide/hard-drive
+---
+
 # rclone FAQ
 
 Below are some common questions and solutions related to using **rclone** with **DUMB**.
 
 ---
 
-## ❓ Frequently Asked Questions (FAQ)
+## Frequently Asked Questions (FAQ)
 
 ### I think I might be rate limited by the debrid service - seeing `423` errors.
 
@@ -127,5 +132,5 @@ sudo systemctl status make-rshared.service
 ```
 
 
-## 📎 Related Pages
+## Related Pages
 - [Rclone Configuration](../services/dependent/rclone.md)

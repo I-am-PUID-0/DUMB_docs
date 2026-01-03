@@ -1,5 +1,6 @@
 ---
 title: General FAQ
+icon: lucide/help-circle
 ---
 
 # General FAQ
@@ -8,9 +9,9 @@ Below are some common questions and solutions related to **DUMB** that apply acr
 
 ---
 
-## ❓ Frequently Asked Questions (FAQ)
+## Frequently Asked Questions (FAQ)
 
-### 💾 Will DUMB use a lot of storage space?
+### Will DUMB use a lot of storage space?
 
 That depends on how you configure it. Most services (like Zurg and Rclone) operate by streaming content from the debrid service, so **very little is permanently stored** on your local system — unless you're using `rclone` with VFS caching enabled.
 
@@ -18,19 +19,19 @@ If you're using VFS cache (recommended for Plex), ensure that the cache size is 
 
 ---
 
-### 🧱 Do I need to install every service?
+### Do I need to install every service?
 
 No — DUMB is modular. You can enable or disable services in `dumb_config.json` under each service section. Some [core services](../services/core/index.md) (like `riven_backend`, `cli_debrid`, etc.) provide core functionality and have required [dependent services](../services/dependent/index.md) (like `zurg`, `rclone`, `postgres`, etc.), but others (like `pgadmin`) are [optional service](../services/optional/index.md) tools to help you manage your setup.
 
 ---
 
-### 🌍 Can I run DUMB offline?
+### Can I run DUMB offline?
 
 Most DUMB services interact with external APIs (e.g., Real-Debrid, Plex, Trakt, TMDB, etc.), so **internet access is required** for normal operation. However, local database tools (e.g., pgAdmin) and UIs may still function offline for inspection.
 
 ---
 
-### 🔄 What happens when I update DUMB?
+### What happens when I update DUMB?
 
 The image maintained for DUMB is automatically updated when one of the embedded services (like `riven_backend`, `cli_debrid`, etc.) have a new release available; thus, reducing the need to update to the latest release inside the container. For more info, see the [DUMB FAQ](../faq/dumb.md#does-the-dumb-image-have-the-latest-version-of-x) regarding finding what versions are built into the image. 
 
@@ -40,7 +41,7 @@ You can configure update frequency and behavior in each service’s section of `
 
 ---
 
-### 🔒 Is DUMB secure?
+### Is DUMB secure?
 
 DUMB is intended to run on your **local or private server**. Most services are, by default, bound to `127.0.0.1` and not exposed publicly unless explicitly configured by exposing ports in the Docker compose or changing the bound address.
 
@@ -50,13 +51,13 @@ If you're exposing services externally (e.g., via Traefik or NGINX), consider us
 
 ---
 
-### 🛠️ Can I use my own custom version of a service?
+### Can I use my own custom version of a service?
 
 Yes — you can point most services to a custom branch or fork by editing the `repo_owner`, `repo_name`, `branch`, or `release_version` in its config section in `dumb_config.json`. This is especially useful if you are testing development builds or your own patches.
 
 ---
 
-### 📦 Can I back up my DUMB setup?
+### Can I back up my DUMB setup?
 
 Absolutely. The most important files to back up are:
 
@@ -73,13 +74,13 @@ Regularly backing these up allows you to quickly restore your environment.
 
 ---
 
-### 📈 Can I monitor the system?
+### Can I monitor the system?
 
 Yes — the DUMB Frontend shows real-time logs, service logs, service status, and allows interactive config management. You can also access logs from the filesystem or via the DUMB API (see [API docs](../api/index.md)).
 
 ---
 
-### 🔗 What’s the difference between using rclone/Zurg mounts vs. symlinks (Riven, CLI Debrid, Decypharr, etc.) in my media server?
+### What’s the difference between using rclone/Zurg mounts vs. symlinks (Riven, CLI Debrid, Decypharr, etc.) in my media server?
 
 DUMB supports **two methods of exposing content to your media server**, each with its own use case:
 
@@ -87,7 +88,7 @@ DUMB supports **two methods of exposing content to your media server**, each wit
 
 Mounting the WebDAV or remote storage directly using `rclone` (which often connects to a Zurg instance) gives you full access to all files in your debrid account.
 
-**✅ Pros:**
+**Pros:**
 
 - Access to **all debrid content**, including content not added by Riven
 - Instant visibility of new files from your debrid service
@@ -95,7 +96,7 @@ Mounting the WebDAV or remote storage directly using `rclone` (which often conne
 - Allows content orchestration with [Debrid Media Manager](https://github.com/debridmediamanager/debrid-media-manager) (DMM)
 - Less complexity when sharing mounts across the host or network
 
-**⚠️ Cons:**
+**Cons:**
 
 - File/folder naming is often **inconsistent or messy**
 - Can lead to **Plex/Emby/Jellyfin misidentification**
@@ -107,14 +108,14 @@ Riven creates cleanly named **symlinks** pointing to content in the underlying Z
 
 These symlinks are stored in a separate directory (like `/mnt/debrid/riven_symlinks`) and represent only **curated content** Riven has identified and processed.
 
-**✅ Pros:**
+**Pros:**
 
 - Only includes content that’s been properly scraped and sorted
 - Directory structure and filenames are optimized for media servers
 - More accurate **library scans** and faster detection
 - Ideal for fully automated Plex/Emby/Jellyfin setups
 
-**⚠️ Cons:**
+**Cons:**
 
 - Only includes what Riven has processed — not your full debrid library
 - Requires Riven to stay running and correctly configured
@@ -186,7 +187,7 @@ Using standardized top-level paths makes your setup more portable and ensures sy
 
 ---
 
-## 📎 Related Pages
+## Related Pages
 
 - [Configuration Guide](../features/configuration.md)
 - [Service Overview](../services/index.md)

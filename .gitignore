@@ -1,1 +1,7 @@
 .vscode
+
+# Ignore local Zensical server files
+/site
+
+# MacOS Ignore
+.DS_Store

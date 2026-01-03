@@ -1,10 +1,11 @@
 ---
 title: Contributing
+icon: lucide/git-pull-request
 hide:
   - navigation
 ---
 
-## 🤝 Contributing to DUMB
+## Contributing to DUMB
 
 Thank you for your interest in contributing to **Debrid Unlimited Media Bridge (DUMB)**!
 
@@ -18,7 +19,7 @@ Thank you for helping make DUMB better for everyone!
 
 ---
 
-## 👨‍💻 Development Contributions
+## ‍ Development Contributions
 
 Want to help develop new features, fix bugs, or improve performance?
 
@@ -43,31 +44,31 @@ You can find the [devcontainer setup file](https://github.com/I-am-PUID-0/DUMB/t
 
 ---
 
-## 🌟 Non-Code Contributions
+## Non-Code Contributions
 
 Even if you don't write code, there are **plenty of ways** to help!
 
-### ⭐ Star the Repo
+### Star the Repo
 A quick way to show support is by starring the project on GitHub:  [github.com/I-am-PUID-0/DUMB](https://github.com/I-am-PUID-0/DUMB)
 
-### 🗣️ Join the Community
+### Join the Community
 - Ask questions or help others in the **[DUMB Discord server](https://discord.gg/8dqKUBtbp5)**
-- Boost the server if you find it helpful 🙌
+- Boost the server if you find it helpful 
 - Share your setups and improvements
 
-### 📚 Help with Documentation
+### Help with Documentation
 - Found a typo or confusing section in the docs? Open an issue or pull request.
 - Suggestions and feedback on existing documentation are **always welcome**.
 
 ---
 
-## 🧾 Monetary Contributions?
+## Monetary Contributions?
 
 - Sponsor the Dev through [GitHub Sponsors](https://github.com/sponsors/I-am-PUID-0)
 
 ---
 
-## 🛣️ Roadmap & Feedback
+## Roadmap & Feedback
 
 If you have ideas, feature requests, or feedback:
 
