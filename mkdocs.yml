@@ -13,9 +13,6 @@ nav:
       - Overview: features/index.md
       - Configuration: features/configuration.md
       - Usage: features/usage.md  
-  - Getting Started:
-      - Introduction: getting-started/index.md
-      - Installation: getting-started/installation.md
   - Services:
       - Overview: services/index.md
       - DUMB:
