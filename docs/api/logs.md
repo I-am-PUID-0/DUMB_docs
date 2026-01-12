@@ -53,9 +53,9 @@ Returns a JSON object containing the log chunk and cursor:
 
 ---
 
-## Notes
-- When `reset` is `true`, clients should replace their log buffer with `chunk`.
-- On incremental requests, pass the returned `cursor` to get only new bytes.
+!!! note "Important Notes"
+    - When `reset` is `true`, clients should replace their log buffer with `chunk`.
+    - On incremental requests, pass the returned `cursor` to get only new bytes.
 
 ---
 

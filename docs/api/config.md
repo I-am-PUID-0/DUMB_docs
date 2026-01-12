@@ -127,11 +127,10 @@ Resets onboarding to incomplete.
 
 ---
 
-## Developer Notes
-
-- The config is held in memory for fast access and allows the user to experiment or preview changes before committing them to file.
-- Validation uses internal DUMB schema checks to ensure required keys and structure.
-- Routes include error handling for malformed config data.
+!!! tip "Developer Notes"
+    - The config is held in memory for fast access and allows the user to experiment or preview changes before committing them to file.
+    - Validation uses internal DUMB schema checks to ensure required keys and structure.
+    - Routes include error handling for malformed config data.
 
 ---
 

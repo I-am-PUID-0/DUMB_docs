@@ -132,68 +132,68 @@ The `core_services` field can be a single object or an array. The `name` can be 
 
 #### Request Body Examples:
 
-**Riven**
+=== "Riven"
 
-```json
-{
-  "core_services": {
-    "name": "riven_backend",
-    "debrid_service": "RealDebrid",
-    "debrid_key": "abc123",
-    "service_options": {}
-  },
-  "optional_services": ["zilean", "pgadmin", "riven_frontend"]
-}
-```
-
-**Decypharr**
-
-```json
-{
-  "core_services": {
-    "name": "decypharr",
-    "debrid_service": "RealDebrid",
-    "debrid_key": "abc123",
-    "service_options": {
-      "decypharr": { "use_embedded_rclone": true }
+    ```json
+    {
+      "core_services": {
+        "name": "riven_backend",
+        "debrid_service": "RealDebrid",
+        "debrid_key": "abc123",
+        "service_options": {}
+      },
+      "optional_services": ["zilean", "pgadmin", "riven_frontend"]
     }
-  },
-  "optional_services": []
-}
-```
+    ```
 
-**CLI Debrid**
+=== "Decypharr"
 
-```json
-{
-  "core_services": {
-    "name": "cli_debrid",
-    "debrid_service": "RealDebrid",
-    "debrid_key": "abc123",
-    "service_options": {
-      "phalanx_db": { "enabled": true }
+    ```json
+    {
+      "core_services": {
+        "name": "decypharr",
+        "debrid_service": "RealDebrid",
+        "debrid_key": "abc123",
+        "service_options": {
+          "decypharr": { "use_embedded_rclone": true }
+        }
+      },
+      "optional_services": []
     }
-  },
-  "optional_services": ["zilean"]
-}
-```
+    ```
 
-**Plex Debrid**
+=== "CLI Debrid"
 
-```json
-{
-  "core_services": {
-    "name": "plex_debrid",
-    "debrid_service": "RealDebrid",
-    "debrid_key": "abc123",
-    "service_options": {
-      "rclone": { "log_level": "DEBUG" },
-      "zurg": { "port": 9194 }
+    ```json
+    {
+      "core_services": {
+        "name": "cli_debrid",
+        "debrid_service": "RealDebrid",
+        "debrid_key": "abc123",
+        "service_options": {
+          "phalanx_db": { "enabled": true }
+        }
+      },
+      "optional_services": ["zilean"]
     }
-  },
-  "optional_services": []
-}
-```
+    ```
+
+=== "Plex Debrid"
+
+    ```json
+    {
+      "core_services": {
+        "name": "plex_debrid",
+        "debrid_service": "RealDebrid",
+        "debrid_key": "abc123",
+        "service_options": {
+          "rclone": { "log_level": "DEBUG" },
+          "zurg": { "port": 9194 }
+        }
+      },
+      "optional_services": []
+    }
+    ```
 
 #### Example Response:
 
@@ -207,13 +207,12 @@ The `core_services` field can be a single object or an array. The `name` can be 
 }
 ```
 
-#### ℹ Notes:
-
-* Dependencies like Zurg or rclone are created using templates and attached to the calling core service.
-* Optional services such as `pgadmin` or `zilean` are started only if included.
-* `debrid_key` is injected into Zurg or Decypharr as needed.
-* `service_options` can override config values such as `log_level`, `port`, or `enabled`.
-* Any startup errors appear in the `errors` list.
+!!! note "Notes"
+    * Dependencies like Zurg or rclone are created using templates and attached to the calling core service.
+    * Optional services such as `pgadmin` or `zilean` are started only if included.
+    * `debrid_key` is injected into Zurg or Decypharr as needed.
+    * `service_options` can override config values such as `log_level`, `port`, or `enabled`.
+    * Any startup errors appear in the `errors` list.
 
 ---
 
@@ -229,10 +228,9 @@ Returns optional services. You can pass `core_service` and `optional_services` q
 
 ---
 
-## Notes
-
-* All process names are matched against the entries defined in `dumb_config.json`.
-* Most process commands are defined as arrays and are managed with subprocess handling inside Python.
+!!! tip "Important Notes"
+    * All process names are matched against the entries defined in `dumb_config.json`.
+    * Most process commands are defined as arrays and are managed with subprocess handling inside Python.
 
 ---
 

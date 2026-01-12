@@ -111,21 +111,22 @@ To successfully run Decypharr with DUMB, the following configuration and mountin
 
 If you are passing the rclone mount to an **external** Arr or media server container, include the following bind mounts in both your `DUMB` and `arrs` docker-compose files (replace `...` with the full host path to your DUMB bind mount):
 
-**DUMB Compose**:
+=== "DUMB Compose"
 
-```yaml
-volumes:
-  - .../DUMB/mnt/debrid:/mnt/debrid:rshared
-```
+    ```yaml
+    volumes:
+      - .../DUMB/mnt/debrid:/mnt/debrid:rshared
+    ```
 
-**Arrs Compose (Sonarr/Radarr)**:
+=== "Arrs Compose (Sonarr/Radarr)"
 
-```yaml
-volumes:
-  - .../DUMB/mnt/debrid:/mnt/debrid:rslave
-```
+    ```yaml
+    volumes:
+      - .../DUMB/mnt/debrid:/mnt/debrid:rslave
+    ```
 
-> These mounts are only required when Arrs or media servers run **outside** the DUMB container and need access to the rclone mount and Decypharr symlinks.
+!!! note "When Required"
+    These mounts are only required when Arrs or media servers run **outside** the DUMB container and need access to the rclone mount and Decypharr symlinks.
 
 ### 2. Configure Root Folders in Arrs
 
@@ -137,13 +138,15 @@ Inside the Sonarr and Radarr web UI:
   * **Radarr**: `/mnt/debrid/decypharr_symlinks/movies`
   * **Sonarr**: `/mnt/debrid/decypharr_symlinks/shows`
 
-> These directories are managed by Decypharr and must be used for proper operation.
+!!! important "Required Paths"
+    These directories are managed by Decypharr and must be used for proper operation.
 
 ### 3. Connect Decypharr to Arrs
 
 Follow the [official usage guide](https://sirrobot01.github.io/decypharr/usage/#connecting-to-sonarrradarr) for step-by-step instructions on connecting your Radarr and Sonarr instances to Decypharr.
 
-> This includes setting the correct API keys and ensuring URL paths match the container environments.
+!!! tip "Connection Tips"
+    This includes setting the correct API keys and ensuring URL paths match the container environments.
 
 ### 4. Plex Library Setup
 
@@ -152,17 +155,19 @@ In Plex, add the Decypharr symlink folders as library sources:
 * **Movies Library**: `/mnt/debrid/decypharr_symlinks/movies`
 * **TV Shows Library**: `/mnt/debrid/decypharr_symlinks/shows`
 
-> This ensures Plex indexes files processed and renamed by Decypharr, enabling clean and consistent playback.
+!!! note "Library Benefits"
+    This ensures Plex indexes files processed and renamed by Decypharr, enabling clean and consistent playback.
 
 
 ---
 
 ## Troubleshooting Tips
 
-* Ensure the bind mounts are correct and both containers see the same `/mnt/debrid` structure
-* Make sure Decypharr has permission to write to and create symlinks in the target directory
-* If media doesn't appear in Plex, check that the symlink folders are scanned and indexed
-* Use `docker inspect` to verify correct mount propagation between DUMB and Arrs
+!!! tip "Common Issues"
+    * Ensure the bind mounts are correct and both containers see the same `/mnt/debrid` structure
+    * Make sure Decypharr has permission to write to and create symlinks in the target directory
+    * If media doesn't appear in Plex, check that the symlink folders are scanned and indexed
+    * Use `docker inspect` to verify correct mount propagation between DUMB and Arrs
 
 ---
 

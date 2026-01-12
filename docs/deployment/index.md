@@ -13,66 +13,74 @@ All deployment methods provide access to the same integrated services and config
 
 ## Available Deployment Guides
 
-### Docker Compose
-Quickest way to get started using Docker CLI and `docker-compose.yml`.
+=== "Docker & CLI Tools"
 
-- [Deploy with Docker](docker.md)
+    ### Docker Compose
+    Quickest way to get started using Docker CLI and `docker-compose.yml`.
 
-### Dockge
-Deploy using the lightweight Dockge container manager.
+    - [Deploy with Docker](docker.md)
 
-- [Deploy with Dockge](dockge.md)
+    ### Dockge
+    Deploy using the lightweight Dockge container manager.
 
-### Portainer
-Deploy using the Portainer web interface.
+    - [Deploy with Dockge](dockge.md)
 
-- [Deploy with Portainer](portainer.md)
+=== "Web-Based Managers"
 
-### Unraid
-Deploy using the Unraid Community Applications plugin and container template.
+    ### Portainer
+    Deploy using the Portainer web interface.
 
-- [Deploy with Unraid](unraid.md)
+    - [Deploy with Portainer](portainer.md)
 
-### WSL2 (Windows Subsystem for Linux)
-Deploy DUMB in a WSL2 environment on Windows 11.
+=== "NAS Platforms"
 
-- [Deploy with WSL](wsl.md)
+    ### Unraid
+    Deploy using the Unraid Community Applications plugin and container template.
 
-### Proxmox
-Deploy inside a lightweight container or VM using Proxmox VE.
+    - [Deploy with Unraid](unraid.md)
 
-- [Deploy with Proxmox](proxmox.md)
+    ### QNAP
+    Deploy using Container Station or Docker on supported QNAP NAS devices.
 
-### QNAP
-Deploy using Container Station or Docker on supported QNAP NAS devices.
+    - [Deploy with QNAP](qnap.md)
 
-- [Deploy with QNAP](qnap.md)
+    ### Synology
+    Deploy using Synology Docker and DSM's GUI or CLI.
 
-### Synology
-Deploy using Synology Docker and DSM's GUI or CLI.
+    - [Deploy with Synology](synology.md)
 
-- [Deploy with Synology](synology.md)
+    ### TrueNAS
+    Deploy on TrueNAS SCALE using Docker or native Apps.
 
-### TrueNAS
-Deploy on TrueNAS SCALE using Docker or native Apps.
+    - [Deploy with TrueNAS](truenas.md)
 
-- [Deploy with TrueNAS](truenas.md)
+=== "Virtualization & Windows"
+
+    ### WSL2 (Windows Subsystem for Linux)
+    Deploy DUMB in a WSL2 environment on Windows 11.
+
+    - [Deploy with WSL](wsl.md)
+
+    ### Proxmox
+    Deploy inside a lightweight container or VM using Proxmox VE.
+
+    - [Deploy with Proxmox](proxmox.md)
 
 ---
 
 
-## Additional Notes
+!!! note "Configuration Requirements"
+    All deployment methods rely on a valid and accessible `dumb_config.json` file for configuring services.
+    
+    It is strongly recommended to bind-mount a local `config` directory to persist user data.
 
-- All methods rely on a valid and accessible `dumb_config.json` file for configuring services.
-- It is strongly recommended to bind-mount a local `config` directory to persist user data.
-
-Example:
-```yaml
-dumb:
-  image: iampuid0/dumb:latest
-  volumes:
-    - ./config:/config
-```
+!!! example "Example Volume Mount"
+    ```yaml
+    dumb:
+      image: iampuid0/dumb:latest
+      volumes:
+        - ./config:/config
+    ```
 
 For more about configuring services, see the [Configuration](../features/configuration.md) page.
 

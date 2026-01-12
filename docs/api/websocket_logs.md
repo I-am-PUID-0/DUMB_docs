@@ -29,24 +29,22 @@ Apr 12, 2025 10:04:01 - INFO - Riven Backend started
 
 ---
 
-## Filtering Logs (Client-side)
+!!! info "Filtering Logs (Client-side)"
+    The server pushes all logs to connected clients. It is up to the client to filter based on:
 
-The server pushes all logs to connected clients. It is up to the client to filter based on:
+    - **Process Name**
+    - **Log Level**
+    - **Search Term**
 
-- **Process Name**
-- **Log Level**
-- **Search Term**
-
-The DUMB Frontend implements dropdowns and search bars for this purpose.
+    The DUMB Frontend implements dropdowns and search bars for this purpose.
 
 ---
 
-## Connection Behavior
-
-- The server **broadcasts logs** to all connected WebSocket clients.
-- If the connection is dropped, reconnect using `/ws/logs`.
-- Log history is **not buffered**, so missed logs are not resent on reconnect.
-- Sending `{"type":"ping"}` will return `pong`.
+!!! note "Connection Behavior"
+    - The server **broadcasts logs** to all connected WebSocket clients.
+    - If the connection is dropped, reconnect using `/ws/logs`.
+    - Log history is **not buffered**, so missed logs are not resent on reconnect.
+    - Sending `{"type":"ping"}` will return `pong`.
 
 ---
 

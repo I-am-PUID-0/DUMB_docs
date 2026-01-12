@@ -39,7 +39,7 @@ Before you deploy DUMB, make sure your environment and accounts are ready.
 
 ## Required Directories
 
-You’ll need to bind mount the following volumes when running the container:
+You'll need to bind mount the following volumes when running the container:
 
 | Container Mount Path       | Description                                       |
 |----------------------------|---------------------------------------------------|
@@ -57,32 +57,32 @@ You’ll need to bind mount the following volumes when running the container:
 |`/plex`                     | Location for Plex Media Server data               |
 |`/mnt/debrid`               | Location for raw debrid files/links and symlinks  |
 
-
 !!! note "/config"
-    If a Zurg config.yml and/or Zurg app is placed here, it will be used to override the default configuration and/or app used at startup
+    If a Zurg config.yml and/or Zurg app is placed here, it will be used to override the default configuration and/or app used at startup.
 
-!!! note "/mnt/debrid:rshared"    
+!!! important "/mnt/debrid:rshared"    
     The `:rshared` must be included in order to support [mount propagation](https://docs.docker.com/storage/bind-mounts/#configure-bind-propagation) for rclone to the host when exposing the raw debrid files/links to an external container; e.g., the arrs or a media server.
 
-    `:rshared` is not required when using the default configuration leveraging the internal media server or when not utilizing [Decypharr](../services/core/decypharr.md)
+    `:rshared` is not required when using the default configuration leveraging the internal media server or when not utilizing [Decypharr](../services/core/decypharr.md).
 ---
 
 ## Preparation Checklist
 
-- Choose your deployment method:
+!!! check "Before You Start"
+    - Choose your deployment method:
 
-    - [Docker](../deployment/docker.md)
-    - [Dockge](../deployment/dockge.md)
-    - [Portainer](../deployment/portainer.md)
-    - [Unraid](../deployment/unraid.md)
-    - [WSL](../deployment/wsl.md)
-    - [Proxmox](../deployment/proxmox.md)
-    - [QNAP](../deployment/qnap.md)
-    - [Synology](../deployment/synology.md)
-    - [TrueNAS](../deployment/truenas.md)
+        - [Docker](../deployment/docker.md)
+        - [Dockge](../deployment/dockge.md)
+        - [Portainer](../deployment/portainer.md)
+        - [Unraid](../deployment/unraid.md)
+        - [WSL](../deployment/wsl.md)
+        - [Proxmox](../deployment/proxmox.md)
+        - [QNAP](../deployment/qnap.md)
+        - [Synology](../deployment/synology.md)
+        - [TrueNAS](../deployment/truenas.md)
 
-- Run the container and access the web UI at the configured port
-- View real-time or service logs to verify service health
+    - Run the container and access the web UI at the configured port
+    - View real-time or service logs to verify service health
 
 ---
 

@@ -25,9 +25,9 @@ If the check fails, the status will be `"unhealthy"` and include diagnostic outp
 
 ---
 
-## Use Case
-- Used by orchestrators or monitoring tools to confirm container availability.
-- Use in load balancers or uptime monitoring dashboards.
+!!! tip "Use Cases"
+    - Used by orchestrators or monitoring tools to confirm container availability.
+    - Use in load balancers or uptime monitoring dashboards.
 
 ---
 

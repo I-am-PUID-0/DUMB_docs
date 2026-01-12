@@ -54,10 +54,14 @@ Each `rclone` instance is defined under the `rclone.instances` section in `dumb_
 - **`api_key`**: (Optional) Debrid API key, used if Zurg is not linked.
 
 ### API Key Behavior
-- If `zurg_enabled` & `zurg_config_file` are **set**: DUMB will configure rclone to use **Zurg's WebDAV** endpoint. The API key should be defined in the **Zurg instance**, not the rclone one.
-- If `decypharr_enabled` is **set**: DUMB will configure rclone to use **Decypharr's WebDAV** endpoint. The API key should be defined in the **Decypharr** config.
-- If `key_type` is **`NzbDAV`**: DUMB will configure rclone to use **NzbDAV's WebDAV** endpoint and read credentials from `WEBDAV_USER`/`WEBDAV_PASSWORD` (or the NzbDAV database). The rclone `api_key` field is ignored.
-- If `decypharr_enabled`, `zurg_enabled` & `zurg_config_file` are **unset or blank**: DUMB will configure rclone to **directly connect to the debrid service**, and the API key must be set in the rclone instance.
+
+!!! tip "API Key Configuration"
+    The API key location depends on your rclone configuration:
+
+    - **Zurg enabled**: API key should be defined in the **Zurg instance**, not the rclone one.
+    - **Decypharr enabled**: API key should be defined in the **Decypharr** config.
+    - **NzbDAV**: Credentials read from `WEBDAV_USER`/`WEBDAV_PASSWORD` or NzbDAV database. The rclone `api_key` field is ignored.
+    - **Direct debrid connection**: API key must be set in the rclone instance when both `decypharr_enabled` and `zurg_enabled` are unset or blank.
 
 ### Adding More Instances
 Users can define additional rclone instances by duplicating the structure and ensuring:
@@ -66,7 +70,8 @@ Users can define additional rclone instances by duplicating the structure and en
 - Each `process_name` is **unique**
 - The `key_type` must match the type of Debrid or WebDAV service used (e.g., `RealDebrid`, `AllDebrid`, `TorBox`, `Premiumize`, `NzbDAV`)
 
-!!! Note "The below example creates a zurg attached rclone mount and a direct debrid connection rclone mount"
+!!! example "Multiple Instances"
+    The below example creates a zurg attached rclone mount and a direct debrid connection rclone mount.
 
 Example:
 ```json
@@ -161,12 +166,14 @@ To improve streaming performance and reduce excessive bandwidth usage when using
 
 You can apply these flags in three ways:
 
-1. **As environment variables** in Docker Compose or `.env` (Recommended):
+=== "Environment Variables (Recommended)"
+
+    Apply settings as environment variables in Docker Compose or `.env`:
 
     !!! note
         Applying the below will make these settings applicable to all rclone instances.
 
-        If you prefer to apply settings per-instance, then see option 2 or 3.
+        If you prefer to apply settings per-instance, then see the other tabs.
 
     ```env
     RCLONE_VFS_CACHE_MODE=full
@@ -181,7 +188,9 @@ You can apply these flags in three ways:
     RCLONE_TPSLIMIT_BURST=10
     ```
 
-2. **By modifying the `command` list** in the `dumb_config.json` rclone instance:
+=== "Command Array in Config"
+
+    Modify the `command` list in the `dumb_config.json` rclone instance:
 
     !!! note 
         The `command` field is empty by default (`"command": []`) because DUMB generates the rclone command dynamically during setup and applies it in memory.
@@ -192,50 +201,52 @@ You can apply these flags in three ways:
 
         To revert to default behavior, simply clear the field again by setting `"command": []`.
 
-      Example default command DUMB generates:
-      ```json
-      "command": [
-        "rclone",
-        "mount",
-        "rclone_RD:",
-        "/mnt/debrid/rclone_RD",
-        "--config", "/config/rclone.config",
-        "--uid=1000",
-        "--gid=1000",
-        "--allow-other",
-        "--poll-interval=0",
-        "--dir-cache-time=10s",
-        "--allow-non-empty"
-      ]
-      ```
+    Example default command DUMB generates:
+    ```json
+    "command": [
+      "rclone",
+      "mount",
+      "rclone_RD:",
+      "/mnt/debrid/rclone_RD",
+      "--config", "/config/rclone.config",
+      "--uid=1000",
+      "--gid=1000",
+      "--allow-other",
+      "--poll-interval=0",
+      "--dir-cache-time=10s",
+      "--allow-non-empty"
+    ]
+    ```
 
-      To apply performance optimizations:
-      ```json
-      "command": [
-        "rclone",
-        "mount",
-        "rclone_RD:",
-        "/mnt/debrid/rclone_RD",
-        "--config", "/config/rclone.config",
-        "--uid=1000",
-        "--gid=1000",
-        "--allow-other",
-        "--poll-interval=0",
-        "--dir-cache-time=10s",
-        "--allow-non-empty",
-        "--vfs-cache-mode=full",
-        "--vfs-read-chunk-size=1M",
-        "--vfs-read-chunk-size-limit=32M",
-        "--buffer-size=64M",
-        "--vfs-cache-max-age=6h",
-        "--vfs-cache-max-size=100G",
-        "--attr-timeout=1s",
-        "--tpslimit=10",
-        "--tpslimit-burst=10"
-      ]
-      ```
+    To apply performance optimizations:
+    ```json
+    "command": [
+      "rclone",
+      "mount",
+      "rclone_RD:",
+      "/mnt/debrid/rclone_RD",
+      "--config", "/config/rclone.config",
+      "--uid=1000",
+      "--gid=1000",
+      "--allow-other",
+      "--poll-interval=0",
+      "--dir-cache-time=10s",
+      "--allow-non-empty",
+      "--vfs-cache-mode=full",
+      "--vfs-read-chunk-size=1M",
+      "--vfs-read-chunk-size-limit=32M",
+      "--buffer-size=64M",
+      "--vfs-cache-max-age=6h",
+      "--vfs-cache-max-size=100G",
+      "--attr-timeout=1s",
+      "--tpslimit=10",
+      "--tpslimit-burst=10"
+    ]
+    ```
 
-3. **Using the DUMB Frontend** to edit the instance config and add these options under `command`.
+=== "DUMB Frontend"
+
+    Use the DUMB Frontend to edit the instance config and add these options under `command`.
 
     - Use the **"Apply in Memory"** button to test changes without saving. This temporarily updates the in-memory config.
     - Use the **"Save to File"** button to persist changes to `dumb_config.json`.

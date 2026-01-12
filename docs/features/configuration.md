@@ -10,10 +10,11 @@ DUMB relies on a **centralized configuration file**, `dumb_config.json`, to cont
 
 DUMB also supports **environment variables, .env files, and Docker secrets**. If the same setting is defined in multiple places, the **precedence is as follows:**
 
-1. **Environment Variables** (highest priority)
-2. **.env File**
-3. **Docker Secrets**
-4. **`dumb_config.json`** (lowest priority)
+!!! tip "Configuration Precedence"
+    1. **Environment Variables** (highest priority)
+    2. **.env File**
+    3. **Docker Secrets**
+    4. **`dumb_config.json`** (lowest priority)
 
 ## Configuration File Structure
 
@@ -72,7 +73,8 @@ Below is a breakdown of some of the sections:
 - **puid** / **pgid** – Define the user and group IDs for container execution.
 - **tz** – Set the timezone (e.g., `America/New_York`).
 
-!!! warning "(puid/pgid cannot be set to `0`, aka root)"
+!!! warning "Root User Not Allowed"
+    `puid`/`pgid` cannot be set to `0` (root). DUMB requires a non-root user for security reasons.
 ---
 
 ## Logging Settings

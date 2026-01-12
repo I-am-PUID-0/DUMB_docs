@@ -175,7 +175,9 @@ Phalanx DB provides distributed metadata storage via Hyperswarm. It is optional 
 CLI Debrid can create symlinks to be used in the media server, or if using the rclone mounts directly in the media server it can monitor the Plex libraries for completed items.
 
 In both cases, ensure the appropriate path for the rclone or zurg mount is used when adding the `Original Files Path`.
-!!! note "The `Original Files Path` is relative to the paths inside the container"
+
+!!! note "Original Files Path"
+    The `Original Files Path` is relative to the paths inside the container.
 
     Example: As default when configured with the onboarding process, the rclone `mount_dir` is set to `/mnt/debrid`, the rclone `mount_name` is set to `clid`, and it is using `zurg_enabled: true` for rclone, then the path should be:  
 
@@ -183,8 +185,10 @@ In both cases, ensure the appropriate path for the rclone or zurg mount is used 
 
 As mentioned, CLI Debrid also monitors either the created symlinks or the Plex libraries for completed items.
 
-As such, it's important to ensure you select the appropriate option for your deployment. 
-!!! note "`Symlinked/Local` will create symlinks in the user defined path, whereas `Plex` will monitor the Plex Libraries defined and not create symlinks"
+As such, it's important to ensure you select the appropriate option for your deployment.
+
+!!! tip "Collection Mode Selection"
+    `Symlinked/Local` will create symlinks in the user defined path, whereas `Plex` will monitor the Plex Libraries defined and not create symlinks.
 
     ![File Collection Management](../../assets/images/cli_debrid/clid_file_collection_management.png)
     ![Symlinked Files Path](../../assets/images/cli_debrid/clid_symlinked_files_path.png)
@@ -194,23 +198,25 @@ As such, it's important to ensure you select the appropriate option for your dep
 
 ## Plex Media Server Built-in!
 
-With [Plex Media Server](plex-media-server.md) enabled in DUMB, you can also leverage it with CLI Debrid
+With [Plex Media Server](plex-media-server.md) enabled in DUMB, you can also leverage it with CLI Debrid.
 
-As shown below, if you select to "Sign in to Plex" during the CLI Debrid onboarding, it will allow you to select the local instance of [Plex Media Server](plex-media-server.md)
+As shown below, if you select to "Sign in to Plex" during the CLI Debrid onboarding, it will allow you to select the local instance of [Plex Media Server](plex-media-server.md).
 
-!!! note "[Plex Media Server](plex-media-server.md) must be configured and running in DUMB before it will appear in the list of available servers"
+!!! note "Plex Media Server Requirement"
+    [Plex Media Server](plex-media-server.md) must be configured and running in DUMB before it will appear in the list of available servers.
 
 ![Sign in to Plex](../../assets/images/cli_debrid/plex_sign_in.PNG)
 
 Signing into Plex and selecting the DUMB [Plex Media Server](plex-media-server.md) will pre-populate the "Plex URL" and "Plex Token" within the CLI Debrid onboarding. 
 
-However, note that it sets the "Plex URL" as the DUMB docker container's IP Address:
+!!! warning "Plex URL Configuration"
+    However, note that it sets the "Plex URL" as the DUMB docker container's IP Address:
 
-![Plex URL Signed In](../../assets/images/cli_debrid/plex_server_url_signed_in.PNG)
+    ![Plex URL Signed In](../../assets/images/cli_debrid/plex_server_url_signed_in.PNG)
 
-This may cause issues if the address changes for the container, so it is suggested to change the "Plex URL" as shown below:
+    This may cause issues if the address changes for the container, so it is suggested to change the "Plex URL" as shown below:
 
-![Plex URL](../../assets/images/cli_debrid/plex_server_url.PNG)
+    ![Plex URL](../../assets/images/cli_debrid/plex_server_url.PNG)
 
 ---
 ## Zilean Built-in!

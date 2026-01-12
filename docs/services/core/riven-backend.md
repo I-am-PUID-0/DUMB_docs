@@ -91,17 +91,19 @@ Before Riven Backend can be used, **initial configuration is required**.
 
 After completing the DUMB onboarding, navigate to the **Riven Frontend** and open the `Settings` page. The following sections should be reviewed and updated:
 
-### Required Configuration
-At a minimum, **enable at least one Content source** under the `Content` section. Without this, Riven cannot function.
+!!! important "Required Configuration"
+    At a minimum, **enable at least one Content source** under the `Content` section. Without this, Riven cannot function.
 
 ### Recommended Setup Areas
+
 - **General** – Adjust base settings like min/max files size, etc.
 - **Media Server** – Add your Plex, Jellyfin, or Emby server details for library syncing.
 - **Content** – Configure sources such as Trakt, Seerr, or the Plex Watchlist, MDB List, Listrr.
 - **Scrapers** – Enable one or more scrapers (e.g., Zilean, Torrentio, Knightcrawler, Orionoid, Jackett, Mediafusion, Prowlarr, Comet).
 - **Ranking** – Customize how results are scored and filtered.
 
-!!! note " Once complete, Riven will begin processing requests based on the selected sources and configurations."
+!!! note "After Configuration"
+    Once complete, Riven will begin processing requests based on the selected sources and configurations.
 
 ---
 
