@@ -25,7 +25,7 @@ hide:
 **DUMB** is an all-in-one media management and streaming solution that integrates multiple services into a single Docker image for streamlined deployment. Automate finding, downloading, and organizing media content using Debrid Services, Plex Discover Watchlists, Trakt lists, Seerr, and more.
 
 <div class="hero-actions" markdown>
-[:octicons-arrow-right-24: Installation Guide](getting-started/installation.md){ .md-button .md-button--primary }
+[:octicons-arrow-right-24: Deployment Guide](deployment/index.md){ .md-button .md-button--primary }
 </div>
 </div>
 </div>
