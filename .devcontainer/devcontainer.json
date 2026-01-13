@@ -1,6 +1,6 @@
 {
     "name": "DUMB-Docs Dev Container",
-    "image": "mcr.microsoft.com/devcontainers/python:3.11",
+    "image": "mcr.microsoft.com/devcontainers/python:3.14",
     "workspaceFolder": "/workspace",
     "customizations": {
         "vscode": {
@@ -25,7 +25,11 @@
         "--dns=8.8.8.8",
         "--dns=8.8.4.4"
     ],
+    "remoteEnv": {
+        "WATCHFILES_FORCE_POLLING": "true",
+        "WATCHFILES_POLL_DELAY_MS": "200"
+    },
     "postCreateCommand": "bash ./.devcontainer/init.sh",
-    "postStartCommand": "zensical serve",
+    "postStartCommand": "rm -rf .cache site && zensical serve",
     "remoteUser": "vscode"
 }
