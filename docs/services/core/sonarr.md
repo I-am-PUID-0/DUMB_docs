@@ -1,5 +1,6 @@
 ---
 title: Sonarr
+icon: lucide/radio
 ---
 
 # Sonarr (Core Service)
@@ -8,7 +9,7 @@ title: Sonarr
 
 ---
 
-## 🔗 Service Relationships
+## Service Relationships
 
 | Classification | Role                               |
 | -------------- | ---------------------------------- |
@@ -19,7 +20,7 @@ title: Sonarr
 
 ---
 
-## 📦 Configuration in `dumb_config.json`
+## Configuration in `dumb_config.json`
 
 ```json
 "sonarr": {
@@ -43,7 +44,7 @@ title: Sonarr
 }
 ```
 
-### 🔍 Key Configuration Fields
+### Key Configuration Fields
 
 * `core_service`: Set to `decypharr` or `nzbdav` to enable DUMB integration with those services.
 * `port`: Web UI port (default `8989`).
@@ -52,7 +53,7 @@ title: Sonarr
 
 ---
 
-## ⚙️ Integration with DUMB
+## Integration with DUMB
 
 * For Decypharr integration, set `core_service` to `decypharr` and follow the [Decypharr guide](decypharr.md).
 * For NzbDAV integration, set `core_service` to `nzbdav` and follow the [NzbDAV guide](nzbdav.md).
@@ -60,13 +61,13 @@ title: Sonarr
 
 ---
 
-## 🌐 Accessing the UI
+## Accessing the UI
 
 * Navigate to: `http://<host>:8989`
 
 ---
 
-## 🔗 Resources
+## Resources
 
 * [Sonarr Website](https://sonarr.tv/)
 * [Sonarr GitHub](https://github.com/Sonarr/Sonarr)

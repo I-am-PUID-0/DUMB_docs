@@ -1,5 +1,6 @@
 ---
 title: Logs API
+icon: lucide/file-text
 ---
 
 # Logs API
@@ -8,7 +9,7 @@ The **Logs API** allows clients to retrieve recent logs captured by DUMB and ser
 
 ---
 
-## 🔍 Endpoint
+## Endpoint
 
 ```
 GET /logs
@@ -16,7 +17,7 @@ GET /logs
 
 ---
 
-## 🧾 Query Parameters
+## Query Parameters
 
 | Parameter      | Type   | Description                                                                 |
 |----------------|--------|-----------------------------------------------------------------------------|
@@ -26,7 +27,7 @@ GET /logs
 
 ---
 
-## 🧪 Example Request
+## Example Request
 
 ```
 GET /logs?process_name=Riven%20Backend
@@ -36,7 +37,7 @@ This request fetches the latest log chunk for the specified service.
 
 ---
 
-## ✅ Response Format
+## Response Format
 
 Returns a JSON object containing the log chunk and cursor:
 
@@ -52,12 +53,12 @@ Returns a JSON object containing the log chunk and cursor:
 
 ---
 
-## ⚠️ Notes
-- When `reset` is `true`, clients should replace their log buffer with `chunk`.
-- On incremental requests, pass the returned `cursor` to get only new bytes.
+!!! note "Important Notes"
+    - When `reset` is `true`, clients should replace their log buffer with `chunk`.
+    - On incremental requests, pass the returned `cursor` to get only new bytes.
 
 ---
 
-## 🧱 Related
+## Related
 - [Real-Time WebSocket Logs](websocket_logs.md) for live streaming logs.
 - [Process Management](process.md) for interacting with services whose logs may be captured here.

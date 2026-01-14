@@ -1,5 +1,6 @@
 ---
 title: Decypharr
+icon: lucide/shield
 ---
 
 # Decypharr (Core Service)
@@ -8,7 +9,7 @@ title: Decypharr
 
 ---
 
-## 🔗 Service Relationships
+## Service Relationships
 
 | Classification | Role                                                           |
 | -------------- | -------------------------------------------------------------- |
@@ -20,7 +21,7 @@ title: Decypharr
 
 ---
 
-## 📦 Configuration in `dumb_config.json`
+## Configuration in `dumb_config.json`
 
 ```json
 "decypharr": {
@@ -53,7 +54,7 @@ title: Decypharr
 },
 ```
 
-### 🔍 Key Configuration Fields
+### Key Configuration Fields
 
 * `enabled`: Toggle to run Decypharr via DUMB.
 * `process_name`: Used for display and logs.
@@ -68,10 +69,10 @@ title: Decypharr
 
 ---
 
-## ⚙️ What Decypharr does
+## What Decypharr does
 
 
-### 🧠 How It Works
+### How It Works
 
 Decypharr acts as both a torrent manager and a renaming/organizing engine:
 
@@ -81,20 +82,20 @@ Decypharr acts as both a torrent manager and a renaming/organizing engine:
 * Provides a Web UI and WebDAV endpoints for remote management
 * Ensures all changes propagate cleanly between containers using `rshared`/`rslave`
 
-### 🎛️ Supported Features
+### Supported Features
 
-* ✅ Mock Qbittorrent API for Sonarr, Radarr, Lidarr, etc.
-* 🖥 Full-featured UI for managing torrents
-* 🌐 Proxy filtering for un-cached Debrid torrents
-* 🔁 Multiple Debrid service support (Real Debrid, Torbox, Debrid Link, All Debrid)
-* 📂 WebDAV server per Debrid provider for mounting remote files
-* 🔧 Repair Worker for missing files or symlinks
+*  Mock Qbittorrent API for Sonarr, Radarr, Lidarr, etc.
+*  Full-featured UI for managing torrents
+*  Proxy filtering for un-cached Debrid torrents
+*  Multiple Debrid service support (Real Debrid, Torbox, Debrid Link, All Debrid)
+*  WebDAV server per Debrid provider for mounting remote files
+*  Repair Worker for missing files or symlinks
 
 ---
 
-## 📦 Integration with DUMB
+## Integration with DUMB
 
-### 🧭 Arr `core_service` Setting
+### Arr `core_service` Setting
 
 For Sonarr/Radarr/Lidarr/Whisparr instances you want wired to Decypharr, set:
 
@@ -110,21 +111,22 @@ To successfully run Decypharr with DUMB, the following configuration and mountin
 
 If you are passing the rclone mount to an **external** Arr or media server container, include the following bind mounts in both your `DUMB` and `arrs` docker-compose files (replace `...` with the full host path to your DUMB bind mount):
 
-**DUMB Compose**:
+=== "DUMB Compose"
 
-```yaml
-volumes:
-  - .../DUMB/mnt/debrid:/mnt/debrid:rshared
-```
+    ```yaml
+    volumes:
+      - .../DUMB/mnt/debrid:/mnt/debrid:rshared
+    ```
 
-**Arrs Compose (Sonarr/Radarr)**:
+=== "Arrs Compose (Sonarr/Radarr)"
 
-```yaml
-volumes:
-  - .../DUMB/mnt/debrid:/mnt/debrid:rslave
-```
+    ```yaml
+    volumes:
+      - .../DUMB/mnt/debrid:/mnt/debrid:rslave
+    ```
 
-> These mounts are only required when Arrs or media servers run **outside** the DUMB container and need access to the rclone mount and Decypharr symlinks.
+!!! note "When Required"
+    These mounts are only required when Arrs or media servers run **outside** the DUMB container and need access to the rclone mount and Decypharr symlinks.
 
 ### 2. Configure Root Folders in Arrs
 
@@ -136,13 +138,15 @@ Inside the Sonarr and Radarr web UI:
   * **Radarr**: `/mnt/debrid/decypharr_symlinks/movies`
   * **Sonarr**: `/mnt/debrid/decypharr_symlinks/shows`
 
-> These directories are managed by Decypharr and must be used for proper operation.
+!!! important "Required Paths"
+    These directories are managed by Decypharr and must be used for proper operation.
 
 ### 3. Connect Decypharr to Arrs
 
 Follow the [official usage guide](https://sirrobot01.github.io/decypharr/usage/#connecting-to-sonarrradarr) for step-by-step instructions on connecting your Radarr and Sonarr instances to Decypharr.
 
-> This includes setting the correct API keys and ensuring URL paths match the container environments.
+!!! tip "Connection Tips"
+    This includes setting the correct API keys and ensuring URL paths match the container environments.
 
 ### 4. Plex Library Setup
 
@@ -151,21 +155,23 @@ In Plex, add the Decypharr symlink folders as library sources:
 * **Movies Library**: `/mnt/debrid/decypharr_symlinks/movies`
 * **TV Shows Library**: `/mnt/debrid/decypharr_symlinks/shows`
 
-> This ensures Plex indexes files processed and renamed by Decypharr, enabling clean and consistent playback.
+!!! note "Library Benefits"
+    This ensures Plex indexes files processed and renamed by Decypharr, enabling clean and consistent playback.
 
 
 ---
 
-## 🛠️ Troubleshooting Tips
+## Troubleshooting Tips
 
-* Ensure the bind mounts are correct and both containers see the same `/mnt/debrid` structure
-* Make sure Decypharr has permission to write to and create symlinks in the target directory
-* If media doesn't appear in Plex, check that the symlink folders are scanned and indexed
-* Use `docker inspect` to verify correct mount propagation between DUMB and Arrs
+!!! tip "Common Issues"
+    * Ensure the bind mounts are correct and both containers see the same `/mnt/debrid` structure
+    * Make sure Decypharr has permission to write to and create symlinks in the target directory
+    * If media doesn't appear in Plex, check that the symlink folders are scanned and indexed
+    * Use `docker inspect` to verify correct mount propagation between DUMB and Arrs
 
 ---
 
-## 🌐 Supported Debrid Providers
+## Supported Debrid Providers
 
 * [Real Debrid](https://real-debrid.com)
 * [Torbox](https://www.torbox.net)
@@ -174,7 +180,7 @@ In Plex, add the Decypharr symlink folders as library sources:
 
 ---
 
-## 🔗 Resources
+## Resources
 
 * [Decypharr GitHub](https://github.com/sirrobot01/decypharr)
 * [Decypharr Docs](https://sirrobot01.github.io/decypharr/)

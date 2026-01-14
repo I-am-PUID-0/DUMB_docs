@@ -1,5 +1,6 @@
 ---
 title: Core Services Overview
+icon: lucide/cpu
 ---
 
 # Core Services
@@ -8,7 +9,7 @@ Core services in DUMB are essential building blocks that handle media automation
 
 ---
 
-## 📦 What Are Core Services?
+## What Are Core Services?
 
 Core services are the services that:
 
@@ -18,7 +19,7 @@ Core services are the services that:
 !!!note "You can use as many core services simultaneously as you like"
 ---
 
-## 🧱 Core Service Index
+## Core Service Index
 
 | Service                             | Description                                          | Depends On                        | Optional Integrations        |
 | ----------------------------------- | ---------------------------------------------------- | --------------------------------- | ---------------------------- |
@@ -38,7 +39,7 @@ Core services are the services that:
 
 ---
 
-## 🔗 Dependency Guidelines
+## Dependency Guidelines
 
 If you enable a core service, be sure to also:
 
@@ -47,7 +48,7 @@ If you enable a core service, be sure to also:
 
 ---
 
-## 🚀 Example Workflows
+## Example Workflows
 
 ### [CLI Debrid](cli-debrid.md) 
 
@@ -102,7 +103,7 @@ If you enable a core service, be sure to also:
 
 ---
 
-## 🧠 Tips
+## Tips
 
 * Use `process_name` in `dumb_config.json` to identify each service clearly in logs and the UI
 * Onboarding will automatically add required dependencies for the Core services selected
@@ -110,7 +111,7 @@ If you enable a core service, be sure to also:
 
 ---
 
-## 📚 Related Pages
+## Related Pages
 
 * [Dependent Services](../dependent/index.md)
 * [Optional Services](../optional/index.md)

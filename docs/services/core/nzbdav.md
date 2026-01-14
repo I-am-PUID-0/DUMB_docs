@@ -1,5 +1,6 @@
 ---
 title: NzbDAV
+icon: lucide/cloud
 ---
 
 # NzbDAV (Core Service)
@@ -8,7 +9,7 @@ title: NzbDAV
 
 ---
 
-## 🔗 Service Relationships
+## Service Relationships
 
 | Classification | Role                                  |
 | -------------- | ------------------------------------- |
@@ -19,7 +20,7 @@ title: NzbDAV
 
 ---
 
-## 📦 Configuration in `dumb_config.json`
+## Configuration in `dumb_config.json`
 
 ```json
 "nzbdav": {
@@ -50,7 +51,7 @@ title: NzbDAV
 },
 ```
 
-### 🔍 Key Configuration Fields
+### Key Configuration Fields
 
 * `enabled`: Toggle to run NzbDAV via DUMB.
 * `frontend_port`: Port for the Web UI and WebDAV endpoint.
@@ -59,7 +60,7 @@ title: NzbDAV
 * `config_dir`: Path where NzbDAV data is stored.
 * `env`: Optional environment variables (see below).
 
-### 🔧 Environment Variables
+### Environment Variables
 
 * `WEBDAV_USER`: Override the WebDAV username (defaults to `admin`).
 * `WEBDAV_PASSWORD`: Override the WebDAV password.
@@ -68,9 +69,9 @@ title: NzbDAV
 
 ---
 
-## ⚙️ Integration with DUMB
+## Integration with DUMB
 
-### 🧭 Arr `core_service` Setting
+### Arr `core_service` Setting
 
 For Sonarr/Radarr/Lidarr/Whisparr instances you want wired to NzbDAV, set:
 
@@ -148,13 +149,13 @@ DUMB will:
 
 ---
 
-## 🌐 Accessing the UI
+## Accessing the UI
 
 * Navigate to: `http://<host>:<frontend_port>` (default port `3000`)
 
 ---
 
-## 🛠️ Troubleshooting Tips
+## Troubleshooting Tips
 
 * If rclone fails to authenticate, verify `WEBDAV_USER`/`WEBDAV_PASSWORD` and restart the container.
 * If Arr download clients are not created, confirm each Arr instance is enabled and has a readable `config.xml` for API key discovery.
@@ -162,6 +163,6 @@ DUMB will:
 
 ---
 
-## 🔗 Resources
+## Resources
 
 * [NzbDAV GitHub](https://github.com/nzbdav-dev/nzbdav)

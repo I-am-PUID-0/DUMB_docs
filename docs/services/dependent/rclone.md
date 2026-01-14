@@ -1,12 +1,13 @@
 ---
 title: rclone
+icon: lucide/hard-drive
 ---
 
 rclone is a command-line tool used in DUMB to mount cloud storage—specifically Debrid services like Real-Debrid—into the container as a local file system. It works in tandem with Zurg and is configured automatically during container startup.
 
 ---
 
-## ⚙️ Configuration Settings in `dumb_config.json`
+## Configuration Settings in `dumb_config.json`
 Each `rclone` instance is defined under the `rclone.instances` section in `dumb_config.json`. Example:
 ```json
 "rclone": {
@@ -34,7 +35,7 @@ Each `rclone` instance is defined under the `rclone.instances` section in `dumb_
 },
 ```
 
-### 🔍 Configuration Key Descriptions
+### Configuration Key Descriptions
 - **`enabled`**: Whether this rclone instance should be started.
 - **`core_service`**: Flag to indicate the associated core service during onboarding.
 - **`process_name`**: The label used in logs and process tracking.
@@ -52,20 +53,25 @@ Each `rclone` instance is defined under the `rclone.instances` section in `dumb_
 - **`command`**: Custom CLI arguments to be appended to rclone at runtime.
 - **`api_key`**: (Optional) Debrid API key, used if Zurg is not linked.
 
-### 🔁 API Key Behavior
-- If `zurg_enabled` & `zurg_config_file` are **set**: DUMB will configure rclone to use **Zurg's WebDAV** endpoint. The API key should be defined in the **Zurg instance**, not the rclone one.
-- If `decypharr_enabled` is **set**: DUMB will configure rclone to use **Decypharr's WebDAV** endpoint. The API key should be defined in the **Decypharr** config.
-- If `key_type` is **`NzbDAV`**: DUMB will configure rclone to use **NzbDAV's WebDAV** endpoint and read credentials from `WEBDAV_USER`/`WEBDAV_PASSWORD` (or the NzbDAV database). The rclone `api_key` field is ignored.
-- If `decypharr_enabled`, `zurg_enabled` & `zurg_config_file` are **unset or blank**: DUMB will configure rclone to **directly connect to the debrid service**, and the API key must be set in the rclone instance.
+### API Key Behavior
 
-### ➕ Adding More Instances
+!!! tip "API Key Configuration"
+    The API key location depends on your rclone configuration:
+
+    - **Zurg enabled**: API key should be defined in the **Zurg instance**, not the rclone one.
+    - **Decypharr enabled**: API key should be defined in the **Decypharr** config.
+    - **NzbDAV**: Credentials read from `WEBDAV_USER`/`WEBDAV_PASSWORD` or NzbDAV database. The rclone `api_key` field is ignored.
+    - **Direct debrid connection**: API key must be set in the rclone instance when both `decypharr_enabled` and `zurg_enabled` are unset or blank.
+
+### Adding More Instances
 Users can define additional rclone instances by duplicating the structure and ensuring:
 
 - Each `instance name` is **unique**
 - Each `process_name` is **unique**
 - The `key_type` must match the type of Debrid or WebDAV service used (e.g., `RealDebrid`, `AllDebrid`, `TorBox`, `Premiumize`, `NzbDAV`)
 
-!!! Note "The below example creates a zurg attached rclone mount and a direct debrid connection rclone mount"
+!!! example "Multiple Instances"
+    The below example creates a zurg attached rclone mount and a direct debrid connection rclone mount.
 
 Example:
 ```json
@@ -115,9 +121,9 @@ Example:
 
 ---
 
-## 🧠 Features Enabled by DUMB
+## Features Enabled by DUMB
 
-### 🔄 Auto-Generated `rclone.config`
+### Auto-Generated `rclone.config`
 DUMB generates the required `rclone.config` file at runtime. This includes:
 ```ini
 [rclone_RD]
@@ -128,13 +134,13 @@ pacer_min_sleep = 0
 ```
 This eliminates the need for any manual setup.
 
-### 🔒 Debrid API Integration
+### Debrid API Integration
 DUMB supports multiple Debrid configurations using a combination of `rclone` and `zurg` instances.
 
-### 🧲 Works With Zurg
+### Works With Zurg
 Zurg exposes a WebDAV server which rclone mounts using the configuration above.
 
-### 🔧 rclone Flags via Environment Variables
+### rclone Flags via Environment Variables
 All `--flag=value` options in rclone can be passed as environment variables. Format:
 ```bash
 RCLONE_<OPTION_NAME_UPPERCASE>=<value>
@@ -151,7 +157,7 @@ For more info, see [rclone docs](https://rclone.org/docs/#environment-variables)
 
 ---
 
-## 📚 Optimizing rclone for Media Server Usage
+## Optimizing rclone for Media Server Usage
 
 To improve streaming performance and reduce excessive bandwidth usage when using rclone with media servers (e.g., Plex, Jellyfin, Emby), consider tuning the mount behavior using additional flags.
 
@@ -160,12 +166,14 @@ To improve streaming performance and reduce excessive bandwidth usage when using
 
 You can apply these flags in three ways:
 
-1. **As environment variables** in Docker Compose or `.env` (Recommended):
+=== "Environment Variables (Recommended)"
+
+    Apply settings as environment variables in Docker Compose or `.env`:
 
     !!! note
         Applying the below will make these settings applicable to all rclone instances.
 
-        If you prefer to apply settings per-instance, then see option 2 or 3.
+        If you prefer to apply settings per-instance, then see the other tabs.
 
     ```env
     RCLONE_VFS_CACHE_MODE=full
@@ -180,7 +188,9 @@ You can apply these flags in three ways:
     RCLONE_TPSLIMIT_BURST=10
     ```
 
-2. **By modifying the `command` list** in the `dumb_config.json` rclone instance:
+=== "Command Array in Config"
+
+    Modify the `command` list in the `dumb_config.json` rclone instance:
 
     !!! note 
         The `command` field is empty by default (`"command": []`) because DUMB generates the rclone command dynamically during setup and applies it in memory.
@@ -191,56 +201,58 @@ You can apply these flags in three ways:
 
         To revert to default behavior, simply clear the field again by setting `"command": []`.
 
-      Example default command DUMB generates:
-      ```json
-      "command": [
-        "rclone",
-        "mount",
-        "rclone_RD:",
-        "/mnt/debrid/rclone_RD",
-        "--config", "/config/rclone.config",
-        "--uid=1000",
-        "--gid=1000",
-        "--allow-other",
-        "--poll-interval=0",
-        "--dir-cache-time=10s",
-        "--allow-non-empty"
-      ]
-      ```
+    Example default command DUMB generates:
+    ```json
+    "command": [
+      "rclone",
+      "mount",
+      "rclone_RD:",
+      "/mnt/debrid/rclone_RD",
+      "--config", "/config/rclone.config",
+      "--uid=1000",
+      "--gid=1000",
+      "--allow-other",
+      "--poll-interval=0",
+      "--dir-cache-time=10s",
+      "--allow-non-empty"
+    ]
+    ```
 
-      To apply performance optimizations:
-      ```json
-      "command": [
-        "rclone",
-        "mount",
-        "rclone_RD:",
-        "/mnt/debrid/rclone_RD",
-        "--config", "/config/rclone.config",
-        "--uid=1000",
-        "--gid=1000",
-        "--allow-other",
-        "--poll-interval=0",
-        "--dir-cache-time=10s",
-        "--allow-non-empty",
-        "--vfs-cache-mode=full",
-        "--vfs-read-chunk-size=1M",
-        "--vfs-read-chunk-size-limit=32M",
-        "--buffer-size=64M",
-        "--vfs-cache-max-age=6h",
-        "--vfs-cache-max-size=100G",
-        "--attr-timeout=1s",
-        "--tpslimit=10",
-        "--tpslimit-burst=10"
-      ]
-      ```
+    To apply performance optimizations:
+    ```json
+    "command": [
+      "rclone",
+      "mount",
+      "rclone_RD:",
+      "/mnt/debrid/rclone_RD",
+      "--config", "/config/rclone.config",
+      "--uid=1000",
+      "--gid=1000",
+      "--allow-other",
+      "--poll-interval=0",
+      "--dir-cache-time=10s",
+      "--allow-non-empty",
+      "--vfs-cache-mode=full",
+      "--vfs-read-chunk-size=1M",
+      "--vfs-read-chunk-size-limit=32M",
+      "--buffer-size=64M",
+      "--vfs-cache-max-age=6h",
+      "--vfs-cache-max-size=100G",
+      "--attr-timeout=1s",
+      "--tpslimit=10",
+      "--tpslimit-burst=10"
+    ]
+    ```
 
-3. **Using the DUMB Frontend** to edit the instance config and add these options under `command`.
+=== "DUMB Frontend"
+
+    Use the DUMB Frontend to edit the instance config and add these options under `command`.
 
     - Use the **"Apply in Memory"** button to test changes without saving. This temporarily updates the in-memory config.
     - Use the **"Save to File"** button to persist changes to `dumb_config.json`.
     - After either action, press the **"Restart"** button for the changes to take effect.
 
-### 🌐 Settings Description
+### Settings Description
 
 | Setting                           | Value     | Description                                                                     |
 |-----------------------------------|-----------|---------------------------------------------------------------------------------|
@@ -261,7 +273,7 @@ You can apply these flags in three ways:
 | `--tpslimit` / `--tpslimit-burst` | `10`           | Prevents overwhelming debrid APIs with too many requests.                  |
 
 
-### ⚡ Buffer Size Tips
+### Buffer Size Tips
 Adjust `--buffer-size` based on the system RAM:
 
 | System RAM     | Recommended `--buffer-size` |
@@ -273,17 +285,17 @@ Adjust `--buffer-size` based on the system RAM:
 
 --- 
 
-## 📂 Default Mount Structure
+## Default Mount Structure
 
 DUMB uses a predictable internal mount layout within the container to organize mounted debrid services and their symlinks when configured by the onboarding process.
 
 !!! note "The below convention is automatically followed when using the onboarding system to configure core services."
 
-### 📁 Root Mount Directory
+### Root Mount Directory
 
 * `/mnt/debrid` is the root mount location inside the container.
 
-### 🛆 rclone Mount Targets
+### rclone Mount Targets
 
 * Each rclone mount uses the core service name as its subdirectory.
 
@@ -292,7 +304,7 @@ DUMB uses a predictable internal mount layout within the container to organize m
     * Core service `riven` → `/mnt/debrid/riven`
     * Core service `decypharr` → `/mnt/debrid/decypharr`
 
-### 🔗 Symlink Directories
+### Symlink Directories
 
 * Core services that generate symlinks (e.g., Riven, Decypharr) will place them in subdirectories named with the pattern: `<core_service>_symlinks`
 
@@ -305,7 +317,7 @@ This naming convention makes it easy to identify and separate raw debrid mounts 
 
 ---
 
-## ⚙️ Mount Propagation
+## Mount Propagation
 
 !!! note "/mnt/debrid:rshared"    
     The `:rshared` must be included in order to support [mount propagation](https://docs.docker.com/storage/bind-mounts/#configure-bind-propagation) for rclone to the host when exposing the raw debrid files/links to an external container; e.g., the arrs or a media server.
@@ -316,11 +328,11 @@ Mount propagation controls how mount events (like new mounts created inside the 
 
 In the context of DUMB, mount propagation is critical for ensuring that media servers (e.g., Plex, Jellyfin) running **OUTSIDE** the container can see and access the dynamically-mounted cloud content that rclone brings in **inside** the container.
 
-### 🔗 Required Propagation Flags
+### Required Propagation Flags
 
 When mounting a path like `/mnt/debrid` from the host into the DUMB container, the bind mount must include **[mount propagation](https://docs.docker.com/storage/bind-mounts/#configure-bind-propagation)** flags to allow sub-mounts (e.g., `/mnt/debrid/riven`, `/mnt/debrid/decypharr`, etc.) to be visible **OUTSIDE** the container.
 
-#### ✅ Recommended Flag: `:rshared`
+#### Recommended Flag: `:rshared`
 
 Example:
 
@@ -344,7 +356,7 @@ Use `:rslave` **only if** you do not need to propagate mounts **from the host in
 
 ---
 
-### ⚠️ Common Issues Without Propagation
+### Common Issues Without Propagation
 
 * You may not see rclone mounts or Zurg's WebDAV mount in `/mnt/debrid` on the host.
 * Media servers running on the host or in other containers may report missing files or empty directories.
@@ -352,7 +364,7 @@ Use `:rslave` **only if** you do not need to propagate mounts **from the host in
 
 ---
 
-### 🔧 Host System Requirements
+### Host System Requirements
 !!! note "mount --make-rshared /"
 
     Most Linux distributions support mount propagation. However, the base path must be a shared or slave mount, or mount propagation will not function correctly.
@@ -364,7 +376,7 @@ To use mount propagation:
 * The host filesystem **must support it** (most Linux distributions do).
 * The base mount point (e.g., `/mnt/debrid`) must itself be a **shared** or **slave** mount.
 
-### ✅ How to Check
+### How to Check
 
 You can verify the current propagation mode using the `mount` or `findmnt` command:
 
@@ -384,7 +396,7 @@ Look for one of these at the end of the line:
 * `slave:` → slave mount
 * `private:` → not propagating (default)
 
-### 🛠️ How to Enable
+### How to Enable
 
 To ensure the base directory allows propagation:
 
@@ -404,7 +416,7 @@ mount --make-rshared /
     See the [rclone FAQ](../../faq/rclone.md#error-response-from-daemon-path-yourhostpathmnt-is-mounted-on--but-it-is-not-a-shared-mount) for additional details
 
 
-### 📅 Best Practices
+### Best Practices
 
 * Always prefer `:rshared` for `/mnt/debrid` in **DUMB** container mounts when external access to the mounts is needed.
 * Use `:rslave` in **consumer containers** (e.g., Plex, Sonarr, Radarr) for safer downstream propagation.
@@ -413,7 +425,7 @@ mount --make-rshared /
 
 ---
 
-### 📊 Summary Table for Mount Propagation Use Cases
+### Summary Table for Mount Propagation Use Cases
 
 | Propagation Mode    | Container → Host | Host → Container | Used For                                       | Notes                                                                     |
 | ------------------- | ---------------- | ---------------- | ---------------------------------------------- | ------------------------------------------------------------------------- |
@@ -425,7 +437,7 @@ The `rshared` flag should be reserved for DUMB's own mount directory so other se
 
 ---
 
-## 💻 Accessing rclone Inside the Container
+## Accessing rclone Inside the Container
 To run rclone commands manually:
 ```bash
 docker exec -it DUMB /bin/bash
@@ -435,14 +447,14 @@ rclone mount rclone_RD: /mnt/test
 
 ---
 
-## 🧠 Tips
+## Tips
 - Mounts are bind-mounted into the container by default.
 - If you mount `/mnt/debrid/` to the host with the `:rshared` flag you will see all Zurg-fetched content.
 - Use the `RCLONE_LOG_LEVEL` env var to control verbosity.
 
 ---
 
-## 📚 Resources
+## Resources
 - [rclone Documentation](https://rclone.org/)
 - [WebDAV Docs](https://rclone.org/webdav/)
 - [rclone Environment Variables](https://rclone.org/docs/#environment-variables)

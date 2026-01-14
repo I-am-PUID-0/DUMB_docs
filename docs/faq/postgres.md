@@ -1,5 +1,6 @@
 ---
 title: PostgreSQL FAQ
+icon: lucide/database
 ---
 
 # PostgreSQL FAQ
@@ -8,7 +9,7 @@ Below are common questions and explanations related to **PostgreSQL**, which is 
 
 ---
 
-## 🗃️ How PostgreSQL is used in DUMB
+## How PostgreSQL is used in DUMB
 
 PostgreSQL is used to **store persistent data** for the following services:
 
@@ -27,7 +28,7 @@ The database storage path is configured using the `postgres_data` path in `dumb_
 
 ---
 
-## ❗ What happens if I delete the database?
+## What happens if I delete the database?
 
 If the PostgreSQL volume or `/postgres_data` directory is deleted, **all data for Riven and Zilean will be lost**.
 
@@ -46,7 +47,7 @@ Both services will start fresh and **reinitialize their databases** upon next la
 
 ---
 
-## 🔁 Can I reset the database intentionally?
+## Can I reset the database intentionally?
 
 Yes — stopping the stack, deleting the `postgres_data` directory, and starting again will reset everything.
 
@@ -58,7 +59,7 @@ Alternatively, use **pgAdmin 4** (if enabled) to drop individual databases manua
 
 ---
 
-## 🔐 What are the default credentials?
+## What are the default credentials?
 
 - **Username**: `DUMB`
 - **Password**: `postgres`
@@ -67,7 +68,7 @@ Alternatively, use **pgAdmin 4** (if enabled) to drop individual databases manua
 
 ---
 
-## 💻 Can I connect to PostgreSQL externally?
+## Can I connect to PostgreSQL externally?
 
 Yes — by default, PostgreSQL binds to `127.0.0.1`. If you want to connect from an external app (like DBeaver or pgAdmin on your host machine), you'll need to:
 
@@ -77,7 +78,7 @@ Yes — by default, PostgreSQL binds to `127.0.0.1`. If you want to connect from
 
 ---
 
-## 🧪 Is it safe to run queries against the databases?
+## Is it safe to run queries against the databases?
 
 Yes — but with caution. Direct queries using tools like pgAdmin or psql can be useful for debugging or data inspection, but changes may break app logic unless you know what you're doing.
 
@@ -85,7 +86,7 @@ When in doubt, make a backup first!
 
 ---
 
-## 📎 Related Pages
+## Related Pages
 
 - [pgAdmin Service Guide](../services/optional/pgadmin.md)
 - [Riven Backend](../services/core/riven-backend.md)

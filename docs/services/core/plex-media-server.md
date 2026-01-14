@@ -1,5 +1,6 @@
 ---
-Title: Plex Media Server
+title: Plex Media Server
+icon: lucide/tv
 ---
 
 # Plex Media Server (Core Service)
@@ -8,7 +9,7 @@ Title: Plex Media Server
 
 ---
 
-## 🔗 Service Relationships
+## Service Relationships
 
 | Classification | Role                             |
 | -------------- | -------------------------------- |
@@ -19,7 +20,7 @@ Title: Plex Media Server
 
 ---
 
-## 📦 Configuration in `dumb_config.json`
+## Configuration in `dumb_config.json`
 
 ```json
 "plex": {
@@ -40,7 +41,7 @@ Title: Plex Media Server
 }
 ```
 
-### 🔍 Key Configuration Fields
+### Key Configuration Fields
 
 * `enabled`: Toggle Plex Media Server on or off.
 * `plex_claim`: Plex claim token for initial server registration.
@@ -52,9 +53,9 @@ Title: Plex Media Server
 
 ---
 
-## ⚙️ Setup & Behavior
+## Setup & Behavior
 
-### 🧰 Requirements
+### Requirements
 
 * Plex must have access to:
 
@@ -64,13 +65,13 @@ Title: Plex Media Server
 
 ---
 
-## 📦 Migrating an Existing Plex Server into DUMB
+## Migrating an Existing Plex Server into DUMB
 
 If you're migrating an existing Plex Media Server into the DUMB container, the process involves preserving your current Plex data directory and ensuring it is placed correctly within the DUMB ecosystem.
 
 ---
 
-### 📁 Step 1: Copy Existing Plex Configuration
+### Step 1: Copy Existing Plex Configuration
 
 Whether your current Plex server is running as a Docker container or directly on the host machine, locate its configuration directory. This directory typically contains:
 
@@ -96,7 +97,7 @@ DUMB/plex/Plex Media Server/Library/...
 
 ---
 
-### 🗃️ Step 2: Point DUMB to the Copied Config
+### Step 2: Point DUMB to the Copied Config
 
 !!! note "This is only required if changing the default location (shown below) for Plex configs inside the container"
 
@@ -113,7 +114,7 @@ Update the `dumb_config.json` to ensure the `config_dir` is `/plex`, which is th
 
 ---
 
-### 🗂️ Step 3: Add Media Content
+### Step 3: Add Media Content
 
 If you have existing media content from your previous Plex setup:
 
@@ -136,7 +137,7 @@ If you have existing media content from your previous Plex setup:
 
 ---
 
-### ✅ Step 4: Restart and Verify
+### Step 4: Restart and Verify
 
 Once configuration and mounts are complete:
 
@@ -149,7 +150,7 @@ Once configuration and mounts are complete:
 
 ---
 
-### 🧪 Optional: Reclaim or Reconfigure
+### Optional: Reclaim or Reconfigure
 
 If you're reusing an old server and want to reset it:
 
@@ -160,7 +161,7 @@ This allows you to re-register the server cleanly if needed.
 
 ---
 
-### 🧰 Summary Table
+### Summary Table
 
 | Migration Source      | Steps                                                          |
 | --------------------- | -------------------------------------------------------------- |
@@ -172,7 +173,7 @@ Once complete, your DUMB-based Plex server should fully replicate your prior set
 
 --- 
 
-## 🛠️ How to Start
+## How to Start
 
 ### Utilize the onboarding process
 
@@ -200,7 +201,7 @@ Hardware-accelerated streaming enables Plex to use the GPU or specialized hardwa
 !!! warning "Plex Pass Required"
     Hardware-accelerated transcoding is a **premium feature** and requires an active Plex Pass subscription. [Learn more](https://support.plex.tv/articles/115002178853-using-hardware-accelerated-streaming/)
 
-### 🧪 Docker Setup for Hardware Transcoding
+### Docker Setup for Hardware Transcoding
 
 To enable hardware transcoding in a Docker container:
 
@@ -230,7 +231,7 @@ getent group render
 
 Make sure the Plex container runs with appropriate `PUID` and `PGID` values that also have access to `/dev/dri`.
 
-### ⚙️ Enabling in Plex Settings
+### Enabling in Plex Settings
 
 Once the container is running and hardware access is configured:
 
@@ -239,7 +240,7 @@ Once the container is running and hardware access is configured:
 3. Enable the checkbox: **Use hardware acceleration when available**
 4. (Optional) Enable **Use hardware-accelerated video encoding** for encoding tasks.
 
-### ✅ Confirming Hardware Transcoding is Active
+### Confirming Hardware Transcoding is Active
 
 When a video is playing:
 
@@ -249,13 +250,13 @@ When a video is playing:
 
 ---
 
-### 🧪 Monitoring GPU Usage from Inside the Container
+### Monitoring GPU Usage from Inside the Container
 
 You can supplement Plex's built-in tools (like "Stats for Nerds") with real-time GPU monitoring inside the DUMB container.
 
 ---
 
-#### 🧠 Intel iGPU Monitoring
+#### Intel iGPU Monitoring
 
 Intel GPUs (e.g., Quick Sync) can be monitored using `intel-gpu-tools`:
 
@@ -279,7 +280,7 @@ This provides a live view of the GPU's video encode/decode engines. Look for act
 
 ---
 
-#### 🧠 NVIDIA GPU Monitoring
+#### NVIDIA GPU Monitoring
 
 For NVIDIA GPUs with NVENC/NVDEC support, use the `nvidia-smi` tool:
 
@@ -304,7 +305,7 @@ Look for the Plex process listed under the `Processes` section. When active tran
 
 ---
 
-### 🛑 Troubleshooting GPU Access & Hardware Transcoding
+### Troubleshooting GPU Access & Hardware Transcoding
 
 * Confirm the container has access to `/dev/dri` or sometimes `/dev/nvidia*`
 * Confirm Plex Pass is active and the account used in Plex is signed in and authorized
@@ -315,7 +316,7 @@ Look for the Plex process listed under the `Processes` section. When active tran
 
 ---
 
-## 🧩 Integration with Other Services
+## Integration with Other Services
 
 Plex is designed to serve content collected and maintained by core DUMB services including **Riven**, **CLI Debrid**, **Plex Debrid**, and **Decypharr**. These services fetch, organize, and optionally symlink media content into the mounted directory used by Plex.
 
@@ -329,14 +330,14 @@ Plex is designed to serve content collected and maintained by core DUMB services
 ---
 
 
-## 🌐 Access
+## Access
 
 * URL: `http://<host>:32400/web`
 * Credentials: Managed through Plex.tv account
 
 ---
 
-## 📁 Mount and Path Planning
+## Mount and Path Planning
 
 Ensure your media storage is accessible to Plex via the correct container path.
 
@@ -345,7 +346,7 @@ Ensure your media storage is accessible to Plex via the correct container path.
 
 ---
 
-## 🧪 Tips and Troubleshooting
+## Tips and Troubleshooting
 
 * If the container fails to start due to permissions, ensure Plex has proper access to its `config_dir` and media directories.
 * Use `PUID` and `PGID` to match host user permissions.
@@ -354,7 +355,7 @@ Ensure your media storage is accessible to Plex via the correct container path.
 
 ---
 
-## 🔗 Resources
+## Resources
 
 * [Plex Official Site](https://www.plex.tv/)
 * [Plex Claim Token Page](https://www.plex.tv/claim)

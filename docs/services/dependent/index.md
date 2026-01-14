@@ -1,5 +1,6 @@
 ---
- title: Dependent Services Overview
+title: Dependent Services Overview
+icon: lucide/box
 ---
 
 # Dependent Services
@@ -8,7 +9,7 @@ Dependent services are essential building blocks required by one or more core se
 
 ---
 
-## ⚙️ What Are Dependent Services?
+## What Are Dependent Services?
 
 A service is considered **dependent** if:
 
@@ -17,7 +18,7 @@ A service is considered **dependent** if:
 
 ---
 
-## 🧱 Dependent Service Index
+## Dependent Service Index
 
 | Service                                    | Description                                         | Required By                               |
 | ------------------------------------------ | --------------------------------------------------- | ----------------------------------------- |
@@ -29,7 +30,7 @@ A service is considered **dependent** if:
 
 ---
 
-## 🔗 How They Work
+## How They Work
 
 Dependent services act as building blocks — either providing runtime resources or exposing interfaces used by core services.
 
@@ -42,7 +43,7 @@ For example:
 
 ---
 
-## 🧠 Tips
+## Tips
 
 * These services are typically auto-launched when their associated core service starts
 * Avoid disabling them manually unless you're sure the core service won't need them
@@ -50,7 +51,7 @@ For example:
 
 ---
 
-## 📚 Related Pages
+## Related Pages
 
 * [Core Services](../core/index.md)
 * [Optional Services](../optional/index.md)

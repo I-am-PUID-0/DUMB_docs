@@ -1,5 +1,6 @@
 ---
 title: pgAdmin 4
+icon: lucide/database
 ---
 
 # pgAdmin 4
@@ -10,7 +11,7 @@ DUMB includes pgAdmin pre-installed and configured to work out of the box, allow
 
 ---
 
-## ⚙️ Configuration Settings in `dumb_config.json`
+## Configuration Settings in `dumb_config.json`
 ```json
 "pgadmin": {
     "enabled": false,
@@ -26,7 +27,7 @@ DUMB includes pgAdmin pre-installed and configured to work out of the box, allow
 },
 ```    
 
-### 🔍 Configuration Key Descriptions
+### Configuration Key Descriptions
 - **`enabled`**: Whether to start the pgAdmin service.
 - **`process_name`**: The label used in logs and process tracking.
 - **`config_dir`** – Directory where pgAdmin configuration files are stored.
@@ -40,7 +41,7 @@ DUMB includes pgAdmin pre-installed and configured to work out of the box, allow
 - **`setup_password`**: The password to be used with pgAdmin. 
 - **`command`** – The command used to start pgAdmin.
 
-## 🚪 Accessing pgAdmin
+## Accessing pgAdmin
 - Navigate to: `http://<host>:<port>` 
     - default port `5050`
 - Login using the credentials set via environment variables:
@@ -55,7 +56,7 @@ DUMB includes pgAdmin pre-installed and configured to work out of the box, allow
 
 ---
 
-## 🔐 Server Configuration
+## Server Configuration
 - pgAdmin is preconfigured with a server connection named **DUMB**.
 - On first login, you must enter the password for the PostgreSQL server connection.
     - Default password: `postgres`
@@ -65,17 +66,17 @@ DUMB includes pgAdmin pre-installed and configured to work out of the box, allow
 
 ---
 
-## ⚙️ Extensions
+## Extensions
 The following PostgreSQL extensions are included in the DUMB image:
 
-### 📈 `system_stats`
+### `system_stats`
 Provides system performance statistics inside PostgreSQL.
 
 - Find it in the pgAdmin dashboard under the connected database (e.g., `pgadmin` or `riven`).
 
 ![System Stats](../../assets/images/pgadmin/pgadmin-system-stats.png)
 
-### 📅 `pgAgent`
+### `pgAgent`
 A job scheduler for PostgreSQL. Useful for:
 
 - Scheduling backups
@@ -85,7 +86,7 @@ A job scheduler for PostgreSQL. Useful for:
 
 ---
 
-## 📚 More Info
+## More Info
 
 - [pgAdmin FAQ](../../faq/pgadmin.md)
 
@@ -95,7 +96,7 @@ A job scheduler for PostgreSQL. Useful for:
 
 ---
 
-## 🧠 Summary
+## Summary
 | Setting                | Value                |
 |------------------------|----------------------|
 | UI Address             | `http://<host>:5050` |

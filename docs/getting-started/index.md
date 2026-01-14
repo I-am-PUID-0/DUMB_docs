@@ -1,27 +1,28 @@
 ---
 title: Introduction
+icon: lucide/rocket
 ---
 
-# 🚀 Getting Started with DUMB
+# Getting Started with DUMB
 
 Welcome to **DUMB – Debrid Unlimited Media Bridge**: a unified media management and automation tool designed for users who want to streamline their content discovery, acquisition, and playback using services like **Plex**, **Real-Debrid**, **Trakt**, **Seerr**, and more.
 
 ---
 
-## 🔍 What Is DUMB?
+## What Is DUMB?
 
 DUMB combines multiple backend services into a single containerized system to provide:
 
-- 🔎 **Search and discovery** using Trakt, Plex Watchlists, Seerr, etc.
-- ⚡ **Real-Debrid integration** for content fetching via Zurg
-- ☁️ **Remote mounting** of Debrid storage using rclone
-- 🧠 **Metadata caching** with Zilean
-- 📦 **Automated download orchestration** with Riven
-- 📊 **Web-based dashboards** for control and monitoring
+-  **Search and discovery** using Trakt, Plex Watchlists, Seerr, etc.
+-  **Real-Debrid integration** for content fetching via Zurg
+-  **Remote mounting** of Debrid storage using rclone
+-  **Metadata caching** with Zilean
+-  **Automated download orchestration** with Riven
+-  **Web-based dashboards** for control and monitoring
 
 ---
 
-## 🧩 Is This for You?
+## Is This for You?
 
 DUMB is ideal if you:
 
@@ -33,7 +34,7 @@ DUMB is ideal if you:
 
 ---
 
-## 🖼️ Architecture at a Glance
+## Architecture at a Glance
 
 ![DUMB Flow Diagram](../assets/images/under_construction.png)
 
@@ -41,15 +42,15 @@ DUMB is ideal if you:
 
 ---
 
-## 🛠️ System Requirements
+## System Requirements
 
-- 🐳 Docker or a compatible runtime
-- ⚙️ Linux (recommended) or Windows (WSL)
-- 🔒 Real-Debrid
+-  Docker or a compatible runtime
+-  Linux (recommended) or Windows (WSL)
+-  Real-Debrid
 
 ---
 
-## ⏭️ What Next?
+## What Next?
 
 1. Head to [Installation](installation.md) to get ready.
 2. Choose your platform in [Deployment](../deployment/index.md)

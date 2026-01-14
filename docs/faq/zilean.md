@@ -1,5 +1,6 @@
 ---
 title: Zilean FAQ
+icon: lucide/book-open
 ---
 
 # Zilean FAQ
@@ -8,7 +9,7 @@ Below are some common questions and solutions related to Zilean when used with *
 
 ---
 
-## ❓ Frequently Asked Questions (FAQ)
+## Frequently Asked Questions (FAQ)
 
 ### Why is Zilean spamming my logs!?!
 

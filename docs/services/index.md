@@ -1,5 +1,6 @@
 ---
 title: Services Overview
+icon: lucide/layers
 ---
 
 # Services Overview
@@ -13,47 +14,47 @@ DUMB is composed of multiple services that work together to provide a complete a
 
 ---
 
-## 🧹 How the Services Work Together
+## How the Services Work Together
 
 DUMB is built as a collection of microservices that communicate over internal APIs and shared paths. Below is an example flow:
 
 1. **Platform Infrastructure**
 
-    * 🔐 **DUMB API** coordinates and manages all service interactions
-    * 🗃️ **DUMB Frontend** provides the web interface for managing and viewing services
+    *  **DUMB API** coordinates and manages all service interactions
+    *  **DUMB Frontend** provides the web interface for managing and viewing services
 
 2. **Debrid Orchestration & Content Management**
 
-    * 🧠 **Riven Backend**, 🧲 **CLI Debrid**, 🚁 **Plex Debrid**, and 🌐 **Decypharr** each serve as a Debrid orchestrator: requesting, managing, and monitoring content acquisition workflows
+    *  **Riven Backend**,  **CLI Debrid**,  **Plex Debrid**, and  **Decypharr** each serve as a Debrid orchestrator: requesting, managing, and monitoring content acquisition workflows
     * These core services integrate with providers like Trakt, Seerr, and Debrid APIs to manage what content gets fetched
-    * 📥 **NzbDAV** provides a WebDAV endpoint and download client integration for NZB workflows
-    * 📚 **Sonarr/Radarr/Lidarr/Whisparr** manage media queues and organize content from download clients
-    * 🧭 **Prowlarr** manages indexers and syncs them to the Arrs
+    *  **NzbDAV** provides a WebDAV endpoint and download client integration for NZB workflows
+    *  **Sonarr/Radarr/Lidarr/Whisparr** manage media queues and organize content from download clients
+    *  **Prowlarr** manages indexers and syncs them to the Arrs
 
 3. **Media Playback**
 
-    * 🎥 **Plex** is the core service that hosts and serves collected content to users
+    *  **Plex** is the core service that hosts and serves collected content to users
         * It relies on symlinked or mounted content made available through rclone/Zurg from the other core services
-    * 🍿 **Jellyfin** and **Emby** can be used as alternatives to Plex for library playback
+    *  **Jellyfin** and **Emby** can be used as alternatives to Plex for library playback
 
 4. **Storage & Retrieval**
 
-    * 📁 **rclone** mounts remote Debrid storage for local access
-    * ⚡ **Zurg** provides WebDAV access to debrid downloads
+    *  **rclone** mounts remote Debrid storage for local access
+    *  **Zurg** provides WebDAV access to debrid downloads
 
 5. **Metadata & Caching**
 
-    * 🛢 **CLI Battery** and 🌐 **Phalanx DB** serve as local or distributed metadata stores
-    * 🛢 **Zilean** caches metadata and exposes a Torznab-compatible indexer for scraping optimization
+    *  **CLI Battery** and  **Phalanx DB** serve as local or distributed metadata stores
+    *  **Zilean** caches metadata and exposes a Torznab-compatible indexer for scraping optimization
 
 6. **Database Layer**
 
-    * 📂 **PostgreSQL** stores metadata for Riven, Zilean, and pgAdmin
-    * 📊 **pgAdmin** is a GUI for exploring PostgreSQL databases
+    *  **PostgreSQL** stores metadata for Riven, Zilean, and pgAdmin
+    *  **pgAdmin** is a GUI for exploring PostgreSQL databases
 
 ---
 
-## 🧱 Quick Reference
+## Quick Reference
 
 | Service                                                  | Type      | Key Role                                                  |
 | -------------------------------------------------------- | --------- | --------------------------------------------------------- |
@@ -83,7 +84,7 @@ DUMB is built as a collection of microservices that communicate over internal AP
 
 ---
 
-## 🧠 Tips
+## Tips
 
 * Use the onboarding UI to enable only the services you need
 * Services will auto-start in dependency order
@@ -91,7 +92,7 @@ DUMB is built as a collection of microservices that communicate over internal AP
 
 ---
 
-## 📚 Service Categories
+## Service Categories
 
 * [DUMB Services](../services/dumb/index.md)
 * [Core Services](../services/core/index.md)

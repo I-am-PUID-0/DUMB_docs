@@ -1,5 +1,6 @@
 ---
 title: Jellyfin
+icon: lucide/play
 ---
 
 # Jellyfin (Core Service)
@@ -8,7 +9,7 @@ title: Jellyfin
 
 ---
 
-## 🔗 Service Relationships
+## Service Relationships
 
 | Classification | Role                               |
 | -------------- | ---------------------------------- |
@@ -19,7 +20,7 @@ title: Jellyfin
 
 ---
 
-## 📦 Configuration in `dumb_config.json`
+## Configuration in `dumb_config.json`
 
 ```json
 "jellyfin": {
@@ -37,7 +38,7 @@ title: Jellyfin
 }
 ```
 
-### 🔍 Key Configuration Fields
+### Key Configuration Fields
 
 * `pinned_version`: Optional version pin for Jellyfin updates.
 * `config_dir`, `config_file`, `log_file`: Paths for config and logs.
@@ -45,13 +46,13 @@ title: Jellyfin
 
 ---
 
-## 🌐 Accessing the UI
+## Accessing the UI
 
 * Navigate to: `http://<host>:8096` (default Jellyfin port)
 
 ---
 
-## 🔗 Resources
+## Resources
 
 * [Jellyfin Website](https://jellyfin.org/)
 * [Jellyfin GitHub](https://github.com/jellyfin/jellyfin)

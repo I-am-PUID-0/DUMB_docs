@@ -1,5 +1,6 @@
 ---
 title: CLI Debrid
+icon: lucide/terminal
 ---
 
 # CLI Debrid (Core Service)
@@ -8,7 +9,7 @@ title: CLI Debrid
 
 ---
 
-## 🔗 Service Relationships
+## Service Relationships
 
 | Classification | Role                                                                                                       |
 | -------------- | ---------------------------------------------------------------------------------------------------------- |
@@ -19,7 +20,7 @@ title: CLI Debrid
 
 ---
 
-## 📦 Configuration in `dumb_config.json`
+## Configuration in `dumb_config.json`
 
 ```json
 "cli_debrid": {
@@ -59,7 +60,7 @@ title: CLI Debrid
 },
 ```
 
-### 🔍 Key Configuration Fields
+### Key Configuration Fields
 
 * `enabled`: Toggle to run CLI Debrid via DUMB.
 * `process_name`: Used for display and logs.
@@ -72,16 +73,16 @@ title: CLI Debrid
 
 ---
 
-## ⚙️ What CLI Debrid Does
+## What CLI Debrid Does
 
-### 🧠 Intelligent Automation
+### Intelligent Automation
 
 * Monitors your Plex library or local folder structure (symlinked library)
 * Scrapes for content from various sources (Zilean, Jackett, Torrentio, Nyaa, Media Fusion)
 * Downloads new or upgraded content using Debrid providers
 * Optionally leverages webhook notifications from Seerr or Zurg to trigger updates
 
-### 🎛️ Supported Features
+### Supported Features
 
 * Content Sources: MDBList, Trakt, Seerr
 * Upgrading: Queue system for quality upgrades
@@ -93,7 +94,7 @@ title: CLI Debrid
 
 ---
 
-## ⚡ Required Component: CLI Battery
+## Required Component: CLI Battery
 
 !!! warning "CLI Battery must be running for CLI Debrid to function."
 
@@ -129,7 +130,7 @@ CLI Battery provides local metadata storage and Trakt integration, acting as the
 
 ---
 
-## 🧰 Optional Utility: Phalanx DB
+## Optional Utility: Phalanx DB
 
 ```json
 "phalanx_db": {
@@ -169,12 +170,14 @@ Phalanx DB provides distributed metadata storage via Hyperswarm. It is optional 
 
 ---
 
-## 🔁 Mount Considerations
+## Mount Considerations
 
 CLI Debrid can create symlinks to be used in the media server, or if using the rclone mounts directly in the media server it can monitor the Plex libraries for completed items.
 
 In both cases, ensure the appropriate path for the rclone or zurg mount is used when adding the `Original Files Path`.
-!!! note "The `Original Files Path` is relative to the paths inside the container"
+
+!!! note "Original Files Path"
+    The `Original Files Path` is relative to the paths inside the container.
 
     Example: As default when configured with the onboarding process, the rclone `mount_dir` is set to `/mnt/debrid`, the rclone `mount_name` is set to `clid`, and it is using `zurg_enabled: true` for rclone, then the path should be:  
 
@@ -182,8 +185,10 @@ In both cases, ensure the appropriate path for the rclone or zurg mount is used 
 
 As mentioned, CLI Debrid also monitors either the created symlinks or the Plex libraries for completed items.
 
-As such, it's important to ensure you select the appropriate option for your deployment. 
-!!! note "`Symlinked/Local` will create symlinks in the user defined path, whereas `Plex` will monitor the Plex Libraries defined and not create symlinks"
+As such, it's important to ensure you select the appropriate option for your deployment.
+
+!!! tip "Collection Mode Selection"
+    `Symlinked/Local` will create symlinks in the user defined path, whereas `Plex` will monitor the Plex Libraries defined and not create symlinks.
 
     ![File Collection Management](../../assets/images/cli_debrid/clid_file_collection_management.png)
     ![Symlinked Files Path](../../assets/images/cli_debrid/clid_symlinked_files_path.png)
@@ -191,35 +196,37 @@ As such, it's important to ensure you select the appropriate option for your dep
 
 ---
 
-## 🚀 Plex Media Server Built-in!
+## Plex Media Server Built-in!
 
-With [Plex Media Server](plex-media-server.md) enabled in DUMB, you can also leverage it with CLI Debrid
+With [Plex Media Server](plex-media-server.md) enabled in DUMB, you can also leverage it with CLI Debrid.
 
-As shown below, if you select to "Sign in to Plex" during the CLI Debrid onboarding, it will allow you to select the local instance of [Plex Media Server](plex-media-server.md)
+As shown below, if you select to "Sign in to Plex" during the CLI Debrid onboarding, it will allow you to select the local instance of [Plex Media Server](plex-media-server.md).
 
-!!! note "[Plex Media Server](plex-media-server.md) must be configured and running in DUMB before it will appear in the list of available servers"
+!!! note "Plex Media Server Requirement"
+    [Plex Media Server](plex-media-server.md) must be configured and running in DUMB before it will appear in the list of available servers.
 
 ![Sign in to Plex](../../assets/images/cli_debrid/plex_sign_in.PNG)
 
 Signing into Plex and selecting the DUMB [Plex Media Server](plex-media-server.md) will pre-populate the "Plex URL" and "Plex Token" within the CLI Debrid onboarding. 
 
-However, note that it sets the "Plex URL" as the DUMB docker container's IP Address:
+!!! warning "Plex URL Configuration"
+    However, note that it sets the "Plex URL" as the DUMB docker container's IP Address:
 
-![Plex URL Signed In](../../assets/images/cli_debrid/plex_server_url_signed_in.PNG)
+    ![Plex URL Signed In](../../assets/images/cli_debrid/plex_server_url_signed_in.PNG)
 
-This may cause issues if the address changes for the container, so it is suggested to change the "Plex URL" as shown below:
+    This may cause issues if the address changes for the container, so it is suggested to change the "Plex URL" as shown below:
 
-![Plex URL](../../assets/images/cli_debrid/plex_server_url.PNG)
+    ![Plex URL](../../assets/images/cli_debrid/plex_server_url.PNG)
 
 ---
-## 🚀 Zilean Built-in!
+## Zilean Built-in!
 
 With [Zilean](../optional/zilean.md) enabled in DUMB, you can also leverage it with CLI Debrid
 
 ![Add A Scraper](../../assets/images/cli_debrid/clid_add_a_scraper_zilean.png)
 
 
-## 🧠 Queues & Processing (Behind the Scenes)
+## Queues & Processing (Behind the Scenes)
 
 * **Wanted Queue**: Items identified from your lists that need to be downloaded but haven't been processed by the scraper yet. Shows the time the item was last scraped. If within 24 hours of scraping items will remain in the Wanted queue.
 * **Scraping Queue**: Items actively being searched for download sources (torrents/magnets).
@@ -243,7 +250,7 @@ All queues are managed on scheduled intervals.
 
 ---
 
-## 📡 Webhook Support
+## Webhook Support
 
 CLI Debrid can listen for:
 
@@ -263,7 +270,7 @@ done
 echo "Webhook update complete."
 ```
 
-## ⚙️ Branch / Version Targeting
+## Branch / Version Targeting
 You can control which version or branch is deployed by setting:
 
 - `branch_enabled: true` and specifying a `branch`
@@ -271,7 +278,7 @@ You can control which version or branch is deployed by setting:
 
 ---
 
-## 🌐 Access
+## Access
 
 - Navigate to: `http://<host>:<port>` 
 

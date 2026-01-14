@@ -1,5 +1,6 @@
 ---
 title: Lidarr
+icon: lucide/music
 ---
 
 # Lidarr (Core Service)
@@ -8,7 +9,7 @@ title: Lidarr
 
 ---
 
-## 🔗 Service Relationships
+## Service Relationships
 
 | Classification | Role                               |
 | -------------- | ---------------------------------- |
@@ -19,7 +20,7 @@ title: Lidarr
 
 ---
 
-## 📦 Configuration in `dumb_config.json`
+## Configuration in `dumb_config.json`
 
 ```json
 "lidarr": {
@@ -43,7 +44,7 @@ title: Lidarr
 }
 ```
 
-### 🔍 Key Configuration Fields
+### Key Configuration Fields
 
 * `core_service`: Set to `decypharr` or `nzbdav` to enable DUMB integration with those services.
 * `port`: Web UI port (default `8686`).
@@ -52,7 +53,7 @@ title: Lidarr
 
 ---
 
-## ⚙️ Integration with DUMB
+## Integration with DUMB
 
 * For Decypharr integration, set `core_service` to `decypharr` and follow the [Decypharr guide](decypharr.md).
 * For NzbDAV integration, set `core_service` to `nzbdav` and follow the [NzbDAV guide](nzbdav.md).
@@ -60,13 +61,13 @@ title: Lidarr
 
 ---
 
-## 🌐 Accessing the UI
+## Accessing the UI
 
 * Navigate to: `http://<host>:8686`
 
 ---
 
-## 🔗 Resources
+## Resources
 
 * [Lidarr Website](https://lidarr.audio/)
 * [Lidarr GitHub](https://github.com/Lidarr/Lidarr)

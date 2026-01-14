@@ -1,6 +1,6 @@
 {
     "name": "DUMB-Docs Dev Container",
-    "image": "mcr.microsoft.com/devcontainers/python:3.11",
+    "image": "mcr.microsoft.com/devcontainers/python:3.14",
     "workspaceFolder": "/workspace",
     "customizations": {
         "vscode": {
@@ -9,9 +9,13 @@
             ]
         }
     },
-    "forwardPorts": [
-        8100
-    ],
+    "forwardPorts": [8000],
+    "portsAttributes": {
+        "8000": {
+            "label": "Zensical",
+            "onAutoForward": "openBrowser"
+        }
+    },
     "mounts": [
         "source=${localWorkspaceFolder},target=/workspace,type=bind"
     ],
@@ -21,6 +25,11 @@
         "--dns=8.8.8.8",
         "--dns=8.8.4.4"
     ],
-    "postCreateCommand": "pip install mkdocs-material",
+    "remoteEnv": {
+        "WATCHFILES_FORCE_POLLING": "true",
+        "WATCHFILES_POLL_DELAY_MS": "200"
+    },
+    "postCreateCommand": "bash ./.devcontainer/init.sh",
+    "postStartCommand": "rm -rf .cache site && zensical serve",
     "remoteUser": "vscode"
 }

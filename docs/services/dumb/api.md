@@ -1,5 +1,6 @@
 ---
 title: DUMB API
+icon: lucide/code
 ---
 
 # DUMB API
@@ -7,7 +8,7 @@ The **DUMB API** is the central communication layer between the DUMB Frontend an
 
 ---
 
-## ⚙️ Configuration Settings in `dumb_config.json`
+## Configuration Settings in `dumb_config.json`
 Located in `dumb.api_service`:
 ```json
 "enabled": true,
@@ -17,7 +18,7 @@ Located in `dumb.api_service`:
 "port": 8000
 ```
 
-### 🔍 Configuration Key Descriptions
+### Configuration Key Descriptions
 - **`enabled`** – Whether the API service should run.
 - **`process_name`** – Used in process management and logs.
 - **`log_level`** – Logging verbosity for the API.

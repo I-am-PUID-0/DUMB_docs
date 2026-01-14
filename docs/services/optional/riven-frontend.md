@@ -1,3 +1,8 @@
+---
+title: Riven Frontend
+icon: lucide/layout-dashboard
+---
+
 # Riven Frontend
 
 The **Riven Frontend** is the web-based interface for interacting with the Riven Backend. It allows users to manage settings, content, and integrations from a clean and modern UI.
@@ -6,7 +11,7 @@ DUMB handles automatic installation and updates of the frontend, including versi
 
 ---
 
-## ⚙️ Configuration Settings in `dumb_config.json`
+## Configuration Settings in `dumb_config.json`
 
 ```json
 "riven_frontend": {
@@ -39,7 +44,7 @@ DUMB handles automatic installation and updates of the frontend, including versi
 },
 ```
 
-### 🔍 Configuration Key Descriptions
+### Configuration Key Descriptions
 
 - **`enabled`**: Whether to start the Riven Frontend service.
 - **`process_name`**: Used in logs and process tracking.
@@ -62,12 +67,12 @@ DUMB handles automatic installation and updates of the frontend, including versi
 
 ---
 
-## 🔧 ORIGIN Variable
+## ORIGIN Variable
 The `ORIGIN` key must match the public-facing URL used to access the frontend. It ensures correct behavior for authentication, saving settings, and API communication.
 
 ---
 
-## ⚙️ Branch / Version Targeting
+## Branch / Version Targeting
 You can control which version or branch of the frontend is deployed by setting:
 
 - `branch_enabled: true` and specifying a `branch`
@@ -75,20 +80,20 @@ You can control which version or branch of the frontend is deployed by setting:
 
 ---
 
-## 🌐 Access
+## Access
 - Navigate to: `http://<host>:<port>` 
     - default port `3000`
 
-!!! note "🔐 If using a reverse proxy, ensure the `ORIGIN` environment variable matches the external URL."
+!!! note " If using a reverse proxy, ensure the `ORIGIN` environment variable matches the external URL."
 
 ---
 
-## 🧠 Tips
+## Tips
 - The frontend depends on the backend being reachable at `http://<host>:<port>` defined in the `dumb_config.json` for the [Riven Backend](../core/riven-backend.md)
 - Use Docker port mappings if needed to expose the frontend
 - Check `PORT` and `ORIGIN` values if the UI fails to load
 
 ---
 
-## 📚 Resources
+## Resources
 - [Riven Frontend GitHub](https://github.com/rivenmedia/riven-frontend)
