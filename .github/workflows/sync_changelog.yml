@@ -21,7 +21,7 @@ jobs:
 
     steps:
       - name: Checkout MkDocs Repo
-        uses: actions/checkout@v3
+        uses: actions/checkout@v6
 
       - name: Fetch Changelog
         run: |
