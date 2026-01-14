@@ -63,7 +63,7 @@ jobs:
 
       - name: Auto Approve PR
         if: success() && steps.extract_pr.outputs.pull_request_number != ''
-        uses: hmarr/auto-approve-action@v3
+        uses: hmarr/auto-approve-action@v4
         with:
           github-token: ${{ secrets.RELEASE_PLEASE_TOKEN }}
           pull-request-number: ${{ steps.extract_pr.outputs.pull_request_number }}
