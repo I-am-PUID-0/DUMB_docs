@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.5.0](https://github.com/I-am-PUID-0/DUMB_docs/compare/1.4.0...1.5.0) (2026-01-14)
+
+
+### ✨ Features
+
+* uplift docs from mkdocs to zensical ([#22](https://github.com/I-am-PUID-0/DUMB_docs/issues/22)) ([5548ee3](https://github.com/I-am-PUID-0/DUMB_docs/commit/5548ee36a61eb14e83f78db19fcb9e64949d5a6f))
+
 ## [1.4.0](https://github.com/I-am-PUID-0/DUMB_docs/compare/1.3.5...1.4.0) (2025-12-30)
 
 
