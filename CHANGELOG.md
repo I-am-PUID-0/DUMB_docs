@@ -1,6 +1,18 @@
 # Changelog
 
 
+## [1.7.0](https://github.com/I-am-PUID-0/DUMB_docs/compare/1.6.0...1.7.0) (2026-01-26)
+
+
+### ✨ Features
+
+* Expands DUMB's documentation ([4a55e8c](https://github.com/I-am-PUID-0/DUMB_docs/commit/4a55e8cae10a0808228fc31e46a84dea2a069487))
+
+
+### 📖 Documentation
+
+* Updates DUMB's features and architecture ([4a55e8c](https://github.com/I-am-PUID-0/DUMB_docs/commit/4a55e8cae10a0808228fc31e46a84dea2a069487))
+
 ## [1.6.0](https://github.com/I-am-PUID-0/DUMB_docs/compare/1.5.0...1.6.0) (2026-01-26)
 
 
