@@ -74,16 +74,31 @@ hide:
 <div class="grid cards" markdown>
 
 - ## :material-rocket-launch:{ .lg .middle } Quick Start
-  Get DUMB up and running in minutes with our streamlined deployment process. Choose from Docker, Portainer, Unraid, or other platforms.
+  Get DUMB up and running in minutes with Docker, Portainer, Unraid, or other platforms.
 
 - ## :material-puzzle:{ .lg .middle } Unified Platform
   All your favorite media services in one container. Plex, Jellyfin, Emby, Sonarr, Radarr, and more—pre-configured and ready to use.
 
 - ## :material-cog:{ .lg .middle } Automated Workflows
-  Connect Debrid services, Trakt lists, and Plex Discover watchlists. DUMB handles the rest—from discovery to streaming.
+  Connect Debrid and Usenet services, Trakt lists, and Plex Discover watchlists. DUMB auto-wires the stack from onboarding to streaming.
+
+- ## :material-auto-fix:{ .lg .middle } Guided Onboarding
+  Step-by-step setup for core services, optional tools, credentials, and embedded UIs. Start with sane defaults, then refine later.
 
 - ## :material-monitor-share:{ .lg .middle } Embedded UIs
   Use Traefik to unify service UIs under one endpoint and manage everything from the DUMB dashboard.
+
+- ## :material-chart-line:{ .lg .middle } Live Metrics
+  Track CPU, memory, disk, and network usage in real time with WebSocket-powered updates.
+
+- ## :material-shield-lock:{ .lg .middle } Authentication
+  Optional JWT auth with user management to secure the UI and API.
+
+- ## :material-update:{ .lg .middle } Auto-Update
+  Keep services current with scheduled updates or pinned versions.
+
+- ## :material-refresh:{ .lg .middle } Auto-Restart
+  Health checks and backoff restarts keep services resilient.
 
 </div>
 

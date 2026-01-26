@@ -9,7 +9,7 @@ hide:
 
 ## About DUMB (Debrid Unlimited Media Bridge)
 
-**Debrid Unlimited Media Bridge (DUMB)** is an all-in-one, containerized platform for managing and automating media workflows using premium debrid services like Real-Debrid. Whether you're looking to automate downloads, organize libraries, mount remote content, or just reduce manual steps — DUMB aims to unify it all into a seamless experience.
+**Debrid Unlimited Media Bridge (DUMB)** is an all-in-one, containerized platform for managing and automating media workflows using premium debrid services (like Real-Debrid) and Usenet. Whether you're looking to automate downloads, organize libraries, mount remote content, or just reduce manual steps, DUMB aims to unify it all into a seamless experience.
 
 ---
 
@@ -17,7 +17,7 @@ hide:
 
 DUMB was created with a single goal:
 
-**Bridge the gap between cloud-based debrid services and traditional media server ecosystems like Plex, Jellyfin, and Emby — with maximum automation and minimal configuration.**
+**Bridge the gap between debrid or Usenet services and traditional media server ecosystems like Plex, Jellyfin, and Emby — with maximum automation and minimal configuration.**
 
 By directly integrating the **media server itself** (e.g. Plex) within the DUMB container, the platform overcomes long-standing issues like broken bind mount propagation, sync delays, and external scan conflicts common in multi-container setups.
 
@@ -27,15 +27,22 @@ By directly integrating the **media server itself** (e.g. Plex) within the DUMB 
 
 Unlike other solutions that focus on one piece of the puzzle, **DUMB integrates every step** of the media pipeline:
 
-*  *Embedded Media Servers* — Plex, Jellyfin, and Emby run inside the same container, ensuring seamless access to mounted content and full internal control
-*  *Service Coordination* — via the internal DUMB API and real-time config management
-*  *Automated Acquisition* — with core services for discovery and Zurg and/or rclone for debrid content fetching
-*  *Cloud Storage Mounting* — through rclone mounts direct to debrid (e.g., Real-Debrid WebDAV) or utilizing Zurg's WebDAV
-*  *Library Management* — using symlinks, metadata enrichment, and optional server updates
-*  *Metadata Caching* — with Zilean to reduce latency and boost scraping efficiency
-*  *Visual Control* — via the DUMB Frontend for live logs, settings, and monitoring
+*  *Embedded media servers* — Plex, Jellyfin, and Emby run inside the same container, ensuring seamless access to mounted content and full internal control
+*  *Service coordination* — via the internal DUMB API and real-time config management
+*  *Automated acquisition* — with core services for discovery and orchestrators like Riven, CLI Debrid, Decypharr, and NzbDAV
+*  *Cloud storage mounting* — through rclone mounts direct to debrid (e.g., Real-Debrid WebDAV) or utilizing Zurg's WebDAV
+*  *Arr automation* — Sonarr, Radarr, Lidarr, and Whisparr handle queues, renaming, and library organization
+*  *Library management* — using symlinks, metadata enrichment, and optional server updates
+*  *Metadata caching* — with Zilean to reduce latency and boost scraping efficiency
+*  *Visual control* — via the DUMB Frontend for onboarding, live logs, settings, and monitoring
 
 All services are configured through a centralized file (`dumb_config.json`) and can be dynamically updated at runtime via the DUMB Frontend.
+
+!!! info "Combined workflows"
+
+    You can attach a single Arr instance to multiple workflows by setting
+    `core_service` to a list (for example `["decypharr", "nzbdav"]`). When combined,
+    DUMB switches Arr root folders to `/mnt/debrid/combined_symlinks/<slug>`.
 
 ---
 
@@ -48,9 +55,13 @@ DUMB is built using a **modular, microservices** architecture, with the followin
 | **DUMB API**             | Core controller and coordination hub                                                         |
 | **DUMB Frontend**        | Graphical interface for managing services, configs, and logs                                 |
 | **Plex Media Server**    | First-class embedded media server for direct playback of collected content                   |
-| **Riven**                | Content search, acquisition, and integration with platforms like Plex, Trakt, Seerr, etc |
-| **CLI Debrid**           | Content search, acquisition, and integration with platforms like Plex, Trakt, Seerr, etc |
-| **Decypharr**            | Content search, acquisition, and integration with platforms like Plex, Trakt, Seerr, etc |
+| **Riven**                | Debrid content orchestration (Plex, Trakt, Seerr, lists)                                     |
+| **CLI Debrid**           | Debrid content orchestration (lists, watchlists, upgrades)                                   |
+| **Decypharr**            | Debrid workflow for Arr download clients and symlink libraries                               |
+| **NzbDAV**               | Usenet WebDAV gateway and Arr download-client integration                                    |
+| **Prowlarr**             | Indexer management and sync to Arr services                                                  |
+| **Sonarr/Radarr/Lidarr/Whisparr** | Arr automation for movies, TV, music, and adult content                             |
+| **Huntarr**              | Backlog search automation and quality upgrades                                               |
 | **Zurg**                 | Handles Real-Debrid content interaction, file repair, and directory structuring              |
 | **rclone**               | Mounts cloud storage into the local container for access by your media server                |
 | **Zilean**               | Caches metadata and file hash lookups for performance                                        |
