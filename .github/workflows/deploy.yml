@@ -20,7 +20,8 @@ jobs:
       url: ${{ steps.deployment.outputs.page_url }}
     if: >
       github.event_name == 'workflow_dispatch' ||
-      startsWith(github.event.head_commit.message, 'chore(master): release ')
+      startsWith(github.event.head_commit.message, 'chore(master): release ') ||
+      startsWith(github.event.head_commit.message, 'Update Changelog') 
     runs-on: ubuntu-latest
     outputs:
       version: ${{ env.VERSION }}
