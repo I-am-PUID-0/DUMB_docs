@@ -1,5 +1,28 @@
 # Changelog
 
+## [1.6.0](https://github.com/I-am-PUID-0/DUMB_docs/compare/1.5.0...1.6.0) (2026-01-26)
+
+
+### ✨ Features
+
+* **docs:** add comprehensive reference documentation for configuration schema, core service routing, environment variables, multi-instance setup, service ports, and individual services (Huntarr, Seerr, Tautulli) ([88abe64](https://github.com/I-am-PUID-0/DUMB_docs/commit/88abe642b7dd712c60e3a44382446f6ba15cdec1))
+
+
+### 🐛 Bug Fixes
+
+* **deps:** bump actions/checkout from 3 to 6 ([#25](https://github.com/I-am-PUID-0/DUMB_docs/issues/25)) ([bfbddc3](https://github.com/I-am-PUID-0/DUMB_docs/commit/bfbddc3002b9eab0e9c20f345dc81a03951da9bb))
+* **deps:** bump actions/setup-python from 5 to 6 ([#28](https://github.com/I-am-PUID-0/DUMB_docs/issues/28)) ([026b030](https://github.com/I-am-PUID-0/DUMB_docs/commit/026b030e706fa28f942f077ccd27112f9ba0473e))
+* **deps:** bump hmarr/auto-approve-action from 3 to 4 ([#27](https://github.com/I-am-PUID-0/DUMB_docs/issues/27)) ([1ba1775](https://github.com/I-am-PUID-0/DUMB_docs/commit/1ba17751401af3df8135e5ffce380269db0f4c77))
+* **deps:** bump peaceiris/actions-gh-pages from 3 to 4 ([#24](https://github.com/I-am-PUID-0/DUMB_docs/issues/24)) ([2e3fff3](https://github.com/I-am-PUID-0/DUMB_docs/commit/2e3fff365c3da1de5c29b5ce98b1a1220d67af05))
+* **deps:** bump peter-evans/create-pull-request from 5 to 8 ([#26](https://github.com/I-am-PUID-0/DUMB_docs/issues/26)) ([ce19d3f](https://github.com/I-am-PUID-0/DUMB_docs/commit/ce19d3f3d92e813f23940e8b55bf080711686f64))
+* revert version number to 1.5.0 in release manifest and project configuration ([03ff7f1](https://github.com/I-am-PUID-0/DUMB_docs/commit/03ff7f15dd8c894245723ed06f5e1bc9ccb7951f))
+
+
+### 🤡 Other Changes
+
+* **master:** release 1.6.0 ([#30](https://github.com/I-am-PUID-0/DUMB_docs/issues/30)) ([74a64b9](https://github.com/I-am-PUID-0/DUMB_docs/commit/74a64b9d7905ada8806677ce0c5576b386504761))
+* **master:** release 1.7.0 ([#32](https://github.com/I-am-PUID-0/DUMB_docs/issues/32)) ([4c12e2f](https://github.com/I-am-PUID-0/DUMB_docs/commit/4c12e2f757047510a06fef66e3471fedaba3e745))
+
 ## [1.5.0](https://github.com/I-am-PUID-0/DUMB_docs/compare/1.4.0...1.5.0) (2026-01-14)
 
 
