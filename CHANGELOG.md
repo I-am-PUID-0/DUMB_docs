@@ -1,6 +1,14 @@
 # Changelog
 
 
+## [1.7.1](https://github.com/I-am-PUID-0/DUMB_docs/compare/1.7.0...1.7.1) (2026-01-26)
+
+
+### 🚀 CI/CD Pipeline
+
+* Allows deploy on changelog updates ([5712684](https://github.com/I-am-PUID-0/DUMB_docs/commit/57126848b60eff37c1bb0e5deb647f91d4139c3a))
+* Allows the deployment workflow to run when a commit message starts with "Update Changelog". ([5712684](https://github.com/I-am-PUID-0/DUMB_docs/commit/57126848b60eff37c1bb0e5deb647f91d4139c3a))
+
 ## [1.7.0](https://github.com/I-am-PUID-0/DUMB_docs/compare/1.6.0...1.7.0) (2026-01-26)
 
 
