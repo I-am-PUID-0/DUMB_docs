@@ -31,11 +31,34 @@ icon: lucide/tv
   "port": 32400,
   "auto_update": false,
   "auto_update_interval": 24,
+  "pinned_version": "",
   "config_dir": "/plex",
   "config_file": "/plex/Plex Media Server/Preferences.xml",
   "log_file": "/plex/Plex Media Server/Logs/Plex Media Server.log",
   "plex_claim": "",
   "friendly_name": "DUMB",
+  "dbrepair": {
+    "enabled": false,
+    "run_before_start": false,
+    "interval_minutes": 10080,
+    "idle_check_minutes": 5,
+    "backoff_multiplier": 2.0,
+    "max_backoff_minutes": 60,
+    "max_wait_minutes": 0,
+    "install_dir": "/data/dbrepair",
+    "executable": "DBRepair.sh",
+    "sqlite_path": "/usr/lib/plexmediaserver/Plex SQLite",
+    "databases_path": "/plex/Plex Media Server/Plug-in Support/Databases",
+    "required_args": [],
+    "script_args": [
+      "auto"
+    ],
+    "log_file": "/log/plex_dbrepair.log",
+    "db_path": "/plex/Plex Media Server/Plug-in Support/Databases/com.plexapp.plugins.library.db",
+    "work_dir": "",
+    "command": [],
+    "env": {}
+  },
   "command": [],
   "env": {}
 }
@@ -48,6 +71,8 @@ icon: lucide/tv
 * `friendly_name`: The name that appears in the Plex Web App and on local clients.
 * `config_dir`: Directory containing Plex server data (including preferences).
 * `port`: Default access port (32400).
+* `pinned_version`: Pin Plex to a specific version when using manual builds.
+* `dbrepair`: Optional DBRepair configuration for scheduled Plex database maintenance.
 
 !!! important  "DUMB does not yet support `auto_update` or `port` assignment for Plex Media Server"
 
@@ -57,7 +82,7 @@ icon: lucide/tv
 
 ### Requirements
 
-* Plex must have access to:
+Plex must have access to:
 
   * Media directories (local or rclone-mounted).
   * Transcoding cache (if transcoding is enabled).

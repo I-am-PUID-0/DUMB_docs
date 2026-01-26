@@ -28,6 +28,7 @@ It is pre-installed and automatically initialized during container startup.
   ],
   "config_dir": "/postgres_data",
   "config_file": "/postgres_data/postgresql.conf",
+  "log_file": "/log/postgres.log",
   "initdb_args": "--data-checksums",
   "user": "DUMB",
   "password": "postgres",
@@ -53,6 +54,7 @@ It is pre-installed and automatically initialized during container startup.
     - **`enabled`** – Whether this database should be created.
 - **`config_dir`** – Directory where PostgreSQL configuration files are stored.
 - **`config_file`** – Path to the primary PostgreSQL configuration file.
+- **`log_file`** – Path to the PostgreSQL log file.
 - **`initdb_args`** – Additional arguments passed to initdb during database initialization.
 - **`user/password`** – Default database credentials.
 - **`run_directory`** – Directory where PostgreSQL runtime files (like sockets) are stored.
@@ -82,6 +84,7 @@ It is pre-installed and automatically initialized during container startup.
 | Data Directory       | `/postgres_data`          |
 | Config File          | `/postgres_data/postgresql.conf` |
 | Runtime Directory    | `/run/postgresql`         |
+| Log File             | `/log/postgres.log`       |
 
 ---
 

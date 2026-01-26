@@ -28,6 +28,7 @@ icon: lucide/eye
     "Default": {
       "enabled": false,
       "core_service": "",
+      "use_huntarr": false,
       "process_name": "Whisparr",
       "suppress_logging": false,
       "auto_update": false,
@@ -46,7 +47,8 @@ icon: lucide/eye
 
 ### Key Configuration Fields
 
-* `core_service`: Set to `decypharr` or `nzbdav` to enable DUMB integration with those services.
+* `core_service`: Set to `decypharr`, `nzbdav`, or a list of both to enable DUMB integration.
+* `use_huntarr`: Opt this instance into Huntarr automation.
 * `port`: Web UI port (default `6969`).
 * `pinned_version`: Optional version pin for Whisparr updates.
 * `config_dir`, `config_file`, `log_file`: Paths for config and logs.
@@ -57,7 +59,10 @@ icon: lucide/eye
 
 * For Decypharr integration, set `core_service` to `decypharr` and follow the [Decypharr guide](decypharr.md).
 * For NzbDAV integration, set `core_service` to `nzbdav` and follow the [NzbDAV guide](nzbdav.md).
+* For combined workflows, set `core_service` to `["decypharr", "nzbdav"]`.
 * Use [Prowlarr](prowlarr.md) to centrally manage indexers and sync them to Whisparr.
+* DUMB enables Arr folder permission updates and applies permissions to configured root folders during integration.
+* See [Core Service Routing](../../reference/core-service.md) for how `core_service` affects automation.
 
 ---
 

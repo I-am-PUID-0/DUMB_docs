@@ -30,6 +30,6 @@
         "WATCHFILES_POLL_DELAY_MS": "200"
     },
     "postCreateCommand": "bash ./.devcontainer/init.sh",
-    "postStartCommand": "rm -rf .cache site && zensical serve",
+    "postStartCommand": "rm -rf .cache site && zensical serve --dev-addr 0.0.0.0:8000",
     "remoteUser": "vscode"
 }

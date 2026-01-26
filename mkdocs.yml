@@ -12,7 +12,25 @@ nav:
   - Features:
       - Overview: features/index.md
       - Configuration: features/configuration.md
-      - Usage: features/usage.md  
+      - Usage: features/usage.md
+      - Authentication: features/authentication.md
+      - Auto-restart: features/auto-restart.md
+      - Auto-update: features/auto-update.md
+      - FFprobe Monitor: features/ffprobe-monitor.md
+      - Metrics: features/metrics.md
+      - Embedded UIs: features/embedded-ui.md
+  - Frontend:
+      - Overview: frontend/index.md
+      - Dashboard: frontend/dashboard.md
+      - Onboarding: frontend/onboarding.md
+      - Settings: frontend/settings.md
+      - Service Pages: frontend/service-pages.md
+      - Metrics: frontend/metrics.md
+  - Architecture:
+      - Overview: architecture/index.md
+      - Backend: architecture/backend.md
+      - Frontend: architecture/frontend.md
+      - Traefik: architecture/traefik.md
   - Services:
       - Overview: services/index.md
       - DUMB:
@@ -27,6 +45,7 @@ nav:
         - Plex Media Server: services/core/plex-media-server.md
         - Jellyfin: services/core/jellyfin.md
         - Emby: services/core/emby.md
+        - Seerr: services/core/seerr.md
         - Plex Debrid: services/core/plex-debrid.md
         - Riven Backend: services/core/riven-backend.md
         - Sonarr: services/core/sonarr.md
@@ -34,6 +53,7 @@ nav:
         - Lidarr: services/core/lidarr.md
         - Prowlarr: services/core/prowlarr.md
         - Whisparr: services/core/whisparr.md
+        - Huntarr: services/core/huntarr.md
       - Dependent:
         - Overview: services/dependent/index.md
         - CLI Battery: services/dependent/cli-battery.md
@@ -43,8 +63,9 @@ nav:
         - zurg: services/dependent/zurg.md
       - Optional:
         - Overview: services/optional/index.md
-        - pgAdmin: services/optional/pgadmin.md        
+        - pgAdmin: services/optional/pgadmin.md
         - Riven Frontend: services/optional/riven-frontend.md
+        - Tautulli: services/optional/tautulli.md
         - Zilean: services/optional/zilean.md
   - Deployment:
       - Overview: deployment/index.md
@@ -59,22 +80,35 @@ nav:
       - Dockge: deployment/dockge.md
   - API:
       - Overview: api/index.md
+      - Authentication: api/auth.md
       - Health: api/health.md
       - Process Management: api/process.md
       - Configuration: api/config.md
       - Logs: api/logs.md
-      - Real-Time WebSocket Logs: api/websocket_logs.md
-  - FAQ: 
+      - WebSocket: api/websocket.md
+      - WebSocket Logs: api/websocket_logs.md
+  - Reference:
+      - Overview: reference/index.md
+      - Service Ports: reference/ports.md
+      - Environment Variables: reference/environment-variables.md
+      - Config Schema: reference/config-schema.md
+      - Multi-instance Setup: reference/instances.md
+      - Core Service Routing: reference/core-service.md
+  - FAQ:
       - General: faq/general.md
-      - DUMB: faq/dumb.md
-      - Decypharr: faq/decypharr.md      
+      - Authentication: faq/authentication.md
       - CLI Debrid: faq/cli-debrid.md
+      - Decypharr: faq/decypharr.md
+      - DUMB: faq/dumb.md
+      - Huntarr: faq/huntarr.md
+      - pgAdmin: faq/pgadmin.md
       - Plex: faq/plex.md
       - Plex Debrid: faq/plex-debrid.md
-      - pgAdmin: faq/pgadmin.md
       - PostgreSQL: faq/postgres.md
       - rclone: faq/rclone.md
       - Riven: faq/riven.md
+      - Seerr: faq/seerr.md
+      - Tautulli: faq/tautulli.md
       - Zilean: faq/zilean.md
       - Zurg: faq/zurg.md
   - Changelog: changelog.md

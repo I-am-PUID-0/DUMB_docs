@@ -40,9 +40,18 @@ DUMB handles automatic installation and updates of the frontend, including versi
         "build"
     ],
     "config_dir": "/riven/frontend",
+    "log_file": "/log/riven_frontend.log",
     "env": {}
 },
 ```
+
+!!! warning "Port conflicts and auto-shift"
+
+    Riven defaults (`3000`/`8080`) overlap with NzbDAV defaults. DUMB can auto-shift
+    conflicting ports at container startup or during the onboarding core-service
+    start flow, updating `dumb_config.json` accordingly.
+    Per-service stop/start/restart does not re-run port conflict resolution, so fix
+    conflicts manually before restarting a single service.
 
 ### Configuration Key Descriptions
 
@@ -63,6 +72,7 @@ DUMB handles automatic installation and updates of the frontend, including versi
 - **`platforms`**: Expected runtime environment (e.g., `pnpm`).
 - **`command`**: Command used to build or start the frontend service.
 - **`config_dir`**: Directory where the frontend files are stored.
+- **`log_file`**: Path to the Riven frontend log file.
 - **`env`**: Dictionary of environment variables passed to the process (e.g., `PORT`, `ORIGIN`, `HOST`).
 
 ---

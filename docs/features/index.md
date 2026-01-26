@@ -15,9 +15,14 @@ DUMB (Debrid Unlimited Media Bridge) is an all-in-one media management solution 
 * **Built-In Media Server Integration** – Includes **Plex Media Server, Jellyfin, and Emby**, fully embedded in the container to eliminate mount propagation issues.
 * **Automated Content Management** – Uses **Debrid** and **Usenet** services alongside **Plex Discover Watchlists**, **Trakt lists**, and **Seerr** to automate media retrieval.
 * **Arr + WebDAV Workflows** – Supports **Sonarr, Radarr, Lidarr, Whisparr**, plus WebDAV-driven clients like **Decypharr** (Debrid) and **NzbDAV** (Usenet).
+* **Huntarr automation** – Optional continuous searches to fill missing content and upgrade quality.
 * **Integrated Web UI** – Control and manage services through a simple **web-based interface**.
+* **[Authentication](authentication.md)** – Optional JWT-based security with user management and session handling.
+* **[Auto-update](auto-update.md)** – Keep services current with automatic updates from GitHub releases, nightly builds, or specific branches.
 * **Modular Design** – Each service (Riven, Zurg, Zilean, etc.) is independently configurable and upgradable.
 * **Advanced Logging & Monitoring** – View and filter service logs directly from the [DUMB Frontend](../services/dumb/dumb-frontend.md).
+* **[FFprobe monitor](ffprobe-monitor.md)** – Background worker that detects and unsticks ffprobe scans in Sonarr/Radarr.
+* **Real-Time Metrics** – Monitor CPU, memory, disk, and network usage with WebSocket-powered live updates.
 
 ## Core Components
 
@@ -46,6 +51,10 @@ DUMB integrates the following projects to create a seamless media experience:
 ### **Arrs (Sonarr/Radarr/Lidarr/Whisparr)**
 
 The Arrs handle **TV, movies, music, and adult content** automation and organization. During onboarding, selecting Decypharr or NzbDAV can wire Arr instances automatically.
+
+### **Huntarr**
+
+[Huntarr](https://github.com/plexguide/Huntarr.io) automates **missing-content** and **quality-upgrade** searches across the Arr stack. DUMB can filter Huntarr instances by `core_service` to keep Debrid and Usenet workflows separate.
 
 ### **Zurg**
 

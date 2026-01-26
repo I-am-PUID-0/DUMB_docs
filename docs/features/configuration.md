@@ -16,6 +16,27 @@ DUMB also supports **environment variables, .env files, and Docker secrets**. If
     3. **Docker Secrets**
     4. **`dumb_config.json`** (lowest priority)
 
+```mermaid
+%%{ init: { "flowchart": { "curve": "basis" } } }%%
+flowchart TD
+    ENV([Environment variables])
+    DOT([.env file])
+    SEC([Docker secrets])
+    CFG[(dumb_config.json)]
+    MERGE[Resolved configuration]
+    API[DUMB API]
+    PH[Process handler]
+    SVC[Managed services]
+
+    ENV ==> MERGE
+    DOT ==> MERGE
+    SEC ==> MERGE
+    CFG ==> MERGE
+    MERGE ==> API
+    API ==> PH
+    PH ==> SVC
+```
+
 ## Configuration File Structure
 
 !!! caution "Be Careful When Modifying `dumb_config.json`"
@@ -30,26 +51,31 @@ Below is the **general structure** of `dumb_config.json`:
     "puid": 1000,
     "pgid": 1000,
     "tz": "",
+    "data_root": "/data",
     "dumb": { ... },
+    "traefik": { ... },
     "cli_debrid": { ... },
     "cli_battery": { ... },
     "decypharr": { ... },
     "nzbdav": { ... },
     "emby": { ... },
     "jellyfin": { ... },
-    "sonarr": { ... },
-    "radarr": { ... },
     "lidarr": { ... },
-    "prowlarr": { ... },
-    "whisparr": { ... },
     "phalanx_db": { ... },
     "plex": { ... },
+    "tautulli": { ... },
+    "huntarr": { ... },
+    "seerr": { ... },
     "plex_debrid": { ... },
     "postgres": { ... },
     "pgadmin": { ... },
+    "prowlarr": { ... },
     "rclone": { ... },
     "riven_backend": { ... },
     "riven_frontend": { ... },
+    "radarr": { ... },
+    "sonarr": { ... },
+    "whisparr": { ... },
     "zilean": { ... },
     "zurg": { ... }
 }
@@ -67,11 +93,13 @@ Below is a breakdown of some of the sections:
 ```json
 "puid": 1000,
 "pgid": 1000,
-"tz": ""
+"tz": "",
+"data_root": "/data"
 ```
 
 - **puid** / **pgid** – Define the user and group IDs for container execution.
 - **tz** – Set the timezone (e.g., `America/New_York`).
+- **data_root** – Base path for service data directories.
 
 !!! warning "Root User Not Allowed"
     `puid`/`pgid` cannot be set to `0` (root). DUMB requires a non-root user for security reasons.
@@ -163,15 +191,21 @@ See the individual service pages for in-depth configuration details:
 
 ---
 
-## `core_service` (Arr Integration)
+## `core_service` (Arr integration)
 
-Some services (notably the Arrs) include a `core_service` field to tell DUMB which core workflow they should attach to.
+Some services (notably the Arrs) include a `core_service` field to tell DUMB
+which core workflow(s) they should attach to. This field accepts a single value,
+a comma-separated string, or a list.
+
+See the [Core Service Routing reference](../reference/core-service.md) for detailed behavior and examples.
 
 Allowed values:
 
 * `""` (blank): no core integration
 * `decypharr`: route Arr automation through Decypharr
 * `nzbdav`: route Arr automation through NzbDAV
+
+To combine workflows, use a list or a comma-separated `core_service`.
 
 Examples:
 
@@ -190,6 +224,16 @@ Examples:
   "instances": {
     "Default": {
       "core_service": "nzbdav"
+    }
+  }
+}
+```
+
+```json
+"whisparr": {
+  "instances": {
+    "Combined": {
+      "core_service": ["decypharr", "nzbdav"]
     }
   }
 }

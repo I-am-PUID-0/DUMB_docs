@@ -105,7 +105,47 @@ curl -X POST http://localhost:8000/config/service-config \
 
 ### `GET /config/service-ui`
 **Description:**
-Returns a list of enabled services with UI ports and writes a Traefik dynamic config file.
+Returns a list of enabled services with UI ports and the current service UI toggle state.
+
+**Response:**
+```json
+{
+  "enabled": true,
+  "services": [
+    {
+      "name": "Riven Frontend",
+      "port": 3000,
+      "path": "/service/ui/riven_frontend"
+    },
+    {
+      "name": "pgAdmin 4",
+      "port": 5050,
+      "path": "/service/ui/pgadmin"
+    }
+  ]
+}
+```
+
+---
+
+### `POST /config/service-ui`
+**Description:**
+Enables or disables the embedded service UI feature. When enabled, Traefik routes are configured to proxy service UIs through the DUMB frontend.
+
+**Request Body:**
+```json
+{
+  "enabled": true
+}
+```
+
+**Response:**
+```json
+{
+  "message": "Service UI enabled",
+  "enabled": true
+}
+```
 
 ---
 

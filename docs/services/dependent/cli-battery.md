@@ -5,9 +5,19 @@ icon: lucide/battery-charging
 
 # CLI Battery Configuration
 
-The **CLI Battery** is a Flask-based companion application required by CLI Debrid. It provides metadata services and background processing, integrating with Trakt and exposing a lightweight web API for managing movies and TV shows. This service must be running for CLI Debrid to operate properly.
+The **CLI Battery** is a Flask-based companion application required by CLI Debrid. It provides metadata services and background processing, integrates with Trakt, and exposes a lightweight web API for managing movies and TV shows. This service must be running for CLI Debrid to operate properly.
 
-## Configuration Settings in `dumb_config.json`
+## Service relationships
+
+| Classification | Role |
+| -------------- | ---- |
+| Dependent | CLI Debrid companion service |
+| Depends On | [CLI Debrid](../core/cli-debrid.md) |
+| Exposes UI | Yes |
+
+---
+
+## Configuration settings in `dumb_config.json`
 
 ```json
 "cli_battery": {
@@ -46,6 +56,18 @@ The **CLI Battery** is a Flask-based companion application required by CLI Debri
 * **`log_file`**: Path to the CLI Battery log file.
 * **`env`**: Environment variables passed to the subprocess.
 
+### Environment variables
+
+* `CLI_DEBRID_BATTERY_PORT`: Port the Flask app binds to (defaults to `port`).
+* `USER_CONFIG`: Config directory (`/cli_debrid/data/config/`).
+* `USER_LOGS`: Log directory (`/cli_debrid/data/logs/`).
+* `USER_DB_CONTENT`: Metadata database directory (`/cli_debrid/data/db_content/`).
+* `PYTHONPATH`: Module lookup path (`/cli_debrid`).
+
+!!! warning "Trakt authorization"
+
+    CLI Battery handles Trakt OAuth flows. Make sure the callback URL you authorize matches the port you expose.
+
 ---
 
 ## Required by CLI Debrid
@@ -54,7 +76,7 @@ CLI Battery must be running **before** CLI Debrid launches, as the latter depend
 
 ---
 
-## Web Interface & API
+## Web interface and API
 
 CLI Battery is a Flask web app exposing a browser UI and REST API:
 
@@ -76,11 +98,28 @@ CLI Battery is a Flask web app exposing a browser UI and REST API:
 ---
 
 ## Access
-- Navigate to: `http://<host>:<port>` 
-    - default port `5001`
+
+- Navigate to: `http://<host>:<port>` (default `5001`)
 
 ---
 
+## Access via Traefik
+
+If Traefik is enabled in DUMB, CLI Battery can be reached via the proxy path:
+
+```
+http://<host>/cli_battery/
+```
+
+---
+
+## Logs and data paths
+
+- Logs: `/cli_debrid/data/logs/battery_debug.log`
+- Config: `/cli_debrid/data/config/settings.json`
+- Metadata DB: `/cli_debrid/data/db_content/`
+
+---
 
 ## Additional Resources
 

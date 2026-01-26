@@ -16,7 +16,9 @@ Core services are the services that:
 * Drive a major part of the media pipeline (e.g., indexing, downloading, symlinking, organization, hosting, playback, etc. )
 * May require one or more **dependent services** to function
 
-!!!note "You can use as many core services simultaneously as you like"
+!!! note "You can use as many core services simultaneously as you like"
+
+    Core services can run side-by-side. DUMB will start dependencies in the correct order.
 ---
 
 ## Core Service Index
@@ -25,10 +27,11 @@ Core services are the services that:
 | ----------------------------------- | ---------------------------------------------------- | --------------------------------- | ---------------------------- |
 | [CLI Debrid](cli-debrid.md)         | Debrid media scraper, automation engine, and upgrade engine              | CLI Battery, Phalanx DB, rclone, Zurg  | Zilean                  |
 | [Decypharr](decypharr.md)           | Debrid-native torrent client for use with the arrs (Sonarr/Radarr) to create symlinks to debrid content | rclone                            | Zilean, Sonarr, Radarr        |
-| [NzbDAV](nzbdav.md)                 | WebDAV service for NZB access and Arr download client integration         | rclone                            | Sonarr, Radarr                |
+| [NzbDAV](nzbdav.md)                 | WebDAV service for NZB access and Arr download client integration         | rclone                            | Sonarr, Radarr, Lidarr, Whisparr |
 | [Plex](plex-media-server.md)        | Hosts media collected by core services               |                                   |                              |
 | [Jellyfin](jellyfin.md)             | Media server for hosting and playing content         |                                   |                              |
 | [Emby](emby.md)                     | Media server for hosting and playing content         |                                   |                              |
+| [Seerr](seerr.md)                   | Media request and discovery platform                 |                                   | Plex, Radarr, Sonarr          |
 | [Plex Debrid](plex-debrid.md)       | Debrid media scraper and automation engine           | rclone, Zurg                      | Zilean                       |
 | [Riven Backend](riven-backend.md)   | Debrid media scraper and automation engine           | PostgreSQL, rclone, Zurg          | Zilean, Riven Frontend       |
 | [Sonarr](sonarr.md)                 | TV automation and organization                        |                                   | Prowlarr, Decypharr, NzbDAV  |
@@ -36,6 +39,7 @@ Core services are the services that:
 | [Lidarr](lidarr.md)                 | Music automation and organization                     |                                   | Prowlarr, Decypharr, NzbDAV  |
 | [Prowlarr](prowlarr.md)             | Indexer manager for Arrs                              |                                   | Sonarr, Radarr, Lidarr, Whisparr |
 | [Whisparr](whisparr.md)             | Adult content automation and organization             |                                   | Prowlarr, Decypharr, NzbDAV  |
+| [Huntarr](huntarr.md)               | Continuous backlog searches for Arr instances         |                                   | Sonarr, Radarr, Lidarr, Whisparr |
 
 ---
 
@@ -80,7 +84,7 @@ If you enable a core service, be sure to also:
 ### [NzbDAV](nzbdav.md)
 
 * **Requires:** [rclone](../dependent/rclone.md)
-* **Optionally Uses:** Sonarr and Radarr for NZB client integration
+* **Optionally Uses:** Sonarr, Radarr, Lidarr, and Whisparr for NZB client integration
 * **Outputs:** WebDAV mount at `/mnt/debrid/nzbdav` plus symlink roots for Arrs
 
 ### [Plex Debrid](plex-debrid.md)
@@ -94,6 +98,18 @@ If you enable a core service, be sure to also:
 * **Requires:** [PostgreSQL](../dependent/postgres.md), [rclone](../dependent/rclone.md), and [Zurg](../dependent/zurg.md)
 * **Optionally Uses:** [Zilean](../optional/zilean.md) (as a scraper)
 * **Outputs:** Clean symlinks for Plex/Emby/Jellyfin
+
+### [Seerr](seerr.md)
+
+* **Requires:** Plex, Jellyfin, or Emby for discovery (optional but recommended)
+* **Optionally Uses:** [Sonarr](sonarr.md) and [Radarr](radarr.md) for request fulfillment
+* **Outputs:** Approved requests that flow into Arr queues
+
+### [Huntarr](huntarr.md)
+
+* **Requires:** Arr instances with `use_huntarr: true`
+* **Optionally Filters:** Arr instances by `core_service`
+* **Outputs:** Periodic backlog searches for missing or upgrade content
 
 ### Arrs (Sonarr/Radarr/Lidarr/Whisparr)
 

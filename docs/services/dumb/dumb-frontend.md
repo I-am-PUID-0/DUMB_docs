@@ -3,7 +3,19 @@ title: DUMB Frontend
 icon: lucide/layout-dashboard
 ---
 
-The **DUMB Frontend** is a web-based user interface designed to enhance the management and monitoring of the Debrid Unlimited Media Bridge (DUMB) ecosystem. It offers features such as real-time service logs, filtering options, and service control functionalities, providing users with an intuitive platform to interact with DUMB services.
+The **DUMB Frontend** is the web UI for managing and monitoring the DUMB ecosystem.
+It provides service controls, real-time logs, embedded UIs, onboarding, settings,
+and metrics in a single interface.
+
+!!! tip "Frontend documentation"
+
+    For detailed guides on using the frontend, see the [Frontend Documentation](../../frontend/index.md) section:
+
+    - [Dashboard](../../frontend/dashboard.md) - Service overview and control
+    - [Onboarding](../../frontend/onboarding.md) - Setup wizard guide
+    - [Settings](../../frontend/settings.md) - Configuration and preferences
+    - [Service pages](../../frontend/service-pages.md) - Per-service controls, logs, and config
+    - [Metrics](../../frontend/metrics.md) - System monitoring
 
 ---
 
@@ -21,6 +33,7 @@ The **DUMB Frontend** is a web-based user interface designed to enhance the mana
     "branch": "main",
     "suppress_logging": false,
     "log_level": "INFO",            
+    "log_file": "/log/dumb_frontend.log",
     "origins": [
         "http://0.0.0.0:3005"
     ],
@@ -71,70 +84,15 @@ You can control which version or branch of the frontend is deployed by setting:
 - Navigate to: `http://<host>:<port>`
     - default port `3005`
 
-## User Interface Overview
+## Frontend usage guides
 
-### Service Dashboard
+For UI walkthroughs, use the frontend section:
 
-![Service Dashboard](../../assets/images/dmb_frontend/service_dashboard.PNG)
-
-The **Service Dashboard** displays all active services, showing their status and providing control options.
-
-### Settings Menu
-
-![Settings Menu](../../assets/images/dmb_frontend/dumb_settings_menu.PNG)
-
-The **Settings Menu** section allows for:
-
-- Viewing the current installed version of services
-- Launching the onboarding process to add additional core services 
-- Links to each of the service maintainers’ websites
-- Links to DUMB Discord, GitHub, Docs, and DockerHub
-- A list of Contributors for the project  
-
-### Toolbar
-
-![Toolbar](../../assets/images/dmb_frontend/toolbar.PNG)
-
-The **Toolbar** allows for quick access to service settings and real-time logs, including:
-
-* View services that are currently disabled
-* Individual service logs, configuration files, and DUMB config settings
-
-
-### Real-Time Logs
-
-![Real-Time Logs](../../assets/images/dmb_frontend/real_time_logs.PNG)
-
-The **Real-Time Logs** section allows for:
-
-- Filtering logs by **text entry** or **drop-down menu** (log levels and process names).
-- Setting the number of log lines to capture.
-- Downloading captured logs automatically named **DMB_logs.txt**.
-- Pausing and resuming real-time logs.
-
-### Viewing and Modifying Configurations
-
-#### Edit DUMB Config
-
-![Edit DUMB Config](../../assets/images/dmb_frontend/edit_dumb_config.PNG)
-
-For each listed service, users can **view and modify** the `dumb_config.json` configuration. Changes can be applied **temporarily** (saved in memory) or **permanently** (saved to file).
-
-#### Edit Service Config
-
-![Edit Service Config](../../assets/images/dmb_frontend/edit_service_config.PNG)
-
-For services with additional settings, this option allows similar modifications for the **service-specific configuration files**.
-
-### Viewing Logs for Services
-
-![View Service Logs](../../assets/images/dmb_frontend/view_service_logs.PNG)
-
-For services with log files, this view allows:
-
-- **Viewing the latest logs** (since the last service start).
-- **Filtering logs** (by log levels, log lines).
-- **Downloading logs**, automatically named based on the service.
+- [Dashboard](../../frontend/dashboard.md) - Service cards, toolbar, and logs
+- [Settings](../../frontend/settings.md) - Preferences and config editors
+- [Service pages](../../frontend/service-pages.md) - Per-service controls and logs
+- [Onboarding](../../frontend/onboarding.md) - Setup wizard
+- [Metrics](../../frontend/metrics.md) - System monitoring
 
 ---
 

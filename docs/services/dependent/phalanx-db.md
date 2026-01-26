@@ -7,7 +7,19 @@ icon: lucide/database
 
 **Phalanx DB** is an optional decentralized metadata service that can enhance CLI Debrid by providing distributed data capabilities through Hyperswarm. It runs independently and is not required for CLI Debrid to function.
 
-## Configuration Settings in `dumb_config.json`
+---
+
+## Service relationships
+
+| Classification | Role |
+| -------------- | ---- |
+| Dependent | Optional metadata service |
+| Depends On | None |
+| Exposes UI | No (REST API only) |
+
+---
+
+## Configuration settings in `dumb_config.json`
 
 ```json
 "phalanx_db": {
@@ -31,6 +43,7 @@ icon: lucide/database
   "platforms": ["pnpm"],
   "command": ["node", "phalanx_db_rest.js"],
   "config_dir": "/phalanx_db",
+  "log_file": "/log/phalanx_db.log",
   "env": {}
 },
 ```
@@ -50,7 +63,13 @@ icon: lucide/database
 * **`platforms`**: Required runtime (usually `pnpm` + Node).
 * **`command`**: Startup command.
 * **`config_dir`**: Root directory for the config and runtime files.
+* **`log_file`**: Path to the Phalanx DB log file.
 * **`env`**: Environment variables (if any).
+
+### Environment variables
+
+* `PORT`: REST API port (defaults to `port`).
+* `DEBUG`: Debug logging toggle (`true` when `log_level` is `DEBUG`).
 
 ---
 
@@ -66,6 +85,21 @@ Phalanx DB is beneficial if you want to:
 
 ---
 
+## How DUMB sets it up
+
+When Phalanx DB starts, DUMB:
+
+- Creates `/phalanx_db/data` and symlinks data subdirectories into the project root
+- Ensures storage directories like `autobase_storage_v4/db` exist
+- Sets `PORT` and `DEBUG` environment variables
+- Resolves the latest `phalanx_db_rest_v*.js` file and uses it as the startup command
+
+!!! info "Data layout"
+
+    Runtime data is stored under `/phalanx_db/data` and symlinked into `/phalanx_db` so upgrades can preserve data.
+
+---
+
 ## Branch / Version Targeting
 You can control which version or branch is deployed by setting:
 
@@ -74,6 +108,18 @@ You can control which version or branch is deployed by setting:
 
 ---
 
+## Access
+
+- REST API: `http://<host>:8888` (default)
+
+---
+
+## Logs and data paths
+
+- Data root: `/phalanx_db/data`
+- Logs: `/log/phalanx_db.log`
+
+---
 
 ## Additional Resources
 

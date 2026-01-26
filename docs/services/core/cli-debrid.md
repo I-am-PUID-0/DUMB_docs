@@ -9,6 +9,39 @@ icon: lucide/terminal
 
 ---
 
+## Workflow diagram
+
+```mermaid
+%%{ init: { "flowchart": { "curve": "basis" } } }%%
+flowchart TD
+    A([Request sources:<br/>Seerr, Trakt,<br/>Plex Watchlist])
+    B[[Prowlarr / Indexers]]
+    C[CLI Debrid]
+    D@{shape: cloud, label: "Debrid providers"}
+    E[Zurg or Decypharr<br/>WebDAV]
+    F[(Rclone WebDAV Mount<br/>Root Path:<br/>/mnt/debrid/clid)]
+    G[Rename + Link Step:<br/>Symlinks]
+    H[(Final Symlink Root:<br/>/mnt/debrid/clid_symlinks)]
+    I([Media Servers:<br/>Plex, Jellyfin, Emby])
+
+    A <==> C
+    B <==> C
+    C <==> D
+    D e1@=== E
+    C ==> G
+    G ==> H
+    F ===> C
+    F e2@=== H
+    E e3@=== F
+    H e4@=== I
+
+    classDef animate stroke-dasharray: 9,5,stroke-dashoffset: 900,animation: dash 25s linear infinite;
+    class e1,e2,e3,e4 animate
+
+```
+
+---
+
 ## Service Relationships
 
 | Classification | Role                                                                                                       |
@@ -159,6 +192,7 @@ CLI Battery provides local metadata storage and Trakt integration, acting as the
         "phalanx_db_rest.js"
     ],
     "config_dir": "/phalanx_db",
+    "log_file": "/log/phalanx_db.log",
     "env": {}
 },
 ```
@@ -275,6 +309,51 @@ You can control which version or branch is deployed by setting:
 
 - `branch_enabled: true` and specifying a `branch`
 - or `release_version_enabled: true` and specifying a `release_version`
+
+!!! info "Dev releases use the prerelease tag"
+
+    CLI Debrid dev builds are published as GitHub prereleases. To track dev, enable
+    `release_version_enabled` and set `release_version` to `prerelease`.
+
+=== "Dev (prerelease)"
+
+    ```json
+    "cli_debrid": {
+        "enabled": true,
+        "process_name": "CLI Debrid",
+        "repo_owner": "godver3",
+        "repo_name": "cli_debrid",
+        "release_version_enabled": true,
+        "release_version": "prerelease",
+        "branch_enabled": false,
+        "branch": "main",
+        "suppress_logging": false,
+        "log_level": "INFO",
+        "port": 5000,
+        "auto_update": true,
+        "auto_update_interval": 1
+    }
+    ```
+
+=== "Stable (latest release)"
+
+    ```json
+    "cli_debrid": {
+        "enabled": true,
+        "process_name": "CLI Debrid",
+        "repo_owner": "godver3",
+        "repo_name": "cli_debrid",
+        "release_version_enabled": false,
+        "release_version": "v0.6.07",
+        "branch_enabled": false,
+        "branch": "main",
+        "suppress_logging": false,
+        "log_level": "INFO",
+        "port": 5000,
+        "auto_update": true,
+        "auto_update_interval": 1
+    }
+    ```
 
 ---
 

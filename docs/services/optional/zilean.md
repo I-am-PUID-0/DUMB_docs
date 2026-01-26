@@ -37,6 +37,7 @@ Below is a sample configuration for Zilean within the `dumb_config.json` file:
   "command": ["/zilean/app/zilean-api"],
   "config_dir": "/zilean",
   "config_file": "/zilean/app/data/settings.json",
+  "log_file": "/log/zilean.log",
   "env": {
     "DOTNET_RUNNING_IN_CONTAINER": "true",
     "DOTNET_gcServer": "1",
@@ -71,6 +72,7 @@ Below is a sample configuration for Zilean within the `dumb_config.json` file:
 - **`platforms`**: Required environments—Zilean uses both .NET and Python.
 - **`command`**: The binary or command used to launch Zilean.
 - **`config_dir`** / **`config_file`**: Where configuration files are stored and loaded.
+- **`log_file`**: Path to the Zilean log file.
 - **`env`**: Dictionary of environment variables passed at runtime, including:
   - **`DOTNET_RUNNING_IN_CONTAINER`**: Informs .NET that it is containerized.
   - **`DOTNET_gcServer`**: Enables server-mode garbage collection.

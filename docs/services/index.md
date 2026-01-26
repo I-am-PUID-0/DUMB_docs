@@ -30,6 +30,7 @@ DUMB is built as a collection of microservices that communicate over internal AP
     *  **NzbDAV** provides a WebDAV endpoint and download client integration for NZB workflows
     *  **Sonarr/Radarr/Lidarr/Whisparr** manage media queues and organize content from download clients
     *  **Prowlarr** manages indexers and syncs them to the Arrs
+    *  **Huntarr** automates backlog and quality-upgrade searches across the Arr stack
 
 3. **Media Playback**
 
@@ -68,11 +69,13 @@ DUMB is built as a collection of microservices that communicate over internal AP
 | [Plex](../services/core/plex-media-server.md)            | Core      | Media server for hosting and playing content              |
 | [Jellyfin](../services/core/jellyfin.md)                 | Core      | Media server for hosting and playing content              |
 | [Emby](../services/core/emby.md)                         | Core      | Media server for hosting and playing content              |
+| [Seerr](../services/core/seerr.md)                       | Core      | Media request and discovery platform                      |
 | [Sonarr](../services/core/sonarr.md)                     | Core      | TV automation and organization                            |
 | [Radarr](../services/core/radarr.md)                     | Core      | Movie automation and organization                         |
 | [Lidarr](../services/core/lidarr.md)                     | Core      | Music automation and organization                         |
 | [Prowlarr](../services/core/prowlarr.md)                 | Core      | Indexer management for Arrs                               |
 | [Whisparr](../services/core/whisparr.md)                 | Core      | Adult content automation and organization                 |
+| [Huntarr](../services/core/huntarr.md)                   | Core      | Backlog search automation for Arrs                        |
 | [rclone](../services/dependent/rclone.md)                | Dependent | Mount Debrid storage                                      |
 | [Zurg](../services/dependent/zurg.md)                    | Dependent | Serve Debrid content via WebDAV                           |
 | [PostgreSQL](../services/dependent/postgres.md)          | Dependent | Persistent metadata database                              |

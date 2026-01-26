@@ -7,6 +7,39 @@ icon: lucide/database
 
 The **Riven Backend** is the core component responsible for data handling, automation, API integrations, and scraping within the Riven ecosystem. Proper configuration ensures seamless integration with services like Seerr, Plex, and Trakt.
 
+---
+
+## Workflow diagram
+
+```mermaid
+%%{ init: { "flowchart": { "curve": "basis" } } }%%
+flowchart TD
+    A([Request sources:<br/>Seerr, Trakt,<br/>Plex Watchlist])
+    B[[Prowlarr / Indexers]]
+    C[Riven]
+    D@{shape: cloud, label: "Debrid Providers"}
+    E[Zurg or Decypharr<br/>WebDAV]
+    F[(Rclone WebDAV Mount<br/>Root Path:<br/>/mnt/debrid/riven)]
+    G[Rename + Link Step:<br/>Symlinks]
+    H[(Final Symlink Root:<br/>/mnt/debrid/riven_symlinks)]
+    I([Media Servers:<br/>Plex, Jellyfin, Emby])
+
+    A <==> C
+    B <==> C
+    C <==> D
+    D e1@=== E
+    C ==> G
+    G ==> H
+    F ===> C
+    F e2@=== H
+    E e3@=== F
+    H e4@=== I
+
+    classDef animate stroke-dasharray: 9,5,stroke-dashoffset: 900,animation: dash 25s linear infinite;
+    class e1,e2,e3,e4 animate
+
+```
+
 ## Configuration Settings in `dumb_config.json`
 
 ```json
@@ -45,10 +78,19 @@ The **Riven Backend** is the core component responsible for data handling, autom
     ],
     "config_dir": "/riven/backend",
     "config_file": "/riven/backend/data/settings.json",
+    "log_file": "/log/riven_backend.log",
     "env": {},
     "wait_for_dir": ""
 },
 ```
+
+!!! warning "Port conflicts and auto-shift"
+
+    Riven defaults (`3000`/`8080`) overlap with NzbDAV defaults. DUMB can auto-shift
+    conflicting ports at container startup or during the onboarding core-service
+    start flow, updating `dumb_config.json` accordingly.
+    Per-service stop/start/restart does not re-run port conflict resolution, so fix
+    conflicts manually before restarting a single service.
 
 ### Configuration Key Descriptions
 
@@ -72,6 +114,7 @@ The **Riven Backend** is the core component responsible for data handling, autom
 - **`platforms`**: Expected runtime environment (e.g., `python`).
 - **`command`**: How the service is started.
 - **`config_dir`** / **`config_file`**: Configuration directory and settings file.
+- **`log_file`**: Path to the Riven backend log file.
 - **`env`**: Dictionary of environment variables passed to the process.
 - **`wait_for_dir`**: Delays startup until the specified directory exists.
 

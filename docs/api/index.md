@@ -22,11 +22,13 @@ The API is enabled and configured using the `dumb_config.json` under the `dumb.a
 --- 
 
 ## Features
-- Health checks
-- Process management (start, stop, restart services)
-- Real-time log streaming via WebSocket
-- Configuration viewing and updates (in-memory and persistent)
-- Environment state inspection
+
+- **Authentication** - JWT-based user authentication and management
+- **Health checks** - Container and service health monitoring
+- **Process management** - Start, stop, restart services
+- **Real-time streaming** - WebSocket endpoints for logs, status, and metrics
+- **Configuration** - View and update settings (in-memory and persistent)
+- **Environment state inspection** - Service and system information
 
 ---
 
@@ -34,6 +36,9 @@ The API is enabled and configured using the `dumb_config.json` under the `dumb.a
 
 | Method | Path                      | Description                                |
 |--------|---------------------------|--------------------------------------------|
+| GET    | `/api/auth/status`        | Get authentication status                  |
+| POST   | `/api/auth/login`         | Authenticate and get JWT tokens            |
+| POST   | `/api/auth/refresh`       | Refresh access token                       |
 | GET    | `/health`                 | Container health check                     |
 | GET    | `/process/processes`      | List all services in `dumb_config.json`    |
 | GET    | `/process`                | Get a specific service by `process_name`   |
@@ -42,8 +47,11 @@ The API is enabled and configured using the `dumb_config.json` under the `dumb.a
 | POST   | `/process/restart-service`| Restart a specific service                 |
 | GET    | `/process/service-status` | Get the current status of a service        |
 | POST   | `/process/start-core-service` | Start core services + dependencies     |
+| GET    | `/process/capabilities`   | Get backend feature flags                  |
 | GET    | `/logs`                   | Read service log chunks                    |
 | WS     | `/ws/logs`                | Real-time log streaming                    |
+| WS     | `/ws/status`              | Real-time service status updates           |
+| WS     | `/ws/metrics`             | Real-time system metrics                   |
 
 ---
 
@@ -82,10 +90,13 @@ These are helpful for development, debugging, and integrating external systems w
 --- 
 
 ## Next Steps
+
 Click on any of the modules in the sidebar to explore endpoint structure, usage examples, and development guidelines for extending the DUMB API:
 
+- [Authentication](auth.md)
 - [Health Check](health.md)
-- [Logs](logs.md)
 - [Process Management](process.md)
 - [Configuration](config.md)
+- [Logs](logs.md)
+- [WebSocket](websocket.md)
 - [WebSocket Logs](websocket_logs.md)

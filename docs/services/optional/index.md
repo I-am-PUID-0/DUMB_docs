@@ -25,6 +25,7 @@ Optional services are:
 | --------------------------------- | ----------------------------------------------------------- | ------------------------------ |
 | [pgAdmin](../optional/pgadmin.md) | Web-based PostgreSQL administration UI                      | PostgreSQL                     |
 | [Riven Frontend](../optional/riven-frontend.md) | Web-based UI for management of the [Riven Backend](../core/riven-backend.md) | Riven |
+| [Tautulli](../optional/tautulli.md) | Plex monitoring and statistics                            | Plex Media Server              |
 | [Zilean](../optional/zilean.md)   | Debrid scraper and metadata cache for various core services | Riven, CLI Debrid, Plex Debrid |
 
 ---
@@ -34,9 +35,9 @@ Optional services are:
 Optional services attach to the DUMB ecosystem dynamically:
 
 * **[pgAdmin](../optional/pgadmin.md)** provides a GUI for exploring and managing the PostgreSQL instance used by Riven and Zilean.
-* **[Riven Frontend](../optional/riven-frontend.md)** provides a GUI for exploring and managing content requests that are facilitated by the [Riven Backend](../core/riven-backend.md)
+* **[Riven Frontend](../optional/riven-frontend.md)** provides a GUI for exploring and managing content requests that are facilitated by the [Riven Backend](../core/riven-backend.md).
+* **[Tautulli](../optional/tautulli.md)** monitors your Plex server, tracking playback history, user activity, and providing detailed statistics.
 * **[Zilean](../optional/zilean.md)** improves scraping efficiency by caching previous results from [Debrid Media Manager](https://debridmediamanager.com/) hash lists shared by users and reducing redundant queries. Core services like Riven and CLI Debrid can use it as a scraping backend.
-
 
 These services can be disabled at any time without affecting the startup of core or dependent services.
 

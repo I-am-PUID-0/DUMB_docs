@@ -9,6 +9,37 @@ The **Process Management** endpoints handle launching, stopping, restarting, and
 
 ---
 
+## Lifecycle flow
+
+```mermaid
+%%{ init: { "flowchart": { "curve": "basis" } } }%%
+flowchart TD
+    A([Start or restart request])
+    B{Endpoint}
+    C[Start core service<br/>/process/start-core-service]
+    D[Start or restart service<br/>/process/start-service or /process/restart-service]
+    E[Validate + persist config]
+    F[Run setup hooks]
+    G{Port conflict?}
+    H[Adjust ports + save]
+    I[Launch process]
+    J([Status + logs])
+
+    A ==> B
+    B -- Core service --> C
+    B -- Single service --> D
+    C ==> E
+    E ==> F
+    F ==> G
+    G -- Yes --> H
+    G -- No --> I
+    H ==> I
+    D ==> F
+    I ==> J
+```
+
+---
+
 ## Endpoints
 
 ### `GET /process/processes`
@@ -225,6 +256,32 @@ Returns the available core services, their dependencies, and default service opt
 ### `GET /process/optional-services`
 
 Returns optional services. You can pass `core_service` and `optional_services` query params to tailor the list.
+
+---
+
+### `GET /process/capabilities`
+
+Returns backend capabilities and feature flags. Used by the frontend to determine available features.
+
+#### Example Response:
+
+```json
+{
+  "service_ui_supported": true,
+  "optional_only_onboarding": false,
+  "metrics_history": true,
+  "auto_restart": true,
+  "multi_instance": true
+}
+```
+
+| Field | Description |
+|-------|-------------|
+| `service_ui_supported` | Whether embedded service UIs via Traefik are available |
+| `optional_only_onboarding` | Whether onboarding can skip core service selection |
+| `metrics_history` | Whether historical metrics are collected |
+| `auto_restart` | Whether auto-restart functionality is enabled |
+| `multi_instance` | Whether services support multiple instances |
 
 ---
 

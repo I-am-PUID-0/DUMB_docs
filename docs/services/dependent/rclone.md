@@ -37,7 +37,7 @@ Each `rclone` instance is defined under the `rclone.instances` section in `dumb_
 
 ### Configuration Key Descriptions
 - **`enabled`**: Whether this rclone instance should be started.
-- **`core_service`**: Flag to indicate the associated core service during onboarding.
+- **`core_service`**: Flag to indicate the associated core service(s) during onboarding.
 - **`process_name`**: The label used in logs and process tracking.
 - **`suppress_logging`**: If `true`, disables log output for this service.
 - **`log_level`**: Logging verbosity level (e.g., `DEBUG`, `INFO`).

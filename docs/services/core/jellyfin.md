@@ -30,6 +30,7 @@ icon: lucide/play
   "auto_update": false,
   "auto_update_interval": 24,
   "pinned_version": "",
+  "port": 8096,
   "config_dir": "/jellyfin",
   "config_file": "/jellyfin/config/system.xml",
   "log_file": "/jellyfin/log/jellyfin.log",
@@ -41,6 +42,7 @@ icon: lucide/play
 ### Key Configuration Fields
 
 * `pinned_version`: Optional version pin for Jellyfin updates.
+* `port`: Web UI port (default `8096`).
 * `config_dir`, `config_file`, `log_file`: Paths for config and logs.
 * `command`: Override the default startup command if needed.
 

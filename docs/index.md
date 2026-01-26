@@ -22,10 +22,11 @@ hide:
 <div class="hero-text" markdown>
 <h1>DUMB - A Unified Media Solution</h1>
 
-**DUMB** is an all-in-one media management and streaming solution that integrates multiple services into a single Docker image for streamlined deployment. Automate finding, downloading, and organizing media content using Debrid Services, Plex Discover Watchlists, Trakt lists, Seerr, and more.
+**DUMB** is an all-in-one media management and streaming solution that integrates multiple services into a single Docker image for streamlined deployment. Automate discovery, downloads, and library organization using Debrid and Usenet services, Plex Discover Watchlists, Trakt lists, Seerr, and more.
 
 <div class="hero-actions" markdown>
 [:octicons-arrow-right-24: Deployment Guide](deployment/index.md){ .md-button .md-button--primary }
+[:material-sitemap: Architecture](architecture/index.md){ .md-button }
 </div>
 </div>
 </div>
@@ -79,7 +80,10 @@ hide:
   All your favorite media services in one container. Plex, Jellyfin, Emby, Sonarr, Radarr, and more—pre-configured and ready to use.
 
 - ## :material-cog:{ .lg .middle } Automated Workflows
-  Connect your Debrid services, Trakt lists, and Plex Discover watchlists. DUMB handles the rest—from discovery to streaming.
+  Connect Debrid services, Trakt lists, and Plex Discover watchlists. DUMB handles the rest—from discovery to streaming.
+
+- ## :material-monitor-share:{ .lg .middle } Embedded UIs
+  Use Traefik to unify service UIs under one endpoint and manage everything from the DUMB dashboard.
 
 </div>
 
@@ -89,12 +93,13 @@ DUMB integrates a comprehensive ecosystem of media management tools:
 
 **Media Servers**: Plex Media Server, Jellyfin, Emby  
 **Orchestrators**: Riven, CLI Debrid, Plex Debrid, Decypharr, NzbDAV  
-**Automation**: Sonarr, Radarr, Lidarr, Prowlarr, Whisparr  
-**Storage & Caching**: Zurg, rclone, Zilean  
-**Database**: PostgreSQL, pgAdmin 4
+**Automation**: Sonarr, Radarr, Lidarr, Prowlarr, Whisparr, Huntarr  
+**Storage & Caching**: Zurg, rclone  
+**Monitoring & Tools**: Tautulli, Zilean, Seerr  
+**Database**: PostgreSQL, pgAdmin 4, Phalanx DB
 
 All services work together seamlessly with Plex Discover Watchlists, Trakt lists, Seerr, and more to streamline media discovery and access.
 
 ---
 
-Ready to get started? Check out the [Deployment Guide](deployment/index.md) or explore the [Features](features/index.md) and [Services](services/index.md) documentation.
+Ready to get started? Check out the [Deployment Guide](deployment/index.md) or explore the [Features](features/index.md), [Services](services/index.md), and [Reference](reference/index.md) documentation.

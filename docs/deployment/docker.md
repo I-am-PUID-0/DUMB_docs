@@ -3,188 +3,292 @@ title: Deploy with Docker
 icon: fontawesome/brands/docker
 ---
 
+# Deploy with Docker
 
-## Deploying DUMB with Docker
+This guide assumes you have never used Docker before. It walks through what Docker
+is, how Docker Compose works, how to install Docker on Ubuntu, and how to deploy
+DUMB cleanly with persistent storage.
 
-This guide will walk you through every step, from installing Docker to setting up and running the DUMB container. 
+!!! tip "Prefer a UI?"
 
-Whether you're new to Docker or just need a quick refresher, you'll be up and running in no time.
+    [Portainer](portainer.md) is a great option if you want a web UI for managing
+    containers, logs, and volumes. If you want to deploy DUMB with Portainer
+    Stacks, follow the [Portainer deployment guide](portainer.md) instead.
 
+---
 
 ## Prerequisites
 
-Before you begin, make sure you have the following:
+Before you begin, confirm you have:
 
-- A system running **Ubuntu 20.04 or later**  
-- A **non-root user** with `sudo` privileges  
-- An active internet connection  
-- Basic familiarity with using the **terminal**
+- A system running **Ubuntu 20.04 or later**
+- A **non-root user** with `sudo` privileges
+- An active internet connection
+- Access to a terminal
 
-!!! tip "This guide assumes you're installing Docker on a fresh Ubuntu setup. If you're on Windows, refer to the [Windows Setup Guide (Docker/WSL)](wsl.md)."
+!!! warning "Avoid the Snap package"
 
+    Do not install Docker via Snap. The Snap build often breaks networking,
+    volume mounts, and socket permissions required by DUMB. Use the official
+    Docker install method in this guide instead.
 
-## Install Docker
-1. From Ubuntu, install Docker by pasting the following into the Ubuntu Command Line Interface (CLI); follow the prompts. 
-```bash
-curl -fsSL https://get.docker.com -o get-docker.sh
-sh get-docker.sh
-```
+!!! tip "Windows users"
 
-!!! note "WSL DETECTED"
-    If you receive the following prompt during the Docker install, then follow the steps here: [Windows Setup Guide (Docker/WSL)](wsl.md)
+    If you're on Windows, use the [Windows Setup Guide (Docker/WSL)](wsl.md).
+
+---
+
+## What Docker and Docker Compose do
+
+Docker runs applications inside **containers**, which are isolated environments
+that package the app and its dependencies. Docker Compose is a helper tool that
+starts one or more containers using a `docker-compose.yml` file.
+
+For DUMB, Compose:
+
+- Pulls the DUMB image from a registry
+- Creates a container with your settings
+- Mounts your local folders so configs and logs persist
+- Exposes ports so you can reach the UI and API
+
+---
+
+## Install Docker (official method)
+
+1. Download the official installer:
+
     ```bash
-    WSL DETECTED: We recommend using Docker Desktop for Windows.
-    Please get Docker Desktop from https://www.docker.com/products/docker-desktop/
+    curl -fsSL https://get.docker.com -o get-docker.sh
     ```
 
-----
+2. Run it and follow any prompts:
 
-### Confirm Docker Install
-1. Enter the following command:
+    ```bash
+    sh get-docker.sh
+    ```
+
+!!! note "WSL detected"
+
+    If the installer reports WSL, follow the [Windows Setup Guide (Docker/WSL)](wsl.md).
+
+---
+
+## Install Docker on other Linux distributions
+
+If you are not on Ubuntu, use the official Docker Engine instructions for your OS:
+
+- **Debian**: https://docs.docker.com/engine/install/debian/
+- **Fedora**: https://docs.docker.com/engine/install/fedora/
+- **RHEL/CentOS**: https://docs.docker.com/engine/install/centos/
+- **Arch**: https://docs.docker.com/engine/install/archlinux/
+
+Use the Docker Engine package (not Snap). Once installed, return to this guide
+and continue from **Confirm Docker and Compose are installed**.
+
+---
+
+## Confirm Docker and Compose are installed
+
+1. Check the Docker version:
+
+    ```bash
+    docker --version
+    ```
+
+2. Check Docker Compose version:
+
+    ```bash
+    docker compose version
+    ```
+
+Example output:
+
 ```bash
-docker compose version
-```
-2. If the output is similar to the below, then docker and docker compose were successfully installed:
-```bash
-ubuntu@DUMB:~$ docker compose version
+Docker version 26.1.4, build 5650f9b
 Docker Compose version v2.24.2
 ```
 
-## Define the Directory Structure
+---
 
-!!! note "If you already have a directory structure you'd like to use, then you can skip this step."
+## Optional: allow non-root Docker usage
 
-1. Create a directory for docker in your user directory and change directories to docker.
-```bash
-cd ~ && mkdir docker && cd docker
-```
-
-2. Create the DUMB directories.
-```bash
-mkdir -p DUMB/config DUMB/log DUMB/data DUMB/mnt/debrid
-```
-
-
-## Download and Edit the docker-compose.yml
-!!! important "The docker-compose.yml file will need to be edited to include the necessary environment variable values."
-
-1. Download the latest docker-compose.yml from the GitHub repository with the following:
-```bash
-curl -O https://raw.githubusercontent.com/I-am-PUID-0/DUMB/master/docker-compose.yml
-```
-
-2. Run the following command to update the paths in the `docker-compose.yml`
-```bash
-sed -i "s|/home/username/docker/DUMB|$HOME/docker/DUMB|g" docker-compose.yml
-```
-
-3. Run the following command to update the `docker-compose.yml`
-!!! note "timezone"
-    The bellow command defaults to `TZ=UTC`, update while running the command if desired
-
+By default, Docker commands require `sudo`. If you want to run Docker without
+`sudo`, add your user to the `docker` group.
 
 ```bash
-read -p "Enter your timezone [UTC]: " TZ && TZ=${TZ:-UTC} && \
-sed -i \
-  -e "s|TZ=|TZ=$TZ|" \
-  -e "s|PUID=|PUID=$(id -u)|" \
-  -e "s|PGID=|PGID=$(id -g)|" \
-  docker-compose.yml
-
+sudo usermod -aG docker $USER
 ```
 
+Log out and back in (or reboot) so group membership refreshes.
 
-----
+If you skip this step, keep using `sudo` for Docker commands.
 
-## Start up the Docker Compose
+---
 
-!!! tip "Docker Compose"
-    The following command starts Docker Compose in detached mode, meaning it runs in the background and frees up your terminal.
+## Define the directory structure
 
-    If you **omit the `-d` flag**, Docker Compose will run in the **foreground**, streaming all container logs directly to your terminal. 
+These folders store configs, logs, and data **outside** the container, so they
+survive upgrades and restarts.
 
-    This is useful for debugging or monitoring in real time, but you will need to open another terminal to run additional commands while it's running.
+1. Create a workspace:
 
-    - **Pressing `Ctrl + C`** will **shut down** all running containers.
-    - To **exit without stopping** the container(s), you must start Docker Compose in detached mode using `-d`.
+    ```bash
+    cd ~
+    mkdir -p docker
+    cd docker
+    ```
 
-     There is no built-in "detach shortcut" when running in the foreground — to keep containers running after exit, always use the below command
+2. Create DUMB directories:
+
+    ```bash
+    mkdir -p DUMB/config DUMB/log DUMB/data DUMB/mnt/debrid
+    ```
+
+---
+
+!!! info "Stopping here for Portainer"
+
+    If you plan to deploy DUMB via Portainer **Stacks**, stop after creating the
+    directory structure. You will paste the `docker-compose.yml` into Portainer
+    and deploy it from there instead of running `docker compose` on the host.
+
+## Download and edit `docker-compose.yml`
+
+1. Download the latest Compose file:
+
+    ```bash
+    curl -O https://raw.githubusercontent.com/I-am-PUID-0/DUMB/master/docker-compose.yml
+    ```
+
+2. Replace the default path with your home directory:
+
+    ```bash
+    sed -i "s|/home/username/docker/DUMB|$HOME/docker/DUMB|g" docker-compose.yml
+    ```
+
+3. Fill in `TZ`, `PUID`, and `PGID`:
+
+    ```bash
+    read -p "Enter your timezone [UTC]: " TZ && TZ=${TZ:-UTC} && \
+    sed -i \
+      -e "s|TZ=|TZ=$TZ|" \
+      -e "s|PUID=|PUID=$(id -u)|" \
+      -e "s|PGID=|PGID=$(id -g)|" \
+      docker-compose.yml
+    ```
+
+!!! tip "Timezone format"
+
+    Use a region format like `America/New_York` or `Europe/London`.
+
+---
+
+## Start DUMB with Docker Compose
+
+Run the container in detached mode:
 
 ```bash
 sudo docker compose up -d
 ```
 
 Example output:
+
 ```bash
-ubuntu@DUMB:~/docker$ sudo docker compose up -d
-[+] Running 1/2
- ⠋ Network docker_default  Created                                                                                                                                                       1.1s 
-  Container DUMB       Started  
+[+] Running 2/2
+ Container DUMB  Started
+ Network docker_default  Created
 ```
 
- Once started, the container will run in the background.
-
-
-## That’s It!
-
-Once deployed, DUMB will initialize and make its services available at their respective ports (e.g., DUMB Frontend at `:3005`, API at `:8000`, etc.).
-
-You can now manage DUMB entirely through the **[DUMB Frontend](../services/dumb/dumb-frontend.md)**, or explore the [Configuration](../features/configuration.md) docs to adjust settings as needed.
+The container now runs in the background.
 
 ---
 
-## Additional Useful Commands
+## Access the UI
 
+By default:
 
-### ▶ Attach to the Running Container
+- **DUMB Frontend**: `http://<host>:3005`
+- **DUMB API**: `http://<host>:8000`
+
+If you do not see the UI:
+
+- Confirm the container is running: `sudo docker ps`
+- Check logs: `sudo docker logs -f DUMB`
+- Ensure ports are exposed in your `docker-compose.yml`
+- See [Service ports](../reference/ports.md)
+
+---
+
+## Expose ports for direct UI access
+
+Docker only exposes ports you explicitly map in your `docker-compose.yml`.
+If a UI is not reachable, it usually means the port is not mapped.
+
+Example: expose the DUMB frontend and API.
+
+```yaml
+services:
+  DUMB:
+    ports:
+      - "3005:3005"
+      - "8000:8000"
+```
+
+Example: expose an Arr service UI (Radarr).
+
+```yaml
+services:
+  DUMB:
+    ports:
+      - "7878:7878"
+```
+
+!!! info "Reverse proxy or embedded UIs"
+
+    If you use a reverse proxy (Traefik, Nginx, Caddy) or DUMB’s embedded UIs,
+    you can avoid exposing every service port directly.
+
+After updating ports, restart the stack:
+
+```bash
+sudo docker compose down
+sudo docker compose up -d
+```
+
+---
+
+## Common Docker commands
+
+### Attach to the running container
 
 ```bash
 sudo docker attach DUMB
 ```
 
-### Detach Without Stopping the Container
+### Detach without stopping
 
+Press `Ctrl + P` then `Ctrl + Q` to detach and leave it running.
 
-Press Ctrl + P followed by Ctrl + Q.
+!!! important "Avoid Ctrl+C"
 
-This sequence sends a signal to Docker to detach from the container while leaving it running in the background.
+    `Ctrl+C` stops the container if it is attached to your terminal.
 
-!!! important "Use this sequence rather than simply closing the terminal window or using Ctrl + C, as those actions might stop the container."
-
-!!! note "Ctrl + P + Ctrl + Q"
-    Remember, Ctrl + P + Ctrl + Q must be pressed in quick succession.
-
-    You press Ctrl + P first, and while holding Ctrl, press Q.
-
-    After this, you will be returned to your host terminal, and the container will continue to run in the background.
-
-
-
-### View Docker Container Logs
-
-To view the container logs, enter the following:
-
-```bash
-sudo docker container logs DUMB
-```
-
-Alternatively, use -f to follow the logs in real-time. 
-!!! note "You can exit with Ctrl + C (this does not stop the container)."
+### View logs
 
 ```bash
 sudo docker logs -f DUMB
 ```
 
-### Shutdown Docker Compose
+### Stop and remove the container
 
 ```bash
 sudo docker compose down
 ```
 
-Example output:
-```bash
-ubuntu@DUMB:~/docker$ sudo docker compose down
-[+] Running 2/2
- Container DUMB       Removed                                                                                                                                                      10.4s 
- Network docker_default  Removed     
-```
+---
+
+## Next steps
+
+- Continue setup in the [DUMB Frontend](../services/dumb/dumb-frontend.md)
+- Review [Configuration](../features/configuration.md)
+- Use [Service ports](../reference/ports.md) to expose UIs as needed
