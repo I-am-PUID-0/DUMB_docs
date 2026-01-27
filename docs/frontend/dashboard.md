@@ -18,6 +18,8 @@ The dashboard displays service cards for each configured service, showing:
 - Auto-restart badge
 - Quick action buttons
 
+![Service dashboard](../assets/images/frontend/service_dashboard.png){ .shadow }
+
 ---
 
 ## Service cards
@@ -67,35 +69,9 @@ Each service card provides action buttons:
 
 ## Service detail navigation
 
-Click anywhere on a service card (except the action buttons) to navigate to the service detail page, where you can:
-
-- View and edit service configuration
-- Access real-time logs
-- See detailed status information
-- Configure auto-restart settings
-
-### Service detail tools
-
-From the service detail view, you can access configuration editors and logs for the selected service.
-
-#### Edit DUMB Config
-
-![Edit DUMB Config](../assets/images/dmb_frontend/edit_dumb_config.PNG)
-
-Use this to view or edit `dumb_config.json`. Changes can be saved temporarily (in memory) or
-persisted to disk.
-
-#### Edit Service Config
-
-![Edit Service Config](../assets/images/dmb_frontend/edit_service_config.PNG)
-
-For services with their own config files, you can open and edit those settings here.
-
-#### View service logs
-
-![View Service Logs](../assets/images/dmb_frontend/view_service_logs.PNG)
-
-Log views support filtering by log level and line count, plus a one-click download.
+Click anywhere on a service card (except the action buttons) to open its service page. For a full breakdown
+of service-page controls (config editors, logs, auto-restart overrides, and embedded UIs), see
+[Service pages](service-pages.md).
 
 ---
 
@@ -115,7 +91,7 @@ The connection status is shown in the header area. If disconnected, the frontend
 
 The toolbar provides quick access to service settings and logs.
 
-![Toolbar](../assets/images/dmb_frontend/toolbar.PNG)
+![Toolbar](../assets/images/frontend/toolbar.png){ .shadow }
 
 From here you can:
 
@@ -125,7 +101,7 @@ From here you can:
 
 ### Real-time logs
 
-![Real-Time Logs](../assets/images/dmb_frontend/real_time_logs.PNG)
+![Real-Time Logs](../assets/images/frontend/real_time_logs.png){ .shadow }
 
 The log viewer supports:
 
@@ -142,6 +118,8 @@ Services are displayed in a grid layout, organized by:
 
 - **Enabled services first** - Active services appear prominently
 - **Alphabetical order** - Within each group
+
+![Disabled services toggle](../assets/images/frontend/disabled_services.png){ .shadow }
 
 ---
 

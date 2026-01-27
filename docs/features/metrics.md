@@ -19,6 +19,8 @@ The metrics system provides:
 - **WebSocket streaming** - Push updates to connected clients
 - **cgroup awareness** - Accurate reporting in containerized environments
 
+![Metrics overview](../assets/images/features/metrics.png){ .shadow }
+
 ---
 
 ## Collected metrics

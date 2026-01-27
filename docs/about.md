@@ -89,9 +89,9 @@ See the [Contributing Guide](contributing.md) for more details.
 
 ## Learn More
 
-*  [Getting Started](getting-started/index.md)
 *  [Deployment Options](deployment/index.md)
 *  [Service Configuration](services/index.md)
 *  [Features](features/index.md)
+*  [Frontend](frontend/index.md)
 
 ---

@@ -46,6 +46,8 @@ Configure the global auto-restart behavior:
 | **Cooldown** | Time between restart attempts |
 | **Grace Period** | Wait time before health checks |
 
+![Auto-restart controls](../assets/images/frontend/auto_restart.png){ .shadow }
+
 ### Service overrides
 
 Service pages can also override auto-restart settings per service:
@@ -74,8 +76,6 @@ The frontend includes editors for the main DUMB config and service-specific conf
 
 ### Edit DUMB Config
 
-![Edit DUMB Config](../assets/images/dmb_frontend/edit_dumb_config.PNG)
-
 View or edit `dumb_config.json`. Changes can be saved in memory or written to disk.
 
 Notes:
@@ -85,7 +85,7 @@ Notes:
 
 ### Edit Service Config
 
-![Edit Service Config](../assets/images/dmb_frontend/edit_service_config.PNG)
+![Edit Service Config](../assets/images/frontend/edit_service_config.png){ .shadow }
 
 For services with separate config files, you can open and modify those settings here.
 Service configs should be saved to file.
@@ -96,6 +96,8 @@ Service configs should be saved to file.
 
 Service pages include log viewers when a log file is configured or when the service
 is allowlisted for logs:
+
+![View service logs](../assets/images/frontend/view_service_logs.png){ .shadow }
 
 - Filter by text and level
 - Limit displayed lines

@@ -18,6 +18,8 @@ The embedded UI feature provides:
 - **Integrated experience** - Access services without leaving DUMB
 - **Traefik routing** - Dynamic path-based routing to services
 
+![Embedded UIs in DUMB](../assets/images/features/embedded_ui.png){ .shadow }
+
 ---
 
 ## How it works

@@ -18,6 +18,8 @@ The metrics dashboard shows:
 - **Process details** - Per-service resource consumption
 - **System information** - Container and host details
 
+![Metrics dashboard](../assets/images/frontend/metrics.png)
+
 ---
 
 ## Resource monitoring

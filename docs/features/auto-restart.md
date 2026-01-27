@@ -19,6 +19,9 @@ The auto-restart system provides:
 - **Restart limits** - Prevent infinite restart loops
 - **Grace periods** - Allow services time to initialize
 
+![Auto-restart status](../assets/images/features/auto_restart.png){ .shadow }
+![Auto-restart indicators](../assets/images/features/auto_restart_indicators.png){ .shadow }
+
 ---
 
 ## How it works

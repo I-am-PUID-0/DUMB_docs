@@ -22,8 +22,6 @@ The Settings page is organized into sections:
 
 ### Settings menu
 
-![Settings Menu](../assets/images/dmb_frontend/dumb_settings_menu.PNG)
-
 The settings menu also includes quick links for:
 
 - Rerunning onboarding
@@ -43,6 +41,8 @@ Displays current versions:
 - DUMB Backend version
 - DUMB Frontend version
 - Individual service versions
+
+![About settings](../assets/images/frontend/about_settings.png){ .shadow }
 
 ### Launch Onboarding
 
@@ -80,6 +80,8 @@ Toggle the embedded service UI feature:
 
 When enabled, the Settings page shows how many UI-capable services are detected. Service pages include an embedded UI tab, a direct link button, and a full-window toggle for iframes.
 
+![Embedded UI settings](../assets/images/frontend/embedded_ui_settings.png){ .shadow }
+
 ---
 
 
@@ -107,6 +109,8 @@ Optional GitHub personal access token for:
     2. Create a token with `repo` scope
     3. Paste it in the GitHub Token field
 
+![Token settings](../assets/images/frontend/tokens_settings.png){ .shadow }
+
 ---
 
 ## UI preferences
@@ -120,6 +124,8 @@ Customize how timestamps appear in the log viewer:
 | **Date Order** | MDY (US) or DMY (International) |
 | **Hour Format** | 12-hour or 24-hour |
 | **Zero Padding** | Include leading zeros |
+
+![Log timestamp settings](../assets/images/frontend/log_timestamp_settings.png){ .shadow }
 
 
 ---
@@ -139,6 +145,8 @@ Toggle the authentication requirement for accessing DUMB:
 !!! danger "Security warning"
 
     Only disable authentication in trusted, isolated environments.
+
+![Authentication settings](../assets/images/frontend/auth_settings.png){ .shadow }
 
 ### User management
 
@@ -164,14 +172,18 @@ Quick access to:
 
 - [GitHub Repository](https://github.com/I-am-PUID-0/DUMB)
 - [Discord Community](https://discord.gg/8dqKUBtbp5)
-- [Documentation](https://I-am-PUID-0.github.io/DUMB)
+- [Documentation](https://dumbarr.com)
 - [Docker Hub](https://hub.docker.com/r/iampuid0/dumb)
+
+![Support links](../assets/images/frontend/support_settings.png){ .shadow }
 
 ---
 
 ### Contributors
 
 Acknowledgment of project contributors and integrated services.
+
+![Contributors](../assets/images/frontend/contributors_settings.png){ .shadow }
 
 
 ---

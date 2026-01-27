@@ -13,8 +13,8 @@ The onboarding wizard guides you through the initial setup of DUMB, helping you 
 
 The wizard walks you through:
 
-1. Selecting core services (orchestrators)
-2. Configuring debrid service credentials
+1. Selecting core services (orchestrators and related tools)
+2. Configuring debrid service credentials (when applicable)
 3. Choosing optional services
 4. Customizing service-specific options
 5. Reviewing and applying your configuration
@@ -72,11 +72,26 @@ Choose one or more core services:
 
     You can select multiple core services if needed. Each will be configured with its own dependencies.
 
+!!! note "Guided setup"
+
+    1. Choose **Debrid**, **Usenet**, or **Both**.
+    2. Decide whether to use **Arrs** (required for Usenet).
+    3. If using both workflows, pick **Combined** or **Separate** Arr instances.
+    4. (Optional) Enable **multi-quality** Sonarr/Radarr instances.
+    5. Select supporting services (Seerr, Huntarr, Zilean, PostgreSQL + pgAdmin, Tautulli).
+    6. Click **Apply recommendations** to populate the core services list.
+
+!!! tip "Arr instance layouts"
+
+    - **Combined**: one Arr instance uses a list-based `core_service` (Decypharr + NzbDAV)
+    - **Separate**: Debrid and Usenet get separate Arr instances
+    - **Multi-quality**: Sonarr/Radarr instances are created per quality tier
+
 ---
 
 ### Step 2: Configure debrid service
 
-For each core service, provide your debrid credentials:
+For each debrid-capable core service, provide your debrid credentials:
 
 | Field | Description |
 |-------|-------------|
@@ -100,7 +115,7 @@ Choose additional services to enable:
 | **Utilities** | Zilean, pgAdmin, Riven Frontend, PostgreSQL |
 | **Monitoring** | Tautulli |
 
-Optional services are automatically configured with appropriate connections to your core services.
+Optional services are filtered based on your core services and automatically configured with appropriate connections.
 
 ---
 
@@ -116,6 +131,11 @@ Configure additional settings for selected services:
 - **Decypharr**: Use embedded rclone option
 
 Default values are pre-filled but can be customized.
+
+!!! info "Instances"
+
+    Services that support multiple instances show instance panels on a single page. Each instance can have its
+    own options (including `core_service` routing).
 
 ---
 
@@ -207,6 +227,11 @@ For services that support multiple instances (like Zurg or rclone), the wizard:
 - Creates instances linked to core services
 - Names them appropriately (e.g., "Zurg w/ Riven")
 - Configures separate ports to avoid conflicts
+
+For Arr services and Huntarr, instance names can be used to split workflows (e.g., Debrid vs Usenet, or multiple
+quality tiers). 
+
+Combined Arr workflows use `/mnt/debrid/combined_symlinks/<slug>` for root folders.
 
 ---
 
