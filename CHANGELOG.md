@@ -1,6 +1,13 @@
 # Changelog
 
 
+## [1.7.2](https://github.com/I-am-PUID-0/DUMB_docs/compare/1.7.1...1.7.2) (2026-01-27)
+
+
+### 📖 Documentation
+
+* updates frontend documentation and assets ([8ff67d4](https://github.com/I-am-PUID-0/DUMB_docs/commit/8ff67d4cf62c674d94f80160191ca7df3e6e4dbd))
+
 ## [1.7.1](https://github.com/I-am-PUID-0/DUMB_docs/compare/1.7.0...1.7.1) (2026-01-26)
 
 
