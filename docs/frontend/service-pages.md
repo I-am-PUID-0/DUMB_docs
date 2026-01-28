@@ -15,11 +15,12 @@ auto-restart policies, auto-update scheduling, and configuration editors.
 Each service page includes:
 
 - Current status, health, and restart counters
-- Start, stop, and restart actions
+- Start, stop, and restart actions (except for the API service)
 - Configuration editors with validation
 - Log viewers (service logs, plus special logs when available)
 - Embedded UI tab when supported and enabled
 - Per-service auto-restart overrides
+- On-demand update checks and auto-update scheduling
 
 ---
 
@@ -32,6 +33,10 @@ Action buttons:
 
 - **Start**, **Stop**, **Restart** for the current service
 - **Auto-restart** opens per-service overrides (if supported)
+
+!!! note "API service controls"
+
+    The DUMB API service does not show Start/Stop/Restart controls in the UI.
 
 ---
 
@@ -60,13 +65,25 @@ Service pages can also override auto-restart settings per service:
 
 ## Auto-update settings
 
-Configure automatic service updates:
+The updates panel lets you check for updates on demand and configure automatic update checks:
+
+Manual update actions:
+
+- **Check for updates** runs a one-time update check even if auto-update is disabled.
+- **Install update** applies the latest available update when allowed.
+- **Override + install** appears when a service is pinned to a release/branch and you explicitly choose to bypass the block.
+
+Automatic update settings:
 
 | Setting | Description |
 |---------|-------------|
 | **Enabled** | Check for updates automatically |
 | **Interval** | Hours between update checks |
-| **Clear on Update** | Remove old files when updating |
+
+Notes:
+
+- Saving auto-update settings reschedules the updater immediately (no service restart required).
+- **Next check** is shown in the panel once auto-update is enabled and scheduled.
 
 ---
 
