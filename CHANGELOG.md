@@ -1,6 +1,13 @@
 # Changelog
 
 
+## [1.7.3](https://github.com/I-am-PUID-0/DUMB_docs/compare/1.7.2...1.7.3) (2026-01-28)
+
+
+### 📖 Documentation
+
+* Refines service pages documentation ([cec5e96](https://github.com/I-am-PUID-0/DUMB_docs/commit/cec5e965f07a71f4f218165bcaac46b0dd4a45a8))
+
 ## [1.7.2](https://github.com/I-am-PUID-0/DUMB_docs/compare/1.7.1...1.7.2) (2026-01-27)
 
 
