@@ -31,13 +31,14 @@ Seerr provides:
 
 ## Configuration settings in `dumb_config.json`
 
-Below is a sample configuration for Seerr within the `dumb_config.json` file:
+### Seerr instance configuration
 
 ```json
 "seerr": {
   "instances": {
     "Default": {
       "enabled": false,
+      "sync_role": "disabled",
       "core_service": "",
       "process_name": "Seerr",
       "repo_owner": "seerr-team",
@@ -71,9 +72,10 @@ Below is a sample configuration for Seerr within the `dumb_config.json` file:
 }
 ```
 
-### Configuration key descriptions
+#### Seerr instance keys
 
 - **`enabled`**: Whether to start this Seerr instance.
+- **`sync_role`**: `disabled`, `primary`, or `subordinate`.
 - **`process_name`**: Display name used in logs and the frontend.
 - **`repo_owner`** / **`repo_name`**: GitHub repository to pull from.
 - **`release_version_enabled`** / **`release_version`**: Use a tagged release if enabled.
@@ -90,6 +92,115 @@ Below is a sample configuration for Seerr within the `dumb_config.json` file:
 - **`config_dir`** / **`config_file`**: Where configuration files are stored.
 - **`log_file`**: Path to the Seerr log file.
 - **`env`**: Environment variables passed at runtime.
+
+---
+
+## Seerr Sync
+
+Seerr Sync replicates requests from one **primary** Seerr instance to one or more **subordinates**. It is one‑way and is designed for multi‑Seerr setups where the primary is the source of truth.
+
+### High-level overview
+
+Seerr Sync keeps multiple Seerr instances aligned by periodically polling the primary and applying changes to subordinates.
+
+How it works:
+
+- **Polling** - Periodically polls the primary for all requests (default 60s).
+- **Fingerprinting** - Each request is identified by `{mediaType}:{tmdbId}:{is4k}`.
+- **Sync actions** - New requests are created on subordinates, status changes propagate, and deletions are optionally mirrored.
+- **State persistence** - Tracks synced requests in `/config/seerr_sync_state.json` so it survives restarts.
+- **Failure handling** - Failed sync attempts are tracked separately and retried after a configurable delay.
+
+Use case example:
+
+Multiple Seerr instances (for example, one per household) can share the same request library. Users submit requests on the primary and they appear on all subordinates, each tied to its own Arr stack.
+
+### Top-level `seerr_sync` settings
+
+```json
+"seerr_sync": {
+  "enabled": false,
+  "poll_interval_seconds": 60,
+  "external_primary": {
+    "enabled": false,
+    "url": "",
+    "api_key": ""
+  },
+  "external_subordinates": [
+    { "url": "", "api_key": "" }
+  ],
+  "options": {
+    "sync_pending": true,
+    "sync_approved": true,
+    "sync_declined": false,
+    "sync_deletes": true,
+    "sync_4k_separately": true,
+    "user_mapping": "admin"
+  }
+}
+```
+
+#### Seerr Sync keys
+
+- **`seerr_sync.enabled`**: Master toggle for Seerr Sync.
+- **`seerr_sync.poll_interval_seconds`**: Poll interval in seconds (minimum 10).
+- **`seerr_sync.external_primary.enabled`**: Use an external Seerr as primary.
+- **`seerr_sync.external_primary.url`**: External primary base URL.
+- **`seerr_sync.external_primary.api_key`**: API key for external primary.
+- **`seerr_sync.external_subordinates`**: List of external subordinate URLs + API keys.
+- **`seerr_sync.options.sync_pending`**: Sync pending requests.
+- **`seerr_sync.options.sync_approved`**: Sync approved requests.
+- **`seerr_sync.options.sync_declined`**: Sync declined requests.
+- **`seerr_sync.options.sync_deletes`**: Delete subordinates when deleted on primary.
+- **`seerr_sync.options.sync_4k_separately`**: Treat 4K as separate requests.
+- **`seerr_sync.options.user_mapping`**: Owner mapping (`admin` or `email_match`).
+
+Key fields:
+
+- **`enabled`**: Master toggle for Seerr Sync.
+- **`poll_interval_seconds`**: Minimum 10 seconds. How often to poll the primary.
+- **`external_primary`**: Use an external Seerr as primary (URL + API key required).
+- **`external_subordinates`**: External subordinate list (URL + API key required for each).
+- **`options`**: Toggles for request types and ownership mapping.
+
+### Per-instance `sync_role`
+
+Each Seerr instance has a sync role:
+
+```json
+"seerr": {
+  "instances": {
+    "Default": {
+      "enabled": true,
+      "sync_role": "disabled"
+    }
+  }
+}
+```
+
+Values:
+
+- **`disabled`**: Not part of sync.
+- **`primary`**: Source of truth.
+- **`subordinate`**: Receives replicated requests.
+
+!!! warning "Validation rules"
+
+    - Only one internal primary is allowed.
+    - If an external primary is enabled, no internal instance can be primary.
+    - A primary must exist (internal or external).
+    - At least one subordinate must exist (internal or external).
+    - External entries require both URL and API key.
+
+### Frontend integration
+
+The Seerr service page includes a **Seerr Sync** panel with:
+
+- Enable toggle and polling interval
+- External primary + subordinates editor (API keys are hidden by default)
+- Sync options toggles and user mapping
+- Per-instance sync role selector
+- Status + failed request reporting (with clear actions and scrollable list)
 
 ---
 

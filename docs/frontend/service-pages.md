@@ -21,6 +21,7 @@ Each service page includes:
 - Embedded UI tab when supported and enabled
 - Per-service auto-restart overrides
 - On-demand update checks and auto-update scheduling
+- Seerr Sync controls when viewing a Seerr instance
 
 ---
 
@@ -84,6 +85,21 @@ Notes:
 
 - Saving auto-update settings reschedules the updater immediately (no service restart required).
 - **Next check** is shown in the panel once auto-update is enabled and scheduled.
+
+---
+
+## Seerr Sync panel
+
+On Seerr service pages, the **Seerr Sync** panel lets you:
+
+- Configure the top-level `seerr_sync` settings (enable, polling, external primary/subordinates)
+- Toggle sync behavior options (pending/approved/declined/deletes/4K)
+- Select the per-instance `sync_role` (disabled/primary/subordinate)
+- View sync status and failed requests
+
+API keys are hidden by default and can be revealed when needed.
+
+Failed request lists are shown in a scrollable panel so large queues don’t expand the page.
 
 ---
 

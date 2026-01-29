@@ -16,6 +16,7 @@ DUMB (Debrid Unlimited Media Bridge) is an all-in-one media management solution 
 * **Automated Content Management** – Uses **Debrid** and **Usenet** services alongside **Plex Discover Watchlists**, **Trakt lists**, and **Seerr** to automate media retrieval.
 * **Arr + WebDAV Workflows** – Supports **Sonarr, Radarr, Lidarr, Whisparr**, plus WebDAV-driven clients like **Decypharr** (Debrid) and **NzbDAV** (Usenet).
 * **Huntarr automation** – Optional continuous searches to fill missing content and upgrade quality.
+* **[Seerr Sync](seerr-sync.md)** – One-way request replication from a primary Seerr to subordinate instances for multi-household or multi-stack setups.
 * **Integrated Web UI** – Control and manage services through a simple **web-based interface**.
 * **[Authentication](authentication.md)** – Optional JWT-based security with user management and session handling.
 * **[Auto-update](auto-update.md)** – Keep services current with automatic updates from GitHub releases, nightly builds, or specific branches.

@@ -48,6 +48,10 @@ The API is enabled and configured using the `dumb_config.json` under the `dumb.a
 | GET    | `/process/service-status` | Get the current status of a service        |
 | POST   | `/process/start-core-service` | Start core services + dependencies     |
 | GET    | `/process/capabilities`   | Get backend feature flags                  |
+| GET    | `/seerr-sync/status`      | Seerr Sync summary status                  |
+| GET    | `/seerr-sync/failed`      | Seerr Sync failed request list             |
+| GET    | `/seerr-sync/state`       | Seerr Sync raw state (debug)               |
+| DELETE | `/seerr-sync/failed`      | Clear failed Seerr Sync requests           |
 | GET    | `/logs`                   | Read service log chunks                    |
 | WS     | `/ws/logs`                | Real-time log streaming                    |
 | WS     | `/ws/status`              | Real-time service status updates           |
@@ -68,6 +72,7 @@ The DUMB API is split into the following modules:
 | `logs.py` | REST endpoint for reading historical logs |
 | `websocket_logs.py` | WebSocket server for streaming real-time logs to frontend |
 | `process.py` | Service control for backend processes (start, stop, restart) |
+| `seerr_sync.py` | Seerr Sync status and failure endpoints |
 
 ---
 
@@ -100,3 +105,4 @@ Click on any of the modules in the sidebar to explore endpoint structure, usage 
 - [Logs](logs.md)
 - [WebSocket](websocket.md)
 - [WebSocket Logs](websocket_logs.md)
+- [Seerr Sync](seerr-sync.md)

@@ -16,6 +16,7 @@ nav:
       - Authentication: features/authentication.md
       - Auto-restart: features/auto-restart.md
       - Auto-update: features/auto-update.md
+      - Seerr Sync: features/seerr-sync.md
       - FFprobe Monitor: features/ffprobe-monitor.md
       - Metrics: features/metrics.md
       - Embedded UIs: features/embedded-ui.md
@@ -85,6 +86,7 @@ nav:
       - Process Management: api/process.md
       - Configuration: api/config.md
       - Logs: api/logs.md
+      - Seerr Sync: api/seerr-sync.md
       - WebSocket: api/websocket.md
       - WebSocket Logs: api/websocket_logs.md
   - Reference:
