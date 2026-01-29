@@ -1,6 +1,13 @@
 # Changelog
 
 
+## [1.8.0](https://github.com/I-am-PUID-0/DUMB_docs/compare/1.7.3...1.8.0) (2026-01-29)
+
+
+### ✨ Features
+
+* adds documentation for Seerr Sync feature ([8733cab](https://github.com/I-am-PUID-0/DUMB_docs/commit/8733cab338bef743e055d81656406b3da157b1a7))
+
 ## [1.7.3](https://github.com/I-am-PUID-0/DUMB_docs/compare/1.7.2...1.7.3) (2026-01-28)
 
 
