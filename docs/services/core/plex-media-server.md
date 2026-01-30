@@ -74,7 +74,7 @@ icon: lucide/tv
 * `pinned_version`: Pin Plex to a specific version when using manual builds.
 * `dbrepair`: Optional DBRepair configuration for scheduled Plex database maintenance.
 
-!!! important  "DUMB does not yet support `auto_update` or `port` assignment for Plex Media Server"
+!!! important  "DUMB does not yet support `port` assignment for Plex Media Server"
 
 ---
 
@@ -96,33 +96,59 @@ If you're migrating an existing Plex Media Server into the DUMB container, the p
 
 ---
 
-### Step 1: Copy Existing Plex Configuration
+### Step 1: Locate your existing Plex data directory
+
+Plex keeps its state in a folder named **`Plex Media Server`**. That folder contains:
+
+- `Preferences.xml`
+- `Plug-in Support/Databases/` (library DB)
+- `Metadata/`, `Media/`, `Cache/`, `Logs/`, and more
+
+Common locations:
+
+| Environment | Typical Plex data path |
+|-------------|------------------------|
+| Linux (native) | `/var/lib/plexmediaserver/Library/Application Support/Plex Media Server` |
+| Linux (snap) | `~/snap/plexmediaserver/common/Library/Application Support/Plex Media Server` |
+| Docker | Your mapped volume (example: `/path/to/plex` → `/config`) |
+
+!!! tip "What you need to copy"
+
+    Copy the entire **`Plex Media Server`** folder, not just `Preferences.xml`.
+
+---
+
+### Step 2: Copy the Plex data into DUMB
 
 Whether your current Plex server is running as a Docker container or directly on the host machine, locate its configuration directory. This directory typically contains:
 
 * `Plex Media Server/Preferences.xml`
-* `Plex Media Server/Library/...`
+* `Plex Media Server/Plug-in Support/Databases/...`
 * `Plex Media Server/Logs/...`
+
+!!! warning "Stop Plex before copying"
+
+    Stop the existing Plex server before copying data to avoid a partial or corrupted database copy.
 
 Copy this entire Plex configuration directory to the DUMB host's Plex directory:
 
 ```bash
 # Replace /path/to/existing/plex with the path from your host or old container
-cp -r "/path/to/existing/plex/Plex Media Server" "/path/to/DUMB/plex/"
+rsync -a "/path/to/existing/plex/Plex Media Server" "/path/to/DUMB/plex/"
 ```
 
 The result should be:
 
 ```
 DUMB/plex/Plex Media Server/Preferences.xml
-DUMB/plex/Plex Media Server/Library/...
+DUMB/plex/Plex Media Server/Plug-in Support/Databases/...
 ```
 
-!!! important "The internal path **must** remain `/plex/Plex Media Server/Preferences.xml` inside the container, unless you follow Step 2 below."
+!!! important "The internal path **must** remain `/plex/Plex Media Server/Preferences.xml` inside the container, unless you follow Step 3 below."
 
 ---
 
-### Step 2: Point DUMB to the Copied Config
+### Step 3: Point DUMB to the copied config
 
 !!! note "This is only required if changing the default location (shown below) for Plex configs inside the container"
 
@@ -139,7 +165,26 @@ Update the `dumb_config.json` to ensure the `config_dir` is `/plex`, which is th
 
 ---
 
-### Step 3: Add Media Content
+### Step 4: Verify permissions
+
+Plex must be able to **read and write** the copied files. If you see permission errors, adjust ownership to match the user defined in your Docker compose.
+
+!!! note "Match PUID/PGID ownership"
+
+    The Plex data directory should be owned by the same UID/GID used in the container (`PUID`/`PGID`).  
+    Example:
+
+    ```bash
+    # Replace 1000:1000 with your container PUID:PGID and adjust the path
+    sudo chown -R 1000:1000 /path/to/DUMB/plex
+    sudo chmod -R u+rwX,g+rwX /path/to/DUMB/plex
+    ```
+
+    If your container uses a different PUID/PGID (for example, `568:568` on some NAS setups), use that instead.
+
+---
+
+### Step 5: Add media content
 
 If you have existing media content from your previous Plex setup:
 
@@ -162,7 +207,7 @@ If you have existing media content from your previous Plex setup:
 
 ---
 
-### Step 4: Restart and Verify
+### Step 6: Restart and verify
 
 Once configuration and mounts are complete:
 
@@ -175,7 +220,7 @@ Once configuration and mounts are complete:
 
 ---
 
-### Optional: Reclaim or Reconfigure
+### Optional: reclaim or reconfigure
 
 If you're reusing an old server and want to reset it:
 

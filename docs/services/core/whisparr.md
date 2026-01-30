@@ -30,6 +30,13 @@ icon: lucide/eye
       "core_service": "",
       "use_huntarr": false,
       "process_name": "Whisparr",
+      "repo_owner": "Whisparr",
+      "repo_name": "Whisparr",
+      "release_version_enabled": false,
+      "release_version": "latest",
+      "clear_on_update": false,
+      "exclude_dirs": [],
+      "platforms": [],
       "suppress_logging": false,
       "auto_update": false,
       "auto_update_interval": 24,
@@ -51,7 +58,23 @@ icon: lucide/eye
 * `use_huntarr`: Opt this instance into Huntarr automation.
 * `port`: Web UI port (default `6969`).
 * `pinned_version`: Optional version pin for Whisparr updates.
+* `repo_owner` / `repo_name`: GitHub repo used for releases or branch builds.
+* `release_version_enabled` / `release_version`: Use GitHub releases (e.g., `latest`, `nightly`, `prerelease`, or a tag).
+* `clear_on_update`: Clear the install directory before updating.
+* `exclude_dirs`: Directories to preserve when clearing.
+* `platforms`: Build platforms (auto‑defaults to `["dotnet"]` when using branches).
 * `config_dir`, `config_file`, `log_file`: Paths for config and logs.
+
+---
+
+## Repo-based installs and updates
+
+Whisparr now supports the same repo‑based controls as other DUMB services.
+
+- **GitHub releases**: Set `release_version_enabled: true` with a valid `repo_owner`/`repo_name`.
+- **Default updater**: Leave `release_version_enabled: false` to use the standard Arr updater.
+
+GitHub sources take priority when enabled and are **not** a fallback. `pinned_version` only applies to the traditional Arr updater.
 
 ---
 

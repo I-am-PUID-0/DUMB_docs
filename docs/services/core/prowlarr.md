@@ -28,6 +28,13 @@ icon: lucide/search
     "Default": {
       "enabled": false,
       "process_name": "Prowlarr",
+      "repo_owner": "Prowlarr",
+      "repo_name": "Prowlarr",
+      "release_version_enabled": false,
+      "release_version": "latest",
+      "clear_on_update": false,
+      "exclude_dirs": [],
+      "platforms": [],
       "suppress_logging": false,
       "auto_update": false,
       "auto_update_interval": 24,
@@ -47,7 +54,23 @@ icon: lucide/search
 
 * `port`: Web UI port (default `9696`).
 * `pinned_version`: Optional version pin for Prowlarr updates.
+* `repo_owner` / `repo_name`: GitHub repo used for releases or branch builds.
+* `release_version_enabled` / `release_version`: Use GitHub releases (e.g., `latest`, `nightly`, `prerelease`, or a tag).
+* `clear_on_update`: Clear the install directory before updating.
+* `exclude_dirs`: Directories to preserve when clearing.
+* `platforms`: Build platforms (auto‑defaults to `["dotnet"]` when using branches).
 * `config_dir`, `config_file`, `log_file`: Paths for config and logs.
+
+---
+
+## Repo-based installs and updates
+
+Prowlarr now supports the same repo‑based controls as other DUMB services.
+
+- **GitHub releases**: Set `release_version_enabled: true` with a valid `repo_owner`/`repo_name`.
+- **Default updater**: Leave `release_version_enabled: false` to use the standard Arr updater.
+
+GitHub sources take priority when enabled and are **not** a fallback. `pinned_version` only applies to the traditional Arr updater.
 
 ---
 

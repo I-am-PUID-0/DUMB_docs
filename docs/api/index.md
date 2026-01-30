@@ -51,6 +51,7 @@ The API is enabled and configured using the `dumb_config.json` under the `dumb.a
 | GET    | `/seerr-sync/status`      | Seerr Sync summary status                  |
 | GET    | `/seerr-sync/failed`      | Seerr Sync failed request list             |
 | GET    | `/seerr-sync/state`       | Seerr Sync raw state (debug)               |
+| POST   | `/seerr-sync/test`        | Test Seerr URL + API key                   |
 | DELETE | `/seerr-sync/failed`      | Clear failed Seerr Sync requests           |
 | GET    | `/logs`                   | Read service log chunks                    |
 | WS     | `/ws/logs`                | Real-time log streaming                    |

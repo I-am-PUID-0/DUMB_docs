@@ -95,6 +95,7 @@ On Seerr service pages, the **Seerr Sync** panel lets you:
 - Configure the top-level `seerr_sync` settings (enable, polling, external primary/subordinates)
 - Toggle sync behavior options (pending/approved/declined/deletes/4K)
 - Select the per-instance `sync_role` (disabled/primary/subordinate)
+- Test external primary/subordinate connections before saving
 - View sync status and failed requests
 
 API keys are hidden by default and can be revealed when needed.

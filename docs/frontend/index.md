@@ -57,6 +57,12 @@ The frontend maintains WebSocket connections to receive live updates:
 - **System metrics** - CPU, memory, disk usage
 - **Log streaming** - New log entries as they occur
 
+!!! warning "Reverse proxy must allow WebSockets"
+
+    If you proxy the DUMB Frontend through Nginx or another reverse proxy, make sure WebSockets are enabled.
+    WebSocket traffic powers real-time logs, metrics, and service status.
+    Traefik enables WebSockets by default, but Nginx requires explicit configuration.
+
 ### Service control
 
 Start, stop, and restart services directly from the dashboard or service detail pages. The frontend shows:

@@ -106,6 +106,40 @@ Raw sync state (debugging).
 
 ---
 
+### POST `/api/seerr-sync/test`
+
+Test connectivity to a Seerr instance using a URL and API key.
+
+Request body:
+
+```json
+{
+  "url": "https://seerr.example.com",
+  "api_key": "your_api_key"
+}
+```
+
+Response (success):
+
+```json
+{
+  "ok": true,
+  "status": {
+    "version": "1.0.0"
+  }
+}
+```
+
+Response (failure):
+
+```json
+{
+  "detail": "Seerr responded with HTTP 401"
+}
+```
+
+---
+
 ### DELETE `/api/seerr-sync/failed`
 
 Clear failed requests so they are retried on the next poll.

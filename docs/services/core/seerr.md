@@ -99,6 +99,8 @@ Seerr provides:
 
 Seerr Sync replicates requests from one **primary** Seerr instance to one or more **subordinates**. It is one‑way and is designed for multi‑Seerr setups where the primary is the source of truth.
 
+For a full overview and use‑case narrative, see [Seerr Sync](../../features/seerr-sync.md).
+
 ### High-level overview
 
 Seerr Sync keeps multiple Seerr instances aligned by periodically polling the primary and applying changes to subordinates.
@@ -198,6 +200,7 @@ The Seerr service page includes a **Seerr Sync** panel with:
 
 - Enable toggle and polling interval
 - External primary + subordinates editor (API keys are hidden by default)
+- Test buttons to validate external primary and subordinate connectivity
 - Sync options toggles and user mapping
 - Per-instance sync role selector
 - Status + failed request reporting (with clear actions and scrollable list)
@@ -322,5 +325,5 @@ This provides a unified interface without exposing Seerr's port directly.
 
 ## Resources
 
-- [Overseerr GitHub Repository](https://github.com/sct/overseerr)
-- [Overseerr Documentation](https://docs.overseerr.dev/)
+- [Seerr GitHub Repository](https://github.com/seerr-team/seerr)
+- [Seerr Documentation](https://docs.seerr.dev/)
