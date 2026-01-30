@@ -1,6 +1,13 @@
 # Changelog
 
 
+## [1.9.0](https://github.com/I-am-PUID-0/DUMB_docs/compare/1.8.0...1.9.0) (2026-01-30)
+
+
+### ✨ Features
+
+* **seerr-sync:** adds Seerr Sync test endpoint ([968968a](https://github.com/I-am-PUID-0/DUMB_docs/commit/968968a4cf5c9258220f586d55bc90cb30d34a3d))
+
 ## [1.8.0](https://github.com/I-am-PUID-0/DUMB_docs/compare/1.7.3...1.8.0) (2026-01-29)
 
 
