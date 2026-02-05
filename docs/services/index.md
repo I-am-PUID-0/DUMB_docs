@@ -76,6 +76,7 @@ DUMB is built as a collection of microservices that communicate over internal AP
 | [Prowlarr](../services/core/prowlarr.md)                 | Core      | Indexer management for Arrs                               |
 | [Whisparr](../services/core/whisparr.md)                 | Core      | Adult content automation and organization                 |
 | [Huntarr](../services/core/huntarr.md)                   | Core      | Backlog search automation for Arrs                        |
+| [Profilarr](../services/core/profilarr.md)               | Core      | Profiles/custom formats manager for Sonarr/Radarr         |
 | [rclone](../services/dependent/rclone.md)                | Dependent | Mount Debrid storage                                      |
 | [Zurg](../services/dependent/zurg.md)                    | Dependent | Serve Debrid content via WebDAV                           |
 | [PostgreSQL](../services/dependent/postgres.md)          | Dependent | Persistent metadata database                              |

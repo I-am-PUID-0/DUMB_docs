@@ -108,7 +108,7 @@ DUMB integrates a comprehensive ecosystem of media management tools:
 
 **Media Servers**: Plex Media Server, Jellyfin, Emby  
 **Orchestrators**: Riven, CLI Debrid, Plex Debrid, Decypharr, NzbDAV  
-**Automation**: Sonarr, Radarr, Lidarr, Prowlarr, Whisparr, Huntarr  
+**Automation**: Sonarr, Radarr, Lidarr, Prowlarr, Whisparr, Huntarr, Profilarr  
 **Storage & Caching**: Zurg, rclone  
 **Monitoring & Tools**: Tautulli, Zilean, Seerr  
 **Database**: PostgreSQL, pgAdmin 4, Phalanx DB

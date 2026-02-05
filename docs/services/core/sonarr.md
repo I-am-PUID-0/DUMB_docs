@@ -29,6 +29,7 @@ icon: lucide/radio
       "enabled": false,
       "core_service": "",
       "use_huntarr": false,
+      "use_profilarr": false,
       "process_name": "Sonarr",
       "repo_owner": "Sonarr",
       "repo_name": "Sonarr",
@@ -56,6 +57,7 @@ icon: lucide/radio
 
 * `core_service`: Set to `decypharr`, `nzbdav`, or a list of both to enable DUMB integration.
 * `use_huntarr`: Opt this instance into Huntarr automation.
+* `use_profilarr`: Opt this instance into Profilarr auto‑linking.
 * `port`: Web UI port (default `8989`).
 * `pinned_version`: Optional version pin for Sonarr updates.
 * `repo_owner` / `repo_name`: GitHub repo used for releases or branch builds.

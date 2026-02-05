@@ -55,6 +55,7 @@ nav:
         - Prowlarr: services/core/prowlarr.md
         - Whisparr: services/core/whisparr.md
         - Huntarr: services/core/huntarr.md
+        - Profilarr: services/core/profilarr.md
       - Dependent:
         - Overview: services/dependent/index.md
         - CLI Battery: services/dependent/cli-battery.md

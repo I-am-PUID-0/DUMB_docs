@@ -17,6 +17,7 @@ still allowing multiple instances of the same Arr service.
 |-------------|---------|
 | Arr instances (`sonarr`, `radarr`, `lidarr`, `whisparr`) | Selects the download workflow(s) to auto-wire. |
 | Huntarr instances | Filters which Arr instances are sent to Huntarr. |
+| Profilarr instances | Filters which Arr instances are auto-linked to Profilarr. |
 | rclone/zurg instances | Labels the instance for the workflow it supports. |
 
 ---
@@ -33,6 +34,7 @@ flowchart TD
     PROWLARR[Prowlarr apps + tags]
     IDX[Tagged indexers]
     HUNTARR[Huntarr instance]
+    PROFILARR[Profilarr instance]
 
     ARR ==> CS
     CS -- decypharr --> DEC
@@ -42,6 +44,7 @@ flowchart TD
     PROWLARR ==> IDX
     IDX ==> ARR
     CS ==> HUNTARR
+    CS ==> PROFILARR
 ```
 
 ---
@@ -77,6 +80,11 @@ When `core_service` is set on a Huntarr instance, DUMB:
 
 - Sends Arr instances whose core services overlap the Huntarr instance.
 
+When `core_service` is set on a Profilarr instance, DUMB:
+
+- Auto-links only Arr instances whose core services overlap the Profilarr instance.
+- Seeds profile/custom format/regex/media-management sync for those Arr instances (when `use_profilarr` is enabled on the Arr).
+
 ---
 
 ## Example: split Debrid and Usenet workflows
@@ -88,12 +96,14 @@ When `core_service` is set on a Huntarr instance, DUMB:
       "enabled": true,
       "core_service": "decypharr",
       "use_huntarr": true,
+      "use_profilarr": true,
       "port": 7878
     },
     "Usenet": {
       "enabled": true,
       "core_service": "nzbdav",
       "use_huntarr": false,
+      "use_profilarr": false,
       "port": 7879
     }
   }
@@ -105,6 +115,7 @@ In this layout:
 - The Debrid Radarr instance syncs with Decypharr and Debrid indexers.
 - The Usenet Radarr instance syncs with NzbDAV and Usenet indexers.
 - Huntarr only receives the Debrid instance because `use_huntarr` is set there.
+- Profilarr only links the Debrid instance because `use_profilarr` is set there.
 
 ## Example: combine workflows on one Arr instance
 
@@ -113,7 +124,8 @@ In this layout:
   "instances": {
     "Combined": {
       "core_service": ["decypharr", "nzbdav"],
-      "use_huntarr": true
+      "use_huntarr": true,
+      "use_profilarr": true
     }
   }
 }

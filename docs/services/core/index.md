@@ -40,6 +40,7 @@ Core services are the services that:
 | [Prowlarr](prowlarr.md)             | Indexer manager for Arrs                              |                                   | Sonarr, Radarr, Lidarr, Whisparr |
 | [Whisparr](whisparr.md)             | Adult content automation and organization             |                                   | Prowlarr, Decypharr, NzbDAV  |
 | [Huntarr](huntarr.md)               | Continuous backlog searches for Arr instances         |                                   | Sonarr, Radarr, Lidarr, Whisparr |
+| [Profilarr](profilarr.md)           | Profiles and formats manager for Sonarr/Radarr         |                                   | Sonarr, Radarr |
 
 ---
 
@@ -110,6 +111,12 @@ If you enable a core service, be sure to also:
 * **Requires:** Arr instances with `use_huntarr: true`
 * **Optionally Filters:** Arr instances by `core_service`
 * **Outputs:** Periodic backlog searches for missing or upgrade content
+
+### [Profilarr](profilarr.md)
+
+* **Requires:** Sonarr and/or Radarr instances with `use_profilarr: true`
+* **Optionally Filters:** Arr instances by `core_service`
+* **Outputs:** Synced profiles, custom formats, regex patterns, and media management settings
 
 ### Arrs (Sonarr/Radarr/Lidarr/Whisparr)
 
