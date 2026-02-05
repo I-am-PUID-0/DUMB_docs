@@ -1,6 +1,13 @@
 # Changelog
 
 
+## [1.10.0](https://github.com/I-am-PUID-0/DUMB_docs/compare/1.9.0...1.10.0) (2026-02-05)
+
+
+### ✨ Features
+
+* **profilarr:** adds Profilarr integration to DUMB ([022721d](https://github.com/I-am-PUID-0/DUMB_docs/commit/022721d49951d4d0374077d4bb030cd298d1a025))
+
 ## [1.9.0](https://github.com/I-am-PUID-0/DUMB_docs/compare/1.8.0...1.9.0) (2026-01-30)
 
 
