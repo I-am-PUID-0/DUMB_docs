@@ -73,6 +73,7 @@ Auto-update settings are configured per-service in `dumb_config.json`:
   "service_name": {
     "enabled": true,
     "auto_update": true,
+    "auto_update_start_time": "04:00",
     "auto_update_interval": 24,
     "release_version_enabled": false,
     "release_version": "latest",
@@ -90,6 +91,7 @@ Auto-update settings are configured per-service in `dumb_config.json`:
 | Option | Type | Default | Description |
 |--------|------|---------|-------------|
 | `auto_update` | boolean | `false` | Enable automatic updates for this service |
+| `auto_update_start_time` | string | `"04:00"` | 24-hour schedule anchor time (`HH:MM`) |
 | `auto_update_interval` | number | `24` | Hours between update checks |
 | `release_version_enabled` | boolean | `false` | Use release version strategy |
 | `release_version` | string | `"latest"` | Target version: `latest`, `nightly`, `prerelease`, or specific version |
@@ -116,6 +118,7 @@ The default strategy fetches the latest stable release from GitHub:
 {
   "frontend": {
     "auto_update": true,
+    "auto_update_start_time": "04:00",
     "auto_update_interval": 24
   }
 }
@@ -204,7 +207,7 @@ Lock a service to a specific version:
 
 ## Update intervals
 
-The `auto_update_interval` setting controls how often DUMB checks for updates:
+The `auto_update_start_time` and `auto_update_interval` settings control update cadence:
 
 | Interval | Check Frequency | Recommended For |
 |----------|-----------------|-----------------|
@@ -216,10 +219,13 @@ The `auto_update_interval` setting controls how often DUMB checks for updates:
 {
   "frontend": {
     "auto_update": true,
+    "auto_update_start_time": "04:00",
     "auto_update_interval": 24
   }
 }
 ```
+
+With this example, checks run once per day at 04:00. If you set `auto_update_interval` to another value (for example `12`), checks run every 12 hours anchored from the configured start time.
 
 ---
 

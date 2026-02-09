@@ -185,6 +185,62 @@ Decypharr can run with either embedded rclone (recommended) or external rclone i
 
 When embedded mode is enabled, DUMB builds a default `rclone` block and synchronizes `debrids` entries from the `api_keys` map. It also ensures provider folders match the embedded mount layout under `/mnt/debrid/decypharr`.
 
+### Beta Features: DFS + Usenet
+
+Decypharr beta introduces a new mount system (DFS) and native Usenet support.
+To use beta builds in DUMB, set:
+
+```json
+"decypharr": {
+  "branch_enabled": true,
+  "branch": "beta",
+  "mount_type": "dfs",
+  "mount_path": "/mnt/debrid/decypharr"
+}
+```
+
+**Mount types (beta)**
+
+| Mount Type | Description |
+|-----------|-------------|
+| `dfs` | Decypharr File System (recommended for streaming) |
+| `rclone` | Embedded rclone managed by Decypharr |
+| `external_rclone` | External RC endpoint (manual) |
+| `none` | No mount (API/WebDAV only) |
+
+DFS tuning lives under `decypharr.dfs` in `dumb_config.json`:
+
+```json
+"dfs": {
+  "cache_dir": "/decypharr/cache/dfs",
+  "chunk_size": "10MB",
+  "disk_cache_size": "50GB",
+  "cache_expiry": "24h",
+  "cache_cleanup_interval": "1h",
+  "daemon_timeout": "30m",
+  "uid": 1000,
+  "gid": 1000,
+  "umask": "022",
+  "allow_other": true,
+  "default_permissions": true
+}
+```
+
+**Usenet (beta)**
+
+Decypharr beta connects directly to NNTP providers (no Sabnzbd container needed).
+Configure Usenet inside the Decypharr UI or `config.json`. DUMB does not manage
+Usenet provider credentials.
+
+To wire Arrs to Usenet, add a **Sabnzbd** download client in Sonarr/Radarr:
+
+- Host: `http://decypharr:8282`
+- API Key: Decypharr API token (Settings → Auth)
+- Category: `sonarr` / `radarr`
+
+You can keep the normal Decypharr (qBittorrent) client for torrents and add the
+Sabnzbd client for NZBs.
+
 #### Embedded provider keys
 
 Use `api_keys` to define provider credentials:

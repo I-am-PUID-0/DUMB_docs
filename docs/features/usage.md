@@ -37,9 +37,11 @@ Some services support automatic updates.
 Enable by setting:
 ```json
 "auto_update": true,
+"auto_update_start_time": "04:00",
 "auto_update_interval": 24
 ```
 !!! note "`auto_update_interval` is measured in hours."
+!!! note "`auto_update_start_time` uses 24-hour `HH:MM` format."
 
 Services supporting auto-updates:
 

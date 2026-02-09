@@ -79,6 +79,7 @@ Automatic update settings:
 | Setting | Description |
 |---------|-------------|
 | **Enabled** | Check for updates automatically |
+| **Start time** | Daily schedule anchor in `HH:MM` (24-hour) |
 | **Interval** | Hours between update checks |
 
 Notes:
