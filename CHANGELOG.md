@@ -1,6 +1,13 @@
 # Changelog
 
 
+## [1.11.0](https://github.com/I-am-PUID-0/DUMB_docs/compare/1.10.0...1.11.0) (2026-02-09)
+
+
+### ✨ Features
+
+* **docs:** adds documentation for auto-update start time and Decypharr beta features ([1c2b436](https://github.com/I-am-PUID-0/DUMB_docs/commit/1c2b4367e74c29c30204e1f2f569fab9e0e3bf46))
+
 ## [1.10.0](https://github.com/I-am-PUID-0/DUMB_docs/compare/1.9.0...1.10.0) (2026-02-05)
 
 
