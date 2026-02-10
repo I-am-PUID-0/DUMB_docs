@@ -1,6 +1,13 @@
 # Changelog
 
 
+## [1.12.0](https://github.com/I-am-PUID-0/DUMB_docs/compare/1.11.0...1.12.0) (2026-02-10)
+
+
+### ✨ Features
+
+* **symlinks:** Implements symlink management API docs ([3e8ffb2](https://github.com/I-am-PUID-0/DUMB_docs/commit/3e8ffb2ce38feb5d982bdf5dd9da686cc5168df1))
+
 ## [1.11.0](https://github.com/I-am-PUID-0/DUMB_docs/compare/1.10.0...1.11.0) (2026-02-09)
 
 
