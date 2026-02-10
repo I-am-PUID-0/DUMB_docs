@@ -20,6 +20,7 @@ DUMB (Debrid Unlimited Media Bridge) is an all-in-one media management solution 
 * **Integrated Web UI** – Control and manage services through a simple **web-based interface**.
 * **[Authentication](authentication.md)** – Optional JWT-based security with user management and session handling.
 * **[Auto-update](auto-update.md)** – Keep services current with automatic updates from GitHub releases, nightly builds, or specific branches.
+* **[Symlink Operations](symlinks.md)** – End-to-end guide for repair, migration, backup/restore, scheduled snapshots, and path-transition playbooks.
 * **Modular Design** – Each service (Riven, Zurg, Zilean, etc.) is independently configurable and upgradable.
 * **Advanced Logging & Monitoring** – View and filter service logs directly from the [DUMB Frontend](../services/dumb/dumb-frontend.md).
 * **[FFprobe monitor](ffprobe-monitor.md)** – Background worker that detects and unsticks ffprobe scans in Sonarr/Radarr.

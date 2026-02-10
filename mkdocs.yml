@@ -16,6 +16,7 @@ nav:
       - Authentication: features/authentication.md
       - Auto-restart: features/auto-restart.md
       - Auto-update: features/auto-update.md
+      - Symlink Operations: features/symlinks.md
       - Seerr Sync: features/seerr-sync.md
       - FFprobe Monitor: features/ffprobe-monitor.md
       - Metrics: features/metrics.md

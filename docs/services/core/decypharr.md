@@ -147,6 +147,58 @@ When Decypharr starts, DUMB performs several automation steps:
 - Populates Debrid providers and folders when embedded rclone is enabled
 - Uses per-instance category labels when creating Arr download client entries
 
+### Symlink repair and migration
+
+For the complete DUMB symlink guide (UI option behavior, root scope, backup/restore, schedule, retention, and migration playbooks), see [Symlink Operations](../../features/symlinks.md).
+
+If mount layouts change (for example provider-path changes between Decypharr modes), use
+`POST /api/process/symlink-repair` to rewrite existing symlink targets instead of manually relinking.
+
+Common Decypharr migration:
+
+```json
+{
+  "dry_run": true,
+  "presets": ["decypharr_beta_consolidated"]
+}
+```
+
+Apply changes:
+
+```json
+{
+  "dry_run": false,
+  "presets": ["decypharr_beta_consolidated"],
+  "backup_path": "/config/symlink-repair/decypharr-manifest.json"
+}
+```
+
+When Arr `core_service` changes from Decypharr-only to combined Decypharr+NzbDAV, root folders move
+from `/mnt/debrid/decypharr_symlinks/<slug>` to `/mnt/debrid/combined_symlinks/<slug>`.
+Use root migration mode:
+
+```json
+{
+  "dry_run": false,
+  "root_migrations": [
+    {
+      "from_root": "/mnt/debrid/decypharr_symlinks",
+      "to_root": "/mnt/debrid/combined_symlinks"
+    }
+  ],
+  "backup_path": "/config/symlink-repair/decypharr-combined-manifest.json"
+}
+```
+
+To clone entries into the new root while keeping the old root intact (for staged imports),
+set `"copy_instead_of_move": true`.
+
+For periodic safety snapshots, set service config keys `symlink_backup_enabled`,
+`symlink_backup_interval`, `symlink_backup_start_time`, and `symlink_backup_path`
+to let DUMB run internal scheduled snapshots. You can also run/manual restore via
+`POST /api/process/symlink-manifest/backup` and `POST /api/process/symlink-manifest/restore`.
+Set `symlink_backup_retention_count` to keep only the newest N scheduled manifests (`0` disables pruning).
+
 !!! info "Startup timing"
 
     If the Decypharr UI is not reachable yet, DUMB retries the download-client setup shortly after startup.

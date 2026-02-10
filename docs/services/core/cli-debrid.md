@@ -227,6 +227,54 @@ As such, it's important to ensure you select the appropriate option for your dep
     ![File Collection Management](../../assets/images/cli_debrid/clid_file_collection_management.png)
     ![Symlinked Files Path](../../assets/images/cli_debrid/clid_symlinked_files_path.png)
 
+### Symlink repair and migration
+
+For the complete DUMB symlink guide (UI option behavior, root scope, backup/restore, schedule, retention, and migration playbooks), see [Symlink Operations](../../features/symlinks.md).
+
+For CLI Debrid symlink libraries (commonly `/mnt/debrid/clid_symlinks`), DUMB exposes
+`POST /api/process/symlink-repair` to rewrite symlink targets after mount-path changes.
+
+Example custom rewrite for CLI Debrid:
+
+```json
+{
+  "dry_run": true,
+  "roots": ["/mnt/debrid/clid_symlinks"],
+  "rewrite_rules": [
+    {
+      "from_prefix": "/mnt/debrid/clid_old",
+      "to_prefix": "/mnt/debrid/clid"
+    }
+  ]
+}
+```
+
+Set `"dry_run": false` to apply and optionally set `backup_path` for a manifest.
+
+If you need to move the symlink tree itself (not just rewrite targets), use `root_migrations`:
+
+```json
+{
+  "dry_run": false,
+  "root_migrations": [
+    {
+      "from_root": "/mnt/debrid/clid_symlinks_old",
+      "to_root": "/mnt/debrid/clid_symlinks"
+    }
+  ]
+}
+```
+
+If you want to populate another service symlink tree without removing CLI Debrid entries
+(for example `/mnt/debrid/clid_symlinks` to `/mnt/debrid/decypharr_symlinks`), include
+`"copy_instead_of_move": true` in the same request.
+
+For recurring backups of existing symlink libraries, use service config keys
+`symlink_backup_enabled`, `symlink_backup_interval`, `symlink_backup_start_time`,
+and `symlink_backup_path` to enable DUMB’s internal scheduler. Keep generated manifests for
+`POST /api/process/symlink-manifest/restore` recovery runs.
+Use `symlink_backup_retention_count` to keep only the newest N scheduled manifests (`0` keeps all).
+
 
 ---
 
