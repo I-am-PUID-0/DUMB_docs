@@ -1,6 +1,6 @@
 [project]
 name = "dumb-docs"
-version = "1.12.0"
+version = "1.13.0"
 description = "DUMB Documentaton"
 authors = [
     {name = "I-am-PUID-0",email = "36779668+I-am-PUID-0@users.noreply.github.com"}
