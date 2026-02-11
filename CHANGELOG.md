@@ -1,6 +1,13 @@
 # Changelog
 
 
+## [1.13.0](https://github.com/I-am-PUID-0/DUMB_docs/compare/1.12.0...1.13.0) (2026-02-11)
+
+
+### ✨ Features
+
+* **process:** Adds dependency graph API and symlink enhancements ([848e844](https://github.com/I-am-PUID-0/DUMB_docs/commit/848e844b99bec7d4703c7dd6c3cb6d2ee2df1920))
+
 ## [1.12.0](https://github.com/I-am-PUID-0/DUMB_docs/compare/1.11.0...1.12.0) (2026-02-10)
 
 
