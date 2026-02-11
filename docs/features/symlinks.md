@@ -87,11 +87,17 @@ Important:
 DUMB provides three categories of symlink operations:
 
 1. Repair/migration (`POST /api/process/symlink-repair`)
+    - Async apply mode:
+        - `POST /api/process/symlink-repair-async`
+        - `GET /api/process/symlink-job-status`
+        - `GET /api/process/symlink-job-latest`
 2. Standalone snapshot backup/restore (`POST /api/process/symlink-manifest/backup`, `POST /api/process/symlink-manifest/restore`)
-   - Async backup/restore modes:
-     - `POST /api/process/symlink-manifest/backup-async`
-     - `POST /api/process/symlink-manifest/restore-async`
-     - `GET /api/process/symlink-job-status`
+    - Compare/preview mode:
+        - `GET /api/process/symlink-manifest/compare`
+    - Async backup/restore modes:
+        - `POST /api/process/symlink-manifest/backup-async`
+        - `POST /api/process/symlink-manifest/restore-async`
+        - `GET /api/process/symlink-job-status`
 3. Scheduled snapshot backup and restore selection (`/api/process/symlink-backup-*`)
 
 See API details: [Process Management API](../api/process.md).
@@ -183,6 +189,7 @@ Snapshot tab behavior:
 
 - `Manifest path` now includes a dropdown picker of existing snapshot files (same directory scan behavior as scheduled restore), plus a `Custom path` option.
 - `Manifest path` remains fully editable when `Custom path` is selected.
+- Restore flow includes **Preview changes** to compare the selected manifest against current symlinks using current restore options (`overwrite_existing`, `restore_broken`).
 - Backup root scope defaults to `Current service root` on the active service page.
 - Managed default manifest path now follows snapshot root selection:
     - current/specific root => `/config/symlink-repair/snapshots/{service}.json`

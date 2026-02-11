@@ -19,9 +19,12 @@ Each service page includes:
 - Configuration editors with validation
 - Log viewers (service logs, plus special logs when available)
 - Embedded UI tab when supported and enabled
+- Dependency graph view for core/dependency startup relationships
 - Per-service auto-restart overrides
 - On-demand update checks and auto-update scheduling
 - Seerr Sync controls when viewing a Seerr instance
+- Symlink Job Center (for symlink-capable services) with active jobs, recent history, retry, and failure clearing
+- Sidebar operator QoL controls (quick filters, saved views, compact mode, and command palette)
 
 ---
 
@@ -41,6 +44,33 @@ Action buttons:
 
 ---
 
+## Dependency graph view
+
+On the **DUMB Config** tab, use the **Dependencies** action to open a pop-out dependency graph panel that:
+
+- Shows dependency startup order for the current service context
+- Highlights missing/stopped dependencies
+- Provides remediation suggestions
+- Offers one-click **Fix now** actions to start available dependency processes
+- Includes a contextual **Why this matters** callout with a deep link back to this section
+
+Notes:
+
+- For multi-instance dependency services (for example `rclone`, `zurg`), the graph now scopes dependencies to instances linked to the current core service via `core_service`/`core_services`.
+- If no linked dependency instance exists, the panel reports that mapping gap instead of treating an unrelated instance as valid.
+- The panel also infers links from service config relationships (`core_service`, `core_services`, `wait_for_url`, `wait_for_dir`) so non-core services (for example Seerr, Tautulli, Arr instances tied to Decypharr/NzbDAV) can show real dependency edges.
+- Dependency resolution now runs on the backend (`GET /api/process/dependency-graph`) so startup ordering and dependency edges are aligned with backend process/config semantics.
+- The dependency pop-out includes a backend-provided truth table showing which signals are treated as hard dependencies (`core map`, `core_service`, `wait_for_url`, `wait_for_dir`, `wait_for_mounts`) versus simple linkage context.
+- The dependency pop-out supports scope selection:
+  - `Runtime`: hard runtime/configured dependencies
+  - `All`: includes soft linkage edges (for example optional integrations)
+- The `Flow` view renders a Mermaid dependency graph (with edge strength styling) and also shows directed edge details plus Mermaid source text for troubleshooting.
+- The `Flow` view also lists backend `parallel_groups` to make concurrent prerequisite stages explicit (for example Riven startup prerequisites in parallel before backend start).
+
+For dependency services (for example `zurg`/`rclone`), the panel also shows which core services currently depend on them.
+
+---
+
 ## Auto-restart policy
 
 Configure the global auto-restart behavior:
@@ -51,6 +81,8 @@ Configure the global auto-restart behavior:
 | **Max Restarts** | Maximum restart attempts |
 | **Cooldown** | Time between restart attempts |
 | **Grace Period** | Wait time before health checks |
+
+The auto-restart modal includes a contextual **Why this matters** callout linking to this section.
 
 ![Auto-restart controls](../assets/images/frontend/auto_restart.png){ .shadow }
 
@@ -67,6 +99,8 @@ Service pages can also override auto-restart settings per service:
 ## Auto-update settings
 
 The updates panel lets you check for updates on demand and configure automatic update checks:
+
+The panel includes a contextual **Why this matters** callout linking to this section.
 
 Manual update actions:
 
@@ -98,6 +132,7 @@ On Seerr service pages, the **Seerr Sync** panel lets you:
 - Select the per-instance `sync_role` (disabled/primary/subordinate)
 - Test external primary/subordinate connections before saving
 - View sync status and failed requests
+- Review a contextual **Why this matters** callout linking to this section
 
 API keys are hidden by default and can be revealed when needed.
 
@@ -117,6 +152,9 @@ Notes:
 
 - The editor runs schema validation when available.
 - Invalid JSON or validation errors block saves until corrected.
+- Validation errors now include inline "Why invalid" guidance (for example missing required fields, wrong types, unknown keys).
+- A live config diff preview shows added/changed/removed paths before apply/save.
+- Risk-tagged config changes (for example command/env/path/network/restart/update/credential fields) require an explicit acknowledgement checkbox before apply/save.
 
 ### Edit Service Config
 
@@ -166,6 +204,22 @@ NzbDAV uses a trailing slash in its embedded UI path to match its frontend routi
 
 You can choose a default tab for each service page (for example, always open logs).
 The selection is stored in the UI preferences.
+
+---
+
+## Sidebar operator QoL
+
+The services sidebar includes faster navigation controls for large stacks:
+
+- **Quick filters** for `All`, `Running`, `Stopped`, and `Unhealthy` services
+- **Search filter** for process name/config key matching
+- **Saved views** to store and re-apply filter/search/toggle combinations
+- **Compact mode** to reduce service-row density in the sidebar
+- **Command palette** (`Ctrl/Cmd + K`) to jump directly to service pages
+- **Assignable service shortcuts** configured from command-palette results by entering shortcut-capture mode and pressing the combo
+- **Collapsible Sidebar tools** section to keep controls hidden when not needed
+
+These controls are persisted in `dumb_config.json` under `dumb.ui.sidebar` (with local state used as a fallback during initial load) and are intended for power-user workflows across many services.
 
 ---
 

@@ -14,10 +14,11 @@ The onboarding wizard guides you through the initial setup of DUMB, helping you 
 The wizard walks you through:
 
 1. Selecting core services (orchestrators and related tools)
-2. Configuring debrid service credentials (when applicable)
-3. Choosing optional services
-4. Customizing service-specific options
-5. Reviewing and applying your configuration
+2. Running preflight health/readiness checks
+3. Configuring debrid service credentials (when applicable)
+4. Choosing optional services
+5. Customizing service-specific options
+6. Reviewing and applying your configuration
 
 ---
 
@@ -28,17 +29,19 @@ The wizard walks you through:
 flowchart TD
     A([App start<br/>or launch onboarding])
     B{Onboarding Required?}
-    C[Onboarding Wizard]
-    D[Apply Configuration]
-    E[Run Setup + Start Services]
-    F([Dashboard])
+    C[Core Service Selection]
+    D[Preflight Checks]
+    E[Apply Configuration]
+    F[Run Setup + Start Services]
+    G([Dashboard])
 
     A ==> B
-    B -- No --> F
+    B -- No --> G
     B -- Yes --> C
     C ==> D
     D ==> E
     E ==> F
+    F ==> G
 ```
 
 ---
@@ -89,7 +92,21 @@ Choose one or more core services:
 
 ---
 
-### Step 2: Configure debrid service
+### Step 2: Preflight checks
+
+The wizard verifies key backend readiness signals before proceeding:
+
+- DUMB API health endpoint response
+- Backend capabilities endpoint availability
+- Core service catalog loading
+- Existing mount/symlink path configuration visibility
+- Embedded UI endpoint availability
+
+Blocking check failures must be resolved before moving to the next step.
+
+---
+
+### Step 3: Configure debrid service
 
 For each debrid-capable core service, provide your debrid credentials:
 
@@ -106,7 +123,7 @@ For each debrid-capable core service, provide your debrid credentials:
 
 ---
 
-### Step 3: Select optional services
+### Step 4: Select optional services
 
 Choose additional services to enable:
 
@@ -119,7 +136,7 @@ Optional services are filtered based on your core services and automatically con
 
 ---
 
-### Step 4: Service-specific options
+### Step 5: Service-specific options
 
 Configure additional settings for selected services:
 
@@ -139,7 +156,7 @@ Default values are pre-filled but can be customized.
 
 ---
 
-### Step 5: Enable embedded UIs
+### Step 6: Enable embedded UIs
 
 If your backend supports embedded service UIs, you'll be asked:
 
@@ -149,7 +166,7 @@ When enabled, you can access service web interfaces directly within the DUMB fro
 
 ---
 
-### Step 6: Review configuration
+### Step 7: Review configuration
 
 Review your complete configuration before applying:
 
@@ -164,7 +181,7 @@ Review your complete configuration before applying:
 
 ---
 
-### Step 7: Live setup logs
+### Step 8: Live setup logs
 
 Watch the setup progress in real-time:
 
@@ -177,7 +194,7 @@ The log viewer shows output from all services being started.
 
 ---
 
-### Step 8: Success or error
+### Step 9: Success or error
 
 **Success**: All services started successfully. You'll be redirected to the dashboard.
 
