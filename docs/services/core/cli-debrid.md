@@ -88,7 +88,8 @@ flowchart TD
         "USER_CONFIG": "/cli_debrid/data/config/",
         "USER_LOGS": "/cli_debrid/data/logs/",
         "USER_DB_CONTENT": "/cli_debrid/data/db_content/",
-        "CLI_DEBRID_PORT": "{port}"
+        "CLI_DEBRID_PORT": "{port}",
+        "CLI_DEBRID_BATTERY_PORT": "5001"
     }
 },
 ```
@@ -102,6 +103,7 @@ flowchart TD
 * `log_level`, `suppress_logging`: Logging controls.
 * `port`: Flask web interface port.
 * `env`: Environment variable configuration used by CLI Debrid.
+* `env.CLI_DEBRID_BATTERY_PORT`: Battery API port consumed by CLI Debrid; DUMB auto-syncs this to `cli_battery.port`.
 * `clear_on_update`, `exclude_dirs`: Clean old files during update while protecting data dirs.
 
 ---

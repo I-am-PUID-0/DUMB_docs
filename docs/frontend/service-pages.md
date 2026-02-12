@@ -52,20 +52,25 @@ On the **DUMB Config** tab, use the **Dependencies** action to open a pop-out de
 - Highlights missing/stopped dependencies
 - Provides remediation suggestions
 - Offers one-click **Fix now** actions to start available dependency processes
-- Includes a contextual **Why this matters** callout with a deep link back to this section
+- Links to this documentation section from the panel header
 
 Notes:
 
-- For multi-instance dependency services (for example `rclone`, `zurg`), the graph now scopes dependencies to instances linked to the current core service via `core_service`/`core_services`.
+- For multi-instance dependency services (for example `rclone`, `zurg`), the graph scopes dependencies to instances linked to the current core service via `core_service`/`core_services`. Instance-scoped conditional dependencies are filtered so that only the specific instance associated with the current service is shown -- for example, "Rclone w/ CLID" only shows its specific Zurg instance, not Zurg instances belonging to other rclone configurations.
 - If no linked dependency instance exists, the panel reports that mapping gap instead of treating an unrelated instance as valid.
 - The panel also infers links from service config relationships (`core_service`, `core_services`, `wait_for_url`, `wait_for_dir`) so non-core services (for example Seerr, Tautulli, Arr instances tied to Decypharr/NzbDAV) can show real dependency edges.
-- Dependency resolution now runs on the backend (`GET /api/process/dependency-graph`) so startup ordering and dependency edges are aligned with backend process/config semantics.
-- The dependency pop-out includes a backend-provided truth table showing which signals are treated as hard dependencies (`core map`, `core_service`, `wait_for_url`, `wait_for_dir`, `wait_for_mounts`) versus simple linkage context.
+- Dependency resolution runs on the backend (`GET /api/process/dependency-graph`) so startup ordering and dependency edges are aligned with backend process/config semantics.
+- The dependency graph surfaces **conditional startup dependencies** from the backend startup ordering logic. These are dependencies that only apply when specific services are enabled -- for example, Prowlarr depends on Sonarr/Radarr only when those are enabled; Tautulli depends on Plex only when Plex is enabled; Huntarr depends on arr services only when `use_huntarr` is enabled on those instances. These appear with the `conditional_startup_map` signal and are styled the same as other hard runtime dependencies.
+- Each dependency edge displays its signal type as a colored badge tag with a tooltip explaining the signal. Signal types include:
+    - **Hard runtime** (orange): `core map`, `conditional startup`, `wait for url/dir/mounts`, `rclone provider`, `non-core dep`
+    - **Hard configured** (cyan): `core service fields`
+    - **Soft linkage** (gray): `optional integration`, `documented integration`
 - The dependency pop-out supports scope selection:
-  - `Runtime`: hard runtime/configured dependencies
-  - `All`: includes soft linkage edges (for example optional integrations)
-- The `Flow` view renders a Mermaid dependency graph (with edge strength styling) and also shows directed edge details plus Mermaid source text for troubleshooting.
+    - `Runtime`: hard runtime/configured dependencies
+    - `All`: includes soft linkage edges (for example optional integrations and documented service integrations like Seerr request routing to Sonarr/Radarr)
+- The `Flow` view renders a Mermaid dependency graph (with edge strength styling) and shows directed edge details.
 - The `Flow` view also lists backend `parallel_groups` to make concurrent prerequisite stages explicit (for example Riven startup prerequisites in parallel before backend start).
+- With [Geek Mode](settings.md#advanced) enabled, the `Flow` view also shows the raw Mermaid graph source text for troubleshooting.
 
 For dependency services (for example `zurg`/`rclone`), the panel also shows which core services currently depend on them.
 
@@ -152,7 +157,7 @@ Notes:
 
 - The editor runs schema validation when available.
 - Invalid JSON or validation errors block saves until corrected.
-- Validation errors now include inline "Why invalid" guidance (for example missing required fields, wrong types, unknown keys).
+- Validation errors include inline "Why invalid" guidance (for example missing required fields, wrong types, unknown keys).
 - A live config diff preview shows added/changed/removed paths before apply/save.
 - Risk-tagged config changes (for example command/env/path/network/restart/update/credential fields) require an explicit acknowledgement checkbox before apply/save.
 

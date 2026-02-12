@@ -17,6 +17,7 @@ The Settings page is organized into sections:
 - **Tokens** - API keys and service tokens
 - **Embedded UIs** - Service UI toggle
 - **Preferences** - UI customization
+- **Advanced** - Geek Mode and debug-level UI options
 - **Onboarding** - Reset setup wizard
 - **About** - Version and contributor information
 
@@ -130,6 +131,18 @@ Customize how timestamps appear in the log viewer:
 
 ---
 
+
+## Advanced
+
+### Geek Mode
+
+Enable Geek Mode to reveal additional debug-level information in the UI. When enabled:
+
+- The **Flow** view in the [Dependency graph panel](service-pages.md#dependency-graph-view) shows raw Mermaid graph source text for troubleshooting
+
+Geek Mode is disabled by default. Toggle it from the **Advanced** section on the Settings page.
+
+---
 
 ## Authentication settings
 

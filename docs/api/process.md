@@ -269,9 +269,12 @@ Returns backend-resolved dependency relationships for a specific process, includ
 * inferred links from `wait_for_url`/`wait_for_dir` entries (including localhost port matching)
 * inferred links from `wait_for_mounts` by matching required mount paths to provider service mount points
 * rclone provider links (`zurg_enabled`, `decypharr_enabled`, `key_type=nzbdav`) to reflect WebDAV provider dependencies directly
-* non-core hard dependency map for service-specific startup requirements (for example `riven_frontend -> riven_backend`, `zilean -> postgres`)
+* non-core hard dependency map for service-specific startup requirements (for example `riven_frontend -> riven_backend`, `zilean -> postgres`, `pgadmin -> postgres`)
+* conditional startup dependencies from the backend startup ordering logic -- config-aware dependencies like `tautulli -> plex` (when plex is enabled), `prowlarr -> sonarr/radarr` (when those arrs are enabled), `huntarr -> sonarr` (when sonarr has `use_huntarr` enabled), etc. For instance-scoped services (`rclone`, `zurg`), conditional deps are filtered per-instance so that only the specific associated instances are shown (for example, a rclone instance with `zurg_enabled` only shows its own zurg instance, not zurg instances belonging to other rclone configurations)
+* documented integration links (soft linkage, `scope=all` only) -- for example `seerr -> sonarr/radarr` request routing
 * per-process status state used by the frontend dependency graph panel
-* `dependency_truth_table` describing dependency signals and whether each is treated as hard dependency vs linkage
+* `dependency_truth_table` describing the 12 dependency signal types and whether each is treated as hard dependency vs linkage
+* `signals` array on each row/edge identifying which detection signals established the relationship (for example `["core_service_map"]`, `["rclone_provider_zurg", "conditional_startup_map"]`)
 
 #### Required Query Parameter:
 

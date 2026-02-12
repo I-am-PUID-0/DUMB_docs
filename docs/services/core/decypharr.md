@@ -260,23 +260,6 @@ To use beta builds in DUMB, set:
 | `external_rclone` | External RC endpoint (manual) |
 | `none` | No mount (API/WebDAV only) |
 
-DFS tuning lives under `decypharr.dfs` in `dumb_config.json`:
-
-```json
-"dfs": {
-  "cache_dir": "/decypharr/cache/dfs",
-  "chunk_size": "10MB",
-  "disk_cache_size": "50GB",
-  "cache_expiry": "24h",
-  "cache_cleanup_interval": "1h",
-  "daemon_timeout": "30m",
-  "uid": 1000,
-  "gid": 1000,
-  "umask": "022",
-  "allow_other": true,
-  "default_permissions": true
-}
-```
 
 **Usenet (beta)**
 
