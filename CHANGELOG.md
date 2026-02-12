@@ -1,6 +1,13 @@
 # Changelog
 
 
+## [1.14.0](https://github.com/I-am-PUID-0/DUMB_docs/compare/1.13.0...1.14.0) (2026-02-12)
+
+
+### ✨ Features
+
+* **docs:** updates dependency graph docs for clarity ([67f0974](https://github.com/I-am-PUID-0/DUMB_docs/commit/67f09748fcd75c8dce83a5451f550a45c2fbc0e6))
+
 ## [1.13.0](https://github.com/I-am-PUID-0/DUMB_docs/compare/1.12.0...1.13.0) (2026-02-11)
 
 
