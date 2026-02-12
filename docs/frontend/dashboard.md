@@ -49,6 +49,15 @@ If auto-restart is enabled for a service:
 - Shows restart count (e.g., "Restarts: 2")
 - Indicates the auto-restart feature is active
 
+### Resource badges (Geek Mode)
+
+With [Geek Mode](settings.md#geek-mode) enabled, each service card shows live resource badges:
+
+- **CPU%** - Color-coded by usage (green < 50%, amber < 80%, red >= 80%)
+- **Memory RSS** - Current resident memory usage
+
+Metrics are polled every 5 seconds while Geek Mode is active and stop automatically when disabled.
+
 ---
 
 ## Quick actions

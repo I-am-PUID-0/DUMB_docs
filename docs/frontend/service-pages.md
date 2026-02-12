@@ -32,6 +32,8 @@ Each service page includes:
 
 The header shows the service name, status dot, and health badge. When auto-restart is
 enabled for a service, you also see restart counters and the last restart reason.
+With [Geek Mode](settings.md#geek-mode) enabled, the header also displays the internal
+config key and process name in monospace.
 
 Action buttons:
 
@@ -70,9 +72,31 @@ Notes:
     - `All`: includes soft linkage edges (for example optional integrations and documented service integrations like Seerr request routing to Sonarr/Radarr)
 - The `Flow` view renders a Mermaid dependency graph (with edge strength styling) and shows directed edge details.
 - The `Flow` view also lists backend `parallel_groups` to make concurrent prerequisite stages explicit (for example Riven startup prerequisites in parallel before backend start).
-- With [Geek Mode](settings.md#advanced) enabled, the `Flow` view also shows the raw Mermaid graph source text for troubleshooting.
+- With [Geek Mode](settings.md#geek-mode) enabled:
+    - A **Copy JSON** button copies the full dependency graph API response to the clipboard
+    - A **latency badge** shows the fetch time in milliseconds next to the panel title
+    - The `Flow` view also shows the raw Mermaid graph source text for troubleshooting
 
 For dependency services (for example `zurg`/`rclone`), the panel also shows which core services currently depend on them.
+
+---
+
+## Process Metrics panel
+
+With [Geek Mode](settings.md#geek-mode) enabled, the **DUMB Config** tab displays a
+**Process Metrics** panel showing live data from the `/api/metrics` endpoint:
+
+| Section | Details |
+|---------|---------|
+| **Process** | PID, thread count, uptime since last start |
+| **Resources** | CPU% and memory RSS with color-coded badges (green < 50%, amber < 80%, red >= 80%), disk I/O read/write totals |
+| **Network** | Listening ports, active connection count |
+| **Disk** | Per-path existence check (green/red dot), usage with percent bar |
+| **Container** | CPU core count, total/used RAM with percent |
+| **Restarts** | Total restart count, last exit reason, last restart timestamp |
+
+Click **Refresh** to re-fetch metrics on demand. Metrics are fetched once when entering a
+service page with Geek Mode active.
 
 ---
 

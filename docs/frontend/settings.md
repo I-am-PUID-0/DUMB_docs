@@ -136,9 +136,34 @@ Customize how timestamps appear in the log viewer:
 
 ### Geek Mode
 
-Enable Geek Mode to reveal additional debug-level information in the UI. When enabled:
+Enable Geek Mode to reveal additional power-user information across the UI. When enabled:
 
-- The **Flow** view in the [Dependency graph panel](service-pages.md#dependency-graph-view) shows raw Mermaid graph source text for troubleshooting
+**Service page header:**
+
+- Displays the internal config key and process name in monospace (e.g. `sonarr:Sonarr`)
+
+**Dependency graph panel:**
+
+- **Copy JSON** button copies the full dependency graph response to clipboard
+- **Latency badge** shows the API fetch time in milliseconds
+- The **Flow** view shows raw Mermaid graph source text for troubleshooting
+
+**Process Metrics panel** (DUMB Config tab):
+
+- PID, thread count, and process uptime
+- CPU usage and memory RSS with color-coded gauges (green < 50%, amber < 80%, red >= 80%)
+- Disk I/O read/write totals
+- Listening ports and active connection count
+- Disk path health: existence check (green/red dot), usage bar with percent
+- Container summary: CPU cores, total RAM, used RAM
+- Restart history: total count, last exit reason, last restart timestamp
+- Refresh button to re-fetch metrics on demand
+
+**Dashboard ServiceCard badges:**
+
+- CPU% badge per service, color-coded by usage level
+- Memory RSS badge per service
+- Metrics polled every 5 seconds while Geek Mode is active
 
 Geek Mode is disabled by default. Toggle it from the **Advanced** section on the Settings page.
 
