@@ -1,6 +1,13 @@
 # Changelog
 
 
+## [1.15.0](https://github.com/I-am-PUID-0/DUMB_docs/compare/1.14.0...1.15.0) (2026-02-12)
+
+
+### ✨ Features
+
+* Expands Geek Mode documentation ([6809044](https://github.com/I-am-PUID-0/DUMB_docs/commit/680904433168f088b90fdd5acc02487d06bd2d63))
+
 ## [1.14.0](https://github.com/I-am-PUID-0/DUMB_docs/compare/1.13.0...1.14.0) (2026-02-12)
 
 
