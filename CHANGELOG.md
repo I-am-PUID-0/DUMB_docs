@@ -1,6 +1,13 @@
 # Changelog
 
 
+## [1.16.0](https://github.com/I-am-PUID-0/DUMB_docs/compare/1.15.0...1.16.0) (2026-02-13)
+
+
+### ✨ Features
+
+* **docs:** add tile reordering and mobile behavior to dashboard documentation ([aae52dc](https://github.com/I-am-PUID-0/DUMB_docs/commit/aae52dc541daadcc41de8fc8b1bffa17006409cf))
+
 ## [1.15.0](https://github.com/I-am-PUID-0/DUMB_docs/compare/1.14.0...1.15.0) (2026-02-12)
 
 
