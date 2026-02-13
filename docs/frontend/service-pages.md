@@ -250,6 +250,12 @@ The services sidebar includes faster navigation controls for large stacks:
 
 These controls are persisted in `dumb_config.json` under `dumb.ui.sidebar` (with local state used as a fallback during initial load) and are intended for power-user workflows across many services.
 
+The same sidebar preference block also includes persisted dashboard tile ordering at:
+
+- `dumb.ui.sidebar.service_order`
+
+Tile order is written from dashboard drag-and-drop actions and then consumed by both the dashboard and the sidebar service list.
+
 ---
 
 ## Related pages

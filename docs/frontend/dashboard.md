@@ -132,6 +132,27 @@ Services are displayed in a grid layout, organized by:
 
 ---
 
+## Tile reordering
+
+You can reorder dashboard service tiles with drag-and-drop.
+
+- Drag a tile (or use the drag handle) to move it
+- Other tiles shift in real time while you drag
+- The same order is applied to the Services list in the sidebar
+
+Order is persisted in `dumb_config.json` under:
+
+- `dumb.ui.sidebar.service_order`
+
+### Mobile and touch behavior
+
+On mobile, touch reordering is protected by a lock toggle to prevent accidental tile moves while scrolling:
+
+- **Reorder Off** (default): touch scrolling only, no tile movement
+- **Reorder On**: drag-handle touch reordering is enabled
+
+---
+
 ## System alerts
 
 When system resources are critically high, alerts appear at the top of the dashboard:
@@ -154,6 +175,8 @@ The sidebar provides quick access to:
 - **Settings** - Configuration and preferences
 - **Metrics** - System monitoring
 - **Onboarding** - Re-run setup wizard
+
+The Services section follows the same persisted `service_order` used by dashboard tiles.
 
 ---
 
