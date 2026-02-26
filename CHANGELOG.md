@@ -1,6 +1,13 @@
 # Changelog
 
 
+## [1.16.1](https://github.com/I-am-PUID-0/DUMB_docs/compare/1.16.0...1.16.1) (2026-02-26)
+
+
+### 📖 Documentation
+
+* update contributing guidelines for clarity and structure ([6ed9ce1](https://github.com/I-am-PUID-0/DUMB_docs/commit/6ed9ce1f0e343c0b99ace0177876f129d29b18a6))
+
 ## [1.16.0](https://github.com/I-am-PUID-0/DUMB_docs/compare/1.15.0...1.16.0) (2026-02-13)
 
 
