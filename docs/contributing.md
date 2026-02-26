@@ -7,42 +7,73 @@ hide:
 
 ## Contributing to DUMB
 
-Thank you for your interest in contributing to **Debrid Unlimited Media Bridge (DUMB)**!
+Thanks for helping improve **Debrid Unlimited Media Bridge (DUMB)**.
 
-We welcome all forms of contributions — not just code.
+Code, docs, testing feedback, and issue triage are all valuable contributions.
 
-DUMB is an open-source, community-driven project. 
+## Branch Strategy
 
-Whether you're a developer, power user, or just someone passionate about improving media automation, your help is always appreciated!
+- `dev` is the default collaboration branch.
+- `master` is the production and release branch.
+- Open normal feature and fix PRs against `dev`.
+- Open PRs against `master` only for release work or approved hotfixes.
 
-Thank you for helping make DUMB better for everyone!
+## Development Setup
 
----
+Recommended: use the DUMB devcontainer:
 
-## ‍ Development Contributions
+- [.devcontainer/devcontainer.json](https://github.com/I-am-PUID-0/DUMB/tree/master/.devcontainer/devcontainer.json)
 
-Want to help develop new features, fix bugs, or improve performance?
+Quick start:
 
-### Recommended Setup
-The easiest way to contribute code is through the **DUMB Dev Container**, which includes all the required tools:
+1. Fork [I-am-PUID-0/DUMB](https://github.com/I-am-PUID-0/DUMB).
+2. Clone your fork.
+3. Open the workspace in VS Code Dev Containers.
+4. Create a feature branch from `dev`.
+5. Make changes and run relevant checks.
+6. Open a PR to `dev`.
 
-- Based on: `iampuid0/dumb:latest`
-- Python with Black autoformatter
-- Port forwarding for common services
-- Preconfigured workspace mounts
+If you do not use Dev Containers, run with Docker using the same mounts and environment layout.
 
-You can find the [devcontainer setup file](https://github.com/I-am-PUID-0/DUMB/tree/master/.devcontainer/devcontainer.json) in the repo.
+## Pull Request Guidelines
 
-### How to Get Started
+- Keep PRs focused and small when possible.
+- Include a clear summary, motivation, and test notes.
+- Link related issues.
+- Add screenshots for UI changes.
+- Update docs when behavior changes.
 
-1. Fork the [DUMB repository](https://github.com/I-am-PUID-0/DUMB)
-2. Clone your fork locally
-3. Open in **VS Code** using **Dev Containers**
-4. Make your changes, format with `black`, and submit a pull request
+### Commit Format
 
-!!! note "If you’re not using VS Code or Dev Containers, you can also run the project via Docker with the same mounts shown in the `devcontainer.json`."
+Use Conventional Commits for PR titles and commits, for example:
 
----
+- `feat(api): add new symlink repair mode`
+- `fix(proxy): route iframe websocket path correctly`
+- `docs: update onboarding preflight guide`
+
+`conventional-commits.yml` validates PRs targeting both `dev` and `master`.
+
+## Dependabot and Automation Notes
+
+- Dependabot updates are targeted to `dev`.
+- Integration testing for combined Dependabot updates runs from `dev`.
+- Release automation remains pinned to `master`.
+
+## Testing Expectations
+
+Before opening a PR:
+
+- Run formatters/linters relevant to changed files.
+- Run focused tests for your change.
+- Include manual verification notes when automated tests are not available.
+
+## Docs Contributions
+
+Docs live in [DUMB_docs](https://github.com/I-am-PUID-0/DUMB_docs).
+
+- Update docs when API behavior, onboarding flow, or service settings change.
+- Keep examples and screenshots current.
+- Prefer small, reviewable docs PRs.
 
 ## Non-Code Contributions
 
