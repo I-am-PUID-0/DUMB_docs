@@ -1,6 +1,13 @@
 # Changelog
 
 
+## [1.16.2](https://github.com/I-am-PUID-0/DUMB_docs/compare/1.16.1...1.16.2) (2026-03-03)
+
+
+### 🤡 Other Changes
+
+* **neutarr:** update docs to ref neutarr vs huntarr ([0c9d05f](https://github.com/I-am-PUID-0/DUMB_docs/commit/0c9d05fb352f95083db4f2a0363c285507e8f71f))
+
 ## [1.16.1](https://github.com/I-am-PUID-0/DUMB_docs/compare/1.16.0...1.16.1) (2026-02-26)
 
 
