@@ -14,7 +14,7 @@ icon: lucide/shield
 ```mermaid
 %%{ init: { "flowchart": { "curve": "basis" } } }%%
 flowchart TD
-    A([Request Sources:<br/>Seerr, Trakt,<br/>Plex Watchlist,<br/>Huntarr])
+    A([Request Sources:<br/>Seerr, Trakt,<br/>Plex Watchlist,<br/>NeutArr])
     B[Arr Services:<br/>Sonarr, Radarr,<br/>Lidarr,<br/>Whisparr]
     C[[Prowlarr / Indexers]]
     D[Decypharr]
@@ -59,7 +59,7 @@ flowchart TD
 | -------------- | -------------------------------------------------------------- |
 | Core Service   | Debrid Torrent Orchestrator                                    |
 | Depends On     | [rclone](../dependent/rclone.md)                               |
-| Optional       | Sonarr, Radarr, Lidarr, Whisparr, Prowlarr, Huntarr            |
+| Optional       | Sonarr, Radarr, Lidarr, Whisparr, Prowlarr, NeutArr            |
 | Exposes UI     | Yes (Web UI)                                                   |
 
 

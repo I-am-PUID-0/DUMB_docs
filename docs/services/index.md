@@ -30,7 +30,7 @@ DUMB is built as a collection of microservices that communicate over internal AP
     *  **NzbDAV** provides a WebDAV endpoint and download client integration for NZB workflows
     *  **Sonarr/Radarr/Lidarr/Whisparr** manage media queues and organize content from download clients
     *  **Prowlarr** manages indexers and syncs them to the Arrs
-    *  **Huntarr** automates backlog and quality-upgrade searches across the Arr stack
+    *  **NeutArr** automates backlog and quality-upgrade searches across the Arr stack
 
 3. **Media Playback**
 
@@ -75,7 +75,7 @@ DUMB is built as a collection of microservices that communicate over internal AP
 | [Lidarr](../services/core/lidarr.md)                     | Core      | Music automation and organization                         |
 | [Prowlarr](../services/core/prowlarr.md)                 | Core      | Indexer management for Arrs                               |
 | [Whisparr](../services/core/whisparr.md)                 | Core      | Adult content automation and organization                 |
-| [Huntarr](../services/core/huntarr.md)                   | Core      | Backlog search automation for Arrs                        |
+| [NeutArr](../services/core/neutarr.md)                   | Core      | Backlog search automation for Arrs                        |
 | [Profilarr](../services/core/profilarr.md)               | Core      | Profiles/custom formats manager for Sonarr/Radarr         |
 | [rclone](../services/dependent/rclone.md)                | Dependent | Mount Debrid storage                                      |
 | [Zurg](../services/dependent/zurg.md)                    | Dependent | Serve Debrid content via WebDAV                           |

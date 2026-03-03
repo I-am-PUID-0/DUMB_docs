@@ -237,7 +237,7 @@ To disable auto-restart for all services, set `enabled: false` in each service's
 ### Appropriate thresholds
 
 - **Critical services** (Plex, rclone): Lower threshold (2-3)
-- **Background services** (Zilean, Huntarr): Higher threshold (3-5)
+- **Background services** (Zilean, NeutArr): Higher threshold (3-5)
 
 ### Grace periods
 

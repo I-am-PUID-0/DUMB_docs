@@ -16,7 +16,7 @@ still allowing multiple instances of the same Arr service.
 | Config block | Purpose |
 |-------------|---------|
 | Arr instances (`sonarr`, `radarr`, `lidarr`, `whisparr`) | Selects the download workflow(s) to auto-wire. |
-| Huntarr instances | Filters which Arr instances are sent to Huntarr. |
+| NeutArr instances | Filters which Arr instances are sent to NeutArr. |
 | Profilarr instances | Filters which Arr instances are auto-linked to Profilarr. |
 | rclone/zurg instances | Labels the instance for the workflow it supports. |
 
@@ -33,7 +33,7 @@ flowchart TD
     NZB[NzbDAV workflow]
     PROWLARR[Prowlarr apps + tags]
     IDX[Tagged indexers]
-    HUNTARR[Huntarr instance]
+    NEUTARR[NeutArr instance]
     PROFILARR[Profilarr instance]
 
     ARR ==> CS
@@ -43,7 +43,7 @@ flowchart TD
     NZB ==> PROWLARR
     PROWLARR ==> IDX
     IDX ==> ARR
-    CS ==> HUNTARR
+    CS ==> NEUTARR
     CS ==> PROFILARR
 ```
 
@@ -76,9 +76,9 @@ When `core_service` is set on an Arr instance, DUMB:
 When `core_service` includes both `decypharr` and `nzbdav`, DUMB uses a shared
 root folder base at `/mnt/debrid/combined_symlinks/<slug>` for the Arr instance.
 
-When `core_service` is set on a Huntarr instance, DUMB:
+When `core_service` is set on a NeutArr instance, DUMB:
 
-- Sends Arr instances whose core services overlap the Huntarr instance.
+- Sends Arr instances whose core services overlap the NeutArr instance.
 
 When `core_service` is set on a Profilarr instance, DUMB:
 
@@ -95,14 +95,14 @@ When `core_service` is set on a Profilarr instance, DUMB:
     "Debrid": {
       "enabled": true,
       "core_service": "decypharr",
-      "use_huntarr": true,
+      "use_neutarr": true,
       "use_profilarr": true,
       "port": 7878
     },
     "Usenet": {
       "enabled": true,
       "core_service": "nzbdav",
-      "use_huntarr": false,
+      "use_neutarr": false,
       "use_profilarr": false,
       "port": 7879
     }
@@ -114,7 +114,7 @@ In this layout:
 
 - The Debrid Radarr instance syncs with Decypharr and Debrid indexers.
 - The Usenet Radarr instance syncs with NzbDAV and Usenet indexers.
-- Huntarr only receives the Debrid instance because `use_huntarr` is set there.
+- NeutArr only receives the Debrid instance because `use_neutarr` is set there.
 - Profilarr only links the Debrid instance because `use_profilarr` is set there.
 
 ## Example: combine workflows on one Arr instance
@@ -124,7 +124,7 @@ In this layout:
   "instances": {
     "Combined": {
       "core_service": ["decypharr", "nzbdav"],
-      "use_huntarr": true,
+      "use_neutarr": true,
       "use_profilarr": true
     }
   }
@@ -140,4 +140,4 @@ folders for the same Sonarr instance.
 
 - [Multi-instance setup](instances.md)
 - [Prowlarr](../services/core/prowlarr.md)
-- [Huntarr](../services/core/huntarr.md)
+- [NeutArr](../services/core/neutarr.md)

@@ -39,7 +39,7 @@ Core services are the services that:
 | [Lidarr](lidarr.md)                 | Music automation and organization                     |                                   | Prowlarr, Decypharr, NzbDAV  |
 | [Prowlarr](prowlarr.md)             | Indexer manager for Arrs                              |                                   | Sonarr, Radarr, Lidarr, Whisparr |
 | [Whisparr](whisparr.md)             | Adult content automation and organization             |                                   | Prowlarr, Decypharr, NzbDAV  |
-| [Huntarr](huntarr.md)               | Continuous backlog searches for Arr instances         |                                   | Sonarr, Radarr, Lidarr, Whisparr |
+| [NeutArr](neutarr.md)               | Continuous backlog searches for Arr instances         |                                   | Sonarr, Radarr, Lidarr, Whisparr |
 | [Profilarr](profilarr.md)           | Profiles and formats manager for Sonarr/Radarr         |                                   | Sonarr, Radarr |
 
 ---
@@ -106,9 +106,9 @@ If you enable a core service, be sure to also:
 * **Optionally Uses:** [Sonarr](sonarr.md) and [Radarr](radarr.md) for request fulfillment
 * **Outputs:** Approved requests that flow into Arr queues
 
-### [Huntarr](huntarr.md)
+### [NeutArr](neutarr.md)
 
-* **Requires:** Arr instances with `use_huntarr: true`
+* **Requires:** Arr instances with `use_neutarr: true`
 * **Optionally Filters:** Arr instances by `core_service`
 * **Outputs:** Periodic backlog searches for missing or upgrade content
 

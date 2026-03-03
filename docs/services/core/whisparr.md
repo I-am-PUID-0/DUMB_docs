@@ -28,7 +28,7 @@ icon: lucide/eye
     "Default": {
       "enabled": false,
       "core_service": "",
-      "use_huntarr": false,
+      "use_neutarr": false,
       "process_name": "Whisparr",
       "repo_owner": "Whisparr",
       "repo_name": "Whisparr",
@@ -55,7 +55,7 @@ icon: lucide/eye
 ### Key Configuration Fields
 
 * `core_service`: Set to `decypharr`, `nzbdav`, or a list of both to enable DUMB integration.
-* `use_huntarr`: Opt this instance into Huntarr automation.
+* `use_neutarr`: Opt this instance into NeutArr automation.
 * `port`: Web UI port (default `6969`).
 * `pinned_version`: Optional version pin for Whisparr updates.
 * `repo_owner` / `repo_name`: GitHub repo used for releases or branch builds.

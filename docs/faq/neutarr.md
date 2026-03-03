@@ -1,31 +1,31 @@
 ---
-title: Huntarr FAQ
+title: NeutArr FAQ
 icon: lucide/help-circle
 ---
 
-# Huntarr FAQ
+# NeutArr FAQ
 
-Common questions and fixes for Huntarr in DUMB.
+Common questions and fixes for NeutArr in DUMB.
 
 ---
 
-## Why is the Huntarr UI not loading?
+## Why is the NeutArr UI not loading?
 
 Check the following:
 
 - Confirm the service is enabled in `dumb_config.json`.
 - Verify the port in the service configuration (default `9705`).
-- Review the Huntarr logs for startup errors.
+- Review the NeutArr logs for startup errors.
 
 !!! tip "Traefik access"
 
-    If Traefik is enabled, you can access Huntarr at `http://<host>/huntarr/`.
+    If Traefik is enabled, you can access NeutArr at `http://<host>/neutarr/`.
 
 ---
 
-## Why doesn't Huntarr see my Arr instances?
+## Why doesn't NeutArr see my Arr instances?
 
-Huntarr relies on Arr API access.
+NeutArr relies on Arr API access.
 
 - Ensure Sonarr/Radarr/Lidarr are running and reachable.
 - Verify API keys are set in the Arr configs.
@@ -33,9 +33,9 @@ Huntarr relies on Arr API access.
 
 ---
 
-## Which Huntarr instance should I use?
+## Which NeutArr instance should I use?
 
-DUMB supports multiple Huntarr instances for different workflows.
+DUMB supports multiple NeutArr instances for different workflows.
 
 !!! info "Instance ports"
 

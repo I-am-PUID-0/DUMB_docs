@@ -100,7 +100,7 @@ The DUMB frontend also proxies UI requests through a `/ui/<service_name>` path f
 | Zilean | `/service/ui/zilean` | 8182 |
 | CLI Debrid | `/service/ui/cli_debrid` | 5000 |
 | CLI Battery | `/service/ui/cli_battery` | 5001 |
-| Huntarr (instance) | `/service/ui/huntarr_<instance>` | 9705 |
+| NeutArr (instance) | `/service/ui/neutarr_<instance>` | 9705 |
 | Traefik Dashboard | `/service/ui/traefik` | 18081 |
 
 !!! note "Dynamic availability"

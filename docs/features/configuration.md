@@ -64,7 +64,7 @@ Below is the **general structure** of `dumb_config.json`:
     "phalanx_db": { ... },
     "plex": { ... },
     "tautulli": { ... },
-    "huntarr": { ... },
+    "neutarr": { ... },
     "seerr": { ... },
     "plex_debrid": { ... },
     "postgres": { ... },

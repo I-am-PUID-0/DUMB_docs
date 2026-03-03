@@ -45,7 +45,7 @@ This reference documents all ports used by DUMB services. Use this guide to conf
 | 9090 | Zurg (Riven) | API |
 | 9091 | Zurg (CLID) | API |
 | 9696 | Prowlarr | Web UI |
-| 9705 | Huntarr | Web UI |
+| 9705 | NeutArr | Web UI |
 | 18080 | Traefik | Proxy |
 | 32400 | Plex Media Server | Web UI |
 
@@ -263,7 +263,7 @@ http://localhost:9696
 
 ## Optional services
 
-### Huntarr
+### NeutArr
 
 | Instance | Port |
 |----------|------|

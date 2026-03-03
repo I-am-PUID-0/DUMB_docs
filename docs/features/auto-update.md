@@ -301,7 +301,7 @@ Different services have specialized update handling:
 | **Plex Media Server** | System package installer |
 | **Jellyfin** | System package installer |
 | **Emby** | System package installer |
-| **GitHub-based** (Frontend, Huntarr, etc.) | Release download and extraction |
+| **GitHub-based** (Frontend, NeutArr, etc.) | Release download and extraction |
 
 !!! info "Strategy support varies"
 

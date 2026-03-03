@@ -28,7 +28,7 @@ icon: lucide/film
     "Default": {
       "enabled": false,
       "core_service": "",
-      "use_huntarr": false,
+      "use_neutarr": false,
       "use_profilarr": false,
       "process_name": "Radarr",
       "repo_owner": "Radarr",
@@ -56,7 +56,7 @@ icon: lucide/film
 ### Key Configuration Fields
 
 * `core_service`: Set to `decypharr`, `nzbdav`, or a list of both to enable DUMB integration.
-* `use_huntarr`: Opt this instance into Huntarr automation.
+* `use_neutarr`: Opt this instance into NeutArr automation.
 * `use_profilarr`: Opt this instance into Profilarr auto‑linking.
 * `port`: Web UI port (default `7878`).
 * `pinned_version`: Optional version pin for Radarr updates.

@@ -15,7 +15,7 @@ DUMB (Debrid Unlimited Media Bridge) is an all-in-one media management solution 
 * **Built-In Media Server Integration** – Includes **Plex Media Server, Jellyfin, and Emby**, fully embedded in the container to eliminate mount propagation issues.
 * **Automated Content Management** – Uses **Debrid** and **Usenet** services alongside **Plex Discover Watchlists**, **Trakt lists**, and **Seerr** to automate media retrieval.
 * **Arr + WebDAV Workflows** – Supports **Sonarr, Radarr, Lidarr, Whisparr**, plus WebDAV-driven clients like **Decypharr** (Debrid) and **NzbDAV** (Usenet).
-* **Huntarr automation** – Optional continuous searches to fill missing content and upgrade quality.
+* **NeutArr automation** – Optional continuous searches to fill missing content and upgrade quality.
 * **[Seerr Sync](seerr-sync.md)** – One-way request replication from a primary Seerr to subordinate instances for multi-household or multi-stack setups.
 * **Integrated Web UI** – Control and manage services through a simple **web-based interface**.
 * **[Authentication](authentication.md)** – Optional JWT-based security with user management and session handling.
@@ -54,9 +54,9 @@ DUMB integrates the following projects to create a seamless media experience:
 
 The Arrs handle **TV, movies, music, and adult content** automation and organization. During onboarding, selecting Decypharr or NzbDAV can wire Arr instances automatically.
 
-### **Huntarr**
+### **NeutArr**
 
-[Huntarr](https://github.com/plexguide/Huntarr.io) automates **missing-content** and **quality-upgrade** searches across the Arr stack. DUMB can filter Huntarr instances by `core_service` to keep Debrid and Usenet workflows separate.
+[NeutArr](https://github.com/I-am-PUID-0/NeutArr) is DUMB's default backlog-search automation service and handles **missing-content** and **quality-upgrade** searches across the Arr stack. DUMB can filter NeutArr instances by `core_service` to keep Debrid and Usenet workflows separate.
 
 ### **Zurg**
 

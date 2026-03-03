@@ -55,7 +55,7 @@ nav:
         - Lidarr: services/core/lidarr.md
         - Prowlarr: services/core/prowlarr.md
         - Whisparr: services/core/whisparr.md
-        - Huntarr: services/core/huntarr.md
+        - NeutArr: services/core/neutarr.md
         - Profilarr: services/core/profilarr.md
       - Dependent:
         - Overview: services/dependent/index.md
@@ -104,7 +104,7 @@ nav:
       - CLI Debrid: faq/cli-debrid.md
       - Decypharr: faq/decypharr.md
       - DUMB: faq/dumb.md
-      - Huntarr: faq/huntarr.md
+      - NeutArr: faq/neutarr.md
       - pgAdmin: faq/pgadmin.md
       - Plex: faq/plex.md
       - Plex Debrid: faq/plex-debrid.md

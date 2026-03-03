@@ -67,7 +67,7 @@ Choose one or more core services:
 | Category | Services |
 |----------|----------|
 | **Orchestrators** | Riven Backend, CLI Debrid, Decypharr, NzbDAV |
-| **Request/automation** | Seerr, Huntarr |
+| **Request/automation** | Seerr, NeutArr |
 | **Media servers** | Plex, Jellyfin, Emby |
 | **Arr services** | Sonarr, Radarr, Lidarr, Prowlarr, Whisparr |
 
@@ -81,7 +81,7 @@ Choose one or more core services:
     2. Decide whether to use **Arrs** (required for Usenet).
     3. If using both workflows, pick **Combined** or **Separate** Arr instances.
     4. (Optional) Enable **multi-quality** Sonarr/Radarr instances.
-    5. Select supporting services (Seerr, Huntarr, Zilean, PostgreSQL + pgAdmin, Tautulli).
+    5. Select supporting services (Seerr, NeutArr, Zilean, PostgreSQL + pgAdmin, Tautulli).
     6. Click **Apply recommendations** to populate the core services list.
 
 !!! tip "Arr instance layouts"
@@ -245,7 +245,7 @@ For services that support multiple instances (like Zurg or rclone), the wizard:
 - Names them appropriately (e.g., "Zurg w/ Riven")
 - Configures separate ports to avoid conflicts
 
-For Arr services and Huntarr, instance names can be used to split workflows (e.g., Debrid vs Usenet, or multiple
+For Arr services and NeutArr, instance names can be used to split workflows (e.g., Debrid vs Usenet, or multiple
 quality tiers). 
 
 Combined Arr workflows use `/mnt/debrid/combined_symlinks/<slug>` for root folders.

@@ -28,7 +28,7 @@ icon: lucide/music
     "Default": {
       "enabled": false,
       "core_service": "",
-      "use_huntarr": false,
+      "use_neutarr": false,
       "process_name": "Lidarr",
       "repo_owner": "Lidarr",
       "repo_name": "Lidarr",
@@ -55,7 +55,7 @@ icon: lucide/music
 ### Key Configuration Fields
 
 * `core_service`: Set to `decypharr`, `nzbdav`, or a list of both to enable DUMB integration.
-* `use_huntarr`: Opt this instance into Huntarr automation.
+* `use_neutarr`: Opt this instance into NeutArr automation.
 * `port`: Web UI port (default `8686`).
 * `pinned_version`: Optional version pin for Lidarr updates.
 * `repo_owner` / `repo_name`: GitHub repo used for releases or branch builds.

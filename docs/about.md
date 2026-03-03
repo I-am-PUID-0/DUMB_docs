@@ -61,7 +61,7 @@ DUMB is built using a **modular, microservices** architecture, with the followin
 | **NzbDAV**               | Usenet WebDAV gateway and Arr download-client integration                                    |
 | **Prowlarr**             | Indexer management and sync to Arr services                                                  |
 | **Sonarr/Radarr/Lidarr/Whisparr** | Arr automation for movies, TV, music, and adult content                             |
-| **Huntarr**              | Backlog search automation and quality upgrades                                               |
+| **NeutArr**              | Backlog search automation and quality upgrades                                               |
 | **Zurg**                 | Handles Real-Debrid content interaction, file repair, and directory structuring              |
 | **rclone**               | Mounts cloud storage into the local container for access by your media server                |
 | **Zilean**               | Caches metadata and file hash lookups for performance                                        |
