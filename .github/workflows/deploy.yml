@@ -77,7 +77,7 @@ jobs:
           path: site
       
       - name: Deploy Github pages
-        uses: actions/deploy-pages@v4
+        uses: actions/deploy-pages@v5
         id: deployment
 
       - name: Mirror to DUMB gh-pages branch
