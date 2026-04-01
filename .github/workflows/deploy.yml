@@ -46,7 +46,7 @@ jobs:
           poetry install --no-interaction --no-root  # Install dependencies from pyproject.toml
 
       - name: Cache Dependencies
-        uses: actions/cache@v4
+        uses: actions/cache@v5
         with:
           path: ~/.cache/pip
           key: dumb-docs-${{ runner.os }}-${{ hashFiles('**/poetry.lock') }}
