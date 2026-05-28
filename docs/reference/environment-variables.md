@@ -16,6 +16,7 @@ This reference lists container-level environment variables that DUMB reads at st
 | `PUID` | `1000` | Container user ID |
 | `PGID` | `1000` | Container group ID |
 | `TZ` | unset | Time zone (for example `America/New_York`) |
+| `DUMB_PNPM_STORE_ROOT` | `/config/.pnpm-store` | Persistent pnpm package store root used during service setup/builds. Override only if `/config` is not suitable. |
 
 !!! tip "Persist your config"
 

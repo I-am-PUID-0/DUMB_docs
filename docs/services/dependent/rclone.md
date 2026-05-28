@@ -52,6 +52,8 @@ Each `rclone` instance is defined under the `rclone.instances` section in `dumb_
 - **`zurg_config_file`**: Full path to the Zurg config file for this instance.
 - **`command`**: Custom CLI arguments to be appended to rclone at runtime.
 - **`api_key`**: (Optional) Debrid API key, used if Zurg is not linked.
+- **`username`** / **`password`**: Optional direct WebDAV/FTP login credentials for providers that require account login instead of only an API key, such as direct `TorBox`, `TorBox-FTP`, and direct `RealDebrid` mounts.
+- **`customer_id`**: Optional Premiumize customer ID for direct Premiumize WebDAV mounts.
 
 ### API Key Behavior
 
@@ -61,7 +63,9 @@ Each `rclone` instance is defined under the `rclone.instances` section in `dumb_
     - **Zurg enabled**: API key should be defined in the **Zurg instance**, not the rclone one.
     - **Decypharr enabled**: API key should be defined in the **Decypharr** config.
     - **NzbDAV**: Credentials read from `WEBDAV_USER`/`WEBDAV_PASSWORD` or NzbDAV database. The rclone `api_key` field is ignored.
-    - **Direct debrid connection**: API key must be set in the rclone instance when both `decypharr_enabled` and `zurg_enabled` are unset or blank.
+    - **Direct AllDebrid connection**: `api_key` must be set in the rclone instance when both `decypharr_enabled` and `zurg_enabled` are unset or blank.
+    - **Direct TorBox / TorBox-FTP connection**: Set `username` to your TorBox email and `password` to your TorBox account password.
+    - **Direct Premiumize connection**: Set `customer_id` and `api_key`.
 
 ### Adding More Instances
 Users can define additional rclone instances by duplicating the structure and ensuring:
@@ -114,6 +118,27 @@ Example:
       "zurg_config_file": "",
       "command": [],
       "api_key": "YOUR DEBRID API KEY"
+    },
+    "TorBox": {
+      "enabled": false,
+      "core_service": "",
+      "process_name": "rclone w/ TorBox",
+      "suppress_logging": false,
+      "log_level": "INFO",
+      "key_type": "TorBox",
+      "zurg_enabled": false,
+      "decypharr_enabled": false,
+      "mount_dir": "/mnt/debrid",
+      "mount_name": "rclone_TB",
+      "cache_dir": "/cache",
+      "config_dir": "/config",
+      "config_file": "/config/rclone.config",
+      "log_file": "/log/rclone_w_torbox.log",
+      "zurg_config_file": "",
+      "command": [],
+      "api_key": "",
+      "username": "YOUR TORBOX EMAIL",
+      "password": "YOUR TORBOX PASSWORD"
     }
   }
 }

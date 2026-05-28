@@ -273,14 +273,26 @@ Hardware-accelerated streaming enables Plex to use the GPU or specialized hardwa
 
 ### Docker Setup for Hardware Transcoding
 
-To enable hardware transcoding in a Docker container:
+To enable hardware transcoding in a Docker container, pass through the GPU device and provide Plex with a writable transcode directory:
 
 ```yaml
+volumes:
+  - ./data/plex/transcode:/transcode
+
 devices:
   - /dev/dri:/dev/dri
 ```
 
-This grants the container access to the host system's Direct Rendering Infrastructure (DRI), which is required for GPU access (e.g., Intel Quick Sync, NVIDIA NVENC).
+Create the host directory before starting DUMB and make sure it is writable by the configured `PUID:PGID`:
+
+```bash
+mkdir -p ./data/plex/transcode
+sudo chown -R 1000:1000 ./data/plex/transcode
+```
+
+Adjust `1000:1000` to match your container `PUID` and `PGID`. Without a writable `/transcode` mount, Plex can log `Error creating directory "/transcode": Permission denied` and fall back to software transcoding or fail to transcode.
+
+The device mapping grants the container access to the host system's Direct Rendering Infrastructure (DRI), which is required for GPU access (e.g., Intel Quick Sync, NVIDIA NVENC).
 
 ### Intel Quick Sync Users
 

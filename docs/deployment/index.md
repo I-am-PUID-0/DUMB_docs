@@ -60,6 +60,7 @@ You'll need to bind mount the following volumes when running the container:
 |`/phalanx_db/data`          | Location for phalanx_db data                      |
 |`/decypharr`                | Location for decypharr data                       |
 |`/plex`                     | Location for Plex Media Server data               |
+|`/transcode`                | Optional writable Plex transcoding cache          |
 |`/mnt/debrid`               | Location for raw debrid files/links and symlinks  |
 
 !!! note "/config"

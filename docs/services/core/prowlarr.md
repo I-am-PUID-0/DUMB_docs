@@ -120,6 +120,8 @@ When Decypharr is enabled, DUMB also syncs custom indexer definitions and create
 
 If Decypharr is enabled, DUMB automatically enables the public StremThru indexer.
 
+For Whisparr applications, DUMB widens Prowlarr sync categories to include the Movie/TV roots used by the Zilean/StremThru custom definitions plus the common XXX categories. This lets the custom indexers sync to Whisparr while keeping the normal Decypharr/NzbDAV tag separation.
+
 Custom definitions are pulled from the `Prowlarr-Indexers` repository and stored in
 `<prowlarr_config_dir>/Definitions/Custom` (or `<prowlarr_config_dir>/indexer/Definitions/Custom` when present).
 
