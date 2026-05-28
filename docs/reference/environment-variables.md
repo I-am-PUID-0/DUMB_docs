@@ -17,6 +17,7 @@ This reference lists container-level environment variables that DUMB reads at st
 | `PGID` | `1000` | Container group ID |
 | `TZ` | unset | Time zone (for example `America/New_York`) |
 | `DUMB_PNPM_STORE_ROOT` | `/config/.pnpm-store` | Persistent pnpm package store root used during service setup/builds. Override only if `/config` is not suitable. |
+| `DUMB_BUN_CACHE_ROOT` | `/config/.bun-cache` | Persistent Bun package cache root used during Bun-based service setup/builds, such as Pulsarr. Override only if `/config` is not suitable. |
 
 !!! tip "Persist your config"
 

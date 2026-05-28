@@ -90,6 +90,7 @@ The DUMB frontend also proxies UI requests through a `/ui/<service_name>` path f
 | pgAdmin 4 | `/service/ui/pgadmin` | 5050 |
 | Seerr | `/service/ui/seerr` | 5055 |
 | Tautulli | `/service/ui/tautulli` | 8181 |
+| Pulsarr | `/service/ui/pulsarr` | 3003 |
 | Radarr | `/service/ui/radarr` | 7878 |
 | Sonarr | `/service/ui/sonarr` | 8989 |
 | Lidarr | `/service/ui/lidarr` | 8686 |

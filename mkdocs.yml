@@ -69,6 +69,7 @@ nav:
         - pgAdmin: services/optional/pgadmin.md
         - Riven Frontend: services/optional/riven-frontend.md
         - Tautulli: services/optional/tautulli.md
+        - Pulsarr: services/optional/pulsarr.md
         - Zilean: services/optional/zilean.md
   - Deployment:
       - Overview: deployment/index.md

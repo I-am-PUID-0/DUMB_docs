@@ -85,6 +85,7 @@ DUMB is built as a collection of microservices that communicate over internal AP
 | [Zilean](../services/optional/zilean.md)                 | Optional  | Metadata cache and scraping backend                       |
 | [pgAdmin](../services/optional/pgadmin.md)               | Optional  | PostgreSQL GUI                                            |
 | [Riven Frontend](../services/optional/riven-frontend.md) | Optional  | UI for Riven Backend                                      |
+| [Pulsarr](../services/optional/pulsarr.md)               | Optional  | Plex watchlist request automation                         |
 
 ---
 
