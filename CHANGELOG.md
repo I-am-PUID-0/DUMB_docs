@@ -1,6 +1,20 @@
 # Changelog
 
 
+## [1.16.4](https://github.com/I-am-PUID-0/DUMB_docs/compare/1.16.3...1.16.4) (2026-05-28)
+
+
+### 🐛 Bug Fixes
+
+* **decypharr:** update description and support details for Decypharr service ([0a31445](https://github.com/I-am-PUID-0/DUMB_docs/commit/0a31445a608175bd2446f0389f2620c8beb8e620))
+* **process:** enhance service options structure for clarity ([0a31445](https://github.com/I-am-PUID-0/DUMB_docs/commit/0a31445a608175bd2446f0389f2620c8beb8e620))
+
+
+### 📖 Documentation
+
+* **pulsarr:** add optional service documentation ([147020c](https://github.com/I-am-PUID-0/DUMB_docs/commit/147020cf95b5e0e213cc61d53653f76b74ab6aa2))
+* **symlinks:** clarify Decypharr migration playbook details ([0a31445](https://github.com/I-am-PUID-0/DUMB_docs/commit/0a31445a608175bd2446f0389f2620c8beb8e620))
+
 ## [1.16.3](https://github.com/I-am-PUID-0/DUMB_docs/compare/1.16.2...1.16.3) (2026-05-28)
 
 
