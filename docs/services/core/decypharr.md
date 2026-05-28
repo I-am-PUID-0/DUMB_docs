@@ -5,7 +5,7 @@ icon: lucide/shield
 
 # Decypharr (Core Service)
 
-**Decypharr** is a self-hosted, Go-based torrent manager and content orchestrator that integrates multiple Debrid services and acts as a mock qBittorrent client for Arr applications like Sonarr and Radarr. It is a core component in DUMB for automating torrent-based downloads with native Debrid support and seamless library linking.
+**Decypharr** is a self-hosted, Go-based content orchestrator that integrates multiple Debrid services, provides stable DFS and native Usenet support in Decypharr 2.0+, and acts as mock qBittorrent/Sabnzbd clients for Arr applications like Sonarr and Radarr. It is a core component in DUMB for automating Debrid and Usenet downloads with seamless library linking.
 
 ---
 
@@ -19,7 +19,7 @@ flowchart TD
     C[[Prowlarr / Indexers]]
     D[Decypharr]
     E@{shape: cloud, label: "Debrid Providers"}
-    F[[Rclone<br/>Embedded / External]]
+    F[[DFS / Rclone<br/>Mount Mode]]
     G[(WebDAV Mount Root Path:<br/>/mnt/debrid/decypharr)]
     H[(QBit Download Symlinks:<br/>/mnt/debrid/<br/>decypharr_downloads)]
     I[Arr Rename + Link Step:<br/>Hard Link / Symlink]
@@ -57,8 +57,8 @@ flowchart TD
 
 | Classification | Role                                                           |
 | -------------- | -------------------------------------------------------------- |
-| Core Service   | Debrid Torrent Orchestrator                                    |
-| Depends On     | [rclone](../dependent/rclone.md)                               |
+| Core Service   | Debrid and Usenet Orchestrator                                 |
+| Depends On     | None by default; external rclone mode uses [rclone](../dependent/rclone.md) |
 | Optional       | Sonarr, Radarr, Lidarr, Whisparr, Prowlarr, NeutArr            |
 | Exposes UI     | Yes (Web UI)                                                   |
 
@@ -74,7 +74,7 @@ flowchart TD
     "repo_owner": "sirrobot01",
     "repo_name": "decypharr",
     "release_version_enabled": false,
-    "release_version": "v1.0.0",
+    "release_version": "latest",
     "branch_enabled": false,
     "branch": "main",
     "suppress_logging": false,
@@ -93,7 +93,8 @@ flowchart TD
     "config_file": "/decypharr/config.json",
     "log_file": "/decypharr/logs/decypharr.log",
     "env": {},
-    "use_embedded_rclone": true,
+    "mount_type": "dfs",
+    "mount_path": "/mnt/debrid/decypharr",
     "api_keys": {}
 },
 ```
@@ -107,8 +108,9 @@ flowchart TD
 * `log_level`, `suppress_logging`: Logging controls.
 * `port`: Web UI port.
 * `env`: Environment variables passed to Decypharr.
-* `use_embedded_rclone`: Enable the embedded rclone integration (recommended).
-* `api_keys`: Per-provider API keys used by Decypharr (embedded mode).
+* `mount_type`: Decypharr mount mode. Stable Decypharr 2.0+ supports `dfs`, `rclone`, `external_rclone`, and `none` without requiring the beta branch.
+* `mount_path`: Container path for the Decypharr mount (default `/mnt/debrid/decypharr`).
+* `api_keys`: Per-provider API keys used by Decypharr for Debrid providers.
 * `clear_on_update`, `exclude_dirs`: Clean old files during update while protecting data dirs.
 
 ---
@@ -121,7 +123,8 @@ flowchart TD
 Decypharr acts as both a torrent manager and a renaming/organizing engine:
 
 * Handles torrent links via Debrid services
-* Mimics qBittorrent API for seamless \*Arr integration
+* Handles NZB/Usenet downloads through Decypharr 2.0+ native Usenet support
+* Mimics qBittorrent and Sabnzbd-compatible APIs for seamless \*Arr integration
 * Renames and organizes files into structured symlink folders
 * Provides a Web UI and WebDAV endpoints for remote management
 
@@ -132,6 +135,8 @@ Decypharr acts as both a torrent manager and a renaming/organizing engine:
 *  Proxy filtering for un-cached Debrid torrents
 *  Multiple Debrid service support (Real Debrid, Torbox, Debrid Link, All Debrid)
 *  WebDAV server per Debrid provider for mounting remote files
+*  DFS mount mode for Decypharr-managed streaming paths (stable in Decypharr 2.0+)
+*  Native Usenet support through Decypharr's Sabnzbd-compatible endpoint (stable in Decypharr 2.0+)
 *  Repair Worker for missing files or symlinks
 
 ---
@@ -144,7 +149,7 @@ When Decypharr starts, DUMB performs several automation steps:
 - Ensures `/mnt/debrid/decypharr_symlinks/<instance>` roots exist
 - Updates Arr permissions and root folders
 - Adds or updates a download client named `decypharr` in Arr
-- Populates Debrid providers and folders when embedded rclone is enabled
+- Populates Debrid providers from `api_keys` for Decypharr mount modes
 - Uses per-instance category labels when creating Arr download client entries
 
 ### Symlink repair and migration
@@ -224,50 +229,37 @@ For Sonarr/Radarr/Lidarr/Whisparr instances you want wired to Decypharr, set
 This tells DUMB to auto-configure Arr integration around Decypharr’s WebDAV and symlink workflows.
 See [Core Service Routing](../../reference/core-service.md) for how `core_service` affects automation.
 
-To successfully run Decypharr with DUMB, the following configuration and mounting steps must be completed:
+To successfully run Decypharr with DUMB, review the mount mode and path guidance below:
 
-### Embedded vs external rclone
+### Mount modes
 
-Decypharr can run with either embedded rclone (recommended) or external rclone instances.
+Decypharr 2.0+ includes DFS and native Usenet support in stable releases. You no longer need to install the `beta` branch to use these features.
 
-| Mode | How to configure | Notes |
-|------|------------------|-------|
-| Embedded rclone | `use_embedded_rclone: true` + `api_keys` map | DUMB populates `config.json` and Decypharr mounts to `/mnt/debrid/decypharr`. |
-| External rclone | `use_embedded_rclone: false` + rclone instances with `core_service: decypharr` | DUMB reads rclone instance settings and populates debrid folders + RC URLs. |
-
-When embedded mode is enabled, DUMB builds a default `rclone` block and synchronizes `debrids` entries from the `api_keys` map. It also ensures provider folders match the embedded mount layout under `/mnt/debrid/decypharr`.
-
-### Beta Features: DFS + Usenet
-
-Decypharr beta introduces a new mount system (DFS) and native Usenet support.
-To use beta builds in DUMB, set:
+Choose the mount behavior with `mount_type`:
 
 ```json
 "decypharr": {
-  "branch_enabled": true,
-  "branch": "beta",
   "mount_type": "dfs",
   "mount_path": "/mnt/debrid/decypharr"
 }
 ```
 
-**Mount types (beta)**
-
 | Mount Type | Description |
 |-----------|-------------|
-| `dfs` | Decypharr File System (recommended for streaming) |
-| `rclone` | Embedded rclone managed by Decypharr |
-| `external_rclone` | External RC endpoint (manual) |
-| `none` | No mount (API/WebDAV only) |
+| `dfs` | Decypharr File System. Recommended default for Decypharr-managed streaming paths. |
+| `rclone` | Embedded rclone managed by Decypharr. DUMB synchronizes Debrid providers from `api_keys`. |
+| `external_rclone` | DUMB-managed external rclone mount pointed at Decypharr WebDAV. |
+| `none` | No mount; Decypharr exposes API/WebDAV behavior only. |
 
+When `mount_type` is `rclone`, DUMB builds the embedded rclone block and synchronizes `debrids` entries from the `api_keys` map. When `mount_type` is `external_rclone`, DUMB reconciles the matching managed rclone instance. DFS settings such as `mount.dfs.cache_dir` are app-owned; DUMB only ensures required startup paths exist and have the configured ownership.
 
-**Usenet (beta)**
+### Native Usenet
 
-Decypharr beta connects directly to NNTP providers (no Sabnzbd container needed).
+Decypharr 2.0+ can connect directly to NNTP providers (no Sabnzbd container needed).
 Configure Usenet inside the Decypharr UI or `config.json`. DUMB does not manage
 Usenet provider credentials.
 
-To wire Arrs to Usenet, add a **Sabnzbd** download client in Sonarr/Radarr:
+To wire Arrs to Decypharr Usenet, add a **Sabnzbd** download client in Sonarr/Radarr:
 
 - Host: `http://decypharr:8282`
 - API Key: Decypharr API token (Settings → Auth)

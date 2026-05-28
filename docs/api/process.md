@@ -193,7 +193,10 @@ The `core_services` field can be a single object or an array. The `name` can be 
         "debrid_service": "RealDebrid",
         "debrid_key": "abc123",
         "service_options": {
-          "decypharr": { "use_embedded_rclone": true }
+          "decypharr": {
+            "mount_type": "dfs",
+            "mount_path": "/mnt/debrid/decypharr"
+          }
         }
       },
       "optional_services": []

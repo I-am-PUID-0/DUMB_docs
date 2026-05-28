@@ -12,7 +12,7 @@ It covers:
 - Path model and service-specific symlink roots
 - Repair modes and when to use each one
 - Snapshot backup/restore and scheduled backups
-- Safe migration playbooks (including Decypharr beta path changes and individual -> combined roots)
+- Safe migration playbooks (including Decypharr provider path consolidation and individual -> combined roots)
 - Frontend option behavior and backend API behavior
 - Troubleshooting and recovery
 
@@ -293,7 +293,7 @@ Use the Schedule tab dropdown to pick an available manifest discovered from the 
 
 ## Migration playbooks
 
-### Playbook A: Decypharr beta provider path consolidation
+### Playbook A: Decypharr provider path consolidation
 
 Use preset rewrite:
 
