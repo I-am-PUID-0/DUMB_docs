@@ -1,6 +1,17 @@
 # Changelog
 
 
+## [1.16.3](https://github.com/I-am-PUID-0/DUMB_docs/compare/1.16.2...1.16.3) (2026-05-28)
+
+
+### 📖 Documentation
+
+* add DUMB_PNPM_STORE_ROOT environment variable to reference ([3159e7f](https://github.com/I-am-PUID-0/DUMB_docs/commit/3159e7fda39bbb2f917809dcbdafb12df623521a))
+* clarify Prowlarr sync categories for Whisparr applications ([3159e7f](https://github.com/I-am-PUID-0/DUMB_docs/commit/3159e7fda39bbb2f917809dcbdafb12df623521a))
+* enhance Plex Media Server setup instructions for hardware transcoding ([3159e7f](https://github.com/I-am-PUID-0/DUMB_docs/commit/3159e7fda39bbb2f917809dcbdafb12df623521a))
+* expand rclone instance configuration options with optional credentials ([3159e7f](https://github.com/I-am-PUID-0/DUMB_docs/commit/3159e7fda39bbb2f917809dcbdafb12df623521a))
+* update deployment and installation documentation to include transcode directory details ([3159e7f](https://github.com/I-am-PUID-0/DUMB_docs/commit/3159e7fda39bbb2f917809dcbdafb12df623521a))
+
 ## [1.16.2](https://github.com/I-am-PUID-0/DUMB_docs/compare/1.16.1...1.16.2) (2026-03-03)
 
 
