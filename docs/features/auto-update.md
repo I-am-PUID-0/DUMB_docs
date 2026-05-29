@@ -60,7 +60,16 @@ flowchart TD
 2. **Version comparison** - Current version is compared with the latest available
 3. **Download** - If an update is available, the new version is downloaded
 4. **Apply** - The service is stopped, updated, and restarted
-5. **Schedule** - Future update checks are scheduled based on the configured interval
+5. **Notify** - The frontend can show a review notice for available or recently applied DUMB backend/frontend updates
+6. **Schedule** - Future update checks are scheduled based on the configured interval
+
+### Frontend notices
+
+The DUMB Frontend polls `GET /api/process/update-notices` for project-level update notices. Available-update notices come from the backend's current update-status cache. Applied-update notices are persisted to `/config/update_notices.json` when an update install reports success, so the frontend can still show what changed after the backend or frontend restarts.
+
+DUMB dev images use rolling versions such as `v2.4.2-dev.5`. These are treated as dev builds, not production release tags, so their notice action points to the rolling dev-build reference instead of a per-version release page. Production semver releases still link to their release notes, and branch builds with commit markers link to the relevant commit or comparison.
+
+Dismissals are stored in browser local storage and only hide the notice for that browser. They do not remove the backend's applied-update history.
 
 ---
 

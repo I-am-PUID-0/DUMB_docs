@@ -127,7 +127,9 @@ Service pages can also override auto-restart settings per service:
 
 ## Auto-update settings
 
-The updates panel lets you check for updates on demand and configure automatic update checks:
+The updates panel lets you check for updates on demand and configure automatic update checks.
+
+DUMB also shows global update notices in the frontend when a DUMB backend or DUMB frontend update is available, blocked, or was recently applied. The notice opens a review dialog with the affected service, current and available versions, the update message, and a release-notes link when the service has a known repository URL. The first release with this feature also seeds a one-time informational notice with the current version; production versions link to release notes, DUMB dev-image versions such as `v2.4.2-dev.5` link to the rolling dev-build reference, and branch builds with commit markers link to the relevant commit. Applied and informational notices are recorded by the backend under `/config/update_notices.json`, while dismissed notices are remembered only in the current browser.
 
 The panel includes a contextual **Why this matters** callout linking to this section.
 

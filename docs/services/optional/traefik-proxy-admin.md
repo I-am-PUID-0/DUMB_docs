@@ -67,7 +67,7 @@ This lets DUMB regenerate embedded UI routes without overwriting TPA-managed ext
 4. Let DUMB start or prepare PostgreSQL and Traefik automatically.
 5. Open TPA from the DUMB service page, the embedded UI tab, or `http://<host>:3004`.
 
-On first start, DUMB also writes runtime values that TPA needs, including the database URL, admin auth secret, Traefik API URL, access log path, and target-test allowlist.
+On first start, DUMB also writes runtime values that TPA needs, including the database URL, admin auth secret, admin cookie mode, Traefik API URL, access log path, and target-test allowlist.
 
 ---
 
@@ -84,6 +84,20 @@ After this, TPA admin auth protects the TPA UI and API.
 
 !!! tip "SSO can come later"
     Start with local admin auth so you have a known-good break-glass login. You can configure admin SSO later from TPA's Security page.
+
+---
+
+## Admin cookie security
+
+DUMB runs TPA with `ADMIN_COOKIE_SECURE=false` by default. This allows local admin login to work when you open TPA over plain HTTP on a LAN address, such as `http://<host>:3004`. Without this, browsers can store the secure admin session cookie but refuse to send it back over HTTP, which looks like a successful login that immediately returns to the login page.
+
+If you expose TPA only through HTTPS and do not need direct HTTP LAN access, you can set:
+
+```env
+ADMIN_COOKIE_SECURE=true
+```
+
+Then restart TPA. For public deployments, HTTPS plus secure cookies is preferred. Keep `ADMIN_COOKIE_SECURE=false` only when you intentionally need local HTTP access.
 
 ---
 
@@ -279,6 +293,7 @@ Full steps are in the [Cloudflared guide](cloudflared.md).
     "HOSTNAME": "0.0.0.0",
     "ADMIN_AUTH_ENABLED": "true",
     "ADMIN_AUTH_PROVIDER": "local",
+    "ADMIN_COOKIE_SECURE": "false",
     "TRAEFIK_API_URL": "http://127.0.0.1:18081",
     "TRAEFIK_ACCESS_LOG_PATH": "/log/traefik_access.log",
     "TARGET_TEST_ALLOW_CIDRS": "10.0.0.0/16,172.20.0.0/16,192.168.0.0/16,127.0.0.0/8",
@@ -295,6 +310,7 @@ Full steps are in the [Cloudflared guide](cloudflared.md).
 - **`config_dir`**: TPA source and build directory.
 - **`env.DATABASE_URL`**: Generated automatically when missing, targeting DUMB PostgreSQL database `traefik_proxy_admin`.
 - **`env.ADMIN_AUTH_SECRET`**: Generated automatically on first setup and persisted in runtime config.
+- **`env.ADMIN_COOKIE_SECURE`**: Defaults to `false` in DUMB so local HTTP admin login works. Set to `true` when TPA is only accessed through HTTPS.
 - **`env.TRAEFIK_API_URL`**: Internal URL for TPA to inspect DUMB Traefik's live API.
 - **`env.TRAEFIK_ACCESS_LOG_PATH`**: DUMB Traefik access log path for TPA diagnostics.
 - **`env.TARGET_TEST_ALLOW_CIDRS`**: Private CIDR allowlist used by TPA target reachability tests.
@@ -306,6 +322,7 @@ Full steps are in the [Cloudflared guide](cloudflared.md).
 | Symptom | Likely cause | What to check |
 |---------|--------------|---------------|
 | TPA starts but logs database connection errors | PostgreSQL is not ready or database was not created | Restart TPA after PostgreSQL is healthy. DUMB should auto-enable PostgreSQL and create `traefik_proxy_admin`. |
+| TPA login returns to the login page over HTTP | Browser is not sending a secure admin session cookie over plain HTTP | Keep `ADMIN_COOKIE_SECURE=false` for local HTTP access, or access TPA through HTTPS and set it to `true`. Clear the old `tpa-admin-session` cookie after changing this value. |
 | Traefik logs HTTP provider decode errors | TPA provider endpoint returned invalid or partial config | Restart TPA, then Traefik. DUMB waits for a top-level `http` provider response before starting Traefik. |
 | Target test is blocked | Target IP is outside `TARGET_TEST_ALLOW_CIDRS` | Add the private subnet CIDR to the allowlist and restart TPA. |
 | Browser shows 404 from Traefik | No matching router for the requested host | Check the TPA service hostname, domain, enabled state, and Traefik access logs. |
