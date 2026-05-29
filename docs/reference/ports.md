@@ -306,6 +306,21 @@ http://localhost:8181
 http://localhost:8182
 ```
 
+### Traefik Proxy Admin
+
+| Property | Value |
+|----------|-------|
+| **Port** | 3004 |
+| **Type** | Web UI / API |
+
+```
+http://localhost:3004
+```
+
+### Cloudflared
+
+Cloudflared does not expose a local web UI port. It opens an outbound tunnel connection to Cloudflare and forwards public hostname traffic to DUMB Traefik.
+
 ---
 
 ## Dependent services

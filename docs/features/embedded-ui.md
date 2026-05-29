@@ -103,6 +103,7 @@ The DUMB frontend also proxies UI requests through a `/ui/<service_name>` path f
 | CLI Battery | `/service/ui/cli_battery` | 5001 |
 | NeutArr (instance) | `/service/ui/neutarr_<instance>` | 9705 |
 | Traefik Dashboard | `/service/ui/traefik` | 18081 |
+| Traefik Proxy Admin | `/service/ui/traefik_proxy_admin` | 3004 |
 
 !!! note "Dynamic availability"
 
@@ -112,7 +113,7 @@ The DUMB frontend also proxies UI requests through a `/ui/<service_name>` path f
 
 ## Traefik configuration
 
-DUMB automatically generates Traefik routing configuration in `/config/traefik/services.yaml`.
+DUMB automatically generates Traefik embedded-UI routing configuration in `/config/traefik/dynamic/services.yaml`. Traefik watches `/config/traefik/dynamic` for DUMB-owned dynamic files and can also poll Traefik Proxy Admin through its HTTP provider when that optional service is enabled.
 
 ### Example configuration
 

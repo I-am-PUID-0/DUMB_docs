@@ -27,6 +27,8 @@ Optional services are:
 | [Riven Frontend](../optional/riven-frontend.md) | Web-based UI for management of the [Riven Backend](../core/riven-backend.md) | Riven |
 | [Tautulli](../optional/tautulli.md) | Plex monitoring and statistics                            | Plex Media Server              |
 | [Pulsarr](../optional/pulsarr.md) | Plex watchlist request automation                         | Plex, Sonarr, Radarr           |
+| [Traefik Proxy Admin](../optional/traefik-proxy-admin.md) | User-managed Traefik reverse proxy routes | Traefik, PostgreSQL |
+| [Cloudflared](../optional/cloudflared.md) | Cloudflare Tunnel connector for DUMB Traefik | Traefik |
 | [Zilean](../optional/zilean.md)   | Debrid scraper and metadata cache for various core services | Riven, CLI Debrid, Plex Debrid |
 
 ---
@@ -39,6 +41,8 @@ Optional services attach to the DUMB ecosystem dynamically:
 * **[Riven Frontend](../optional/riven-frontend.md)** provides a GUI for exploring and managing content requests that are facilitated by the [Riven Backend](../core/riven-backend.md).
 * **[Tautulli](../optional/tautulli.md)** monitors your Plex server, tracking playback history, user activity, and providing detailed statistics.
 * **[Pulsarr](../optional/pulsarr.md)** monitors Plex watchlists and routes approved requests into Sonarr and Radarr.
+* **[Traefik Proxy Admin](../optional/traefik-proxy-admin.md)** lets operators create Traefik reverse proxy routes for services inside or outside the DUMB container.
+* **[Cloudflared](../optional/cloudflared.md)** runs a Cloudflare Tunnel connector inside DUMB so public traffic can reach the built-in Traefik entrypoint without direct port forwarding.
 * **[Zilean](../optional/zilean.md)** improves scraping efficiency by caching previous results from [Debrid Media Manager](https://debridmediamanager.com/) hash lists shared by users and reducing redundant queries. Core services like Riven and CLI Debrid can use it as a scraping backend.
 
 These services can be disabled at any time without affecting the startup of core or dependent services.

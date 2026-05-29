@@ -61,7 +61,6 @@ Pulsarr provides:
     "dist/server.js"
   ],
   "config_dir": "/pulsarr",
-  "config_file": "/pulsarr/data/db/pulsarr.db",
   "log_file": "/pulsarr/data/logs/pulsarr.log",
   "env": {
     "NODE_ENV": "production",
