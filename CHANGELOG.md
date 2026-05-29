@@ -1,6 +1,13 @@
 # Changelog
 
 
+## [1.18.0](https://github.com/I-am-PUID-0/DUMB_docs/compare/1.17.0...1.18.0) (2026-05-29)
+
+
+### ✨ Features
+
+* **docs:** enhance auto-update and Traefik Proxy Admin documentation ([e39c01e](https://github.com/I-am-PUID-0/DUMB_docs/commit/e39c01e8c9133da5da7c1f38e74bc3b912351e35))
+
 ## [1.17.0](https://github.com/I-am-PUID-0/DUMB_docs/compare/1.16.4...1.17.0) (2026-05-29)
 
 
