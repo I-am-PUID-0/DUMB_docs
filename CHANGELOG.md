@@ -1,6 +1,13 @@
 # Changelog
 
 
+## [1.17.0](https://github.com/I-am-PUID-0/DUMB_docs/compare/1.16.4...1.17.0) (2026-05-29)
+
+
+### ✨ Features
+
+* **docs:** add Cloudflared and Traefik Proxy Admin documentation ([ce5f173](https://github.com/I-am-PUID-0/DUMB_docs/commit/ce5f173d30f839cfb75d50bedec73c48f61a53ca))
+
 ## [1.16.4](https://github.com/I-am-PUID-0/DUMB_docs/compare/1.16.3...1.16.4) (2026-05-28)
 
 
