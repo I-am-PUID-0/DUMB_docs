@@ -1,6 +1,13 @@
 # Changelog
 
 
+## [1.19.0](https://github.com/I-am-PUID-0/DUMB_docs/compare/1.18.0...1.19.0) (2026-06-03)
+
+
+### ✨ Features
+
+* **docs:** update rclone instance configuration instructions and clarify credential usage ([0a3ad5d](https://github.com/I-am-PUID-0/DUMB_docs/commit/0a3ad5dff52bc8941b454e6bf0870c06bd4e5133))
+
 ## [1.18.0](https://github.com/I-am-PUID-0/DUMB_docs/compare/1.17.0...1.18.0) (2026-05-29)
 
 
