@@ -68,11 +68,12 @@ Each `rclone` instance is defined under the `rclone.instances` section in `dumb_
     - **Direct Premiumize connection**: Set `customer_id` and `api_key`.
 
 ### Adding More Instances
-Users can define additional rclone instances by duplicating the structure and ensuring:
+Users can define additional rclone instances by duplicating the structure in the runtime `/config/dumb_config.json` file and restarting DUMB. The DUMB UI can edit rclone instances after they already exist, including instances created by onboarding or service automation.
 
 - Each `instance name` is **unique**
 - Each `process_name` is **unique**
 - The `key_type` must match the type of Debrid or WebDAV service used (e.g., `RealDebrid`, `AllDebrid`, `TorBox`, `Premiumize`, `NzbDAV`)
+- Direct WebDAV/FTP credential fields such as `username`, `password`, and `customer_id` are valid rclone instance keys and should persist across restarts.
 
 !!! example "Multiple Instances"
     The below example creates a zurg attached rclone mount and a direct debrid connection rclone mount.
