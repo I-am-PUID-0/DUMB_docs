@@ -1,6 +1,13 @@
 # Changelog
 
 
+## [1.21.0](https://github.com/I-am-PUID-0/DUMB_docs/compare/1.20.0...1.21.0) (2026-06-04)
+
+
+### ✨ Features
+
+* **docs:** update AltMount configuration with new mount_type and mount_path options ([e83bd26](https://github.com/I-am-PUID-0/DUMB_docs/commit/e83bd2623a760b2cc2a66d837200e8cdd5bc6e75))
+
 ## [1.20.0](https://github.com/I-am-PUID-0/DUMB_docs/compare/1.19.0...1.20.0) (2026-06-04)
 
 
