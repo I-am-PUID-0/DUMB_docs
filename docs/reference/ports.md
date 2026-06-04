@@ -21,6 +21,8 @@ This reference documents all ports used by DUMB services. Use this guide to conf
 |------|---------|------|
 | 3000 | Riven Frontend | Web UI |
 | 3000 | NzbDAV Frontend | Web UI |
+| 3003 | Pulsarr | Web UI |
+| 3004 | Traefik Proxy Admin | Web UI/API |
 | 3005 | DUMB Frontend | Web UI |
 | 5000 | CLI Debrid | Web UI |
 | 5001 | CLI Battery | API |
@@ -33,6 +35,7 @@ This reference documents all ports used by DUMB services. Use this guide to conf
 | 8000 | DUMB API | API |
 | 8080 | Riven Backend | API |
 | 8080 | NzbDAV Backend | API |
+| 8088 | AltMount | Web UI/API |
 | 8096 | Jellyfin | Web UI |
 | 8096 | Emby | Web UI |
 | 8181 | Tautulli | Web UI |
@@ -47,6 +50,7 @@ This reference documents all ports used by DUMB services. Use this guide to conf
 | 9696 | Prowlarr | Web UI |
 | 9705 | NeutArr | Web UI |
 | 18080 | Traefik | Proxy |
+| 18081 | Traefik Dashboard/API | Web UI/API |
 | 32400 | Plex Media Server | Web UI |
 
 !!! warning "Dynamic port reassignment"
@@ -100,6 +104,16 @@ Provides unified access to embedded service UIs when enabled.
 ```
 http://localhost:18080/service/ui/<service_name>
 ```
+
+### Traefik dashboard/API
+
+| Property | Value |
+|----------|-------|
+| **Port** | 18081 |
+| **Type** | Dashboard / API |
+| **Protocol** | HTTP |
+
+Traefik exposes its dashboard/API on the Traefik entrypoint plus one port. TPA uses this internally through `TRAEFIK_API_URL=http://127.0.0.1:18081`.
 
 ---
 
@@ -196,11 +210,22 @@ http://localhost:3000  # Frontend
     The default NzbDAV ports (`3000` and `8080`) overlap with Riven defaults.
     If you run both services, change one set of ports to avoid conflicts.
 
+### AltMount
+
+| Setting | Default |
+|---------|---------|
+| `port` | `8088` |
+| `config_file` | `/altmount/config.yaml` |
+| `metadata_dir` | `/altmount/metadata` |
+| `log_file` | `/altmount/logs/altmount.log` |
+
+AltMount also exposes `/live` for DUMB startup/readiness checks.
+
 ---
 
 ## Arr suite
 
-The Arr applications support multiple instances for different workflows (Decypharr vs NzbDAV).
+The Arr applications support multiple instances for different workflows (for example Decypharr, NzbDAV, or AltMount).
 
 ### Sonarr (TV shows)
 
@@ -259,10 +284,6 @@ http://localhost:6969
 http://localhost:9696
 ```
 
----
-
-## Optional services
-
 ### NeutArr
 
 | Instance | Port |
@@ -282,6 +303,21 @@ http://localhost:9705  # Default instance
 
 ```
 http://localhost:5055
+```
+
+---
+
+## Optional services
+
+### Pulsarr
+
+| Property | Value |
+|----------|-------|
+| **Port** | 3003 |
+| **Type** | Web UI |
+
+```
+http://localhost:3003
 ```
 
 ### Tautulli
@@ -382,8 +418,8 @@ http://localhost:5050
 ### Web UIs (browser access)
 
 ```
-3000-3005, 5000, 5050, 5055, 6969, 7878-7879, 8096,
-8181-8182, 8282, 8686, 8989-8990, 9696, 9705, 32400
+3000-3005, 5000, 5050, 5055, 6969, 7878-7879, 8088, 8096,
+8181-8182, 8282, 8686, 8989-8990, 9696, 9705, 18081, 32400
 ```
 
 ### APIs (service communication)

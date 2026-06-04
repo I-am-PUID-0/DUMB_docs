@@ -14,10 +14,12 @@ DUMB (Debrid Unlimited Media Bridge) is an all-in-one media management solution 
 * **Unified Deployment** – Combines multiple tools into a single, easy-to-deploy system with onboarding-driven setup.
 * **Built-In Media Server Integration** – Includes **Plex Media Server, Jellyfin, and Emby**, fully embedded in the container to eliminate mount propagation issues.
 * **Automated Content Management** – Uses **Debrid** and **Usenet** services alongside **Plex Discover Watchlists**, **Trakt lists**, and **Seerr** to automate media retrieval.
-* **Arr + WebDAV Workflows** – Supports **Sonarr, Radarr, Lidarr, Whisparr**, plus WebDAV-driven clients like **Decypharr** (Debrid) and **NzbDAV** (Usenet).
-* **NeutArr automation** – Optional continuous searches to fill missing content and upgrade quality.
+* **Arr + WebDAV Workflows** – Supports **Sonarr, Radarr, Lidarr, Whisparr**, plus WebDAV-driven clients like **Decypharr** (Debrid and Usenet), **NzbDAV**, and **AltMount**.
+* **NeutArr automation** – Core backlog-search automation to fill missing content and upgrade quality.
+* **Pulsarr watchlist automation** – Optional Plex watchlist request flow that can route requests into Sonarr and Radarr.
 * **[Seerr Sync](seerr-sync.md)** – One-way request replication from a primary Seerr to subordinate instances for multi-household or multi-stack setups.
-* **Integrated Web UI** – Control and manage services through a simple **web-based interface**.
+* **Integrated Web UI** – Control and manage services through a simple **web-based interface** with embedded service UIs.
+* **Traefik access layer** – DUMB-managed embedded UI routes, optional Traefik Proxy Admin user routes, and optional Cloudflared tunnel ingress all share the bundled Traefik entrypoint while keeping ownership boundaries clear.
 * **[Authentication](authentication.md)** – Optional JWT-based security with user management and session handling.
 * **[Auto-update](auto-update.md)** – Keep services current with automatic updates from GitHub releases, nightly builds, or specific branches.
 * **[Symlink Operations](symlinks.md)** – End-to-end guide for repair, migration, backup/restore, scheduled snapshots, and path-transition playbooks.
@@ -26,62 +28,55 @@ DUMB (Debrid Unlimited Media Bridge) is an all-in-one media management solution 
 * **[FFprobe monitor](ffprobe-monitor.md)** – Background worker that detects and unsticks ffprobe scans in Sonarr/Radarr.
 * **Real-Time Metrics** – Monitor CPU, memory, disk, and network usage with WebSocket-powered live updates.
 
-## Core Components
+## Component Groups
 
-DUMB integrates the following projects to create a seamless media experience:
+DUMB integrates the following projects and service families to create a complete media experience:
 
-### **Riven**
+### **DUMB platform**
 
-[Riven](https://github.com/rivenmedia/riven) is one of multiple options responsible for content management, handling **search queries, downloading, and organizing media** for streaming.
+- **DUMB API** coordinates configuration, service lifecycle, logs, metrics, health checks, updates, onboarding, and backend automation.
+- **DUMB Frontend (dmbdb)** provides the dashboard, onboarding wizard, service pages, embedded UI tabs, logs, metrics, and configuration editors.
 
-### **CLI Debrid**
+### **Workflow engines**
 
-[CLI Debrid](https://github.com/godver3/cli_debrid) is one of multiple options responsible for content management, handling **search queries, downloading, and organizing media** for streaming.
+- **Riven Backend** and **CLI Debrid** provide Debrid-oriented orchestration for searching, collecting, and organizing media.
+- **Decypharr** supports Debrid, native Usenet, and hybrid Arr workflows with torrent/Sabnzbd-compatible endpoints and symlink libraries.
+- **NzbDAV** provides an NZB WebDAV gateway and Arr download-client integration for Usenet workflows.
+- **AltMount** provides an alternate Usenet workflow with WebDAV access, SABnzbd-compatible behavior, metadata storage, and optional rclone mount management.
+- **Plex Debrid** remains available for direct Debrid scraping and playback-prep workflows.
 
-### **Decypharr**
+### **Arr automation**
 
-[Decypharr](https://github.com/sirrobot01/decypharr) is a Debrid-focused option responsible for content management, handling **search queries, downloading, and organizing media** for streaming.
+- **Sonarr**, **Radarr**, **Lidarr**, and **Whisparr** manage media queues, imports, renaming, and library organization.
+- **Prowlarr** centralizes indexer management and syncs indexers to Arr instances.
+- **NeutArr** handles missing-content and quality-upgrade searches across selected Arr instances.
+- **Profilarr** syncs profiles, custom formats, regex patterns, and media-management settings for Sonarr/Radarr.
 
-### **NzbDAV**
+During onboarding, selecting Decypharr, NzbDAV, AltMount, or combinations of them can wire Arr instances automatically. DUMB uses `core_service` to keep those integrations scoped to the intended workflow.
 
-[NzbDAV](https://github.com/nzbdav-dev/nzbdav) provides an **NZB WebDAV gateway** and Arr download-client integration for **Usenet** workflows.
+### **Requests and watchlists**
 
-### **Prowlarr**
+- **Seerr** provides a request and discovery portal that can feed Sonarr/Radarr.
+- **Pulsarr** monitors Plex watchlists and routes requests to Sonarr and Radarr when Plex is the request front door.
+- Plex Discover watchlists, Trakt, MDBList, and similar list sources can feed supported workflow engines.
 
-[Prowlarr](https://prowlarr.com/) centralizes **indexer management** and syncs indexers across the Arr stack.
+### **Media servers**
 
-### **Arrs (Sonarr/Radarr/Lidarr/Whisparr)**
+- **Plex Media Server** is bundled directly inside DUMB, giving it internal access to mounted and symlinked media without extra host bind-mount gymnastics.
+- **Jellyfin** and **Emby** are alternative embedded media servers for the same internal-library model.
 
-The Arrs handle **TV, movies, music, and adult content** automation and organization. During onboarding, selecting Decypharr or NzbDAV can wire Arr instances automatically.
+### **Storage, metadata, and databases**
 
-### **NeutArr**
+- **rclone** mounts remote Debrid or WebDAV-backed storage into the container.
+- **Zurg** provides WebDAV access to Debrid content for workflows that use it.
+- **Zilean** caches metadata and hash lookups to improve scraping performance.
+- **PostgreSQL**, **pgAdmin 4**, **Phalanx DB**, and **CLI Battery** support database, metadata, and administration workflows.
 
-[NeutArr](https://github.com/I-am-PUID-0/NeutArr) is DUMB's default backlog-search automation service and handles **missing-content** and **quality-upgrade** searches across the Arr stack. DUMB can filter NeutArr instances by `core_service` to keep Debrid and Usenet workflows separate.
+### **Access and proxying**
 
-### **Zurg**
-
-[Zurg](https://github.com/debridmediamanager/zurg-testing) acts as the automation engine that interacts with **Real-Debrid** to fetch media files.
-
-### **Zilean**
-
-[Zilean](https://github.com/iPromKnight/zilean) enhances content discovery and caching, optimizing the efficiency of media lookups.
-
-### **rclone**
-
-[rclone](https://github.com/rclone/rclone) manages cloud storage connections and allows **mounting remote debrid storage** as if it were a local drive.
-
-### **Plex Media Server**
-
-[Plex](https://www.plex.tv/) is bundled directly inside DUMB, providing internal access to rclone-mounted content without needing to expose paths via external bind mounts.
-
-### **Jellyfin** & **Emby**
-
-[Jellyfin](https://jellyfin.org/) and [Emby](https://emby.media/) are alternative media servers supported inside the same container.
-
-### **PostgreSQL** & **pgAdmin 4**
-
-* **PostgreSQL** serves as the **primary database** for storing metadata, configurations, and user preferences.
-* **pgAdmin 4** provides a **web-based database management interface**, making it easy to manage PostgreSQL.
+- **Traefik** serves DUMB-owned embedded service UI routes under `/service/ui/<service>`.
+- **Traefik Proxy Admin** manages user-created LAN or public host routes through Traefik without overwriting DUMB's embedded UI routes.
+- **Cloudflared** forwards Cloudflare Tunnel traffic to DUMB Traefik without direct router port forwarding.
 
 ## How Does It Work?
 
@@ -90,9 +85,10 @@ DUMB simplifies the media management workflow by:
 1. **Run Onboarding** to select core services and auto-enable required dependencies.
 2. **Scan Lists & Requests** from Plex, Trakt, and Seerr.
 3. **Fetch From Debrid or Usenet** providers (Real-Debrid, AllDebrid, etc.).
-4. **Route Through Orchestrators** (Riven/CLI Debrid) or **Arr clients** (Decypharr/NzbDAV).
+4. **Route Through Orchestrators** (Riven/CLI Debrid) or **Arr clients** (Decypharr/NzbDAV/AltMount).
 5. **Mount & Organize Content** via Zurg + rclone and Arr-managed libraries.
 6. **Stream via Plex/Jellyfin/Emby** using internal paths and embedded media servers.
+7. **Access Safely** through DUMB embedded UI routes, TPA-managed hostnames, or Cloudflare Tunnel routes that all terminate at DUMB Traefik.
 
 ## Next Steps
 

@@ -76,6 +76,11 @@ Seerr provides:
 
 - **`enabled`**: Whether to start this Seerr instance.
 - **`sync_role`**: `disabled`, `primary`, or `subordinate`.
+
+!!! note "No core_service routing for Seerr"
+
+    Seerr request routing is configured inside the Seerr UI by adding Radarr/Sonarr apps, and Seerr Sync is controlled by `sync_role` plus the top-level `seerr_sync` block. The low-level `core_service` field is not used for Decypharr/NzbDAV/AltMount workflow routing on Seerr and is intentionally hidden from onboarding options.
+
 - **`process_name`**: Display name used in logs and the frontend.
 - **`repo_owner`** / **`repo_name`**: GitHub repository to pull from.
 - **`release_version_enabled`** / **`release_version`**: Use a tagged release if enabled.

@@ -168,7 +168,7 @@ For Sonarr/Radarr/Lidarr/Whisparr instances you want wired to NzbDAV, set
 ```
 
 ```json
-"core_service": ["decypharr", "nzbdav"]
+"core_service": ["decypharr", "nzbdav", "altmount"]
 ```
 
 This tells DUMB to auto-configure Arr integration around NzbDAV’s WebDAV and download-client workflows.
@@ -248,14 +248,14 @@ DUMB will:
 * Update Arr permissions (enable chmod + set folder/file modes)
 * Attempt to add an `nzbdav` download client in the Arrs using their API keys
 
-When `core_service` includes both `decypharr` and `nzbdav`, the root folder base
+When `core_service` includes multiple workflow services, the root folder base
 shifts to `/mnt/debrid/combined_symlinks/<category>`.
 
 !!! info "Automatic vs manual wiring"
 
     When `core_service` is set to `nzbdav` (or includes it), DUMB
     automatically configures download clients, root folders, and permissions.
-    If `core_service` includes both `decypharr` and `nzbdav`, the Arr root folder
+    If `core_service` includes multiple workflow services, the Arr root folder
     base switches to `/mnt/debrid/combined_symlinks/<category>`.
     Manual setup is only needed when `core_service` is blank or you want to override
     the combined workflow wiring.

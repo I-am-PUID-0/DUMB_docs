@@ -105,7 +105,7 @@ curl -X POST http://localhost:8000/config/service-config \
 
 ### `GET /config/service-ui`
 **Description:**
-Returns a list of enabled services with UI ports and the current service UI toggle state.
+Returns a list of enabled services with UI ports, proxied paths, and the current service UI toggle state. The list is dynamic and only includes services that are enabled and expose a UI.
 
 **Response:**
 ```json
@@ -121,6 +121,16 @@ Returns a list of enabled services with UI ports and the current service UI togg
       "name": "pgAdmin 4",
       "port": 5050,
       "path": "/service/ui/pgadmin"
+    },
+    {
+      "name": "AltMount",
+      "port": 8088,
+      "path": "/service/ui/altmount"
+    },
+    {
+      "name": "Traefik Proxy Admin",
+      "port": 3004,
+      "path": "/service/ui/traefik_proxy_admin"
     }
   ]
 }
@@ -130,7 +140,7 @@ Returns a list of enabled services with UI ports and the current service UI togg
 
 ### `POST /config/service-ui`
 **Description:**
-Enables or disables the embedded service UI feature. When enabled, Traefik routes are configured to proxy service UIs through the DUMB frontend.
+Enables or disables the embedded service UI feature. When enabled, DUMB writes Traefik routes for service UIs under `/service/ui/<service>` and the DUMB frontend can embed those routes through iframe-aware `/ui/<service>` paths.
 
 **Request Body:**
 ```json

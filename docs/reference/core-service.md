@@ -29,8 +29,9 @@ still allowing multiple instances of the same Arr service.
 flowchart TD
     ARR[Arr instances]
     CS{core_service}
-    DEC[Decypharr workflow]
+    DEC[Decypharr Debrid/Usenet workflow]
     NZB[NzbDAV workflow]
+    ALT[AltMount workflow]
     PROWLARR[Prowlarr apps + tags]
     IDX[Tagged indexers]
     NEUTARR[NeutArr instance]
@@ -39,8 +40,10 @@ flowchart TD
     ARR ==> CS
     CS -- decypharr --> DEC
     CS -- nzbdav --> NZB
+    CS -- altmount --> ALT
     DEC ==> PROWLARR
     NZB ==> PROWLARR
+    ALT ==> PROWLARR
     PROWLARR ==> IDX
     IDX ==> ARR
     CS ==> NEUTARR
@@ -55,8 +58,9 @@ Use one or more of the core workflow keys:
 
 | Value | Workflow | Typical use |
 |-------|----------|-------------|
-| `decypharr` | Debrid/torrent workflow | Decypharr + Debrid indexers |
+| `decypharr` | Debrid and/or Usenet workflow | Decypharr torrent and Sabnzbd-compatible Arr clients |
 | `nzbdav` | Usenet workflow | NzbDAV + Usenet indexers |
+| `altmount` | Usenet workflow | AltMount SABnzbd-compatible client + Usenet indexers |
 
 Leave `core_service` empty if you do not want DUMB to auto-wire a service into a
 workflow. To combine workflows, set `core_service` to a list or use a
@@ -68,13 +72,13 @@ comma-separated string.
 
 When `core_service` is set on an Arr instance, DUMB:
 
-- Configures matching download clients (Decypharr and/or NzbDAV).
+- Configures matching download clients (Decypharr, NzbDAV, and/or AltMount).
 - Adds or updates Arr root folders and permissions for each workflow.
 - Creates Prowlarr apps tagged with the same core service(s) so indexers sync
   only to the intended Arrs.
 
-When `core_service` includes both `decypharr` and `nzbdav`, DUMB uses a shared
-root folder base at `/mnt/debrid/combined_symlinks/<slug>` for the Arr instance.
+When `core_service` includes multiple workflow keys, DUMB uses a shared root
+folder base at `/mnt/debrid/combined_symlinks/<slug>` for the Arr instance.
 
 When `core_service` is set on a NeutArr instance, DUMB:
 
@@ -113,7 +117,7 @@ When `core_service` is set on a Profilarr instance, DUMB:
 In this layout:
 
 - The Debrid Radarr instance syncs with Decypharr and Debrid indexers.
-- The Usenet Radarr instance syncs with NzbDAV and Usenet indexers.
+- The Usenet Radarr instance can sync with Decypharr, NzbDAV, AltMount, or any selected Usenet workflow service.
 - NeutArr only receives the Debrid instance because `use_neutarr` is set there.
 - Profilarr only links the Debrid instance because `use_profilarr` is set there.
 
@@ -123,7 +127,7 @@ In this layout:
 "sonarr": {
   "instances": {
     "Combined": {
-      "core_service": ["decypharr", "nzbdav"],
+      "core_service": ["decypharr", "nzbdav", "altmount"],
       "use_neutarr": true,
       "use_profilarr": true
     }
@@ -131,8 +135,8 @@ In this layout:
 }
 ```
 
-In this layout, DUMB wires both Decypharr and NzbDAV download clients and root
-folders for the same Sonarr instance.
+In this layout, DUMB wires Decypharr, NzbDAV, and AltMount download clients and
+root folders for the same Sonarr instance.
 
 ---
 

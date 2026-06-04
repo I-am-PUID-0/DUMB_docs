@@ -71,7 +71,7 @@ Example NeutArr instance filter:
 "neutarr": {
   "instances": {
     "Decypharr": {
-      "core_service": ["decypharr", "nzbdav"]
+      "core_service": ["decypharr", "nzbdav", "altmount"]
     }
   }
 }

@@ -54,6 +54,8 @@ Below is the **general structure** of `dumb_config.json`:
     "data_root": "/data",
     "dumb": { ... },
     "traefik": { ... },
+    "traefik_proxy_admin": { ... },
+    "cloudflared": { ... },
     "cli_debrid": { ... },
     "cli_battery": { ... },
     "decypharr": { ... },
@@ -64,7 +66,10 @@ Below is the **general structure** of `dumb_config.json`:
     "phalanx_db": { ... },
     "plex": { ... },
     "tautulli": { ... },
+    "pulsarr": { ... },
+    "altmount": { ... },
     "neutarr": { ... },
+    "profilarr": { ... },
     "seerr": { ... },
     "plex_debrid": { ... },
     "postgres": { ... },
@@ -170,17 +175,25 @@ See the individual service pages for in-depth configuration details:
 
 - [DUMB API](../services/dumb/api.md)
 - [DUMB Frontend](../services/dumb/dumb-frontend.md)
+- [Traefik](../architecture/traefik.md)
+- [Traefik Proxy Admin](../services/optional/traefik-proxy-admin.md)
+- [Cloudflared](../services/optional/cloudflared.md)
 - [Decypharr](../services/core/decypharr.md)
 - [CLI Debrid](../services/core/cli-debrid.md)
 - [NzbDAV](../services/core/nzbdav.md)
+- [AltMount](../services/core/altmount.md)
 - [Plex Media Server](../services/core/plex-media-server.md)
 - [Jellyfin](../services/core/jellyfin.md)
 - [Emby](../services/core/emby.md)
+- [Seerr](../services/core/seerr.md)
 - [Sonarr](../services/core/sonarr.md)
 - [Radarr](../services/core/radarr.md)
 - [Lidarr](../services/core/lidarr.md)
 - [Prowlarr](../services/core/prowlarr.md)
 - [Whisparr](../services/core/whisparr.md)
+- [NeutArr](../services/core/neutarr.md)
+- [Profilarr](../services/core/profilarr.md)
+- [Pulsarr](../services/optional/pulsarr.md)
 - [pgAdmin 4](../services/optional/pgadmin.md)
 - [PostgreSQL](../services/dependent/postgres.md)
 - [rclone](../services/dependent/rclone.md)
@@ -204,6 +217,7 @@ Allowed values:
 * `""` (blank): no core integration
 * `decypharr`: route Arr automation through Decypharr
 * `nzbdav`: route Arr automation through NzbDAV
+* `altmount`: route Arr automation through AltMount
 
 To combine workflows, use a list or a comma-separated `core_service`.
 
@@ -233,7 +247,7 @@ Examples:
 "whisparr": {
   "instances": {
     "Combined": {
-      "core_service": ["decypharr", "nzbdav"]
+      "core_service": ["decypharr", "nzbdav", "altmount"]
     }
   }
 }

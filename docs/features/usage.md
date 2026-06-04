@@ -6,7 +6,9 @@ icon: lucide/play-circle
 # Usage
 
 ## Running DUMB
-DUMB automatically starts the services defined in `dumb_config.json` in the proper order. Each service can also be managed independently using the [DUMB Frontend](../services/dumb/dumb-frontend.md/) or by directly modifying the configuration.
+
+DUMB automatically starts the services defined in `dumb_config.json` in dependency-aware order. Each service can also be managed independently using the [DUMB Frontend](../services/dumb/dumb-frontend.md) or by directly modifying the configuration.
+
 !!! important "Onboarding"
     DUMB is preset to disable all services, other than the API and Frontend on the first startup. 
 
@@ -32,7 +34,8 @@ Updates include:
 - Auto-update toggling
 
 ### Auto-Update
-Some services support automatic updates. 
+
+Most managed services support automatic update checks through the same scheduling fields. This includes top-level services and instance-based services such as Arrs, Seerr, NeutArr, Profilarr, rclone, and Zurg.
 
 Enable by setting:
 ```json
@@ -43,24 +46,13 @@ Enable by setting:
 !!! note "`auto_update_interval` is measured in hours."
 !!! note "`auto_update_start_time` uses 24-hour `HH:MM` format."
 
-Services supporting auto-updates:
+Services use one of these update modes depending on how upstream ships them:
 
-- DUMB Frontend
-- Plex Media Server (Future release)
-- Riven Backend and Frontend
-- Decypharr
-- NzbDAV
-- Jellyfin
-- Emby
-- CLI Debrid
-- Plex Debrid
-- Sonarr
-- Radarr
-- Lidarr
-- Prowlarr
-- Whisparr
-- Zilean
-- Zurg
+- **GitHub release or branch services** use `release_version_enabled`, `release_version`, `branch_enabled`, and `branch`.
+- **Pinned binary services** use `pinned_version`.
+- **Instance-based services** store the same update fields inside each instance.
+
+Use the service page's **Updates** panel to see whether an update is available, whether a pin or branch blocks automatic installation, and when the next scheduled check will run.
 
 ---
 

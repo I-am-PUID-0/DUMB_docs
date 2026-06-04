@@ -5,7 +5,7 @@ icon: lucide/server
 
 # Backend architecture
 
-The DUMB backend is a FastAPI service that manages configuration, process lifecycle, and real-time updates. It is the control plane for all managed services.
+The DUMB backend is a FastAPI service that manages configuration, setup hooks, process lifecycle, dependency ordering, route generation, and real-time updates. It is the control plane for all managed services.
 
 ---
 
@@ -17,8 +17,12 @@ The DUMB backend is a FastAPI service that manages configuration, process lifecy
 | Routers | `/auth`, `/process`, `/config`, `/logs`, `/metrics`, `/ws/*` |
 | Config manager | Reads/writes `dumb_config.json` and service settings |
 | Process handler | Starts/stops services and reports status |
+| Setup modules | Install services and patch service-specific config files |
+| Dependency graph | Resolves hard runtime dependencies, configured links, and optional integrations |
 | Auto-update | Downloads releases/branches, runs setup, restarts services |
 | Auto-restart | Monitors service health and applies backoff |
+| Symlink jobs | Runs repair, migration, snapshot backup, and restore operations |
+| Traefik setup | Writes DUMB-owned embedded UI routes and static Traefik config |
 | Metrics | Collects system and service telemetry |
 
 ---
@@ -67,7 +71,7 @@ sequenceDiagram
 ## Configuration pipeline
 
 1. The API validates configuration updates.
-2. Service setup hooks patch service-specific configs (for example Decypharr or NzbDAV).
+2. Service setup hooks patch service-specific configs (for example Decypharr, NzbDAV, AltMount, Profilarr, Traefik Proxy Admin, or Pulsarr).
 3. The process handler applies changes and updates status.
 4. WebSocket channels broadcast logs and state.
 
@@ -83,6 +87,8 @@ Service lifecycle is centralized in the process handler, which:
 
 - Tracks enabled services and instances
 - Executes setup/install steps
+- Applies service-specific configuration reconciliation
+- Resolves startup dependency order and post-core services
 - Applies auto-update scheduling
 - Enforces shutdown ordering
 

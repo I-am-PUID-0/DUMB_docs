@@ -116,7 +116,7 @@ DUMB automatically links Profilarr to Sonarr/Radarr instances that:
 
 - **Blank (`""`)**: Manual mode. DUMB does **not** auto‑link any Arr instances.
 - **Single core service** (e.g., `decypharr`): Links only Arrs in that stack.
-- **Combined** (e.g., `decypharr, nzbdav`): Links Arrs across both stacks.
+- **Combined** (e.g., `decypharr, nzbdav, altmount`): Links Arrs across matching Debrid and Usenet stacks.
 
 ---
 

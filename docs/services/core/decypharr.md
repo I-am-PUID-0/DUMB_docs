@@ -148,9 +148,10 @@ When Decypharr starts, DUMB performs several automation steps:
 - Syncs Arr instance details into `config.json`
 - Ensures `/mnt/debrid/decypharr_symlinks/<instance>` roots exist
 - Updates Arr permissions and root folders
-- Adds or updates a download client named `decypharr` in Arr
+- Adds or updates a qBittorrent-style download client named `decypharr` in Arr
 - Populates Debrid providers from `api_keys` for Decypharr mount modes
 - Uses per-instance category labels when creating Arr download client entries
+- Adds a Sabnzbd-style download client named `decypharr-usenet` when Decypharr Usenet providers are configured
 
 ### Symlink repair and migration
 
@@ -223,7 +224,7 @@ For Sonarr/Radarr/Lidarr/Whisparr instances you want wired to Decypharr, set
 ```
 
 ```json
-"core_service": ["decypharr", "nzbdav"]
+"core_service": ["decypharr", "nzbdav", "altmount"]
 ```
 
 This tells DUMB to auto-configure Arr integration around Decypharr’s WebDAV and symlink workflows.
@@ -259,14 +260,14 @@ Decypharr 2.0+ can connect directly to NNTP providers (no Sabnzbd container need
 Configure Usenet inside the Decypharr UI or `config.json`. DUMB does not manage
 Usenet provider credentials.
 
-To wire Arrs to Decypharr Usenet, add a **Sabnzbd** download client in Sonarr/Radarr:
+To wire Arrs to Decypharr Usenet manually, add a **Sabnzbd** download client in Sonarr/Radarr:
 
 - Host: `http://decypharr:8282`
 - API Key: Decypharr API token (Settings → Auth)
 - Category: `sonarr` / `radarr`
 
-You can keep the normal Decypharr (qBittorrent) client for torrents and add the
-Sabnzbd client for NZBs.
+DUMB creates this Sabnzbd-compatible client automatically for Arr instances whose
+`core_service` includes `decypharr` after Decypharr has Usenet providers configured. You can keep the normal Decypharr qBittorrent-style client for torrents and use the Sabnzbd-style client for NZBs.
 
 #### Embedded provider keys
 
@@ -310,8 +311,7 @@ If you are passing the rclone mount to an **external** Arr or media server conta
 
 When `core_service` is set to `decypharr` (or includes it), DUMB
 automatically creates the root folders and updates the Arr settings for you.
-If `core_service` includes both `decypharr` and `nzbdav`, the Arr root folder
-base switches to `/mnt/debrid/combined_symlinks/<slug>`.
+If `core_service` includes Decypharr plus another workflow service such as `nzbdav` or `altmount`, the Arr root folder base switches to `/mnt/debrid/combined_symlinks/<slug>`. Decypharr-only hybrid Debrid+Usenet setups keep the Decypharr root.
 Manual configuration is only required when `core_service` is left blank or you
 want to override the combined workflow wiring.
 
@@ -328,9 +328,7 @@ Inside the Sonarr and Radarr web UI:
 
 !!! info "Combined root folder"
 
-    If `core_service` includes both `decypharr` and `nzbdav`, DUMB switches the
-    base path to `/mnt/debrid/combined_symlinks/{slugged folder name}` for the
-    Arr root folders.
+    If `core_service` includes Decypharr plus another workflow service such as `nzbdav` or `altmount`, DUMB switches the base path to `/mnt/debrid/combined_symlinks/{slugged folder name}` for the Arr root folders. Decypharr-only hybrid Debrid+Usenet setups keep the Decypharr root.
 
 !!! info "Per-instance folders"
 
@@ -347,8 +345,8 @@ Inside the Sonarr and Radarr web UI:
 ### 3. Connect Decypharr to Arrs
 
 When `core_service` is set to `decypharr` (or includes it), DUMB
-automatically wires the download client and Arr permissions. If `core_service`
-includes both `decypharr` and `nzbdav`, Arrs will point at
+automatically wires the download client and Arr permissions. If `core_service` includes Decypharr plus another workflow service such as
+`nzbdav` or `altmount`, Arrs will point at
 `/mnt/debrid/combined_symlinks/<slug>` instead of the Decypharr-only root.
 Manual configuration is only required when `core_service` is left blank or you
 want to override the combined workflow wiring.

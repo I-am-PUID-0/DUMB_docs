@@ -17,6 +17,7 @@ The embedded UI feature provides:
 - **Simplified networking** - No need to expose multiple ports
 - **Integrated experience** - Access services without leaving DUMB
 - **Traefik routing** - Dynamic path-based routing to services
+- **Root-app handling** - Services such as AltMount, Pulsarr, Traefik Proxy Admin, and Traefik Dashboard can load root-relative assets and APIs while staying inside the embedded service context
 
 ![Embedded UIs in DUMB](../assets/images/features/embedded_ui.png){ .shadow }
 
@@ -82,6 +83,8 @@ http://<host>:18080/service/ui/<service_name>
 
 The DUMB frontend also proxies UI requests through a `/ui/<service_name>` path for iframes and split view. Direct browser navigation to `/ui/<service_name>` is blocked by the frontend proxy; use the service page or the direct-link button instead.
 
+Some embedded services are root-style web apps. Their JavaScript may call paths such as `/api/*`, `/_next/*`, `/dashboard`, or `/auth/login` instead of paths under the service prefix. The dmbdb proxy uses iframe context, referer, and the `dumb_ui_service` cookie to route those requests back to the active service instead of sending them to DUMB's own API.
+
 ### Available services
 
 | Service | Path | Native Port |
@@ -91,6 +94,7 @@ The DUMB frontend also proxies UI requests through a `/ui/<service_name>` path f
 | Seerr | `/service/ui/seerr` | 5055 |
 | Tautulli | `/service/ui/tautulli` | 8181 |
 | Pulsarr | `/service/ui/pulsarr` | 3003 |
+| AltMount | `/service/ui/altmount` | 8088 |
 | Radarr | `/service/ui/radarr` | 7878 |
 | Sonarr | `/service/ui/sonarr` | 8989 |
 | Lidarr | `/service/ui/lidarr` | 8686 |
@@ -218,7 +222,7 @@ When DUMB authentication is enabled:
 
 1. Verify the service is running
 2. Check the service appears in `/api/config/service-ui`
-3. Verify Traefik configuration in `/config/traefik/services.yaml`
+3. Verify Traefik configuration in `/config/traefik/dynamic/services.yaml`
 4. Check Traefik logs for routing errors
 
 ### "Refused to display in frame" error
@@ -232,6 +236,7 @@ When DUMB authentication is enabled:
 - Verify the service name matches the configuration
 - Check if the path prefix is correct
 - Ensure Traefik has reloaded the configuration
+- For root-style apps, reload from the service page so the frontend can refresh the active embedded UI context cookie
 
 ### Slow loading
 

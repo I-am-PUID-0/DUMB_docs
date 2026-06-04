@@ -11,7 +11,7 @@ This section explains how DUMB is structured, how services are orchestrated, and
 
 ## System overview
 
-DUMB bundles a FastAPI backend, a Nuxt 4 frontend, and a set of managed services (core, dependent, and optional). The backend owns configuration, process lifecycle, and update automation. The frontend surfaces status, logs, and configuration controls.
+DUMB bundles a FastAPI backend, a Nuxt 4 frontend, a Traefik access layer, and a set of managed services (core, dependent, and optional). The backend owns configuration, process lifecycle, setup hooks, dependency ordering, health checks, update automation, and Traefik route generation. The frontend surfaces onboarding, status, logs, metrics, configuration controls, and embedded service UIs.
 
 ```mermaid
 flowchart TD
@@ -22,7 +22,9 @@ flowchart TD
     CFG[Config manager]
     SVC[Managed services]
     VOLS[(Storage mounts)]
-    TR["Traefik (optional)"]
+    TR["Traefik access layer"]
+    TPA["Traefik Proxy Admin"]
+    CFD["Cloudflared"]
 
     U ==> FE
     FE ==> API
@@ -32,6 +34,8 @@ flowchart TD
     SVC ==> VOLS
     FE -.-> TR
     TR ==> SVC
+    TPA -. HTTP provider .-> TR
+    CFD -. tunnel ingress .-> TR
 
 ```
 
@@ -47,13 +51,15 @@ flowchart TD
 | Auto-update | Fetches releases/branches and applies updates per service |
 | Auto-restart | Monitors health and restarts services when needed |
 | Frontend | UI for service status, logs, configuration, and onboarding |
-| Traefik | Unified service UI routing (optional) |
+| Traefik | Unified service UI routing and shared reverse-proxy entrypoint |
+| Traefik Proxy Admin | Optional owner of user-managed LAN/public routes through Traefik |
+| Cloudflared | Optional Cloudflare Tunnel connector that forwards public traffic to Traefik |
 
 ---
 
 ## Storage and mounts
 
-Most services store state under `/data`, `/config`, or service-specific directories (for example `/riven`, `/cli_debrid`, `/decypharr`, `/nzbdav`). Media access is typically provided via `/mnt/debrid`, with symlink folders exposed for curated libraries.
+Most services store state under `/data`, `/config`, or service-specific directories (for example `/riven`, `/cli_debrid`, `/decypharr`, `/nzbdav`, `/altmount`, `/traefik-proxy-admin`, or `/pulsarr`). Media access is typically provided via `/mnt/debrid`, with symlink folders exposed for curated libraries.
 
 !!! tip "Mount propagation"
 
@@ -63,11 +69,11 @@ Most services store state under `/data`, `/config`, or service-specific director
 
 ## Networking and proxying
 
-DUMB exposes the frontend and API directly, while Traefik can be enabled to consolidate access to service UIs under a single port and path-based routing.
+DUMB exposes the frontend and API directly, while Traefik can be enabled to consolidate access to service UIs under a single port and path-based routing. When Traefik Proxy Admin is enabled, Traefik also polls TPA's HTTP provider for user-managed host routes. When Cloudflared is enabled, Cloudflare Tunnel traffic is delivered to the same Traefik entrypoint.
 
 !!! info "Traefik is optional"
 
-    You can access service UIs directly on their ports, or enable Traefik to route everything under a single endpoint.
+    You can access service UIs directly on their ports, or enable Traefik to route embedded UIs under a single endpoint. TPA and Cloudflared are optional additions for user-managed hostnames and tunnel ingress.
 
 ---
 

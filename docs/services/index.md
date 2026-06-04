@@ -25,9 +25,9 @@ DUMB is built as a collection of microservices that communicate over internal AP
 
 2. **Debrid Orchestration & Content Management**
 
-    *  **Riven Backend**,  **CLI Debrid**,  **Plex Debrid**, and  **Decypharr** each serve as a Debrid orchestrator: requesting, managing, and monitoring content acquisition workflows
+    *  **Riven Backend**,  **CLI Debrid**, and  **Plex Debrid** serve as Debrid orchestrators; **Decypharr** can serve Debrid, Usenet, or hybrid Arr workflows
     * These core services integrate with providers like Trakt, Seerr, and Debrid APIs to manage what content gets fetched
-    *  **NzbDAV** provides a WebDAV endpoint and download client integration for NZB workflows
+    *  **NzbDAV** and **AltMount** provide WebDAV/download-client style integrations for NZB workflows
     *  **Sonarr/Radarr/Lidarr/Whisparr** manage media queues and organize content from download clients
     *  **Prowlarr** manages indexers and syncs them to the Arrs
     *  **NeutArr** automates backlog and quality-upgrade searches across the Arr stack
@@ -53,6 +53,12 @@ DUMB is built as a collection of microservices that communicate over internal AP
     *  **PostgreSQL** stores metadata for Riven, Zilean, and pgAdmin
     *  **pgAdmin** is a GUI for exploring PostgreSQL databases
 
+7. **Access Layer**
+
+    *  **Traefik** serves DUMB-owned embedded UI routes from `/config/traefik/dynamic/services.yaml`
+    *  **Traefik Proxy Admin** owns user-managed LAN or public host routes through Traefik's HTTP provider
+    *  **Cloudflared** can carry Cloudflare Tunnel traffic to DUMB Traefik without direct port forwarding
+
 ---
 
 ## Quick Reference
@@ -64,8 +70,9 @@ DUMB is built as a collection of microservices that communicate over internal AP
 | [Riven Backend](../services/core/riven-backend.md)       | Core      | Debrid orchestrator (searching, scraping, automation)     |
 | [CLI Debrid](../services/core/cli-debrid.md)             | Core      | Debrid orchestrator (list scanning, upgrades, Plex watch) |
 | [Plex Debrid](../services/core/plex-debrid.md)           | Core      | Debrid orchestrator (direct scraping and playback prep)   |
-| [Decypharr](../services/core/decypharr.md)               | Core      | Debrid orchestrator for Arrs via torrent API integration  |
+| [Decypharr](../services/core/decypharr.md)               | Core      | Debrid and native Usenet workflow service for Arrs        |
 | [NzbDAV](../services/core/nzbdav.md)                     | Core      | WebDAV gateway for NZB + Arr download client workflows    |
+| [AltMount](../services/core/altmount.md)                 | Core      | Alternative Usenet WebDAV and SABnzbd-compatible workflow |
 | [Plex](../services/core/plex-media-server.md)            | Core      | Media server for hosting and playing content              |
 | [Jellyfin](../services/core/jellyfin.md)                 | Core      | Media server for hosting and playing content              |
 | [Emby](../services/core/emby.md)                         | Core      | Media server for hosting and playing content              |

@@ -5,7 +5,7 @@ icon: lucide/traffic-cone
 
 # Traefik proxy
 
-Traefik provides optional reverse-proxy routing for service UIs and user-managed external routes. When enabled, it exposes a single entry point and maps requests to services through DUMB-generated dynamic config and, optionally, Traefik Proxy Admin.
+Traefik provides optional reverse-proxy routing for service UIs and user-managed external routes. When enabled, it exposes a single entry point and maps requests to services through DUMB-generated dynamic config and, optionally, Traefik Proxy Admin. Cloudflared can then carry Cloudflare Tunnel traffic to that same entrypoint.
 
 ---
 
@@ -47,6 +47,12 @@ DUMB separates Traefik configuration ownership into lanes:
 | Traefik Proxy Admin | User-managed reverse proxy routes | `http://127.0.0.1:3004/api/traefik/config` |
 
 Traefik watches `/config/traefik/dynamic` with the file provider. When Traefik Proxy Admin is enabled, DUMB also adds Traefik's HTTP provider pointed at TPA's generated config endpoint.
+
+This split is intentional:
+
+- DUMB can safely regenerate embedded UI routes whenever services change.
+- TPA can manage host-based routes, auth, and middleware without DUMB overwriting them.
+- Cloudflared can bring external traffic to Traefik without replacing either DUMB's routes or TPA's routes.
 
 ---
 

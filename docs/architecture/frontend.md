@@ -48,7 +48,7 @@ The frontend can embed service UIs in iframes when Traefik is enabled, keeping n
 
 !!! tip "Traefik paths"
 
-    Embedded UIs use Traefik paths like `http://<host>/radarr/` or `http://<host>/sonarr/` when proxying is enabled.
+    DUMB-owned embedded UIs use Traefik paths like `http://<host>:18080/service/ui/radarr` or `http://<host>:18080/service/ui/sonarr` when proxying is enabled. Inside dmbdb service pages, iframe traffic is routed through frontend `/ui/<service>` paths so root-style service apps can keep their own relative URLs.
 
 ---
 

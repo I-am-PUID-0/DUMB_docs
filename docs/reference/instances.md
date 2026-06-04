@@ -43,7 +43,7 @@ Services that support instances use an `instances` map keyed by a friendly name:
 - Assign unique ports per instance to avoid collisions.
 - Use distinct `config_dir` and `log_file` paths.
 - Keep `process_name` descriptive for clarity in the UI.
-- Set `core_service` when integrating with Decypharr or NzbDAV (single value, list, or comma-separated).
+- Set `core_service` when integrating with Decypharr, NzbDAV, or AltMount (single value, list, or comma-separated).
 
 ---
 

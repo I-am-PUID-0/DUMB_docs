@@ -88,6 +88,9 @@ hide:
 - ## :material-monitor-share:{ .lg .middle } Embedded UIs
   Use Traefik to unify service UIs under one endpoint and manage everything from the DUMB dashboard.
 
+- ## :material-cloud-lock:{ .lg .middle } Integrated Access Layer
+  Keep DUMB-owned embedded UI routes, user-managed Traefik Proxy Admin routes, and Cloudflare Tunnel ingress in clearly separated lanes.
+
 - ## :material-chart-line:{ .lg .middle } Live Metrics
   Track CPU, memory, disk, and network usage in real time with WebSocket-powered updates.
 
@@ -106,14 +109,26 @@ hide:
 
 DUMB integrates a comprehensive ecosystem of media management tools:
 
-**Media Servers**: Plex Media Server, Jellyfin, Emby  
-**Orchestrators**: Riven, CLI Debrid, Plex Debrid, Decypharr, NzbDAV  
-**Automation**: Sonarr, Radarr, Lidarr, Prowlarr, Whisparr, NeutArr, Profilarr  
-**Storage & Caching**: Zurg, rclone  
-**Monitoring & Tools**: Tautulli, Zilean, Seerr  
-**Database**: PostgreSQL, pgAdmin 4, Phalanx DB
+- **Media Servers**: Plex Media Server, Jellyfin, Emby
+- **Orchestrators**: Riven, CLI Debrid, Plex Debrid, Decypharr, NzbDAV, AltMount
+- **Automation**: Sonarr, Radarr, Lidarr, Prowlarr, Whisparr, NeutArr, Profilarr
+- **Storage & Caching**: Zurg, rclone
+- **Requests & Watchlists**: Seerr, Pulsarr
+- **Monitoring & Tools**: Tautulli, Zilean
+- **Access & Proxying**: Traefik, Traefik Proxy Admin, Cloudflared
+- **Database**: PostgreSQL, pgAdmin 4, Phalanx DB
 
 All services work together seamlessly with Plex Discover Watchlists, Trakt lists, Seerr, and more to streamline media discovery and access.
+
+## Integrated Access Layer
+
+DUMB's Traefik integration is more than a convenience proxy. It gives the stack a single controlled access layer:
+
+- **Embedded service UIs** are DUMB-owned routes generated under `/service/ui/<service>` and surfaced in the dmbdb service pages.
+- **Traefik Proxy Admin** manages operator-created LAN or public hostnames through Traefik's HTTP provider, while DUMB keeps owning the embedded UI route file.
+- **Cloudflared** brings Cloudflare Tunnel traffic to DUMB Traefik without requiring direct router port forwarding.
+
+That separation matters: DUMB can keep regenerating service UI routes for enabled services, TPA can own the routes you deliberately publish, and Cloudflared can be the ingress path for Cloudflare-hosted DNS without replacing Traefik.
 
 ---
 

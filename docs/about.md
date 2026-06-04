@@ -29,19 +29,20 @@ Unlike other solutions that focus on one piece of the puzzle, **DUMB integrates 
 
 *  *Embedded media servers* — Plex, Jellyfin, and Emby run inside the same container, ensuring seamless access to mounted content and full internal control
 *  *Service coordination* — via the internal DUMB API and real-time config management
-*  *Automated acquisition* — with core services for discovery and orchestrators like Riven, CLI Debrid, Decypharr, and NzbDAV
+*  *Automated acquisition* — with core services for discovery and orchestrators like Riven, CLI Debrid, Decypharr, NzbDAV, and AltMount
 *  *Cloud storage mounting* — through rclone mounts direct to debrid (e.g., Real-Debrid WebDAV) or utilizing Zurg's WebDAV
 *  *Arr automation* — Sonarr, Radarr, Lidarr, and Whisparr handle queues, renaming, and library organization
 *  *Library management* — using symlinks, metadata enrichment, and optional server updates
 *  *Metadata caching* — with Zilean to reduce latency and boost scraping efficiency
-*  *Visual control* — via the DUMB Frontend for onboarding, live logs, settings, and monitoring
+*  *Visual control* — via the DUMB Frontend for onboarding, live logs, settings, embedded service UIs, and monitoring
+*  *Integrated access layer* — DUMB-owned Traefik embedded UI routes, optional Traefik Proxy Admin user routes, and optional Cloudflared ingress through the same Traefik entrypoint
 
 All services are configured through a centralized file (`dumb_config.json`) and can be dynamically updated at runtime via the DUMB Frontend.
 
 !!! info "Combined workflows"
 
     You can attach a single Arr instance to multiple workflows by setting
-    `core_service` to a list (for example `["decypharr", "nzbdav"]`). When combined,
+    `core_service` to a list (for example `["decypharr", "nzbdav", "altmount"]`). When combined,
     DUMB switches Arr root folders to `/mnt/debrid/combined_symlinks/<slug>`.
 
 ---
@@ -57,7 +58,7 @@ DUMB is built using a **modular, microservices** architecture, with the followin
 | **Plex Media Server**    | First-class embedded media server for direct playback of collected content                   |
 | **Riven**                | Debrid content orchestration (Plex, Trakt, Seerr, lists)                                     |
 | **CLI Debrid**           | Debrid content orchestration (lists, watchlists, upgrades)                                   |
-| **Decypharr**            | Debrid workflow for Arr download clients and symlink libraries                               |
+| **Decypharr**            | Debrid and native Usenet workflow for Arr download clients and symlink libraries             |
 | **NzbDAV**               | Usenet WebDAV gateway and Arr download-client integration                                    |
 | **Prowlarr**             | Indexer management and sync to Arr services                                                  |
 | **Sonarr/Radarr/Lidarr/Whisparr** | Arr automation for movies, TV, music, and adult content                             |
@@ -66,6 +67,7 @@ DUMB is built using a **modular, microservices** architecture, with the followin
 | **rclone**               | Mounts cloud storage into the local container for access by your media server                |
 | **Zilean**               | Caches metadata and file hash lookups for performance                                        |
 | **PostgreSQL / pgAdmin** | Internal databases and optional management UI                                                |
+| **Traefik / TPA / Cloudflared** | Embedded service UI routing, user-managed reverse proxy routes, and optional Cloudflare Tunnel ingress |
 
 You can explore how these services connect in the [Services Overview](services/index.md) page.
 

@@ -44,6 +44,7 @@ nav:
         - CLI Debrid: services/core/cli-debrid.md
         - Decypharr: services/core/decypharr.md
         - NzbDAV: services/core/nzbdav.md
+        - AltMount: services/core/altmount.md
         - Plex Media Server: services/core/plex-media-server.md
         - Jellyfin: services/core/jellyfin.md
         - Emby: services/core/emby.md

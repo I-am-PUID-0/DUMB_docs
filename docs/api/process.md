@@ -250,7 +250,7 @@ The `core_services` field can be a single object or an array. The `name` can be 
 
 !!! note "Notes"
     * Dependencies like Zurg or rclone are created using templates and attached to the calling core service.
-    * Optional services such as `pgadmin` or `zilean` are started only if included.
+    * Optional services such as `pgadmin`, `zilean`, `pulsarr`, `traefik_proxy_admin`, or `cloudflared` are started only if included.
     * `debrid_key` is injected into Zurg or Decypharr as needed.
     * `service_options` can override config values such as `log_level`, `port`, or `enabled`.
     * Any startup errors appear in the `errors` list.

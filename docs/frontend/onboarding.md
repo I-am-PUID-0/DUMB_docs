@@ -66,7 +66,7 @@ Choose one or more core services:
 
 | Category | Services |
 |----------|----------|
-| **Orchestrators** | Riven Backend, CLI Debrid, Decypharr, NzbDAV |
+| **Orchestrators** | Riven Backend, CLI Debrid, Decypharr, NzbDAV, AltMount |
 | **Request/automation** | Seerr, NeutArr |
 | **Media servers** | Plex, Jellyfin, Emby |
 | **Arr services** | Sonarr, Radarr, Lidarr, Prowlarr, Whisparr |
@@ -78,15 +78,16 @@ Choose one or more core services:
 !!! note "Guided setup"
 
     1. Choose **Debrid**, **Usenet**, or **Both**.
-    2. Decide whether to use **Arrs** (required for Usenet).
-    3. If using both workflows, pick **Combined** or **Separate** Arr instances.
-    4. (Optional) Enable **multi-quality** Sonarr/Radarr instances.
-    5. Select supporting services (Seerr, NeutArr, Zilean, PostgreSQL + pgAdmin, Tautulli).
-    6. Click **Apply recommendations** to populate the core services list.
+    2. Choose the Usenet workflow service (**Decypharr**, **NzbDAV**, **AltMount**, NzbDAV + AltMount, or **All**) when using Usenet.
+    3. Decide whether to use **Arrs** (required for Usenet).
+    4. If using both workflows, pick **Combined** or **Separate** Arr instances.
+    5. (Optional) Enable **multi-quality** Sonarr/Radarr instances.
+    6. Select supporting services (Seerr, NeutArr, Profilarr, music/adult Arrs, and optional utilities in later steps).
+    7. Click **Apply recommendations** to populate the core services list.
 
 !!! tip "Arr instance layouts"
 
-    - **Combined**: one Arr instance uses a list-based `core_service` (Decypharr + NzbDAV)
+    - **Combined**: one Arr instance uses a list-based `core_service` when multiple workflow services are selected. Decypharr-only hybrid setups keep `core_service: decypharr`.
     - **Separate**: Debrid and Usenet get separate Arr instances
     - **Multi-quality**: Sonarr/Radarr instances are created per quality tier
 

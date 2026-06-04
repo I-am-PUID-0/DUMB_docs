@@ -5,7 +5,7 @@ icon: lucide/rocket
 
 # Getting Started with DUMB
 
-Welcome to **DUMB – Debrid Unlimited Media Bridge**: a unified media management and automation tool designed for users who want to streamline their content discovery, acquisition, and playback using services like **Plex**, **Real-Debrid**, **Trakt**, **Seerr**, and more.
+Welcome to **DUMB – Debrid Unlimited Media Bridge**: a unified media management and automation platform designed for users who want to streamline content discovery, acquisition, organization, playback, and service access using Debrid, Usenet, Arrs, media servers, request tools, and embedded service UIs.
 
 ---
 
@@ -13,12 +13,13 @@ Welcome to **DUMB – Debrid Unlimited Media Bridge**: a unified media managemen
 
 DUMB combines multiple backend services into a single containerized system to provide:
 
--  **Search and discovery** using Trakt, Plex Watchlists, Seerr, etc.
--  **Real-Debrid integration** for content fetching via Zurg
--  **Remote mounting** of Debrid storage using rclone
--  **Metadata caching** with Zilean
--  **Automated download orchestration** with Riven
--  **Web-based dashboards** for control and monitoring
+- **Search and discovery** using Trakt, Plex watchlists, Seerr, Pulsarr, and other list/request sources.
+- **Debrid and Usenet workflows** through services such as Riven, CLI Debrid, Decypharr, NzbDAV, and AltMount.
+- **Arr automation** with Sonarr, Radarr, Lidarr, Whisparr, Prowlarr, NeutArr, and Profilarr.
+- **Remote mounting and symlink libraries** using rclone, Zurg, and DUMB-managed path conventions.
+- **Embedded media servers** with Plex, Jellyfin, and Emby inside the same container.
+- **Web-based dashboards** for onboarding, service control, logs, metrics, configuration, updates, and embedded service UIs.
+- **Optional access routing** through DUMB Traefik, Traefik Proxy Admin, and Cloudflared.
 
 ---
 
@@ -26,10 +27,12 @@ DUMB combines multiple backend services into a single containerized system to pr
 
 DUMB is ideal if you:
 
-- Have a Plex, Jellyfin, or Emby or server and want to auto-fill your library from your Seerr requests, Trakt, Plex Watchlists, Mdblist, or Listrr
-- Want a plug-and-play solution that works with Debrid services
+- Have a Plex, Jellyfin, or Emby server and want to auto-fill your library from Seerr requests, Trakt, Plex watchlists, MDBList, Listrr, or similar sources
+- Want a guided solution that works with Debrid, Usenet, or hybrid workflows
 - Prefer a containerized, modular deployment
 - Want real-time log viewing, auto-updates, and one-click service control
+- Want embedded access to service UIs without exposing every service port
+- Want an optional path for protected LAN/public routing through Traefik Proxy Admin and Cloudflare Tunnel
 - Don't want or know how to manually configure and deploy all the incorporated [Services](../services/index.md)
 
 ---
@@ -46,7 +49,7 @@ DUMB is ideal if you:
 
 -  Docker or a compatible runtime
 -  Linux (recommended) or Windows (WSL)
--  Real-Debrid
+- A Debrid or Usenet provider, depending on the workflow you choose
 
 ---
 

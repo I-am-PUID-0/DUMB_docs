@@ -15,7 +15,7 @@ icon: lucide/film
 | -------------- | ---------------------------------- |
 | Core Service   | Movie automation                   |
 | Depends On     | None                               |
-| Optional       | Decypharr, NzbDAV, Prowlarr         |
+| Optional       | Decypharr, NzbDAV, AltMount, Prowlarr |
 | Exposes UI     | Yes (Web UI)                       |
 
 ---
@@ -55,7 +55,7 @@ icon: lucide/film
 
 ### Key Configuration Fields
 
-* `core_service`: Set to `decypharr`, `nzbdav`, or a list of both to enable DUMB integration.
+* `core_service`: Set to `decypharr`, `nzbdav`, `altmount`, or a list of workflow keys to enable DUMB integration.
 * `use_neutarr`: Opt this instance into NeutArr automation.
 * `use_profilarr`: Opt this instance into Profilarr auto‑linking.
 * `port`: Web UI port (default `7878`).
@@ -84,7 +84,8 @@ GitHub sources take priority when enabled and are **not** a fallback. `pinned_ve
 
 * For Decypharr integration, set `core_service` to `decypharr` and follow the [Decypharr guide](decypharr.md).
 * For NzbDAV integration, set `core_service` to `nzbdav` and follow the [NzbDAV guide](nzbdav.md).
-* For combined workflows, set `core_service` to `["decypharr", "nzbdav"]`.
+* For AltMount integration, set `core_service` to `altmount` and follow the [AltMount guide](altmount.md).
+* For combined workflows, set `core_service` to a list such as `["decypharr", "nzbdav", "altmount"]`.
 * Use [Prowlarr](prowlarr.md) to centrally manage indexers and sync them to Radarr.
 * DUMB enables Arr folder permission updates and applies permissions to configured root folders during integration.
 * See [Core Service Routing](../../reference/core-service.md) for how `core_service` affects automation.
