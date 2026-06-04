@@ -1,6 +1,13 @@
 # Changelog
 
 
+## [1.20.0](https://github.com/I-am-PUID-0/DUMB_docs/compare/1.19.0...1.20.0) (2026-06-04)
+
+
+### ✨ Features
+
+* add AltMount service for Usenet workflows and enhance documentation ([21a5a5b](https://github.com/I-am-PUID-0/DUMB_docs/commit/21a5a5b859c8615723509d3c100ebf23ac616804))
+
 ## [1.19.0](https://github.com/I-am-PUID-0/DUMB_docs/compare/1.18.0...1.19.0) (2026-06-03)
 
 
