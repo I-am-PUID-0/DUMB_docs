@@ -37,9 +37,11 @@ The default DUMB config block looks like this:
     "repo_name": "altmount",
     "pinned_version": "latest",
     "port": 8088,
+    "mount_type": "rclone",
     "config_dir": "/altmount",
     "config_file": "/altmount/config.yaml",
     "metadata_dir": "/altmount/metadata",
+    "mount_path": "/mnt/debrid/altmount",
     "log_file": "/altmount/logs/altmount.log",
     "wait_for_url": "http://127.0.0.1:8088/live"
   }
@@ -48,12 +50,23 @@ The default DUMB config block looks like this:
 
 DUMB downloads the matching Linux release binary into `/altmount/altmount`, writes `/altmount/version.txt`, creates the metadata/log/rclone directories, and creates `/altmount/config.yaml` only when it does not already exist. Existing AltMount config files are left in place so UI or manual edits are preserved.
 
+Choose the mount behavior with `mount_type`:
+
+| Value | Behavior |
+|-------|----------|
+| `dfs` | FUSE Mount. DUMB uses the same operator-facing value as Decypharr and writes AltMount's upstream `mount_type: fuse`. |
+| `rclone` | Default. Embedded/Internal Rclone. DUMB writes AltMount's upstream `mount_type: rclone`. |
+| `external_rclone` | External Rclone. DUMB writes AltMount's upstream `mount_type: rclone_external`. |
+| `none` | No AltMount-managed mount. |
+
+DUMB stores the same mount-mode values used by Decypharr (`dfs`, `rclone`, `external_rclone`, `none`) and writes the matching upstream AltMount value into `/altmount/config.yaml`. AltMount's own UI names these choices Disabled, Internal RClone, AltMount Native, and External RClone.
+
 ## First Start
 
 1. Select `AltMount` as the Usenet workflow service in guided onboarding, or enable `altmount` in runtime config.
 2. Start the service from DUMB.
 3. Open the embedded UI from the AltMount service page or browse to `http://<host>:8088`.
-4. Configure providers, SABnzbd behavior, Arr integration, and rclone settings in AltMount.
+4. Configure providers, SABnzbd behavior, Arr integration, and any advanced rclone settings in AltMount.
 
 DUMB enables AltMount SABnzbd compatibility, adds linked Arr instances to AltMount config, and registers AltMount as a SABnzbd download client in Arr instances whose `core_service` includes `altmount`. The generated first-run config intentionally leaves `providers` empty. Add provider details in AltMount before expecting download or WebDAV workflows to return content.
 
