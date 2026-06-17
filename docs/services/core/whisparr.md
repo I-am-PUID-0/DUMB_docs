@@ -29,6 +29,9 @@ icon: lucide/eye
       "enabled": false,
       "core_service": "",
       "use_neutarr": false,
+      "postgres_enabled": false,
+      "postgres_main_db": "",
+      "postgres_log_db": "",
       "process_name": "Whisparr",
       "repo_owner": "Whisparr",
       "repo_name": "Whisparr",
@@ -56,6 +59,8 @@ icon: lucide/eye
 
 * `core_service`: Set to `decypharr`, `nzbdav`, `altmount`, or a list of workflow keys to enable DUMB integration.
 * `use_neutarr`: Opt this instance into NeutArr automation.
+* `postgres_enabled`: Opt this instance into DUMB-managed PostgreSQL config. SQLite is the default; set this to `true` only when you want Whisparr to use PostgreSQL.
+* `postgres_main_db` / `postgres_log_db`: Optional database-name overrides. When blank, DUMB uses `whisparr-main` and `whisparr-log` for the default instance, or unique instance-scoped names for additional instances.
 * `port`: Web UI port (default `6969`).
 * `pinned_version`: Optional version pin for Whisparr updates.
 * `repo_owner` / `repo_name`: GitHub repo used for releases or branch builds.
@@ -64,6 +69,33 @@ icon: lucide/eye
 * `exclude_dirs`: Directories to preserve when clearing.
 * `platforms`: Build platforms (auto‑defaults to `["dotnet"]` when using branches).
 * `config_dir`, `config_file`, `log_file`: Paths for config and logs.
+
+---
+
+## PostgreSQL database mode
+
+When `postgres_enabled` is `true`, DUMB:
+
+* enables the bundled PostgreSQL service if needed;
+* creates the Whisparr main/log databases in `postgres.databases`;
+* starts PostgreSQL before Whisparr; and
+* writes the required `PostgresUser`, `PostgresPassword`, `PostgresHost`, `PostgresPort`, `PostgresMainDb`, and `PostgresLogDb` entries to Whisparr's `config.xml`.
+
+During onboarding, enabling `postgres_enabled` for Whisparr is enough; you do not need to separately select PostgreSQL as an optional service.
+
+!!! danger "This does not migrate existing SQLite data"
+    Setting `postgres_enabled: true` changes the database backend Whisparr starts with. It does **not** copy `whisparr.db` into PostgreSQL.
+
+    If you enable this on an existing SQLite-backed Whisparr instance without doing a manual migration, Whisparr can start against fresh PostgreSQL databases and appear empty or newly initialized.
+
+This mode is intended for new Whisparr databases unless you are deliberately following upstream/community migration notes. Back up both `/whisparr/...` and `/postgres_data` before experimenting with an existing instance.
+
+Manual migration, if you choose to attempt it, is outside DUMB automation. Use the upstream Whisparr PostgreSQL guide as the source of truth for whether migration is currently documented and supported.
+
+!!! warning "PostgreSQL is not a temporary toggle"
+    There is no known supported migration path from PostgreSQL back to SQLite for Whisparr. Treat `postgres_enabled: true` as a long-term database choice unless you are willing to recreate the Whisparr instance from scratch.
+
+    DUMB does not provide automatic SQLite-to-PostgreSQL or PostgreSQL-to-SQLite migration for Whisparr.
 
 ---
 
@@ -100,3 +132,4 @@ GitHub sources take priority when enabled and are **not** a fallback. `pinned_ve
 
 * [Whisparr Website](https://whisparr.com/)
 * [Whisparr GitHub](https://github.com/Whisparr/Whisparr)
+* [Whisparr PostgreSQL setup](https://wiki.servarr.com/whisparr/postgres-setup)

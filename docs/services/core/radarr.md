@@ -30,6 +30,9 @@ icon: lucide/film
       "core_service": "",
       "use_neutarr": false,
       "use_profilarr": false,
+      "postgres_enabled": false,
+      "postgres_main_db": "",
+      "postgres_log_db": "",
       "process_name": "Radarr",
       "repo_owner": "Radarr",
       "repo_name": "Radarr",
@@ -58,6 +61,8 @@ icon: lucide/film
 * `core_service`: Set to `decypharr`, `nzbdav`, `altmount`, or a list of workflow keys to enable DUMB integration.
 * `use_neutarr`: Opt this instance into NeutArr automation.
 * `use_profilarr`: Opt this instance into Profilarr auto‑linking.
+* `postgres_enabled`: Opt this instance into DUMB-managed PostgreSQL config. SQLite is the default; set this to `true` only when you want Radarr to use PostgreSQL.
+* `postgres_main_db` / `postgres_log_db`: Optional database-name overrides. When blank, DUMB uses `radarr-main` and `radarr-log` for the default instance, or unique instance-scoped names for additional instances.
 * `port`: Web UI port (default `7878`).
 * `pinned_version`: Optional version pin for Radarr updates.
 * `repo_owner` / `repo_name`: GitHub repo used for releases or branch builds.
@@ -66,6 +71,33 @@ icon: lucide/film
 * `exclude_dirs`: Directories to preserve when clearing.
 * `platforms`: Build platforms (auto‑defaults to `["dotnet"]` when using branches).
 * `config_dir`, `config_file`, `log_file`: Paths for config and logs.
+
+---
+
+## PostgreSQL database mode
+
+When `postgres_enabled` is `true`, DUMB:
+
+* enables the bundled PostgreSQL service if needed;
+* creates the Radarr main/log databases in `postgres.databases`;
+* starts PostgreSQL before Radarr; and
+* writes the required `PostgresUser`, `PostgresPassword`, `PostgresHost`, `PostgresPort`, `PostgresMainDb`, and `PostgresLogDb` entries to Radarr's `config.xml`.
+
+During onboarding, enabling `postgres_enabled` for Radarr is enough; you do not need to separately select PostgreSQL as an optional service.
+
+!!! danger "This does not migrate existing SQLite data"
+    Setting `postgres_enabled: true` changes the database backend Radarr starts with. It does **not** copy `radarr.db` into PostgreSQL.
+
+    If you enable this on an existing SQLite-backed Radarr instance without doing a manual migration, Radarr can start against fresh PostgreSQL databases and appear empty or newly initialized.
+
+This mode is intended for new Radarr databases unless you are deliberately following Radarr's upstream community migration notes. Radarr's upstream documentation says existing SQLite migration is unsupported and only new PostgreSQL installs are supported. Back up both `/radarr/...` and `/postgres_data` before experimenting with an existing instance.
+
+Manual migration, if you choose to attempt it, is outside DUMB automation. The rough upstream flow is: back up, stop Radarr, enable PostgreSQL mode, let Radarr initialize the PostgreSQL schema once, stop Radarr again, then follow the Radarr `pgloader` migration guide for the main database.
+
+!!! warning "PostgreSQL is not a temporary toggle"
+    There is no known supported migration path from PostgreSQL back to SQLite for Radarr. Treat `postgres_enabled: true` as a long-term database choice unless you are willing to recreate the Radarr instance from scratch.
+
+    DUMB does not provide automatic SQLite-to-PostgreSQL or PostgreSQL-to-SQLite migration for Radarr.
 
 ---
 
@@ -102,3 +134,4 @@ GitHub sources take priority when enabled and are **not** a fallback. `pinned_ve
 
 * [Radarr Website](https://radarr.video/)
 * [Radarr GitHub](https://github.com/Radarr/Radarr)
+* [Radarr PostgreSQL setup](https://wiki.servarr.com/radarr/postgres-setup)

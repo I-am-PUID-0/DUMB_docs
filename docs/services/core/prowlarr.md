@@ -27,6 +27,9 @@ icon: lucide/search
   "instances": {
     "Default": {
       "enabled": false,
+      "postgres_enabled": false,
+      "postgres_main_db": "",
+      "postgres_log_db": "",
       "process_name": "Prowlarr",
       "repo_owner": "Prowlarr",
       "repo_name": "Prowlarr",
@@ -52,6 +55,8 @@ icon: lucide/search
 
 ### Key Configuration Fields
 
+* `postgres_enabled`: Opt this instance into DUMB-managed PostgreSQL config. SQLite is the default; set this to `true` only when you want Prowlarr to use PostgreSQL.
+* `postgres_main_db` / `postgres_log_db`: Optional database-name overrides. When blank, DUMB uses `prowlarr-main` and `prowlarr-log` for the default instance, or unique instance-scoped names for additional instances.
 * `port`: Web UI port (default `9696`).
 * `pinned_version`: Optional version pin for Prowlarr updates.
 * `repo_owner` / `repo_name`: GitHub repo used for releases or branch builds.
@@ -60,6 +65,33 @@ icon: lucide/search
 * `exclude_dirs`: Directories to preserve when clearing.
 * `platforms`: Build platforms (auto‑defaults to `["dotnet"]` when using branches).
 * `config_dir`, `config_file`, `log_file`: Paths for config and logs.
+
+---
+
+## PostgreSQL database mode
+
+When `postgres_enabled` is `true`, DUMB:
+
+* enables the bundled PostgreSQL service if needed;
+* creates the Prowlarr main/log databases in `postgres.databases`;
+* starts PostgreSQL before Prowlarr; and
+* writes the required `PostgresUser`, `PostgresPassword`, `PostgresHost`, `PostgresPort`, `PostgresMainDb`, and `PostgresLogDb` entries to Prowlarr's `config.xml`.
+
+During onboarding, enabling `postgres_enabled` for Prowlarr is enough; you do not need to separately select PostgreSQL as an optional service.
+
+!!! danger "This does not migrate existing SQLite data"
+    Setting `postgres_enabled: true` changes the database backend Prowlarr starts with. It does **not** copy `prowlarr.db` into PostgreSQL.
+
+    If you enable this on an existing SQLite-backed Prowlarr instance without doing a manual migration, Prowlarr can start against fresh PostgreSQL databases and appear empty or newly initialized.
+
+This mode is intended for new Prowlarr databases unless you are deliberately following upstream/community migration notes. Back up both `/prowlarr/...` and `/postgres_data` before experimenting with an existing instance.
+
+Manual migration, if you choose to attempt it, is outside DUMB automation. Use the upstream Prowlarr PostgreSQL guide as the source of truth for whether migration is currently documented and supported.
+
+!!! warning "PostgreSQL is not a temporary toggle"
+    There is no known supported migration path from PostgreSQL back to SQLite for Prowlarr. Treat `postgres_enabled: true` as a long-term database choice unless you are willing to recreate the Prowlarr instance from scratch.
+
+    DUMB does not provide automatic SQLite-to-PostgreSQL or PostgreSQL-to-SQLite migration for Prowlarr.
 
 ---
 
@@ -139,3 +171,4 @@ Other custom indexers in the definition repository are available to add manually
 
 * [Prowlarr Website](https://prowlarr.com/)
 * [Prowlarr GitHub](https://github.com/Prowlarr/Prowlarr)
+* [Prowlarr PostgreSQL setup](https://wiki.servarr.com/prowlarr/postgres-setup)
