@@ -63,7 +63,7 @@ Use Conventional Commits for PR titles and commits, for example:
 
 Before opening a PR:
 
-- Run formatters/linters relevant to changed files.
+- Run formatters/linters relevant to changed files. For DUMB backend changes, run `make format` before `make verify`; `make verify` is check-only and does not rewrite Black formatting drift.
 - Run focused tests for your change.
 - Include manual verification notes when automated tests are not available.
 
@@ -108,4 +108,3 @@ If you have ideas, feature requests, or feedback:
 - Discuss in the community before starting larger PRs
 
 ---
-
