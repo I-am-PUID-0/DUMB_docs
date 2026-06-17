@@ -1,6 +1,13 @@
 # Changelog
 
 
+## [1.22.0](https://github.com/I-am-PUID-0/DUMB_docs/compare/1.21.1...1.22.0) (2026-06-17)
+
+
+### ✨ Features
+
+* **docs:** add PostgreSQL configuration options for core services ([994334e](https://github.com/I-am-PUID-0/DUMB_docs/commit/994334e420319e1e8c5e8277cbf6f43a2cfe88a1))
+
 ## [1.21.1](https://github.com/I-am-PUID-0/DUMB_docs/compare/1.21.0...1.21.1) (2026-06-17)
 
 
