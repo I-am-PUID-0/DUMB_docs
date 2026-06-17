@@ -1,6 +1,13 @@
 # Changelog
 
 
+## [1.21.1](https://github.com/I-am-PUID-0/DUMB_docs/compare/1.21.0...1.21.1) (2026-06-17)
+
+
+### 📖 Documentation
+
+* update contributing guidelines for backend formatting and verification ([a89fd90](https://github.com/I-am-PUID-0/DUMB_docs/commit/a89fd90b705bd2c45e0d17e08f8227bac72e29bc))
+
 ## [1.21.0](https://github.com/I-am-PUID-0/DUMB_docs/compare/1.20.0...1.21.0) (2026-06-04)
 
 
