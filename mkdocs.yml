@@ -20,6 +20,7 @@ nav:
       - Seerr Sync: features/seerr-sync.md
       - FFprobe Monitor: features/ffprobe-monitor.md
       - Metrics: features/metrics.md
+      - AI Assistant: features/ai-assistant.md
       - Embedded UIs: features/embedded-ui.md
   - Frontend:
       - Overview: frontend/index.md
@@ -92,6 +93,7 @@ nav:
       - Process Management: api/process.md
       - Configuration: api/config.md
       - Logs: api/logs.md
+      - AI Assistant: api/ai.md
       - Seerr Sync: api/seerr-sync.md
       - WebSocket: api/websocket.md
       - WebSocket Logs: api/websocket_logs.md

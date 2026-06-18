@@ -27,6 +27,7 @@ DUMB (Debrid Unlimited Media Bridge) is an all-in-one media management solution 
 * **Advanced Logging & Monitoring** – View and filter service logs directly from the [DUMB Frontend](../services/dumb/dumb-frontend.md).
 * **[FFprobe monitor](ffprobe-monitor.md)** – Background worker that detects and unsticks ffprobe scans in Sonarr/Radarr.
 * **Real-Time Metrics** – Monitor CPU, memory, disk, and network usage with WebSocket-powered live updates.
+* **[AI Assistant](ai-assistant.md)** – Optional local or cloud model diagnostics using redacted logs, service config, and dependency context.
 
 ## Component Groups
 

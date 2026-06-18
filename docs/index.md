@@ -94,6 +94,9 @@ hide:
 - ## :material-chart-line:{ .lg .middle } Live Metrics
   Track CPU, memory, disk, and network usage in real time with WebSocket-powered updates.
 
+- ## :material-auto-fix:{ .lg .middle } AI Assist
+  Ask service or stack questions with optional local or cloud AI, using previewable redacted context from logs, docs, config, and dependencies.
+
 - ## :material-shield-lock:{ .lg .middle } Authentication
   Optional JWT auth with user management to secure the UI and API.
 
@@ -114,7 +117,7 @@ DUMB integrates a comprehensive ecosystem of media management tools:
 - **Automation**: Sonarr, Radarr, Lidarr, Prowlarr, Whisparr, NeutArr, Profilarr
 - **Storage & Caching**: Zurg, rclone
 - **Requests & Watchlists**: Seerr, Pulsarr
-- **Monitoring & Tools**: Tautulli, Zilean
+- **Monitoring & Tools**: Tautulli, Zilean, AI Assist
 - **Access & Proxying**: Traefik, Traefik Proxy Admin, Cloudflared
 - **Database**: PostgreSQL, pgAdmin 4, Phalanx DB
 
