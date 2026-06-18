@@ -1,6 +1,13 @@
 # Changelog
 
 
+## [1.22.1](https://github.com/I-am-PUID-0/DUMB_docs/compare/1.22.0...1.22.1) (2026-06-18)
+
+
+### 📖 Documentation
+
+* **ai:** document AI assistant feature and API ([9447159](https://github.com/I-am-PUID-0/DUMB_docs/commit/9447159b39a77a12b4a42672c376476a631d700a))
+
 ## [1.22.0](https://github.com/I-am-PUID-0/DUMB_docs/compare/1.21.1...1.22.0) (2026-06-17)
 
 
