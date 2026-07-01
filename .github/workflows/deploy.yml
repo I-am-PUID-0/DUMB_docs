@@ -72,7 +72,7 @@ jobs:
         run: poetry run zensical build --clean
 
       - name: Upload pages
-        uses: actions/upload-pages-artifact@v4
+        uses: actions/upload-pages-artifact@v5
         with:
           path: site
       
