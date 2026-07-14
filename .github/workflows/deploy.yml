@@ -30,7 +30,7 @@ jobs:
 
     steps:
       - name: Checkout Repository
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
         with:
           fetch-depth: 0
 
@@ -46,7 +46,7 @@ jobs:
           poetry install --no-interaction --no-root  # Install dependencies from pyproject.toml
 
       - name: Cache Dependencies
-        uses: actions/cache@v5
+        uses: actions/cache@v6
         with:
           path: ~/.cache/pip
           key: dumb-docs-${{ runner.os }}-${{ hashFiles('**/poetry.lock') }}
@@ -72,7 +72,7 @@ jobs:
         run: poetry run zensical build --clean
 
       - name: Upload pages
-        uses: actions/upload-pages-artifact@v4
+        uses: actions/upload-pages-artifact@v5
         with:
           path: site
       
@@ -101,7 +101,7 @@ jobs:
       REPO_NAME: ${{ needs.deploy.outputs.repo_name }}
     steps:
       - name: Checkout
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
 
       - name: Check if Release Exists
         id: check_release
@@ -139,7 +139,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
       - name: Post announcement to Discord
         env:
           DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
@@ -158,7 +158,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
 
       - name: "Remove 'autorelease: pending' label from all merged PRs"
         env:
