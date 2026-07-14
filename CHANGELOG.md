@@ -1,6 +1,23 @@
 # Changelog
 
 
+## [1.22.2](https://github.com/I-am-PUID-0/DUMB_docs/compare/1.22.1...1.22.2) (2026-07-14)
+
+
+### 🤡 Other Changes
+
+* update GitHub Actions to use latest action versions and update dependencies ([f08e961](https://github.com/I-am-PUID-0/DUMB_docs/commit/f08e961c85debf2270b20785b2699fe9e149ea90))
+
+
+### 📖 Documentation
+
+* **nzbdav:** update configuration details and migration process ([e5d8cce](https://github.com/I-am-PUID-0/DUMB_docs/commit/e5d8cce7d8a1664c89ddd0d7043bfebb6418a0c1))
+
+
+### 🛠️ Refactors
+
+* remove Plex Debrid references and update related documentation ([6814a42](https://github.com/I-am-PUID-0/DUMB_docs/commit/6814a42dc9de2194fae36b6a751b696cf1a33509))
+
 ## [1.22.1](https://github.com/I-am-PUID-0/DUMB_docs/compare/1.22.0...1.22.1) (2026-06-18)
 
 
