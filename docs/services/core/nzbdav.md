@@ -80,11 +80,20 @@ NzbDAV also exposes a **Usenet download client** path in Arr by emulating a Sabn
 
 ## Configuration in `dumb_config.json`
 
+!!! important "DUMB defaults to the NzbDAV fork"
+
+    DUMB installs and updates NzbDAV from the maintained
+    [`nzbdav/nzbdav`](https://github.com/nzbdav/nzbdav) **fork by default**.
+    It does **not** default to the original
+    [`nzbdav-dev/nzbdav`](https://github.com/nzbdav-dev/nzbdav) repository.
+    The `repo_owner: "nzbdav"` and `repo_name: "nzbdav"` values below select
+    that fork for release, branch, and update operations.
+
 ```json
 "nzbdav": {
     "enabled": false,
     "process_name": "NzbDAV",
-    "repo_owner": "nzbdav-dev",
+    "repo_owner": "nzbdav",
     "repo_name": "nzbdav",
     "release_version_enabled": false,
     "release_version": "latest",
@@ -157,6 +166,19 @@ The Arr instance list is stored in NzbDAV’s SQLite config under `arr.instances
 !!! info "Startup timing"
 
     If the NzbDAV backend is not reachable yet, DUMB retries the download-client setup shortly after startup.
+
+### Database migration startup
+
+DUMB starts the NzbDAV frontend before running the blocking database migration.
+This is the default launch behavior and lets the Web UI show NzbDAV's live
+**Database maintenance in progress** page, including migration steps, progress,
+and elapsed time, even when a large database takes a long time to migrate.
+
+After a successful migration, DUMB starts the normal backend and the page reloads
+into NzbDAV when it becomes healthy. If migration fails, DUMB keeps the frontend
+alive through NzbDAV's brief failure-display window, then stops it and exits the
+NzbDAV process with the migration's non-zero exit code. No separate setting is
+required.
 
 ### Arr `core_service` setting
 
@@ -306,4 +328,6 @@ Instance names are slugified into categories if present (for example, `Radarr 4K
 
 ## Resources
 
-* [NzbDAV GitHub](https://github.com/nzbdav-dev/nzbdav)
+* [NzbDAV fork used by DUMB (default)](https://github.com/nzbdav/nzbdav)
+* [Original NzbDAV repository (not the DUMB default)](https://github.com/nzbdav-dev/nzbdav)
+* [Upstream migration progress integration issue](https://github.com/nzbdav/nzbdav/issues/268)
