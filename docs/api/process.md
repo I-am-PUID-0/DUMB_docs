@@ -219,23 +219,6 @@ The `core_services` field can be a single object or an array. The `name` can be 
     }
     ```
 
-=== "Plex Debrid"
-
-    ```json
-    {
-      "core_services": {
-        "name": "plex_debrid",
-        "debrid_service": "RealDebrid",
-        "debrid_key": "abc123",
-        "service_options": {
-          "rclone": { "log_level": "DEBUG" },
-          "zurg": { "port": 9194 }
-        }
-      },
-      "optional_services": []
-    }
-    ```
-
 #### Example Response:
 
 ```json

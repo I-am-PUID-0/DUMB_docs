@@ -71,7 +71,6 @@ Below is the **general structure** of `dumb_config.json`:
     "neutarr": { ... },
     "profilarr": { ... },
     "seerr": { ... },
-    "plex_debrid": { ... },
     "postgres": { ... },
     "pgadmin": { ... },
     "prowlarr": { ... },

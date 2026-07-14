@@ -50,7 +50,6 @@ nav:
         - Jellyfin: services/core/jellyfin.md
         - Emby: services/core/emby.md
         - Seerr: services/core/seerr.md
-        - Plex Debrid: services/core/plex-debrid.md
         - Riven Backend: services/core/riven-backend.md
         - Sonarr: services/core/sonarr.md
         - Radarr: services/core/radarr.md
@@ -113,7 +112,6 @@ nav:
       - NeutArr: faq/neutarr.md
       - pgAdmin: faq/pgadmin.md
       - Plex: faq/plex.md
-      - Plex Debrid: faq/plex-debrid.md
       - PostgreSQL: faq/postgres.md
       - rclone: faq/rclone.md
       - Riven: faq/riven.md

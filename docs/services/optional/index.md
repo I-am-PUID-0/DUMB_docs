@@ -29,7 +29,7 @@ Optional services are:
 | [Pulsarr](../optional/pulsarr.md) | Plex watchlist request automation                         | Plex, Sonarr, Radarr           |
 | [Traefik Proxy Admin](../optional/traefik-proxy-admin.md) | User-managed Traefik reverse proxy routes | Traefik, PostgreSQL |
 | [Cloudflared](../optional/cloudflared.md) | Cloudflare Tunnel connector for DUMB Traefik | Traefik |
-| [Zilean](../optional/zilean.md)   | Debrid scraper and metadata cache for various core services | Riven, CLI Debrid, Plex Debrid |
+| [Zilean](../optional/zilean.md)   | Debrid scraper and metadata cache for various core services | Riven, CLI Debrid |
 
 ---
 

@@ -33,7 +33,6 @@ Core services are the services that:
 | [Jellyfin](jellyfin.md)             | Media server for hosting and playing content         |                                   |                              |
 | [Emby](emby.md)                     | Media server for hosting and playing content         |                                   |                              |
 | [Seerr](seerr.md)                   | Media request and discovery platform                 |                                   | Plex, Radarr, Sonarr          |
-| [Plex Debrid](plex-debrid.md)       | Debrid media scraper and automation engine           | rclone, Zurg                      | Zilean                       |
 | [Riven Backend](riven-backend.md)   | Debrid media scraper and automation engine           | PostgreSQL, rclone, Zurg          | Zilean, Riven Frontend       |
 | [Sonarr](sonarr.md)                 | TV automation and organization                        |                                   | Prowlarr, Decypharr, NzbDAV, AltMount  |
 | [Radarr](radarr.md)                 | Movie automation and organization                     |                                   | Prowlarr, Decypharr, NzbDAV, AltMount  |
@@ -94,12 +93,6 @@ If you enable a core service, be sure to also:
 * **Requires:** Arr instances with `core_service: altmount` for DUMB-managed download-client setup
 * **Optionally Uses:** AltMount providers, import strategy, and rclone settings managed in AltMount
 * **Outputs:** SABnzbd-compatible Usenet workflow and WebDAV-backed media access
-
-### [Plex Debrid](plex-debrid.md)
-
-* **Requires:** [rclone](../dependent/rclone.md), and [Zurg](../dependent/zurg.md)
-* **Optionally Uses:** [Zilean](../optional/zilean.md) (as a scraper)
-* **Outputs:** Raw files from debrid for Plex/Emby/Jellyfin
 
 ### [Riven Backend](riven-backend.md)
 

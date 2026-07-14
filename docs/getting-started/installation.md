@@ -50,7 +50,6 @@ You'll need to bind mount the following volumes when running the container:
 |`/postgres_data`            | Location for PostgreSQL databases                 |
 |`/pgadmin/data`             | Location for pgAdmin 4 data                       |
 |`/zilean/app/data`          | Location for Zilean data                          |
-|`/plex_debrid/config`       | Location for plex_debrid data                     |
 |`/cli_debrid/data`          | Location for cli_debrid data                      |
 |`/phalanx_db/data`          | Location for phalanx_db data                      |
 |`/decypharr`                | Location for decypharr data                       |

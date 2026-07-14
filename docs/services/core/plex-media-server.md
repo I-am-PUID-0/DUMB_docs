@@ -5,7 +5,7 @@ icon: lucide/tv
 
 # Plex Media Server (Core Service)
 
-**Plex Media Server** serves as the centralized media host for the DUMB ecosystem. It enables playback of collected media through a wide range of client devices and integrates seamlessly with DUMB core orchestrators like Riven, CLI Debrid, Plex Debrid, and Decypharr.
+**Plex Media Server** serves as the centralized media host for the DUMB ecosystem. It enables playback of collected media through a wide range of client devices and integrates seamlessly with DUMB core orchestrators like Riven, CLI Debrid, and Decypharr.
 
 ---
 
@@ -400,7 +400,7 @@ Look for the Plex process listed under the `Processes` section. When active tran
 
 ## Integration with Other Services
 
-Plex is designed to serve content collected and maintained by core DUMB services including **Riven**, **CLI Debrid**, **Plex Debrid**, and **Decypharr**. These services fetch, organize, and optionally symlink media content into the mounted directory used by Plex.
+Plex is designed to serve content collected and maintained by core DUMB services including **Riven**, **CLI Debrid**, and **Decypharr**. These services fetch, organize, and optionally symlink media content into the mounted directory used by Plex.
 
 !!! note "By default, media content is made available inside the container at `/mnt/debrid` through rclone mounts."
 
