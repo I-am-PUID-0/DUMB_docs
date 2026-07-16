@@ -1,6 +1,13 @@
 # Changelog
 
 
+## [1.22.4](https://github.com/I-am-PUID-0/DUMB_docs/compare/1.22.3...1.22.4) (2026-07-16)
+
+
+### 📖 Documentation
+
+* **arr:** document guided SQLite-to-PostgreSQL migration ([674326c](https://github.com/I-am-PUID-0/DUMB_docs/commit/674326ccb5f3aff183a5d45bf3171f9642e20d58))
+
 ## [1.22.3](https://github.com/I-am-PUID-0/DUMB_docs/compare/1.22.2...1.22.3) (2026-07-16)
 
 
