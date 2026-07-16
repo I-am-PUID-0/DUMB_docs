@@ -505,6 +505,59 @@ Rebuilds symlink-backup schedule state from current service config.
 
 ---
 
+## Arr PostgreSQL Migration
+
+These endpoints power the guarded Sonarr/Radarr SQLite-to-PostgreSQL workflow. See [Arr SQLite to PostgreSQL Migration](../features/arr-postgres-migration.md) for operator guidance and limitations.
+
+### `GET /process/arr-postgres-migration/preflight`
+
+Query parameter: `process_name`.
+
+Returns non-mutating SQLite integrity, Arr version, PostgreSQL connectivity/role, target database, and backup-space checks. `ready` is false when any blocking check fails. The response never includes the PostgreSQL password.
+
+### `POST /process/arr-postgres-migration/start`
+
+Queues a persisted rehearsal or cutover job.
+
+```json
+{
+  "process_name": "Sonarr NzbDAV",
+  "mode": "rehearsal",
+  "include_logs": false,
+  "confirmation": "MIGRATE Sonarr NzbDAV",
+  "acknowledge_unsupported": true,
+  "acknowledge_backup": true,
+  "acknowledge_target_reset": true
+}
+```
+
+`mode` must be `rehearsal` or `cutover`. The backend requires every acknowledgement and exact confirmation text. Jobs and detailed stage events persist under `/config/arr-postgres-migration/jobs`.
+
+### `GET /process/arr-postgres-migration/status`
+
+Query parameter: `job_id`.
+
+Returns stage, percentage, recent detailed events, result counts, errors, and rollback state for one job.
+
+### `GET /process/arr-postgres-migration/latest`
+
+Query parameter: `process_name`.
+
+Returns the most recently updated migration job for that service so dmbdb can resume visibility after navigation or refresh.
+
+### `POST /process/arr-postgres-migration/rollback`
+
+```json
+{
+  "job_id": "example-job-id",
+  "confirmation": "ROLLBACK Sonarr NzbDAV"
+}
+```
+
+Restores the job's preserved `config.xml`, persists `postgres_enabled: false`, and restarts the service against SQLite when it was running. This does not reverse-copy changes made after PostgreSQL cutover.
+
+---
+
 ### `GET /process/capabilities`
 
 Returns backend capabilities and feature flags. Used by the frontend to determine available features.
@@ -529,7 +582,10 @@ Returns backend capabilities and feature flags. Used by the frontend to determin
   "symlink_manifest_compare": true,
   "symlink_backup_schedule": true,
   "symlink_backup_manifest_list": true,
-  "symlink_manifest_file_list": true
+  "symlink_manifest_file_list": true,
+  "arr_postgres_migration": true,
+  "arr_postgres_migration_rehearsal": true,
+  "arr_postgres_migration_rollback": true
 }
 ```
 
@@ -552,6 +608,9 @@ Returns backend capabilities and feature flags. Used by the frontend to determin
 | `symlink_backup_schedule` | Whether scheduled symlink backup status/reschedule routes are available |
 | `symlink_backup_manifest_list` | Whether `/process/symlink-backup-manifests` is available |
 | `symlink_manifest_file_list` | Whether `/process/symlink-manifest-files` is available |
+| `arr_postgres_migration` | Whether guarded Sonarr/Radarr SQLite-to-PostgreSQL migration routes are available |
+| `arr_postgres_migration_rehearsal` | Whether isolated rehearsal imports are supported |
+| `arr_postgres_migration_rollback` | Whether jobs can restore preserved SQLite configuration |
 
 ---
 

@@ -90,14 +90,14 @@ During onboarding, enabling `postgres_enabled` for Sonarr is enough; you do not 
 
     If you enable this on an existing SQLite-backed Sonarr instance without doing a manual migration, Sonarr can start against fresh PostgreSQL databases and appear empty or newly initialized.
 
-This mode is intended for new Sonarr databases unless you are deliberately following Sonarr's upstream community migration notes. Sonarr's upstream documentation says existing SQLite migration is unsupported and only new PostgreSQL installs are supported. Back up both `/sonarr/...` and `/postgres_data` before experimenting with an existing instance.
+For an existing instance, use the **Database Migration** tool on its service page. Run a rehearsal first, review its table-count validation, and only then start guarded cutover. See [Arr SQLite to PostgreSQL Migration](../../features/arr-postgres-migration.md).
 
-Manual migration, if you choose to attempt it, is outside DUMB automation. The rough upstream flow is: back up, stop Sonarr, enable PostgreSQL mode, let Sonarr initialize the PostgreSQL schema once, stop Sonarr again, then follow the Sonarr `pgloader` migration guide for the main database.
+Sonarr's upstream documentation still classifies existing SQLite migration as unsupported. Back up `/sonarr/...` and `/postgres_data` before proceeding, even when using DUMB's guarded workflow.
 
 !!! warning "PostgreSQL is not a temporary toggle"
     There is no known supported migration path from PostgreSQL back to SQLite for Sonarr. Treat `postgres_enabled: true` as a long-term database choice unless you are willing to recreate the Sonarr instance from scratch.
 
-    DUMB does not provide automatic SQLite-to-PostgreSQL or PostgreSQL-to-SQLite migration for Sonarr.
+    DUMB preserves the pre-cutover SQLite database and can restore its configuration, but it does not copy later PostgreSQL changes back into SQLite.
 
 ---
 

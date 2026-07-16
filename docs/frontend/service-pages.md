@@ -24,6 +24,7 @@ Each service page includes:
 - On-demand update checks and auto-update scheduling
 - Seerr Sync controls when viewing a Seerr instance
 - Symlink Job Center (for symlink-capable services) with active jobs, recent history, retry, and failure clearing
+- Guided SQLite-to-PostgreSQL rehearsal/cutover panel on Sonarr and Radarr instances
 - Sidebar operator QoL controls (quick filters, saved views, compact mode, and command palette)
 
 ---
@@ -43,6 +44,27 @@ Action buttons:
 !!! note "API service controls"
 
     The DUMB API service does not show Start/Stop/Restart controls in the UI.
+
+---
+
+## Database Migration panel
+
+On Sonarr and Radarr service pages, **Database Migration** opens a guided SQLite-to-PostgreSQL workflow when the backend advertises the `arr_postgres_migration` capability.
+
+The panel provides:
+
+- non-mutating readiness checks;
+- visible SQLite sizes and PostgreSQL target names;
+- rehearsal before cutover;
+- optional application-log migration;
+- exact acknowledgement and confirmation gates;
+- persistent stage/percentage/event progress;
+- imported library row-count results; and
+- explicit SQLite rollback when a cutover backup is available.
+
+The frontend requires a successful rehearsal before enabling its cutover choice. Closing or navigating away from the panel does not cancel the backend job; reopening the service page resumes the latest job display.
+
+See [Arr SQLite to PostgreSQL Migration](../features/arr-postgres-migration.md) before using it in production.
 
 ---
 
@@ -208,6 +230,8 @@ is allowlisted for logs:
 - Follow tail and refresh on an interval (including custom intervals)
 - Manual refresh
 - Download logs
+
+Service-aware parsing promotes inner application metadata when a service wraps its own log format. Bazarr rows use Bazarr's real timestamp and severity, preserve useful logger names such as `waitress`, and group SQL/parameters/traceback continuation lines into the originating error instead of showing each physical line as a current-time `INFO` row.
 
 ### Special log tabs
 
