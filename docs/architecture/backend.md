@@ -92,6 +92,8 @@ Service lifecycle is centralized in the process handler, which:
 - Starts the DUMB API immediately and starts an already-installed DUMB Frontend
   before enabled-service preinstall, so the control plane remains available
   during longer service preparation
+- Records individual service preinstall failures without shutting down the
+  control plane; failed services retry through their normal startup path
 - Applies auto-update scheduling
 - Enforces shutdown ordering
 

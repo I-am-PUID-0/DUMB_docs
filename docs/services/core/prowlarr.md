@@ -167,6 +167,29 @@ Other custom indexers in the definition repository are available to add manually
 
 ---
 
+## Installation troubleshooting
+
+Before extracting an Arr archive, DUMB validates that `tar` can read the full
+gzip archive and logs both the downloaded archive size and free space in the
+installation filesystem. If validation or extraction fails, the structured
+DUMB error includes `tar`'s stderr, its exit status, the archive size, and the
+available space. Messages such as `unexpected end of file`, `No space left on
+device`, `Permission denied`, or `Read-only file system` therefore remain
+visible even when `/opt/prowlarr` is ephemeral.
+
+A Prowlarr preinstall failure no longer shuts down the DUMB API or Frontend.
+DUMB records the failure, completes the remaining preinstall work, and retries
+Prowlarr during normal service startup. If the retry also fails, Prowlarr stays
+stopped while the DUMB control plane remains available for logs and service
+management.
+
+For repeated extraction failures, check the Docker host's storage and inode
+capacity at its Docker root directory. A full container removal/recreation
+deletes the failed archive under `/opt`, so preserve the complete DUMB log when
+requesting support.
+
+---
+
 ## Resources
 
 * [Prowlarr Website](https://prowlarr.com/)

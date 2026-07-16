@@ -97,6 +97,7 @@ You can control which version or branch of Zilean is deployed by setting:
 
 ## Tips
 - The first-time run of Zilean can take a long time; see the [Zilean FAQ](../../faq/zilean.md#why-is-zilean-spamming-my-logs) for more info.
+- Runtime Zilean rebuilds use an on-demand managed .NET 10 SDK. See the [Zilean SDK troubleshooting guide](../../faq/zilean.md#why-does-dotnet-restore-say-that-no-net-sdks-were-found) if restore reports exit code `145` or no installed SDK.
 - Logs from Zilean can be accessed via DUMB’s Frontend or directly from `/log/zilean.log`.
 - If Zilean fails to bind, check for existing services on port `8182`.
 - Use the `clear_on_update` and `exclude_dirs` settings to preserve persistent data.
