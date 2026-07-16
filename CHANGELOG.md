@@ -1,6 +1,13 @@
 # Changelog
 
 
+## [1.22.3](https://github.com/I-am-PUID-0/DUMB_docs/compare/1.22.2...1.22.3) (2026-07-16)
+
+
+### 📖 Documentation
+
+* **bazarr:** document optional service integration ([c8c15b7](https://github.com/I-am-PUID-0/DUMB_docs/commit/c8c15b7167cc6c7557bae84cd751bedf5868bd35))
+
 ## [1.22.2](https://github.com/I-am-PUID-0/DUMB_docs/compare/1.22.1...1.22.2) (2026-07-14)
 
 
