@@ -84,6 +84,24 @@ You can control which version or branch of the frontend is deployed by setting:
 - Navigate to: `http://<host>:<port>`
     - default port `3005`
 
+## Startup behavior
+
+DUMB starts its API before the enabled-service preinstall phase. When the
+frontend runtime is already built and its configured version does not require a
+new install, DUMB also starts the frontend before that phase. This makes the UI
+available while the remaining services are still being prepared and started.
+
+Frontend startup remains after the service preinstall phase when any of the
+following applies:
+
+- The configured frontend entrypoint is missing.
+- A branch install is enabled.
+- A floating release such as `latest`, `nightly`, or `prerelease` must be resolved.
+- The installed frontend version does not match the configured release version.
+
+In those cases, DUMB keeps the existing install/update path and starts the
+frontend after its runtime is ready.
+
 ## Frontend usage guides
 
 For UI walkthroughs, use the frontend section:

@@ -89,6 +89,9 @@ Service lifecycle is centralized in the process handler, which:
 - Executes setup/install steps
 - Applies service-specific configuration reconciliation
 - Resolves startup dependency order and post-core services
+- Starts the DUMB API immediately and starts an already-installed DUMB Frontend
+  before enabled-service preinstall, so the control plane remains available
+  during longer service preparation
 - Applies auto-update scheduling
 - Enforces shutdown ordering
 
