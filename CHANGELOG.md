@@ -1,6 +1,13 @@
 # Changelog
 
 
+## [1.22.6](https://github.com/I-am-PUID-0/DUMB_docs/compare/1.22.5...1.22.6) (2026-07-16)
+
+
+### 📖 Documentation
+
+* **startup:** document resilient preinstall and SDK recovery ([ebb1b37](https://github.com/I-am-PUID-0/DUMB_docs/commit/ebb1b37fba47f3aaeda31db955b29c331b740e8e))
+
 ## [1.22.5](https://github.com/I-am-PUID-0/DUMB_docs/compare/1.22.4...1.22.5) (2026-07-16)
 
 
