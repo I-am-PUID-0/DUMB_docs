@@ -322,6 +322,12 @@ Instance names are slugified into categories if present (for example, `Radarr 4K
 * If rclone fails to authenticate, verify `WEBDAV_USER`/`WEBDAV_PASSWORD` and restart the container.
 * If Arr download clients are not created, confirm each Arr instance is enabled and has a readable `config.xml` for API key discovery.
 * If Arr root folders are missing, verify `core_service` includes `nzbdav` and the Arr API is reachable.
+* Runtime NzbDAV builds use an on-demand managed .NET SDK. DUMB merges the
+  NzbDAV-specific build variables with the container environment so system tools
+  remain available, and invokes `/bin/bash` explicitly when installing the SDK.
+  An error such as `No such file or directory: 'bash'` indicates an image that
+  predates this fix and should be retested after pulling a fixed tag and
+  recreating the container.
 * Check `/log` for NzbDAV startup errors, and ensure `frontend_port`/`backend_port` are not already in use.
 
 ---
