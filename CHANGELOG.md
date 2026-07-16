@@ -1,6 +1,13 @@
 # Changelog
 
 
+## [1.22.5](https://github.com/I-am-PUID-0/DUMB_docs/compare/1.22.4...1.22.5) (2026-07-16)
+
+
+### 📖 Documentation
+
+* **startup:** document early DUMB control-plane availability ([b92a37f](https://github.com/I-am-PUID-0/DUMB_docs/commit/b92a37f075584619f50115badfba8cca4355a862))
+
 ## [1.22.4](https://github.com/I-am-PUID-0/DUMB_docs/compare/1.22.3...1.22.4) (2026-07-16)
 
 
