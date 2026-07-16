@@ -128,6 +128,8 @@ The table shows:
 
 Use **Standard / passive** for the lowest overhead. Use **Enhanced / read-only probes** when you need SQLite page/WAL metadata or PostgreSQL statistics. Plex is always collected passively while running, even if Enhanced is selected.
 
+Enable **Ignore network storage score** for an individual service when its NFS/SMB placement is intentional. The filesystem remains visible in the service details, but it no longer raises the pressure score or replaces recommendations derived from the remaining metrics.
+
 Pressure classifications are `healthy`, `observing`, `moderate`, `high`, `critical`, `unavailable`, or `disabled`. Collect through representative imports, scans, health checks, and playback before deciding whether PostgreSQL would help.
 
 ---

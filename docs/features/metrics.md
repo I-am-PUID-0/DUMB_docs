@@ -69,7 +69,8 @@ Metrics are configured in `dumb_config.json`:
       "services": {
         "nzbdav": {
           "enabled": true,
-          "mode": "standard"
+          "mode": "standard",
+          "ignore_network_storage": false
         },
         "sonarr:Default": {
           "enabled": true,
@@ -108,13 +109,15 @@ Two modes are available:
 | **Standard** | Database/WAL/SHM size, storage filesystem, service-log lock/busy/timeout/I/O signals |
 | **Enhanced** | Standard signals plus bounded, read-only SQLite metadata or PostgreSQL statistics queries |
 
+Each service can set `ignore_network_storage: true` when its storage placement is intentional. DUMB continues to report the detected filesystem, but excludes that network mount from the service's pressure score and recommendation. Other evidence—including WAL growth, lock/busy/timeout errors, probe latency, deadlocks, and long transactions—continues to affect the result.
+
 Automatic collection never runs `VACUUM`, `ANALYZE`, a WAL checkpoint, an integrity check, a repair, or an application data query. Plex remains passive even if Enhanced is selected because Plex uses a customized SQLite build and its live library database is treated conservatively.
 
 !!! warning "Interpret the result as evidence, not a benchmark"
 
     DUMB observes databases from outside the managed application. It cannot measure individual Entity Framework queries, exact lock-wait duration, or promise a PostgreSQL percentage improvement. A `healthy` result means DUMB observed no external pressure indicators during the collection window.
 
-The pressure score considers recent database-related log errors, network-filesystem placement, WAL growth, read-only probe latency, PostgreSQL lock waiters/deadlocks, and long-running transactions. If SQLite is on NFS/SMB or another network filesystem, move it to local storage before treating PostgreSQL as the first performance fix.
+The pressure score considers recent database-related log errors, network-filesystem placement unless explicitly ignored, WAL growth, read-only probe latency, PostgreSQL lock waiters/deadlocks, and long-running transactions. If SQLite is on NFS/SMB or another network filesystem, local storage is normally preferred; use the per-service override only when you intentionally want to assess the remaining signals independently.
 
 Compact database-health samples are included in normal metrics history without storing database paths or storage-source details.
 
