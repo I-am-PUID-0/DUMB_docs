@@ -70,6 +70,7 @@ nav:
         - pgAdmin: services/optional/pgadmin.md
         - Riven Frontend: services/optional/riven-frontend.md
         - Tautulli: services/optional/tautulli.md
+        - Bazarr: services/optional/bazarr.md
         - Pulsarr: services/optional/pulsarr.md
         - Traefik Proxy Admin: services/optional/traefik-proxy-admin.md
         - Cloudflared: services/optional/cloudflared.md

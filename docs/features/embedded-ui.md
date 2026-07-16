@@ -93,6 +93,7 @@ Some embedded services are root-style web apps. Their JavaScript may call paths 
 | pgAdmin 4 | `/service/ui/pgadmin` | 5050 |
 | Seerr | `/service/ui/seerr` | 5055 |
 | Tautulli | `/service/ui/tautulli` | 8181 |
+| Bazarr | `/service/ui/bazarr` | 6767 |
 | Pulsarr | `/service/ui/pulsarr` | 3003 |
 | AltMount | `/service/ui/altmount` | 8088 |
 | Radarr | `/service/ui/radarr` | 7878 |

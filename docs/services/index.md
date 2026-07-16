@@ -91,6 +91,7 @@ DUMB is built as a collection of microservices that communicate over internal AP
 | [Zilean](../services/optional/zilean.md)                 | Optional  | Metadata cache and scraping backend                       |
 | [pgAdmin](../services/optional/pgadmin.md)               | Optional  | PostgreSQL GUI                                            |
 | [Riven Frontend](../services/optional/riven-frontend.md) | Optional  | UI for Riven Backend                                      |
+| [Bazarr](../services/optional/bazarr.md)                 | Optional  | Subtitle search and management for Sonarr/Radarr          |
 | [Pulsarr](../services/optional/pulsarr.md)               | Optional  | Plex watchlist request automation                         |
 | [Traefik Proxy Admin](../services/optional/traefik-proxy-admin.md) | Optional  | User-managed Traefik reverse proxy routes                 |
 | [Cloudflared](../services/optional/cloudflared.md)       | Optional  | Cloudflare Tunnel connector for DUMB Traefik              |

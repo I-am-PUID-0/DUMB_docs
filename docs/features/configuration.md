@@ -66,6 +66,7 @@ Below is the **general structure** of `dumb_config.json`:
     "phalanx_db": { ... },
     "plex": { ... },
     "tautulli": { ... },
+    "bazarr": { ... },
     "pulsarr": { ... },
     "altmount": { ... },
     "neutarr": { ... },
@@ -192,6 +193,7 @@ See the individual service pages for in-depth configuration details:
 - [Whisparr](../services/core/whisparr.md)
 - [NeutArr](../services/core/neutarr.md)
 - [Profilarr](../services/core/profilarr.md)
+- [Bazarr](../services/optional/bazarr.md)
 - [Pulsarr](../services/optional/pulsarr.md)
 - [pgAdmin 4](../services/optional/pgadmin.md)
 - [PostgreSQL](../services/dependent/postgres.md)

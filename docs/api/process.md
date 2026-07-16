@@ -233,7 +233,7 @@ The `core_services` field can be a single object or an array. The `name` can be 
 
 !!! note "Notes"
     * Dependencies like Zurg or rclone are created using templates and attached to the calling core service.
-    * Optional services such as `pgadmin`, `zilean`, `pulsarr`, `traefik_proxy_admin`, or `cloudflared` are started only if included.
+    * Optional services such as `pgadmin`, `zilean`, `bazarr`, `pulsarr`, `traefik_proxy_admin`, or `cloudflared` are started only if included.
     * `debrid_key` is injected into Zurg or Decypharr as needed.
     * `service_options` can override config values such as `log_level`, `port`, or `enabled`.
     * Any startup errors appear in the `errors` list.
@@ -256,7 +256,7 @@ Returns backend-resolved dependency relationships for a specific process, includ
 * inferred links from `wait_for_mounts` by matching required mount paths to provider service mount points
 * rclone provider links (`zurg_enabled`, `decypharr_enabled`, `key_type=nzbdav`) to reflect WebDAV provider dependencies directly
 * non-core hard dependency map for service-specific startup requirements (for example `riven_frontend -> riven_backend`, `zilean -> postgres`, `pgadmin -> postgres`)
-* conditional startup dependencies from the backend startup ordering logic -- config-aware dependencies like `tautulli -> plex` (when plex is enabled), `prowlarr -> sonarr/radarr` (when those arrs are enabled), `neutarr -> sonarr` (when sonarr has `use_neutarr` enabled), etc. For instance-scoped services (`rclone`, `zurg`), conditional deps are filtered per-instance so that only the specific associated instances are shown (for example, a rclone instance with `zurg_enabled` only shows its own zurg instance, not zurg instances belonging to other rclone configurations)
+* conditional startup dependencies from the backend startup ordering logic -- config-aware dependencies like `tautulli -> plex` (when plex is enabled), `bazarr -> sonarr/radarr` (when those Arrs are enabled), `prowlarr -> sonarr/radarr` (when those Arrs are enabled), `neutarr -> sonarr` (when Sonarr has `use_neutarr` enabled), etc. For instance-scoped services (`rclone`, `zurg`), conditional deps are filtered per-instance so that only the specific associated instances are shown (for example, a rclone instance with `zurg_enabled` only shows its own zurg instance, not zurg instances belonging to other rclone configurations)
 * documented integration links (soft linkage, `scope=all` only) -- for example `seerr -> sonarr/radarr` request routing
 * per-process status state used by the frontend dependency graph panel
 * `dependency_truth_table` describing the 12 dependency signal types and whether each is treated as hard dependency vs linkage
