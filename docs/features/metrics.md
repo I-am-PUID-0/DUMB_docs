@@ -16,6 +16,7 @@ The metrics system provides:
 - **Real-time monitoring** - Live CPU, memory, disk, and network stats
 - **Historical tracking** - Time-series data storage for trend analysis
 - **Per-process metrics** - Resource usage by individual service
+- **Optional database health** - Per-service SQLite/PostgreSQL pressure indicators
 - **WebSocket streaming** - Push updates to connected clients
 - **cgroup awareness** - Accurate reporting in containerized environments
 
@@ -60,7 +61,22 @@ Metrics are configured in `dumb_config.json`:
     "history_retention_days": 7,
     "history_max_file_mb": 50,
     "history_max_total_mb": 100,
-    "history_dir": "/config/metrics"
+    "history_dir": "/config/metrics",
+    "database_health": {
+      "enabled": false,
+      "interval_sec": 60,
+      "log_tail_bytes": 262144,
+      "services": {
+        "nzbdav": {
+          "enabled": true,
+          "mode": "standard"
+        },
+        "sonarr:Default": {
+          "enabled": true,
+          "mode": "enhanced"
+        }
+      }
+    }
   }
 }
 ```
@@ -76,6 +92,31 @@ Metrics are configured in `dumb_config.json`:
 | `history_max_file_mb` | `50` | Max size per history file |
 | `history_max_total_mb` | `100` | Max total history storage |
 | `history_dir` | `/config/metrics` | Directory for history files |
+| `database_health.enabled` | `false` | Enable the database-health collector; individual services must still opt in |
+| `database_health.interval_sec` | `60` | Seconds between database collections (15-3600) |
+| `database_health.log_tail_bytes` | `262144` | Maximum new/recent service-log bytes examined per collection |
+| `database_health.services` | `{}` | Per-service/instance settings keyed by the ID reported in `/api/metrics` |
+
+### Database Health Monitoring
+
+Database Health Monitoring is disabled by default and enabled independently for each service. It currently recognizes NzbDAV, Plex, Bazarr, and Sonarr/Radarr/Lidarr/Prowlarr/Whisparr instances.
+
+Two modes are available:
+
+| Mode | Continuous observations |
+|------|-------------------------|
+| **Standard** | Database/WAL/SHM size, storage filesystem, service-log lock/busy/timeout/I/O signals |
+| **Enhanced** | Standard signals plus bounded, read-only SQLite metadata or PostgreSQL statistics queries |
+
+Automatic collection never runs `VACUUM`, `ANALYZE`, a WAL checkpoint, an integrity check, a repair, or an application data query. Plex remains passive even if Enhanced is selected because Plex uses a customized SQLite build and its live library database is treated conservatively.
+
+!!! warning "Interpret the result as evidence, not a benchmark"
+
+    DUMB observes databases from outside the managed application. It cannot measure individual Entity Framework queries, exact lock-wait duration, or promise a PostgreSQL percentage improvement. A `healthy` result means DUMB observed no external pressure indicators during the collection window.
+
+The pressure score considers recent database-related log errors, network-filesystem placement, WAL growth, read-only probe latency, PostgreSQL lock waiters/deadlocks, and long-running transactions. If SQLite is on NFS/SMB or another network filesystem, move it to local storage before treating PostgreSQL as the first performance fix.
+
+Compact database-health samples are included in normal metrics history without storing database paths or storage-source details.
 
 ---
 
@@ -194,6 +235,15 @@ GET /api/metrics
 ```
 
 Returns the current metrics snapshot.
+
+### Database health
+
+```bash
+GET /api/metrics/database-health
+GET /api/metrics/database-health?process_name=NzbDAV&refresh=true
+```
+
+The optional `process_name` filter returns one service. `refresh=true` invalidates cached database probes before collecting; normal `/api/metrics` and WebSocket snapshots reuse the configured slower database interval.
 
 ### Historical metrics
 

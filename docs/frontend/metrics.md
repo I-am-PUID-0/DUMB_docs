@@ -16,6 +16,7 @@ The metrics dashboard shows:
 - **Real-time gauges** - Current resource usage
 - **Historical charts** - Usage trends over time
 - **Process details** - Per-service resource consumption
+- **Database health** - Optional SQLite/PostgreSQL pressure summaries
 - **System information** - Container and host details
 
 ![Metrics dashboard](../assets/images/frontend/metrics.png)
@@ -113,6 +114,24 @@ Sort by any column to identify resource-intensive services.
 
 ---
 
+## Database health
+
+Supported, enabled services appear in the **Database Health** table on the Metrics page. Monitoring remains off until configured from **Metrics → Settings** or the service page's **Database Health** panel.
+
+The table shows:
+
+- database provider and current pressure classification;
+- combined database and SQLite WAL size;
+- database-related log-signal count;
+- bounded read-only probe latency when Enhanced mode is enabled;
+- a service-specific recommendation.
+
+Use **Standard / passive** for the lowest overhead. Use **Enhanced / read-only probes** when you need SQLite page/WAL metadata or PostgreSQL statistics. Plex is always collected passively while running, even if Enhanced is selected.
+
+Pressure classifications are `healthy`, `observing`, `moderate`, `high`, `critical`, `unavailable`, or `disabled`. Collect through representative imports, scans, health checks, and playback before deciding whether PostgreSQL would help.
+
+---
+
 ## System information
 
 ### Container details
@@ -192,6 +211,9 @@ curl http://localhost:8000/api/metrics
 
 # Historical metrics
 curl http://localhost:8000/api/metrics/history?start=2025-01-01&end=2025-01-15
+
+# Database health, optionally forcing a fresh collection
+curl "http://localhost:8000/api/metrics/database-health?process_name=NzbDAV&refresh=true"
 ```
 
 See the [WebSocket API](../api/websocket.md) documentation for real-time streaming.

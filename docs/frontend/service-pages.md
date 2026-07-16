@@ -120,6 +120,10 @@ With [Geek Mode](settings.md#geek-mode) enabled, the **DUMB Config** tab display
 Click **Refresh** to re-fetch metrics on demand. Metrics are fetched once when entering a
 service page with Geek Mode active.
 
+### Database Health panel
+
+Supported database-backed services expose **Database Health** independently of Geek Mode. The panel can opt that service into Standard or Enhanced collection, display database/WAL/storage and log-pressure evidence, and link to the stack-wide Metrics view. Collection is read-only; maintenance and repair operations are never triggered from this panel.
+
 ---
 
 ## Auto-restart policy

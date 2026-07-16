@@ -314,6 +314,12 @@ Instance names are slugified into categories if present (for example, `Radarr 4K
 
 ## Troubleshooting Tips
 
+### Assess SQLite pressure
+
+NzbDAV currently stores its operational and metrics data in SQLite. DUMB can optionally monitor both databases from **Metrics → Settings → Database Health Monitoring** or the NzbDAV service page's **Database Health** panel.
+
+Start with **Standard / passive** mode and collect through normal imports, health checks, and playback. Use **Enhanced / read-only probes** when you also want bounded SQLite metadata latency. Repeated lock/busy/timeout errors, sustained WAL growth, slow probes, or network-filesystem placement are stronger reasons to investigate PostgreSQL than database size alone. See [Metrics Collection](../../features/metrics.md#database-health-monitoring) for the safety boundary and interpretation guidance.
+
 !!! warning "Permission changes"
 
     DUMB updates Arr media-management permissions to enable chmod operations (folder `777`, file `666`).
