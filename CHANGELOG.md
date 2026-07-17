@@ -1,6 +1,16 @@
 # Changelog
 
 
+## [1.22.7](https://github.com/I-am-PUID-0/DUMB_docs/compare/1.22.6...1.22.7) (2026-07-17)
+
+
+### 📖 Documentation
+
+* **metrics:** document network storage scoring override ([e5c0235](https://github.com/I-am-PUID-0/DUMB_docs/commit/e5c0235bfa76d9f71addb58bc65a06ce326f0895))
+* **metrics:** document per-service database health monitoring ([3fd2dd4](https://github.com/I-am-PUID-0/DUMB_docs/commit/3fd2dd4aa7737d5ece767358d46b8bdb2eca1021))
+* **metrics:** expand database health UX and filesystem guidance ([ab59e77](https://github.com/I-am-PUID-0/DUMB_docs/commit/ab59e77306290e1d712b83fe21de8f966ed8b6b5))
+* **nzbdav:** document managed SDK environment recovery ([7cdc8e5](https://github.com/I-am-PUID-0/DUMB_docs/commit/7cdc8e5e7489140ccd89518487ef73b486c986ed))
+
 ## [1.22.6](https://github.com/I-am-PUID-0/DUMB_docs/compare/1.22.5...1.22.6) (2026-07-16)
 
 
