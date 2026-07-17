@@ -106,18 +106,31 @@ Two modes are available:
 
 | Mode | Continuous observations |
 |------|-------------------------|
-| **Standard** | Database/WAL/SHM size, storage filesystem, service-log lock/busy/timeout/I/O signals |
+| **Standard** | Database/WAL/SHM size, filesystem type and placement, byte capacity/free space, inode usage/free inodes, read-only state, and service-log lock/busy/timeout/I/O signals |
 | **Enhanced** | Standard signals plus bounded, read-only SQLite metadata or PostgreSQL statistics queries |
 
 Each service can set `ignore_network_storage: true` when its storage placement is intentional. DUMB continues to report the detected filesystem, but excludes that network mount from the service's pressure score and recommendation. Other evidence—including WAL growth, lock/busy/timeout errors, probe latency, deadlocks, and long transactions—continues to affect the result.
 
-Automatic collection never runs `VACUUM`, `ANALYZE`, a WAL checkpoint, an integrity check, a repair, or an application data query. Plex remains passive even if Enhanced is selected because Plex uses a customized SQLite build and its live library database is treated conservatively.
+Filesystem capacity and inode observations are grouped by mount, so a service with multiple databases on one filesystem is not penalized repeatedly. DUMB also reports local DUMB-managed PostgreSQL storage; an external PostgreSQL host's filesystem cannot be observed from inside DUMB. The network-storage override affects only the network-placement penalty—low free space, inode exhaustion, and read-only state remain active indicators.
+
+Automatic collection never runs `VACUUM`, `ANALYZE`, a WAL checkpoint, an integrity check, a repair, a migration, or an application data query. Plex remains passive even if Enhanced is selected because Plex uses a customized SQLite build and its live library database is treated conservatively.
 
 !!! warning "Interpret the result as evidence, not a benchmark"
 
-    DUMB observes databases from outside the managed application. It cannot measure individual Entity Framework queries, exact lock-wait duration, or promise a PostgreSQL percentage improvement. A `healthy` result means DUMB observed no external pressure indicators during the collection window.
+    DUMB observes databases from outside the managed application. It cannot profile individual application queries, prove root cause, predict a PostgreSQL percentage improvement, guarantee that short-lived events were captured, repair a database, replace backups, or replace application-native diagnostics. A `healthy` result means DUMB observed no configured external pressure indicators during the collection window; it is not an integrity guarantee.
 
-The pressure score considers recent database-related log errors, network-filesystem placement unless explicitly ignored, WAL growth, read-only probe latency, PostgreSQL lock waiters/deadlocks, and long-running transactions. If SQLite is on NFS/SMB or another network filesystem, local storage is normally preferred; use the per-service override only when you intentionally want to assess the remaining signals independently.
+The pressure score considers recent database-related log errors, network-filesystem placement unless explicitly ignored, filesystem fullness, inode pressure, read-only mounts, WAL growth, read-only probe latency, PostgreSQL lock waiters/deadlocks, and long-running transactions. Filesystem fullness begins contributing at 90%, inode usage begins contributing at 90%, and increasingly severe thresholds contribute more evidence. If SQLite is on NFS/SMB or another network filesystem, local storage is normally preferred; use the per-service override only when you intentionally want to assess the remaining signals independently.
+
+Pressure classifications use these score bands:
+
+| Classification | Score | Meaning |
+|----------------|-------|---------|
+| **Healthy** | 0-19 | No configured pressure indicator, or only low-weight evidence, was observed |
+| **Moderate** | 20-44 | Evidence deserves continued observation and workload correlation |
+| **High** | 45-69 | Strong evidence warrants investigation |
+| **Critical** | 70-100 | Multiple or severe indicators require prompt investigation |
+
+`observing`, `collecting`, `unavailable`, and `disabled` describe collection state rather than a scored pressure band.
 
 Compact database-health samples are included in normal metrics history without storing database paths or storage-source details.
 
@@ -275,6 +288,7 @@ The frontend Metrics page displays:
 - Historical line charts
 - Per-process resource table
 - System information panel
+- Database Health immediately above System, with expandable per-service details
 
 ### Dashboard alerts
 
@@ -285,8 +299,9 @@ Configure thresholds in Settings to show alerts:
 | CPU | 85% |
 | Memory | 85% |
 | Disk | 90% |
+| Database Health | Disabled by default; optional Moderate, High, or Critical minimum |
 
-Alerts appear as banners when thresholds are exceeded.
+Alerts appear as banners when thresholds are exceeded. Database Health alert inclusion and its minimum pressure level are browser-local preferences, matching the existing CPU, memory, and disk alert controls; they do not change collection or scoring.
 
 ---
 

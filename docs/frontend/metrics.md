@@ -118,6 +118,8 @@ Sort by any column to identify resource-intensive services.
 
 Supported, enabled services appear in the **Database Health** table on the Metrics page. Monitoring remains off until configured from **Metrics → Settings** or the service page's **Database Health** panel.
 
+The Database Health section appears immediately above **System** at the bottom of the live Metrics content. Click or keyboard-activate any service row to expand or collapse its full details. Expanded details match the service-page panel and include the recommendation, score reasons, database paths/names, provider metadata, filesystem capacity, inode pressure, read-only/network state, probe results, and observed log signals. Column headers, settings, status badges, and detail fields include tooltips, and the section links directly to the Database Health documentation.
+
 The table shows:
 
 - database provider and current pressure classification;
@@ -125,12 +127,17 @@ The table shows:
 - database-related log-signal count;
 - bounded read-only probe latency when Enhanced mode is enabled;
 - a service-specific recommendation.
+- filesystem byte usage/free space, inode usage/free inodes, and read-only state in the expanded details.
 
 Use **Standard / passive** for the lowest overhead. Use **Enhanced / read-only probes** when you need SQLite page/WAL metadata or PostgreSQL statistics. Plex is always collected passively while running, even if Enhanced is selected.
 
 Enable **Ignore network storage score** for an individual service when its NFS/SMB placement is intentional. The filesystem remains visible in the service details, but it no longer raises the pressure score or replaces recommendations derived from the remaining metrics.
 
+The override excludes only network placement. Low free space, high inode usage, read-only storage, WAL growth, log errors, probe latency, locks, deadlocks, and long-running transactions continue to affect the result.
+
 Pressure classifications are `healthy`, `observing`, `moderate`, `high`, `critical`, `unavailable`, or `disabled`. Collect through representative imports, scans, health checks, and playback before deciding whether PostgreSQL would help.
+
+Open **How to read Database Health** for an in-product explanation of observed signals, score bands, and limitations. Database Health is evidence rather than a benchmark: it cannot profile individual SQL queries, prove root cause, predict an exact provider speedup, guarantee every transient event was captured, repair databases, or replace backups and application-native diagnostics.
 
 ---
 
@@ -198,8 +205,9 @@ Configure when alerts appear on the dashboard:
 | CPU | 85% | Settings :material-arrow-right: Preferences |
 | Memory | 85% | Settings :material-arrow-right: Preferences |
 | Disk | 90% | Settings :material-arrow-right: Preferences |
+| Database Health | Off; selectable Moderate/High/Critical minimum | Metrics header or Metrics Settings :material-arrow-right: Database Health Monitoring |
 
-Alerts appear as banners at the top of the dashboard when thresholds are exceeded.
+Alerts appear as banners when thresholds are exceeded and on the global Metrics indicator. **DB health** / **Include Database Health in alerts** is optional and browser-local; enabling it does not enable collection for any service or alter its pressure score.
 
 ---
 

@@ -122,7 +122,7 @@ service page with Geek Mode active.
 
 ### Database Health panel
 
-Supported database-backed services expose **Database Health** independently of Geek Mode. The panel can opt that service into Standard or Enhanced collection, display database/WAL/storage and log-pressure evidence, optionally exclude intentional network storage from scoring, and link to the stack-wide Metrics view. Collection is read-only; maintenance and repair operations are never triggered from this panel.
+Supported database-backed services expose **Database Health** independently of Geek Mode. The panel can opt that service into Standard or Enhanced collection, display database/WAL/storage and log-pressure evidence, optionally exclude intentional network storage from scoring, and link to both the full documentation and stack-wide Metrics view. Storage details include byte capacity/free space, inode usage/free inodes, network placement, and read-only state. Shared **How to read Database Health** guidance explains score bands, safe collection behavior, and diagnostic limitations, while field and control tooltips provide shorter contextual help. Collection is read-only; maintenance, migration, integrity, and repair operations are never triggered from this panel.
 
 ---
 
