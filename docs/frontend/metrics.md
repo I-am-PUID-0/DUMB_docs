@@ -16,7 +16,7 @@ The metrics dashboard shows:
 - **Real-time gauges** - Current resource usage
 - **Historical charts** - Usage trends over time
 - **Process details** - Per-service resource consumption
-- **Database health** - Optional SQLite/PostgreSQL pressure summaries
+- **Database health** - Optional SQL and persistent-store pressure summaries
 - **System information** - Container and host details
 
 ![Metrics dashboard](../assets/images/frontend/metrics.png)
@@ -122,14 +122,16 @@ The Database Health section appears immediately above **System** at the bottom o
 
 The table shows:
 
-- database provider and current pressure classification;
-- combined database and SQLite WAL size;
+- detected SQL provider or custom store format and current pressure classification;
+- combined database/store and SQLite WAL size;
 - database-related log-signal count;
 - bounded read-only probe latency when Enhanced mode is enabled;
 - a service-specific recommendation.
 - filesystem byte usage/free space, inode usage/free inodes, and read-only state in the expanded details.
 
-Use **Standard / passive** for the lowest overhead. Use **Enhanced / read-only probes** when you need SQLite page/WAL metadata or PostgreSQL statistics. Plex is always collected passively while running, even if Enhanced is selected.
+Use **Standard / passive** for the lowest overhead. Use **Enhanced / read-only probes** when you need SQLite page/WAL metadata or PostgreSQL statistics. Plex is always collected passively while running, even if Enhanced is selected. Decypharr append-log stores, Phalanx DB Hyperbee data, and the Zurg state directory are also passive-only; Enhanced does not open or query those formats.
+
+The supported set includes the Arrs, NzbDAV, Bazarr, Plex, CLI Debrid/Battery, Emby, Jellyfin, Profilarr, Tautulli, AltMount, Pulsarr, Seerr, PostgreSQL, pgAdmin, Riven Backend, Zilean, Traefik Proxy Admin, Decypharr, Phalanx DB, and Zurg. DUMB detects SQLite versus PostgreSQL for provider-neutral services and keeps multi-instance entries separate.
 
 Enable **Ignore network storage score** for an individual service when its NFS/SMB placement is intentional. The filesystem remains visible in the service details, but it no longer raises the pressure score or replaces recommendations derived from the remaining metrics.
 

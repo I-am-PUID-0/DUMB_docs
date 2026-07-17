@@ -16,7 +16,7 @@ The metrics system provides:
 - **Real-time monitoring** - Live CPU, memory, disk, and network stats
 - **Historical tracking** - Time-series data storage for trend analysis
 - **Per-process metrics** - Resource usage by individual service
-- **Optional database health** - Per-service SQLite/PostgreSQL pressure indicators
+- **Optional database health** - Per-service SQL and persistent-store pressure indicators
 - **WebSocket streaming** - Push updates to connected clients
 - **cgroup awareness** - Accurate reporting in containerized environments
 
@@ -100,20 +100,33 @@ Metrics are configured in `dumb_config.json`:
 
 ### Database Health Monitoring
 
-Database Health Monitoring is disabled by default and enabled independently for each service. It currently recognizes NzbDAV, Plex, Bazarr, and Sonarr/Radarr/Lidarr/Prowlarr/Whisparr instances.
+Database Health Monitoring is disabled by default and enabled independently for each service. It recognizes every DUMB-managed service with a confirmed database or application-owned persistent store:
+
+| Provider class | Services and observed stores |
+|----------------|------------------------------|
+| **SQLite** | NzbDAV, Bazarr, CLI Debrid, CLI Battery, Emby, Jellyfin, Profilarr, Tautulli, and Plex; Sonarr, Radarr, Lidarr, Prowlarr, and Whisparr when PostgreSQL is disabled |
+| **SQLite or PostgreSQL** | AltMount, Pulsarr, and Seerr; DUMB detects the provider from their application config/environment |
+| **PostgreSQL** | DUMB PostgreSQL, pgAdmin, Riven Backend, Zilean, and Traefik Proxy Admin; Arr instances when `postgres_enabled=true` |
+| **Custom persistent stores** | Decypharr append-only logs, Phalanx DB Hyperbee/Corestore data, and the Zurg state directory |
+
+Services without a confirmed database or durable application store are not listed merely because they use files or caches. Multi-instance services receive one Database Health entry per enabled instance.
 
 Two modes are available:
 
 | Mode | Continuous observations |
 |------|-------------------------|
-| **Standard** | Database/WAL/SHM size, filesystem type and placement, byte capacity/free space, inode usage/free inodes, read-only state, and service-log lock/busy/timeout/I/O signals |
-| **Enhanced** | Standard signals plus bounded, read-only SQLite metadata or PostgreSQL statistics queries |
+| **Standard** | Database/store/WAL/SHM size, filesystem type and placement, byte capacity/free space, inode usage/free inodes, read-only state, and service-log lock/busy/timeout/I/O signals |
+| **Enhanced** | Standard signals plus bounded, read-only SQLite metadata or PostgreSQL statistics queries when the detected provider supports them |
 
 Each service can set `ignore_network_storage: true` when its storage placement is intentional. DUMB continues to report the detected filesystem, but excludes that network mount from the service's pressure score and recommendation. Other evidence—including WAL growth, lock/busy/timeout errors, probe latency, deadlocks, and long transactions—continues to affect the result.
 
 Filesystem capacity and inode observations are grouped by mount, so a service with multiple databases on one filesystem is not penalized repeatedly. DUMB also reports local DUMB-managed PostgreSQL storage; an external PostgreSQL host's filesystem cannot be observed from inside DUMB. The network-storage override affects only the network-placement penalty—low free space, inode exhaustion, and read-only state remain active indicators.
 
-Automatic collection never runs `VACUUM`, `ANALYZE`, a WAL checkpoint, an integrity check, a repair, a migration, or an application data query. Plex remains passive even if Enhanced is selected because Plex uses a customized SQLite build and its live library database is treated conservatively.
+Automatic collection never runs `VACUUM`, `ANALYZE`, a WAL checkpoint, an integrity check, a repair, a migration, or an application data query. Plex remains passive even if Enhanced is selected because Plex uses a customized SQLite build and its live library database is treated conservatively. Decypharr, Phalanx DB, and Zurg also remain passive because their observed stores are not confirmed SQL databases. Directory-backed custom stores use a bounded size/file-count scan rather than opening application data.
+
+!!! info "What Zurg's database means here"
+
+    The public Zurg build used by DUMB calls its in-memory torrent catalog a database, but it does not expose that catalog as SQLite or PostgreSQL. DUMB labels Zurg as `zurg-state` and passively samples the instance's `data/` directory, which includes `fixers.json` in the public build and can contain other version-specific state. It cannot query the live in-memory torrent catalog or infer torrent-catalog performance from those files.
 
 !!! warning "Interpret the result as evidence, not a benchmark"
 

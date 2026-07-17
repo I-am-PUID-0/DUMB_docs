@@ -162,6 +162,14 @@ Example:
 
 ---
 
+## Database Health visibility
+
+Each enabled Zurg instance appears in DUMB's optional [Database Health monitoring](../../features/metrics.md#database-health-monitoring). The public Zurg build calls its live in-memory torrent catalog a database, but that catalog is not an exposed SQLite or PostgreSQL file. DUMB therefore labels Zurg as `zurg-state` and uses a bounded, passive sample of the instance's `data/` directory—including `fixers.json` in the public build—to report state size, file count, filesystem pressure, and any available database-related log signals without assuming that version-specific files are SQLite.
+
+Standard and Enhanced modes are both passive for Zurg. DUMB does not open the state files, query the live torrent catalog, repair Zurg state, or claim that state-directory pressure represents end-to-end Zurg performance.
+
+---
+
 ## Resources
 - [Zurg Testing (default repo)](https://github.com/debridmediamanager/zurg-testing)
 - [Zurg (premium repo)](https://github.com/debridmediamanager/zurg)
