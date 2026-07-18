@@ -1,6 +1,15 @@
 # Changelog
 
 
+## [1.22.8](https://github.com/I-am-PUID-0/DUMB_docs/compare/1.22.7...1.22.8) (2026-07-18)
+
+
+### 📖 Documentation
+
+* **database-health:** document expanded service and provider coverage ([c63a83b](https://github.com/I-am-PUID-0/DUMB_docs/commit/c63a83b459cde4b3ee62b94ed10c5feb9ae56b65))
+* **observability:** document metrics storage and notifications ([8cf5e28](https://github.com/I-am-PUID-0/DUMB_docs/commit/8cf5e285accd6ee638436c019205d165e6f94cee))
+* **services:** document startup recovery and ENOSYS troubleshooting ([83d9074](https://github.com/I-am-PUID-0/DUMB_docs/commit/83d90741d9a83e8dc6372f4958e6a9a2ec267de7))
+
 ## [1.22.7](https://github.com/I-am-PUID-0/DUMB_docs/compare/1.22.6...1.22.7) (2026-07-17)
 
 
