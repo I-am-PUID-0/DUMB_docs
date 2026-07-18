@@ -1,6 +1,13 @@
 # Changelog
 
 
+## [1.22.9](https://github.com/I-am-PUID-0/DUMB_docs/compare/1.22.8...1.22.9) (2026-07-18)
+
+
+### 📖 Documentation
+
+* **prowlarr:** explain Ubuntu 26.04 tar compatibility recovery ([16105c8](https://github.com/I-am-PUID-0/DUMB_docs/commit/16105c8c84af796af133b778c5b1f58be3e07c8d))
+
 ## [1.22.8](https://github.com/I-am-PUID-0/DUMB_docs/compare/1.22.7...1.22.8) (2026-07-18)
 
 
