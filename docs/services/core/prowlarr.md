@@ -189,11 +189,16 @@ deletes the failed archive under `/opt`, so preserve the complete DUMB log when
 requesting support.
 
 If extraction reports `Function not implemented`, the archive and available
-space are not normally the cause. DUMB identifies this as an `ENOSYS` container
-filesystem failure and recommends checking the host's Docker, containerd, runc,
-and seccomp versions plus the filesystem backing Docker's root directory. Do
-not permanently disable seccomp as a workaround; update the host container
-runtime or correct the unsupported backing filesystem instead.
+space are not normally the cause. Ubuntu 26.04's security-hardened GNU tar uses
+the Linux `openat2` interface to confine archive extraction. Older host kernels,
+container runtimes, or seccomp profiles can return `ENOSYS` for that interface
+even when the same installation worked with an older DUMB image. DUMB retries
+these failures with Python's security-filtered archive extractor, which rejects
+paths and links that escape `/opt/prowlarr`.
+
+If both extractors fail, check the host's kernel, Docker, containerd, runc, and
+seccomp versions. Do not permanently disable seccomp as a workaround; updating
+the host runtime retains its security boundary and native GNU tar extraction.
 
 ---
 
