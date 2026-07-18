@@ -52,6 +52,10 @@ icon: lucide/play
 
 * Navigate to: `http://<host>:8096` (default Jellyfin port)
 
+Fresh Jellyfin installs add the official Jellyfin APT source directly. They do
+not require the `add-apt-repository` utility, which is intentionally absent from
+the minimized DUMB runtime image.
+
 ---
 
 ## Resources

@@ -103,6 +103,10 @@ After enabling and starting Pulsarr:
 
 - Pulsarr uses SQLite by default at `/pulsarr/data/db/pulsarr.db`.
 - DUMB installs Bun under `/config/.bun` when Pulsarr is built from source.
+- DUMB runs Pulsarr's idempotent database migrations before each application
+  start. This creates a missing schema and applies upgrades without deleting
+  the retained SQLite database. A migration failure keeps Pulsarr stopped and
+  preserves the migration error in DUMB's service log.
 - If you intentionally serve Pulsarr behind a separate subfolder reverse proxy, set Pulsarr's own `basePath` environment variable for that external proxy. DUMB's embedded UI route strips its service prefix and does not need `basePath`.
 
 ---

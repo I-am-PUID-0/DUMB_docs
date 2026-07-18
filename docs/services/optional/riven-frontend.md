@@ -102,6 +102,10 @@ You can control which version or branch of the frontend is deployed by setting:
 - The frontend depends on the backend being reachable at `http://<host>:<port>` defined in the `dumb_config.json` for the [Riven Backend](../core/riven-backend.md)
 - Use Docker port mappings if needed to expose the frontend
 - Check `PORT` and `ORIGIN` values if the UI fails to load
+- DUMB verifies that the runnable frontend build exists before accepting an
+  installation. If retained source contains `package.json` but the `build`
+  output is missing, DUMB downloads and rebuilds the frontend automatically
+  instead of launching an incomplete installation.
 
 ---
 

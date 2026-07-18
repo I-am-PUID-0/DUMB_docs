@@ -188,6 +188,13 @@ capacity at its Docker root directory. A full container removal/recreation
 deletes the failed archive under `/opt`, so preserve the complete DUMB log when
 requesting support.
 
+If extraction reports `Function not implemented`, the archive and available
+space are not normally the cause. DUMB identifies this as an `ENOSYS` container
+filesystem failure and recommends checking the host's Docker, containerd, runc,
+and seccomp versions plus the filesystem backing Docker's root directory. Do
+not permanently disable seccomp as a workaround; update the host container
+runtime or correct the unsupported backing filesystem instead.
+
 ---
 
 ## Resources
