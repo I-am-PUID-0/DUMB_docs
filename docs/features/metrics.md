@@ -34,6 +34,7 @@ The metrics system provides:
 | **Memory** | Total, used, available, percentage |
 | **Swap** | Total, used, percentage |
 | **Disk** | Total, used, free, percentage |
+| **Inodes** | Total, used, free, percentage |
 | **Network** | Bytes/packets sent and received |
 | **System** | Boot time, uptime |
 
@@ -62,6 +63,17 @@ Metrics are configured in `dumb_config.json`:
     "history_max_file_mb": 50,
     "history_max_total_mb": 100,
     "history_dir": "/config/metrics",
+    "storage": {
+      "provider": "sqlite",
+      "sqlite_path": "/config/metrics/metrics.sqlite",
+      "migrate_jsonl": true,
+      "postgresql": {
+        "database": "dumb_metrics",
+        "schema": "public",
+        "local_retention_days": 7,
+        "retry_interval_sec": 60
+      }
+    },
     "database_health": {
       "enabled": false,
       "interval_sec": 60,
@@ -90,9 +102,16 @@ Metrics are configured in `dumb_config.json`:
 | `history_enabled` | `true` | Store historical data |
 | `history_interval_sec` | `5` | Seconds between samples |
 | `history_retention_days` | `7` | Days to keep history |
-| `history_max_file_mb` | `50` | Max size per history file |
-| `history_max_total_mb` | `100` | Max total history storage |
-| `history_dir` | `/config/metrics` | Directory for history files |
+| `history_max_file_mb` | `50` | Legacy JSONL rotation limit retained for compatibility with older DUMB releases |
+| `history_max_total_mb` | `100` | Maximum compressed payload size retained in local SQLite |
+| `history_dir` | `/config/metrics` | Legacy JSONL source directory used during migration |
+| `storage.provider` | `sqlite` | Primary history backend: `sqlite` or `postgresql` |
+| `storage.sqlite_path` | `/config/metrics/metrics.sqlite` | Dedicated local metrics database; also the PostgreSQL continuity store |
+| `storage.migrate_jsonl` | `true` | Import existing rotating JSONL history once without deleting source files |
+| `storage.postgresql.database` | `dumb_metrics` | Dedicated DUMB-managed PostgreSQL database |
+| `storage.postgresql.schema` | `public` | PostgreSQL schema used for metrics tables |
+| `storage.postgresql.local_retention_days` | `7` | Local history retained for outage fallback and replay |
+| `storage.postgresql.retry_interval_sec` | `60` | Minimum PostgreSQL retry interval after a failure |
 | `database_health.enabled` | `false` | Enable the database-health collector; individual services must still opt in |
 | `database_health.interval_sec` | `60` | Seconds between database collections (15-3600) |
 | `database_health.log_tail_bytes` | `262144` | Maximum new/recent service-log bytes examined per collection |
@@ -177,16 +196,42 @@ ws.onmessage = (event) => {
 
 ## Historical data
 
-### Storage format
+### Metrics history storage
 
-Historical metrics are stored as JSON files in `/config/metrics/`:
+DUMB stores each complete snapshot as a timestamp-indexed, compressed payload. Metrics history is independent from the notification delivery database.
 
-```
-/config/metrics/
-├── metrics_2025-01-15.json
-├── metrics_2025-01-14.json
-└── metrics_2025-01-13.json
-```
+| Backend | Behavior |
+|---------|----------|
+| **SQLite (default)** | Writes `/config/metrics/metrics.sqlite`. It is self-contained, survives container recreation through `/config`, and requires no managed service. |
+| **PostgreSQL (optional)** | Uses the configured DUMB PostgreSQL credentials and a dedicated `dumb_metrics` database by default. Applying the selection enables, provisions, and starts DUMB-managed PostgreSQL in place. |
+
+PostgreSQL is not a secondary backup in this design. When configured and healthy, it is the active history query and retention backend. DUMB first commits each sample to a bounded local SQLite continuity buffer, then copies missing samples to PostgreSQL in timestamp order. This write-ahead step prevents a PostgreSQL restart or outage from creating a gap. If PostgreSQL is stopped, starting, upgrading, or unreachable, history reads and writes continue through SQLite. After connectivity returns, DUMB performs an idempotent reconciliation of the retained SQLite window—including samples older than PostgreSQL's newest row—before PostgreSQL resumes serving history reads.
+
+Selecting PostgreSQL from **Metrics → Settings** does not require a DUMB restart on backends that advertise `metrics_history_hot_activation`. Apply saves the Metrics configuration, enables PostgreSQL when no other service uses it, registers and creates the configured Metrics database, starts or reuses the managed PostgreSQL process, replays retained SQLite samples, and promotes PostgreSQL only after synchronization succeeds. The operation is idempotent, so Apply can safely retry a failed activation. If provisioning or synchronization fails, the API and frontend remain available and SQLite continues serving history.
+
+Older DUMB backends without that capability retain the previous restart-based provisioning behavior; dmbdb identifies this case in the panel instead of attempting the unsupported endpoint.
+
+!!! important "Notifications do not depend on PostgreSQL"
+
+    Notification delivery uses `/config/notifications/notifications.sqlite`. A PostgreSQL metrics outage therefore cannot prevent DUMB from queuing a PostgreSQL failure notification.
+
+#### Existing JSONL history
+
+Earlier DUMB releases wrote rotating `metrics-YYYYMMDD-NNN.jsonl` files under `/config/metrics`. On first use of the database-backed history store, DUMB imports those files idempotently into SQLite. It records completion only after every line decodes and every batch writes successfully, and it leaves every JSONL file untouched for rollback. If a record is malformed or a batch fails, Metrics reports the imported and skipped counts, preserves the incomplete state, and retries on a later manual import or DUMB startup. Use **Metrics → Settings → Import JSONL now** to force a fresh rescan without duplicating timestamps, including after temporarily running an older DUMB release that created additional JSONL files. In PostgreSQL mode, a rescan temporarily returns history reads to SQLite and fully reconciles the retained window before PostgreSQL is promoted again, so an older imported sample is not skipped merely because PostgreSQL already contains newer rows.
+
+The configured `history_max_file_mb` remains in the schema so the same runtime configuration can still be read by older releases, but database-backed DUMB no longer creates new JSONL files.
+
+#### Storage size and compression
+
+Database storage normally uses less space than the equivalent JSONL snapshots because DUMB compresses each repeated-key JSON payload before writing it. The Metrics settings panel reports raw JSON bytes, compressed payload bytes, database file/relation size, and the observed compression ratio.
+
+The filesystem database size will not exactly equal compressed payload size:
+
+- SQLite includes pages, indexes, free pages, and `-wal`/`-shm` files.
+- PostgreSQL includes row, page, index, visibility, and WAL overhead.
+- Recently deleted rows/pages may remain allocated for reuse.
+
+For that reason, SQLite usually provides the clearest space reduction for a single DUMB container. PostgreSQL is primarily useful for longer retention, external queries, stronger concurrency, and centralized operations—not as a guaranteed compression improvement over SQLite.
 
 ### Data structure
 
@@ -222,11 +267,14 @@ Each history entry contains:
 Retrieve historical data via API:
 
 ```bash
-# Get history with time range
-curl "http://localhost:8000/api/metrics/history?start=2025-01-14&end=2025-01-15"
+# Get history newer than a Unix timestamp
+curl "http://localhost:8000/api/metrics/history?since=1784300000&limit=5000"
 
-# Get history with bucket aggregation
-curl "http://localhost:8000/api/metrics/history?bucket_seconds=300"
+# Get compact chart series with server-side buckets
+curl "http://localhost:8000/api/metrics/history_series?since=1784300000&bucket_seconds=300&max_points=600"
+
+# Inspect configured/active storage and compression
+curl "http://localhost:8000/api/metrics/history/storage?probe_postgresql=true"
 ```
 
 ---
@@ -242,6 +290,7 @@ When running in Docker/Kubernetes with resource limits:
 - **CPU** - Reports usage relative to container limit
 - **Memory** - Reports container memory limit, not host
 - **Disk** - Reports container filesystem stats
+- **Inodes** - Reports inode capacity and pressure for the container root filesystem
 
 ### Host mode
 
@@ -278,16 +327,22 @@ The optional `process_name` filter returns one service. `refresh=true` invalidat
 
 ```bash
 GET /api/metrics/history
+GET /api/metrics/history_series
+GET /api/metrics/history/storage
+POST /api/metrics/history/migrate
 ```
 
 Query parameters:
 
 | Parameter | Description |
 |-----------|-------------|
-| `start` | Start date (ISO format) |
-| `end` | End date (ISO format) |
-| `bucket_seconds` | Aggregation bucket size |
-| `max_points` | Maximum data points to return |
+| `since` | Earliest Unix timestamp to return |
+| `full` | Skip the default six-hour lower bound when `true` |
+| `limit` | Maximum snapshots read before truncation |
+| `bucket_seconds` | Aggregation bucket size for `history_series` |
+| `max_points` | Maximum chart points returned by `history_series` |
+
+`GET /api/metrics/history/storage` reports the configured and active providers, fallback state, compression/storage sizes, sample ranges, last PostgreSQL error, and legacy migration state. Pass `probe_postgresql=true` to bypass the reconnect backoff for an operator-requested test. `POST /api/metrics/history/migrate` reruns the idempotent JSONL import; pass `force=true` to rescan after a completed migration.
 
 ---
 
@@ -297,8 +352,8 @@ Query parameters:
 
 The frontend Metrics page displays:
 
-- Real-time gauges for CPU, memory, disk
-- Historical line charts
+- Real-time gauges for CPU, memory, disk, and inode pressure
+- Historical line charts, including inode usage
 - Per-process resource table
 - System information panel
 - Database Health immediately above System, with expandable per-service details
@@ -312,9 +367,12 @@ Configure thresholds in Settings to show alerts:
 | CPU | 85% |
 | Memory | 85% |
 | Disk | 90% |
+| Inodes | 90% |
 | Database Health | Disabled by default; optional Moderate, High, or Critical minimum |
 
-Alerts appear as banners when thresholds are exceeded. Database Health alert inclusion and its minimum pressure level are browser-local preferences, matching the existing CPU, memory, and disk alert controls; they do not change collection or scoring.
+Alerts appear as banners when thresholds are exceeded. Database Health alert inclusion and its minimum pressure level are browser-local preferences, matching the existing CPU, memory, disk, and inode alert controls; they do not change collection or scoring.
+
+Backend outbound notifications have independent persistent thresholds for CPU, memory, disk, inode, and Database Health conditions. See [Notifications](notifications.md). Enabling a backend notification threshold does not alter browser-local alert preferences.
 
 ---
 
@@ -322,17 +380,20 @@ Alerts appear as banners when thresholds are exceeded. Database Health alert inc
 
 ### Automatic cleanup
 
-Old metrics files are automatically removed based on:
+Old metrics samples are automatically removed based on:
 
-- `history_retention_days` - Files older than this are deleted
-- `history_max_total_size_mb` - Oldest files deleted when exceeded
+- `history_retention_days` - Primary-backend samples older than this are deleted
+- `history_max_total_mb` - Oldest local SQLite payloads are deleted when exceeded
+- `storage.postgresql.local_retention_days` - SQLite fallback/replay window while PostgreSQL is primary
+
+Retention and size maintenance runs periodically rather than for every sample, so a database can temporarily exceed a newly selected limit until the next maintenance pass. Changing Metrics storage settings schedules maintenance for the next sample.
 
 ### Manual cleanup
 
-To manually clear metrics history:
+Do not delete a live database while DUMB is writing it. Stop DUMB first, then back up or remove the relevant database if a full reset is intentional. The old JSONL files can be removed after you have validated the imported sample range and retained any rollback copy you need:
 
 ```bash
-rm /config/metrics/metrics_*.json
+rm /config/metrics/metrics-*.jsonl
 ```
 
 ---
@@ -371,7 +432,9 @@ Estimate storage needs:
 
 1. Reduce `history_retention_days`
 2. Increase `history_interval`
-3. Lower `history_max_total_size_mb`
+3. Lower `history_max_total_mb`
+4. Compare compressed payload and database allocation in **Metrics → Settings → History Storage**
+5. If PostgreSQL is active, review its relation size and normal PostgreSQL maintenance behavior
 
 ### Incorrect resource values
 

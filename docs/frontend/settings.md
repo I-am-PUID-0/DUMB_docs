@@ -13,13 +13,19 @@ The Settings page provides access to configuration options, user management, and
 
 The Settings page is organized into sections:
 
-- **Authentication** - Enable/disable auth, manage users
-- **Tokens** - API keys and service tokens
+- **Appearance** - Frontend color theme
+- **About** - Installed service and frontend versions
+- **Onboarding** - Restart the guided setup wizard
 - **Embedded UIs** - Service UI toggle
-- **Preferences** - UI customization
+- **Notifications** - Outbound destinations, event routing, thresholds, tests, and delivery history
+- **Tokens** - API keys and service tokens
+- **Log Timestamp Format** - Date order, clock format, and zero-padding preferences
 - **Advanced** - Geek Mode and debug-level UI options
-- **Onboarding** - Reset setup wizard
-- **About** - Version and contributor information
+- **Authentication** - Enable or disable auth and manage users when supported
+- **Support** - Project community, source, documentation, and image links
+- **Contributors** - Project contributor links
+
+Every top-level section can be expanded or collapsed from its heading. Sections start expanded for existing and first-time users, and each browser remembers the open/closed state independently for the next visit. Collapsing a section changes only the page layout; it does not disable, reset, or stop the feature inside it.
 
 ### Settings menu
 
@@ -82,6 +88,31 @@ Toggle the embedded service UI feature:
 When enabled, the Settings page shows how many UI-capable services are detected. Service pages include an embedded UI tab, a direct link button, and a full-window toggle for iframes.
 
 ![Embedded UI settings](../assets/images/frontend/embedded_ui_settings.png){ .shadow }
+
+---
+
+## Notifications
+
+The Notifications section appears when the connected backend reports the `notifications` capability. It manages backend-owned outbound notifications independently from browser-local Metrics alert banners.
+
+From this section you can:
+
+- Enable or disable outbound delivery globally
+- Configure monitoring, history retention, retry, and persistent-condition thresholds
+- Add multiple Apprise or generic webhook destinations
+- Route destinations by severity, event type, and one or more currently enabled services selected from a dropdown; disabled template services and unknown names are excluded, and saving pauses if enabled-service discovery is unavailable
+- Configure cooldown and recovery behavior
+- Save and test an individual destination
+- Send a manual operator message
+- Review or clear completed delivery history
+
+Saved destination URLs and webhook headers are not returned to the browser. The UI displays whether a secret is configured; leave a blank secret field unchanged to preserve it.
+
+Each event-routing choice shows its runtime severity, trigger, and prerequisites. The section warns when the selected minimum severity filters otherwise-selected events; the default **Warning** minimum excludes normal `Success` events such as a successful Auto-restart. A service-down guidance callout distinguishes unexpected exits from the dashboard's ordinary `Stopped` display and links directly to Auto-restart configuration. Setup/build helper subprocesses are not treated as managed-service exits. Update-available notices are emitted only when a service first enters that state or its available version changes. **Save & test** explains that its one-time test bypasses enable switches and routing filters, while normal manual messages still skip disabled destinations.
+
+The setup screen also explains that Apprise is an embedded DUMB library, not a third-party relay: normal provider URLs are delivered directly from the DUMB container. It identifies `apprise://` and `apprises://` as the explicit Apprise API-server exception and links the official Apprise URL Builder beside the destination controls.
+
+See [Notifications](../features/notifications.md) for provider setup, event behavior, payloads, security guidance, and troubleshooting.
 
 ---
 
@@ -158,11 +189,15 @@ Enable Geek Mode to reveal additional power-user information across the UI. When
 - Container summary: CPU cores, total RAM, used RAM
 - Restart history: total count, last exit reason, last restart timestamp
 - Refresh button to re-fetch metrics on demand
+- A compact **Database Health** subsection for supported services, including provider, pressure score, collection mode, store/WAL size, observed signal count, recommendation, documentation, and a link to the full per-service panel
+
+Geek Mode exposes the Database Health summary but does not automatically enable collection. Database Health remains read-only and opt-in per service.
 
 **Dashboard ServiceCard badges:**
 
 - CPU% badge per service, color-coded by usage level
 - Memory RSS badge per service
+- Database Health pressure and score badge for services explicitly opted into monitoring, with provider, mode, score, and recommendation in its tooltip
 - Metrics polled every 5 seconds while Geek Mode is active
 
 Geek Mode is disabled by default. Toggle it from the **Advanced** section on the Settings page.

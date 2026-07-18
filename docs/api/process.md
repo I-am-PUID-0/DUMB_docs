@@ -585,9 +585,15 @@ Returns backend capabilities and feature flags. Used by the frontend to determin
   "symlink_manifest_file_list": true,
   "arr_postgres_migration": true,
   "arr_postgres_migration_rehearsal": true,
-  "arr_postgres_migration_rollback": true
+  "arr_postgres_migration_rollback": true,
+  "database_health_metrics": true,
+  "metrics_history_storage": true,
+  "metrics_history_hot_activation": true,
+  "notifications": true
 }
 ```
+
+`metrics_history_hot_activation` means the frontend can enable, start, and synchronize DUMB-managed PostgreSQL for Metrics history without restarting DUMB. Clients must continue using the restart-based guidance when this flag is absent.
 
 | Field | Description |
 |-------|-------------|

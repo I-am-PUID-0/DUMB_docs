@@ -69,6 +69,15 @@ The CPU gauge shows:
 | **Total** | Total disk capacity |
 | **Usage %** | Percentage in use |
 
+### Inode usage
+
+| Metric | Description |
+|--------|-------------|
+| **Used / free / total** | Filesystem entries consumed and remaining |
+| **Usage %** | Percentage of available inodes in use |
+
+The **Disk & inodes** card shows current inode pressure and a zoomable inode-history chart alongside disk capacity and I/O. Inodes represent filesystem entries for files and directories, so a filesystem can reach 100% inode usage and reject new files even when byte capacity remains. Inode percentage is also included in JSON/CSV history exports.
+
 ### Network I/O
 
 | Metric | Description |
@@ -116,7 +125,7 @@ Sort by any column to identify resource-intensive services.
 
 ## Database health
 
-Supported, enabled services appear in the **Database Health** table on the Metrics page. Monitoring remains off until configured from **Metrics → Settings** or the service page's **Database Health** panel.
+Only services explicitly opted into Database Health monitoring appear in the **Database Health** table on the Metrics page. Supported services with monitoring disabled remain available in **Metrics → Settings** and the service page's **Database Health** panel so they can be enabled, but they are omitted from the results table. When no services are monitored, the section shows a concise empty state with a **Configure** action instead of disabled service rows.
 
 The Database Health section appears immediately above **System** at the bottom of the live Metrics content. Click or keyboard-activate any service row to expand or collapse its full details. Expanded details match the service-page panel and include the recommendation, score reasons, database paths/names, provider metadata, filesystem capacity, inode pressure, read-only/network state, probe results, and observed log signals. Column headers, settings, status badges, and detail fields include tooltips, and the section links directly to the Database Health documentation.
 
@@ -194,7 +203,30 @@ Lower intervals provide more responsive updates but increase network traffic.
 |---------|---------|-------------|
 | **Retention** | 7 days | How long to keep history |
 | **Bucket Size** | 5 seconds | Aggregation interval |
-| **Max File Size** | 50 MB | Per-file storage limit |
+| **History read backend** | SQLite | Serve history from local SQLite or optional DUMB-managed PostgreSQL |
+| **Max local SQLite size** | 100 MB | Bounds the compressed local history/continuity payloads |
+| **SQLite continuity path** | `/config/metrics/metrics.sqlite` | Persistent local history database and PostgreSQL write-ahead continuity buffer |
+
+### History storage status
+
+Open **Metrics → Settings → History Storage** to see:
+
+- the configured and currently active provider;
+- whether automatic SQLite fallback is active;
+- local and PostgreSQL sample counts and allocated size;
+- the local compressed-to-original JSON ratio;
+- retained legacy JSONL files and import state;
+- the latest safe PostgreSQL connection error.
+
+PostgreSQL is not merely a backup. When selected, synchronized, and healthy, it is the active history query and retention backend. SQLite is written first as a bounded write-ahead continuity buffer so live charts remain available when PostgreSQL is stopped or restarting. Retained local samples are replayed when PostgreSQL reconnects.
+
+On current backends, choosing PostgreSQL only changes the draft selection. The panel explicitly prompts the user to click **Apply & activate PostgreSQL**; nothing is provisioned until that button is used. Apply enables PostgreSQL if necessary, creates the dedicated database, starts or reuses the managed process, synchronizes retained samples, and switches history reads without restarting DUMB. During the operation the panel displays activation progress. Afterward, a persistent **PostgreSQL cutover complete** notice confirms that PostgreSQL is serving history reads while SQLite remains the continuity buffer.
+
+If any step fails, the panel keeps SQLite active and returns to the pending state so **Apply & activate PostgreSQL** can be used to retry. For backward compatibility, dmbdb shows **Apply** plus restart guidance instead when the connected backend does not advertise hot activation support.
+
+Use **Import JSONL now** to force a fresh scan for history created by older DUMB releases. The import is timestamp-idempotent, detects files added after an earlier completed migration, and does not delete the source files. **Refresh / probe** performs an operator-requested PostgreSQL connection test without waiting for the normal retry interval.
+
+See [Metrics history storage](../features/metrics.md#metrics-history-storage) for configuration, sizing, migration, fallback, and rollback details.
 
 ---
 
@@ -207,9 +239,12 @@ Configure when alerts appear on the dashboard:
 | CPU | 85% | Settings :material-arrow-right: Preferences |
 | Memory | 85% | Settings :material-arrow-right: Preferences |
 | Disk | 90% | Settings :material-arrow-right: Preferences |
+| Inodes | 90% | Metrics header warning controls |
 | Database Health | Off; selectable Moderate/High/Critical minimum | Metrics header or Metrics Settings :material-arrow-right: Database Health Monitoring |
 
 Alerts appear as banners when thresholds are exceeded and on the global Metrics indicator. **DB health** / **Include Database Health in alerts** is optional and browser-local; enabling it does not enable collection for any service or alter its pressure score.
+
+These browser alerts are separate from [backend notifications](../features/notifications.md). Backend notifications continue operating without an open browser and have their own persistent thresholds, cooldowns, recovery handling, and delivery history.
 
 ---
 
@@ -221,8 +256,11 @@ Metrics are also available via the REST API:
 # Current metrics snapshot
 curl http://localhost:8000/api/metrics
 
-# Historical metrics
-curl http://localhost:8000/api/metrics/history?start=2025-01-01&end=2025-01-15
+# Historical metrics newer than a Unix timestamp
+curl "http://localhost:8000/api/metrics/history?since=1784300000&limit=5000"
+
+# Storage, migration, and fallback status
+curl "http://localhost:8000/api/metrics/history/storage?probe_postgresql=true"
 
 # Database health, optionally forcing a fresh collection
 curl "http://localhost:8000/api/metrics/database-health?process_name=NzbDAV&refresh=true"

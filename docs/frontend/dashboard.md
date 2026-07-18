@@ -55,8 +55,9 @@ With [Geek Mode](settings.md#geek-mode) enabled, each service card shows live re
 
 - **CPU%** - Color-coded by usage (green < 50%, amber < 80%, red >= 80%)
 - **Memory RSS** - Current resident memory usage
+- **DB Healthy/Moderate/High/Critical + score** - Current Database Health pressure for services explicitly opted into monitoring, color-coded by severity; hover for provider, mode, score, and recommendation
 
-Metrics are polled every 5 seconds while Geek Mode is active and stop automatically when disabled.
+Metrics are polled every 5 seconds while Geek Mode is active and stop automatically when disabled. Database Health badges are omitted for unsupported services and services whose Database Health monitoring is disabled. Geek Mode never enables collection automatically.
 
 ---
 

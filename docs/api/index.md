@@ -27,8 +27,10 @@ The API is enabled and configured using the `dumb_config.json` under the `dumb.a
 - **Health checks** - Container and service health monitoring
 - **Process management** - Start, stop, restart services
 - **Real-time streaming** - WebSocket endpoints for logs, status, and metrics
+- **Metrics history storage** - SQLite history, optional PostgreSQL, migration, compression, and fallback status
 - **Configuration** - View and update settings (in-memory and persistent)
 - **Environment state inspection** - Service and system information
+- **Notifications** - Configure destinations, send tests/manual messages, and inspect persistent delivery history
 
 ---
 
@@ -64,6 +66,17 @@ The API is enabled and configured using the `dumb_config.json` under the `dumb.a
 | POST   | `/ai/models`               | List available provider models             |
 | POST   | `/ai/diagnose`             | Preview or run AI service diagnostics      |
 | POST   | `/ai/diagnose-stack`       | Preview or run stack-wide AI diagnostics   |
+| GET    | `/notifications/config`    | Read redacted notification settings         |
+| POST   | `/notifications/config`    | Update notification settings while preserving redacted secrets |
+| POST   | `/notifications/test`      | Test a saved notification destination       |
+| POST   | `/notifications/send`      | Queue a manual notification                  |
+| GET    | `/notifications/history`   | Read persistent delivery history             |
+| DELETE | `/notifications/history`   | Clear completed notification history         |
+| GET    | `/metrics/history`         | Read provider-neutral metrics history         |
+| GET    | `/metrics/history_series`  | Read compact/downsampled chart history        |
+| GET    | `/metrics/history/storage` | Inspect SQLite/PostgreSQL status and sizing    |
+| POST   | `/metrics/history/migrate` | Import preserved legacy JSONL history          |
+| POST   | `/metrics/history/storage/activate-postgresql` | Provision and activate PostgreSQL Metrics history |
 | WS     | `/ws/logs`                | Real-time log streaming                    |
 | WS     | `/ws/status`              | Real-time service status updates           |
 | WS     | `/ws/metrics`             | Real-time system metrics                   |
@@ -85,6 +98,8 @@ The DUMB API is split into the following modules:
 | `process.py` | Service control for backend processes (start, stop, restart) |
 | `seerr_sync.py` | Seerr Sync status and failure endpoints |
 | `ai.py` | AI provider settings and redacted service diagnostics |
+| `notifications.py` | Notification configuration, tests, manual messages, and delivery history |
+| `metrics.py` | Current metrics, Database Health, provider-neutral history, storage status, and migration |
 
 ---
 
@@ -119,3 +134,5 @@ Click on any of the modules in the sidebar to explore endpoint structure, usage 
 - [WebSocket Logs](websocket_logs.md)
 - [Seerr Sync](seerr-sync.md)
 - [AI Assistant](ai.md)
+- [Notifications](notifications.md)
+- [Metrics](metrics.md)

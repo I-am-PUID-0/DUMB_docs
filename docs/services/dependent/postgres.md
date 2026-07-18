@@ -75,6 +75,7 @@ It is pre-installed and automatically initialized during container startup.
     - `zilean`
     - `riven`
     - `traefik_proxy_admin`
+    - `dumb_metrics` when PostgreSQL is selected under **Metrics → Settings → History Storage**
     - `radarr-main` / `radarr-log` when a Radarr instance has `postgres_enabled: true`
     - `sonarr-main` / `sonarr-log` when a Sonarr instance has `postgres_enabled: true`
     - `lidarr-main` / `lidarr-log` when a Lidarr instance has `postgres_enabled: true`
@@ -163,6 +164,12 @@ DROP DATABASE riven;
 - Always restart the container after modifying config files in `/postgres_data`.
 - Ensure you mount `/postgres_data` if you want persistent databases.
 - [pgAdmin](../optional/pgadmin.md) is the easiest way to visually explore and manage PostgreSQL.
+
+### Pre-existing shared memory block
+
+If an older DUMB process leaves PostgreSQL running inside the same container, the old server may continue owning `/postgres_data` and its original port. Starting another postmaster against that directory produces `pre-existing shared memory block ... is still in use` and a hint to terminate old server processes.
+
+Current DUMB startup reads `postmaster.pid`, verifies that the referenced live process is PostgreSQL for the exact configured data directory, and requests a fast clean `pg_ctl` shutdown before reserving ports. If an older DUMB release already removed the PID file, startup scans PostgreSQL parent command lines and acts only when exactly one process has `-D` pointing to that same canonical data directory. It refuses ambiguous matches. DUMB never blindly removes a live PID file or deletes a shared-memory segment. If the safety check refuses a PID, inspect the complete error and process ownership rather than using `ipcrm`; the refusal means DUMB could not prove that the process was safe to stop.
 
 ---
 

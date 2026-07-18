@@ -118,11 +118,15 @@ With [Geek Mode](settings.md#geek-mode) enabled, the **DUMB Config** tab display
 | **Restarts** | Total restart count, last exit reason, last restart timestamp |
 
 Click **Refresh** to re-fetch metrics on demand. Metrics are fetched once when entering a
-service page with Geek Mode active.
+service page with Geek Mode active. For supported database- or persistent-store-backed
+services, the Geek Mode panel also shows a compact **Database Health** summary with the
+provider, pressure score, collection mode, store/WAL size, observed signal count, and
+current recommendation. **Full details** opens the complete per-service Database Health
+panel. Refreshing Process Metrics also refreshes this Database Health summary.
 
 ### Database Health panel
 
-Supported database- or persistent-store-backed services expose **Database Health** independently of Geek Mode. The backend advertises the supported service keys so the panel stays aligned as adapters are added. The panel can opt that service into Standard or Enhanced collection, display database/store/WAL/storage and log-pressure evidence, optionally exclude intentional network storage from scoring, and link to both the full documentation and stack-wide Metrics view. Storage details include byte capacity/free space, inode usage/free inodes, network placement, and read-only state. Shared **How to read Database Health** guidance explains score bands, safe collection behavior, and diagnostic limitations, while field and control tooltips provide shorter contextual help. Collection is read-only; maintenance, migration, integrity, and repair operations are never triggered from this panel. Non-SQL formats such as the Zurg state directory, Decypharr append logs, and Phalanx Hyperbee remain passive-only even when Enhanced is selected.
+Supported database- or persistent-store-backed services expose the full **Database Health** panel independently of Geek Mode, while Geek Mode also includes its compact summary in Process Metrics. The backend advertises the supported service keys so the panel stays aligned as adapters are added. Neither opening Geek Mode nor viewing the summary enables collection; monitoring remains an explicit per-service choice. The full panel can opt that service into Standard or Enhanced collection, display database/store/WAL/storage and log-pressure evidence, optionally exclude intentional network storage from scoring, and link to both the full documentation and stack-wide Metrics view. Storage details include byte capacity/free space, inode usage/free inodes, network placement, and read-only state. Shared **How to read Database Health** guidance explains score bands, safe collection behavior, and diagnostic limitations, while field and control tooltips provide shorter contextual help. Collection is read-only; maintenance, migration, integrity, and repair operations are never triggered from this panel. Non-SQL formats such as the Zurg state directory, Decypharr append logs, and Phalanx Hyperbee remain passive-only even when Enhanced is selected.
 
 ---
 
