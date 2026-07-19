@@ -7,6 +7,11 @@ icon: lucide/bell
 
 Notification endpoints are available under `/api/notifications`. They follow the same optional authentication behavior as the other protected DUMB API routes.
 
+If the persistent notification SQLite database is temporarily locked, DUMB
+continues running and retries storage initialization in the background. Endpoints
+that require queue or history access return HTTP `503` until storage recovers;
+configuration and supported-event discovery remain available.
+
 ## Configuration
 
 ### `GET /api/notifications/config`

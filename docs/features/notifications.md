@@ -173,6 +173,16 @@ Delivery history statuses are:
 
 History is stored in `/config/notifications/notifications.sqlite`. Completed records older than `history_retention_days` are removed automatically. Clearing history from the UI does not delete queued or retrying deliveries.
 
+Notification storage is optional to DUMB startup. If SQLite is temporarily
+locked while the container starts, DUMB retries schema initialization and then
+starts the API and frontend in a notification-degraded state instead of exiting.
+The delivery worker continues retrying the existing database in the background;
+DUMB does not delete `notifications.sqlite`, its WAL files, queued deliveries, or
+history. Existing delivery attempts are not consumed while storage is
+unavailable. A new automatic event cannot be persisted while the queue remains
+locked, so DUMB logs the queue failure and allows the originating service or
+startup operation to continue.
+
 ## What it cannot guarantee
 
 - A provider accepting a message does not guarantee a phone, email client, or chat application displayed it.
@@ -204,6 +214,18 @@ The frontend checks the backend `notifications` capability. When connected to an
 5. For database events, confirm Database Health is enabled for that service.
 6. For `Service unhealthy` and Auto-restart events, confirm Auto-restart is enabled globally and for the exact service.
 7. To receive successful Auto-restart/update/symlink events, set minimum severity to **Success** or **Info**.
+
+### The notification database is locked
+
+When startup reports that notification SQLite storage is locked, DUMB keeps the
+control plane available and retries automatically. Notification history, tests,
+and manual delivery can temporarily return HTTP `503` until recovery completes.
+
+If the condition does not recover, check that only one DUMB container uses the
+same `/config` directory and that `/config/notifications` is on storage with
+working SQLite file locking. Do not delete `notifications.sqlite-wal` or
+`notifications.sqlite-shm` while any DUMB process is running. Preserve the
+database files and logs when requesting support.
 
 ## Related pages
 
