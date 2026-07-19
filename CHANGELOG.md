@@ -1,6 +1,13 @@
 # Changelog
 
 
+## [1.22.10](https://github.com/I-am-PUID-0/DUMB_docs/compare/1.22.9...1.22.10) (2026-07-19)
+
+
+### 📖 Documentation
+
+* **notifications:** document degraded SQLite recovery behavior ([cf1d468](https://github.com/I-am-PUID-0/DUMB_docs/commit/cf1d4680bad1ae4ab15b58993bdc789b6dbc28d6))
+
 ## [1.22.9](https://github.com/I-am-PUID-0/DUMB_docs/compare/1.22.8...1.22.9) (2026-07-18)
 
 
