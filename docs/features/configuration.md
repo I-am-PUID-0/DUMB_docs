@@ -68,6 +68,7 @@ Below is the **general structure** of `dumb_config.json`:
     "tautulli": { ... },
     "bazarr": { ... },
     "pulsarr": { ... },
+    "maintainerr": { ... },
     "altmount": { ... },
     "neutarr": { ... },
     "profilarr": { ... },
@@ -195,6 +196,7 @@ See the individual service pages for in-depth configuration details:
 - [Profilarr](../services/core/profilarr.md)
 - [Bazarr](../services/optional/bazarr.md)
 - [Pulsarr](../services/optional/pulsarr.md)
+- [Maintainerr](../services/optional/maintainerr.md)
 - [pgAdmin 4](../services/optional/pgadmin.md)
 - [PostgreSQL](../services/dependent/postgres.md)
 - [rclone](../services/dependent/rclone.md)

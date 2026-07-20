@@ -95,6 +95,7 @@ Some embedded services are root-style web apps. Their JavaScript may call paths 
 | Tautulli | `/service/ui/tautulli` | 8181 |
 | Bazarr | `/service/ui/bazarr` | 6767 |
 | Pulsarr | `/service/ui/pulsarr` | 3003 |
+| Maintainerr | `/service/ui/maintainerr` | 6246 |
 | AltMount | `/service/ui/altmount` | 8088 |
 | Radarr | `/service/ui/radarr` | 7878 |
 | Sonarr | `/service/ui/sonarr` | 8989 |

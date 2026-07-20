@@ -29,6 +29,7 @@ This reference documents all ports used by DUMB services. Use this guide to conf
 | 5050 | pgAdmin | Web UI |
 | 5055 | Seerr | Web UI |
 | 5432 | PostgreSQL | Database |
+| 6246 | Maintainerr | Web UI/API |
 | 6969 | Whisparr | Web UI |
 | 7878 | Radarr (Decypharr) | Web UI |
 | 7879 | Radarr (NzbDAV) | Web UI |
@@ -318,6 +319,17 @@ http://localhost:5055
 
 ```
 http://localhost:3003
+```
+
+### Maintainerr
+
+| Property | Value |
+|----------|-------|
+| **Port** | 6246 |
+| **Type** | Web UI/API |
+
+```
+http://localhost:6246
 ```
 
 ### Tautulli

@@ -74,6 +74,7 @@ nav:
         - Tautulli: services/optional/tautulli.md
         - Bazarr: services/optional/bazarr.md
         - Pulsarr: services/optional/pulsarr.md
+        - Maintainerr: services/optional/maintainerr.md
         - Traefik Proxy Admin: services/optional/traefik-proxy-admin.md
         - Cloudflared: services/optional/cloudflared.md
         - Zilean: services/optional/zilean.md
