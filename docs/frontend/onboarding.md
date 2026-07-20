@@ -135,6 +135,12 @@ Choose additional services to enable:
 
 Optional services are filtered based on your core services and automatically configured with appropriate connections.
 
+!!! warning "MediaStorm first login"
+
+    When MediaStorm is selected, its initial admin username and password are both `admin`. The Optional Services step displays this reminder. Change the public default password immediately after first login and before exposing MediaStorm outside your trusted network.
+
+MediaStorm's service-options step also allows its OCI runtime to follow `latest` or be pinned to a release tag, full commit SHA, or OCI digest. Leave release pinning disabled for normal automatic updates. See the [MediaStorm version-selection guide](../services/optional/mediastorm.md#version-selection) before selecting a fixed build.
+
 ---
 
 ### Step 5: Service-specific options

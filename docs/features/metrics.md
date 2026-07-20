@@ -125,7 +125,7 @@ Database Health Monitoring is disabled by default and enabled independently for 
 |----------------|------------------------------|
 | **SQLite** | NzbDAV, Bazarr, CLI Debrid, CLI Battery, Emby, Jellyfin, Maintainerr, Profilarr, Tautulli, and Plex; Sonarr, Radarr, Lidarr, Prowlarr, and Whisparr when PostgreSQL is disabled |
 | **SQLite or PostgreSQL** | AltMount, Pulsarr, and Seerr; DUMB detects the provider from their application config/environment |
-| **PostgreSQL** | DUMB PostgreSQL, pgAdmin, Riven Backend, Zilean, and Traefik Proxy Admin; Arr instances when `postgres_enabled=true` |
+| **PostgreSQL** | DUMB PostgreSQL, pgAdmin, MediaStorm, Riven Backend, Zilean, and Traefik Proxy Admin; Arr instances when `postgres_enabled=true` |
 | **Custom persistent stores** | Decypharr append-only logs, Phalanx DB Hyperbee/Corestore data, and the Zurg state directory |
 
 Services without a confirmed database or durable application store are not listed merely because they use files or caches. Multi-instance services receive one Database Health entry per enabled instance.

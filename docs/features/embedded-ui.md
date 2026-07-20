@@ -96,6 +96,7 @@ Some embedded services are root-style web apps. Their JavaScript may call paths 
 | Bazarr | `/service/ui/bazarr` | 6767 |
 | Pulsarr | `/service/ui/pulsarr` | 3003 |
 | Maintainerr | `/service/ui/maintainerr` | 6246 |
+| MediaStorm | `/service/ui/mediastorm` | 7777 |
 | AltMount | `/service/ui/altmount` | 8088 |
 | Radarr | `/service/ui/radarr` | 7878 |
 | Sonarr | `/service/ui/sonarr` | 8989 |

@@ -94,6 +94,7 @@ DUMB is built as a collection of microservices that communicate over internal AP
 | [Bazarr](../services/optional/bazarr.md)                 | Optional  | Subtitle search and management for Sonarr/Radarr          |
 | [Pulsarr](../services/optional/pulsarr.md)               | Optional  | Plex watchlist request automation                         |
 | [Maintainerr](../services/optional/maintainerr.md)       | Optional  | Rule-based library cleanup and review collections         |
+| [MediaStorm](../services/optional/mediastorm.md)         | Optional  | Self-hosted Debrid, torrent, and Usenet streaming         |
 | [Traefik Proxy Admin](../services/optional/traefik-proxy-admin.md) | Optional  | User-managed Traefik reverse proxy routes                 |
 | [Cloudflared](../services/optional/cloudflared.md)       | Optional  | Cloudflare Tunnel connector for DUMB Traefik              |
 
