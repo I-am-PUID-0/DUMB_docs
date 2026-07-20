@@ -1,6 +1,14 @@
 # Changelog
 
 
+## [1.22.11](https://github.com/I-am-PUID-0/DUMB_docs/compare/1.22.10...1.22.11) (2026-07-20)
+
+
+### 📖 Documentation
+
+* **maintainerr:** add optional service setup and operations guide ([4ed37fe](https://github.com/I-am-PUID-0/DUMB_docs/commit/4ed37fe9fa247686189927719182ab13beba9301))
+* **mediastorm:** document installation and version selection ([0fee91d](https://github.com/I-am-PUID-0/DUMB_docs/commit/0fee91d4fd8edd3b21da80a9074d16b341f7ade2))
+
 ## [1.22.10](https://github.com/I-am-PUID-0/DUMB_docs/compare/1.22.9...1.22.10) (2026-07-19)
 
 
