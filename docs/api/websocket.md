@@ -116,7 +116,7 @@ ws.onmessage = (event) => {
 /ws/metrics
 ```
 
-Streams real-time system metrics including CPU, memory, disk, and network usage.
+Streams real-time system metrics including CPU, memory, selected filesystem, and selected network-interface usage. Each snapshot's `system.filesystems` array contains the configured container-visible paths; `system.disk` and `system.inode` alias the first path for older clients. `system.network_interfaces` contains per-interface counters and metadata, while `system.net_io` is their compatibility aggregate.
 
 ### Query parameters
 

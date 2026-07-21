@@ -43,6 +43,8 @@ Returns notification settings with destination URLs and headers removed. Each de
 
 A blank URL or headers object preserves an existing saved secret for the same destination ID. Destination `service_names` must contain exact process names that are currently enabled in DUMB; disabled template services and unknown names are rejected with `400` rather than retained as hidden filters. An empty list matches all events.
 
+Disk and inode thresholds are evaluated independently for every path in `dumb.metrics.filesystem_paths`. Notification titles identify the affected container path, and cooldown state is kept per threshold condition so simultaneous pressure on two selected filesystems is not collapsed into one event.
+
 ## Supported events
 
 ### `GET /api/notifications/events`

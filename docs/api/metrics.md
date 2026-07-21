@@ -13,7 +13,25 @@ The Metrics API provides live snapshots, database-health observations, historica
 GET /api/metrics
 ```
 
-Returns current system, managed-process, external-process, and configured Database Health data.
+Returns current system, managed-process, external-process, and configured Database Health data. `system.filesystems` contains one entry per configured `dumb.metrics.filesystem_paths` value. `system.disk` and `system.inode` remain aliases for the first configured path for backward compatibility.
+
+## Filesystem discovery
+
+```http
+GET /api/metrics/filesystems
+```
+
+Returns `configured_paths` plus eligible filesystem mount points visible inside the DUMB container. The response intentionally uses container paths; Docker host paths that are not mounted into the container cannot be discovered or monitored. Clients should gate this endpoint and the `filesystem_paths` setting on the `metrics_filesystem_selection` capability.
+
+## Network interface discovery
+
+```http
+GET /api/metrics/network-interfaces
+```
+
+Returns `configured_interfaces` plus interfaces visible inside DUMB's network namespace. Candidate entries include interface name, availability/link state, speed, MTU, and cumulative byte/packet/error/drop counters; IP addresses are not returned. Clients should gate this endpoint and `dumb.metrics.network_interfaces` on the `metrics_network_interface_selection` capability.
+
+In current snapshots, `system.network_interfaces` contains each selected visible interface. `system.net_io` remains the compatibility aggregate and sums only the selected available interfaces. The default `["all"]` selects every visible interface. Host interfaces cannot be discovered from a bridge-networked container merely by changing `system_scope`.
 
 ## Database Health
 
@@ -44,7 +62,7 @@ The response contains ordered `items` and a `truncated` indicator. The configure
 GET /api/metrics/history_series?since=1784300000&bucket_seconds=60&max_points=600
 ```
 
-This endpoint returns compact items, timestamps, CPU/memory/disk/inode percentage series, derived disk/network rate series, summary statistics, truncation state, and the effective bucket size. DUMB automatically increases the bucket size when necessary to honor `max_points`.
+This endpoint returns compact items, timestamps, CPU/memory/disk/inode percentage series, per-selected-filesystem disk/inode series, per-selected-interface send/receive rate series, derived aggregate disk/network rate series, summary statistics, truncation state, and the effective bucket size. DUMB automatically increases the bucket size when necessary to honor `max_points`.
 
 ## Storage status
 

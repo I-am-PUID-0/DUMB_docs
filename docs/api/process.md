@@ -595,11 +595,17 @@ Returns backend capabilities and feature flags. Used by the frontend to determin
   "database_health_metrics": true,
   "metrics_history_storage": true,
   "metrics_history_hot_activation": true,
+  "metrics_filesystem_selection": true,
+  "metrics_network_interface_selection": true,
   "notifications": true
 }
 ```
 
 `metrics_history_hot_activation` means the frontend can enable, start, and synchronize DUMB-managed PostgreSQL for Metrics history without restarting DUMB. Clients must continue using the restart-based guidance when this flag is absent.
+
+`metrics_filesystem_selection` means the backend accepts `dumb.metrics.filesystem_paths`, returns all selected paths in Metrics snapshots/history, and exposes `GET /api/metrics/filesystems` for container-visible mount discovery. Older backends support only the legacy root-filesystem metrics fields.
+
+`metrics_network_interface_selection` means the backend accepts `dumb.metrics.network_interfaces`, returns per-interface Metrics data, and exposes `GET /api/metrics/network-interfaces` for network-namespace interface discovery. Older backends expose only the aggregate `system.net_io` counters.
 
 | Field | Description |
 |-------|-------------|

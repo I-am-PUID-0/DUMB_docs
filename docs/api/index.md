@@ -73,6 +73,8 @@ The API is enabled and configured using the `dumb_config.json` under the `dumb.a
 | GET    | `/notifications/history`   | Read persistent delivery history             |
 | DELETE | `/notifications/history`   | Clear completed notification history         |
 | GET    | `/metrics/history`         | Read provider-neutral metrics history         |
+| GET    | `/metrics/filesystems`     | Discover monitorable container filesystems    |
+| GET    | `/metrics/network-interfaces` | Discover visible network interfaces         |
 | GET    | `/metrics/history_series`  | Read compact/downsampled chart history        |
 | GET    | `/metrics/history/storage` | Inspect SQLite/PostgreSQL status and sizing    |
 | POST   | `/metrics/history/migrate` | Import preserved legacy JSONL history          |

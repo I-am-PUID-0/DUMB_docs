@@ -33,9 +33,9 @@ The metrics system provides:
 | **CPU** | Usage %, core count, load averages (1/5/15 min) |
 | **Memory** | Total, used, available, percentage |
 | **Swap** | Total, used, percentage |
-| **Disk** | Total, used, free, percentage |
-| **Inodes** | Total, used, free, percentage |
-| **Network** | Bytes/packets sent and received |
+| **Filesystems** | Total, used, free, percentage for each selected container-visible path |
+| **Inodes** | Total, used, free, percentage for each selected filesystem |
+| **Network** | Bytes/packets, errors, drops, link state, speed, and MTU for selected visible interfaces |
 | **System** | Boot time, uptime |
 
 ### Per-process metrics
@@ -57,6 +57,13 @@ Metrics are configured in `dumb_config.json`:
 "dumb": {
   "metrics": {
     "system_scope": "auto",
+    "filesystem_paths": [
+      "/data",
+      "/config"
+    ],
+    "network_interfaces": [
+      "all"
+    ],
     "history_enabled": true,
     "history_interval_sec": 5,
     "history_retention_days": 7,
@@ -99,6 +106,8 @@ Metrics are configured in `dumb_config.json`:
 | Option | Default | Description |
 |--------|---------|-------------|
 | `system_scope` | `auto` | Choose system scope for metrics (`auto`, `host`, `container`) |
+| `filesystem_paths` | `["/"]` | Absolute paths visible inside the container whose filesystems are monitored; the first path is primary for compatibility fields and the existing disk/inode history charts |
+| `network_interfaces` | `["all"]` | Interface names visible in DUMB's network namespace; `all` preserves the aggregate of every visible interface, including loopback |
 | `history_enabled` | `true` | Store historical data |
 | `history_interval_sec` | `5` | Seconds between samples |
 | `history_retention_days` | `7` | Days to keep history |
@@ -289,8 +298,9 @@ When running in Docker/Kubernetes with resource limits:
 
 - **CPU** - Reports usage relative to container limit
 - **Memory** - Reports container memory limit, not host
-- **Disk** - Reports container filesystem stats
-- **Inodes** - Reports inode capacity and pressure for the container root filesystem
+- **Disk** - Reports every path selected in `filesystem_paths`
+- **Inodes** - Reports inode capacity and pressure for every selected path
+- **Network** - Reports only interfaces in the container network namespace unless the container uses host networking
 
 ### Host mode
 
@@ -301,6 +311,22 @@ When running without cgroup limits:
 !!! info "Detection"
 
     cgroup detection is automatic. DUMB checks for cgroup v1 and v2 interfaces.
+
+### Selecting the correct storage
+
+Docker only exposes paths mounted into the container. DUMB cannot infer or inspect the host-side source path for storage that is not mounted. Open **Metrics → Settings → Monitored Filesystems**, then select a discovered container mount such as `/data`, `/config`, or another bind-mounted path. You can also enter an absolute container path manually.
+
+The first selected path is the primary filesystem. DUMB keeps its values in the legacy `system.disk` and `system.inode` fields and uses it for the existing disk/inode historical charts. Every selected path is returned in `system.filesystems`, retained in raw/compact history, evaluated by browser alerts, and evaluated independently by backend notification thresholds. Reordering paths changes which filesystem is primary; it does not change Docker mounts.
+
+If two selected paths map to the same underlying host filesystem, their capacity values can be identical. A missing or inaccessible configured path remains visible as unavailable instead of silently falling back to `/`.
+
+### Selecting network interfaces
+
+Open **Metrics → Settings → Monitored Network Interfaces** to choose `all` or specific interface names discovered inside DUMB's network namespace. With normal Docker bridge networking, the useful interface is commonly `eth0`; selecting it excludes loopback traffic from the aggregate chart. With `network_mode: host`, DUMB can discover and select the host's interfaces instead.
+
+The compatibility `system.net_io` object is the sum of the selected available interfaces. `system.network_interfaces` reports each selected interface separately with cumulative byte/packet/error/drop counters plus link state, speed, and MTU. Compact history and chart-series responses retain per-interface rates. A configured interface that temporarily disappears remains visible as unavailable rather than being replaced by another interface.
+
+`system_scope` does not cross network namespaces. Selecting `host` or `cgroup` changes CPU/memory collection behavior, but it cannot expose host network interfaces to a bridge-networked container.
 
 ---
 

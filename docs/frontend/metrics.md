@@ -69,6 +69,10 @@ The CPU gauge shows:
 | **Total** | Total disk capacity |
 | **Usage %** | Percentage in use |
 
+Use **Metrics → Settings → Monitored Filesystems** to choose one or more paths that DUMB can see inside its container. The discovered list includes eligible container mounts; custom absolute container paths are also accepted. For example, if the storage you care about is bind-mounted at `/data`, select `/data` rather than `/`.
+
+Docker does not expose an unmounted host path to DUMB. The selector therefore uses container paths, not host paths. The first selected path is marked **Primary** and supplies the existing disk/inode history chart and compatibility API fields. Use the arrow controls to change the primary path. All selected filesystems appear in the live card and participate in disk/inode alerts; unavailable paths are shown explicitly.
+
 ### Inode usage
 
 | Metric | Description |
@@ -76,7 +80,7 @@ The CPU gauge shows:
 | **Used / free / total** | Filesystem entries consumed and remaining |
 | **Usage %** | Percentage of available inodes in use |
 
-The **Disk & inodes** card shows current inode pressure and a zoomable inode-history chart alongside disk capacity and I/O. Inodes represent filesystem entries for files and directories, so a filesystem can reach 100% inode usage and reject new files even when byte capacity remains. Inode percentage is also included in JSON/CSV history exports.
+The **Filesystems** card shows disk and inode pressure for every selected path, plus a zoomable inode-history chart for the primary path alongside system/container I/O. Inodes represent filesystem entries for files and directories, so a filesystem can reach 100% inode usage and reject new files even when byte capacity remains. JSON history exports retain each filesystem entry; CSV exports add disk and inode percentage columns for every path present in the selected history range.
 
 ### Network I/O
 
@@ -86,6 +90,12 @@ The **Disk & inodes** card shows current inode pressure and a zoomable inode-his
 | **Bytes Received** | Total inbound data |
 | **Packets Sent** | Outbound packet count |
 | **Packets Received** | Inbound packet count |
+
+Use **Metrics → Settings → Monitored Network Interfaces** to select every visible interface or a specific set. The default `all` option preserves the previous aggregate, including loopback. Selecting a specific bridge interface such as `eth0` removes unrelated loopback traffic from the aggregate rate chart.
+
+The Network card shows the selected aggregate plus per-interface link state, speed, MTU, current send/receive rate, cumulative counters, and nonzero error/drop totals. JSON history retains the interface records, and CSV exports add send/receive rate columns for every interface present in the selected range.
+
+Only interfaces visible inside DUMB's network namespace are available. A normally bridge-networked container cannot inspect host interfaces; host interfaces become visible when DUMB runs with host networking.
 
 ---
 
