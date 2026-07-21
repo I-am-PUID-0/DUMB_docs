@@ -1,6 +1,14 @@
 # Changelog
 
 
+## [1.22.12](https://github.com/I-am-PUID-0/DUMB_docs/compare/1.22.11...1.22.12) (2026-07-21)
+
+
+### 📖 Documentation
+
+* **metrics:** document storage and interface selection ([e6dbf64](https://github.com/I-am-PUID-0/DUMB_docs/commit/e6dbf645739db4bf07cfb0aca02a342d937bddb4))
+* **postgres:** document expanded SQLite migration support ([47a4470](https://github.com/I-am-PUID-0/DUMB_docs/commit/47a44702e3644c61f556d34b44ed92097135bbe2))
+
 ## [1.22.11](https://github.com/I-am-PUID-0/DUMB_docs/compare/1.22.10...1.22.11) (2026-07-20)
 
 
