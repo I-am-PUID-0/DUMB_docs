@@ -50,10 +50,10 @@ The API is enabled and configured using the `dumb_config.json` under the `dumb.a
 | GET    | `/process/service-status` | Get the current status of a service        |
 | POST   | `/process/start-core-service` | Start core services + dependencies     |
 | GET    | `/process/capabilities`   | Get backend feature flags                  |
-| GET    | `/process/arr-postgres-migration/preflight` | Check Sonarr/Radarr migration readiness |
-| POST   | `/process/arr-postgres-migration/start` | Start a rehearsal or guarded cutover |
-| GET    | `/process/arr-postgres-migration/status` | Poll migration progress and validation |
-| POST   | `/process/arr-postgres-migration/rollback` | Restore preserved SQLite configuration |
+| GET    | `/process/postgres-migration/preflight` | Check supported service migration readiness |
+| POST   | `/process/postgres-migration/start` | Start a rehearsal or guarded cutover |
+| GET    | `/process/postgres-migration/status` | Poll migration progress and validation |
+| POST   | `/process/postgres-migration/rollback` | Restore preserved SQLite configuration |
 | GET    | `/seerr-sync/status`      | Seerr Sync summary status                  |
 | GET    | `/seerr-sync/failed`      | Seerr Sync failed request list             |
 | GET    | `/seerr-sync/state`       | Seerr Sync raw state (debug)               |

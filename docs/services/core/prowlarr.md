@@ -84,14 +84,12 @@ During onboarding, enabling `postgres_enabled` for Prowlarr is enough; you do no
 
     If you enable this on an existing SQLite-backed Prowlarr instance without doing a manual migration, Prowlarr can start against fresh PostgreSQL databases and appear empty or newly initialized.
 
-This mode is intended for new Prowlarr databases unless you are deliberately following upstream/community migration notes. Back up both `/prowlarr/...` and `/postgres_data` before experimenting with an existing instance.
-
-Manual migration, if you choose to attempt it, is outside DUMB automation. Use the upstream Prowlarr PostgreSQL guide as the source of truth for whether migration is currently documented and supported.
+For an existing instance, use **Database Migration** on the service page. DUMB requires a rehearsal, initializes an isolated Prowlarr-owned PostgreSQL schema, imports and validates every table, and preserves SQLite for rollback. Prowlarr's upstream guide still classifies migration as unsupported. See [SQLite to PostgreSQL Migration](../../features/arr-postgres-migration.md).
 
 !!! warning "PostgreSQL is not a temporary toggle"
     There is no known supported migration path from PostgreSQL back to SQLite for Prowlarr. Treat `postgres_enabled: true` as a long-term database choice unless you are willing to recreate the Prowlarr instance from scratch.
 
-    DUMB does not provide automatic SQLite-to-PostgreSQL or PostgreSQL-to-SQLite migration for Prowlarr.
+    DUMB can restore the preserved pre-cutover SQLite state, but it does not copy later PostgreSQL writes back into SQLite.
 
 ---
 

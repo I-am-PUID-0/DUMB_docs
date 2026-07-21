@@ -88,14 +88,12 @@ During onboarding, enabling `postgres_enabled` for Whisparr is enough; you do no
 
     If you enable this on an existing SQLite-backed Whisparr instance without doing a manual migration, Whisparr can start against fresh PostgreSQL databases and appear empty or newly initialized.
 
-This mode is intended for new Whisparr databases unless you are deliberately following upstream/community migration notes. Back up both `/whisparr/...` and `/postgres_data` before experimenting with an existing instance.
-
-Manual migration, if you choose to attempt it, is outside DUMB automation. Use the upstream Whisparr PostgreSQL guide as the source of truth for whether migration is currently documented and supported.
+For an existing instance, use **Database Migration** on the service page. DUMB requires a rehearsal, initializes an isolated Whisparr-owned PostgreSQL schema, imports and validates every table, and preserves SQLite for rollback. See [SQLite to PostgreSQL Migration](../../features/arr-postgres-migration.md).
 
 !!! warning "PostgreSQL is not a temporary toggle"
     There is no known supported migration path from PostgreSQL back to SQLite for Whisparr. Treat `postgres_enabled: true` as a long-term database choice unless you are willing to recreate the Whisparr instance from scratch.
 
-    DUMB does not provide automatic SQLite-to-PostgreSQL or PostgreSQL-to-SQLite migration for Whisparr.
+    DUMB can restore the preserved pre-cutover SQLite state, but it does not copy later PostgreSQL writes back into SQLite.
 
 ---
 

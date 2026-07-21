@@ -32,6 +32,8 @@ The default DUMB config block looks like this:
 {
   "altmount": {
     "enabled": false,
+    "postgres_enabled": false,
+    "postgres_database": "",
     "process_name": "AltMount",
     "repo_owner": "javi11",
     "repo_name": "altmount",
@@ -60,6 +62,14 @@ Choose the mount behavior with `mount_type`:
 | `none` | No AltMount-managed mount. |
 
 DUMB stores the same mount-mode values used by Decypharr (`dfs`, `rclone`, `external_rclone`, `none`) and writes the matching upstream AltMount value into `/altmount/config.yaml`. AltMount's own UI names these choices Disabled, Internal RClone, AltMount Native, and External RClone.
+
+## PostgreSQL migration
+
+AltMount supports both SQLite and PostgreSQL through its `database` configuration. For an existing SQLite-backed service, open **Database Migration**, run a rehearsal, validate the import against AltMount's current application-created PostgreSQL schema, and only then cut over. DUMB writes the PostgreSQL DSN into `/altmount/config.yaml`, registers the target database (`altmount` by default), and retains the SQLite file for rollback.
+
+Do not set `postgres_enabled: true` directly when existing AltMount state must be retained. DUMB has not found an upstream application-specific data migration tool, so rehearsal and post-cutover application checks are especially important. See [SQLite to PostgreSQL Migration](../../features/arr-postgres-migration.md).
+
+AltMount `v0.3.2` contains a PostgreSQL syntax error in its bundled migration 10 expression index. During guarded schema initialization, DUMB applies the intended corrected index only when the isolated database is at Goose version 9 and contains the expected `import_queue.metadata` column, records version 10, and lets AltMount run all remaining migrations itself. If those exact safeguards do not match, DUMB refuses the repair and restores SQLite instead of skipping unknown schema work.
 
 ## First Start
 

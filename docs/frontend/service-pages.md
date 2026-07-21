@@ -24,7 +24,7 @@ Each service page includes:
 - On-demand update checks and auto-update scheduling
 - Seerr Sync controls when viewing a Seerr instance
 - Symlink Job Center (for symlink-capable services) with active jobs, recent history, retry, and failure clearing
-- Guided SQLite-to-PostgreSQL rehearsal/cutover panel on Sonarr and Radarr instances
+- Guided SQLite-to-PostgreSQL rehearsal/cutover panel on every backend-advertised supported service, with explicit rehearsal/cutover success notices, automatic cutover selection, close-while-active confirmation, and persistent background running/completion indicators
 - Sidebar operator QoL controls (quick filters, saved views, compact mode, and command palette)
 
 ---
@@ -49,7 +49,7 @@ Action buttons:
 
 ## Database Migration panel
 
-On Sonarr and Radarr service pages, **Database Migration** opens a guided SQLite-to-PostgreSQL workflow when the backend advertises the `arr_postgres_migration` capability.
+On Sonarr, Radarr, Lidarr, Prowlarr, Whisparr, Bazarr, Pulsarr, Seerr, and AltMount service pages, **Database Migration** opens a guided SQLite-to-PostgreSQL workflow when the backend advertises `postgres_migration` and includes the service in `postgres_migration_service_keys`. Older backends retain the legacy Sonarr/Radarr capability path.
 
 The panel provides:
 
@@ -64,7 +64,7 @@ The panel provides:
 
 The frontend requires a successful rehearsal before enabling its cutover choice. Closing or navigating away from the panel does not cancel the backend job; reopening the service page resumes the latest job display.
 
-See [Arr SQLite to PostgreSQL Migration](../features/arr-postgres-migration.md) before using it in production.
+See [SQLite to PostgreSQL Migration](../features/arr-postgres-migration.md) before using it in production.
 
 ---
 

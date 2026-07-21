@@ -32,6 +32,8 @@ Open the Bazarr service page in the DUMB frontend, enable the service in **DUMB 
 ```json
 "bazarr": {
   "enabled": false,
+  "postgres_enabled": false,
+  "postgres_database": "",
   "process_name": "Bazarr",
   "repo_owner": "morpheus65535",
   "repo_name": "bazarr",
@@ -59,7 +61,7 @@ Open the Bazarr service page in the DUMB frontend, enable the service in **DUMB 
     "{port}"
   ],
   "config_dir": "/opt/bazarr",
-  "config_file": "/bazarr/data/config.yaml",
+  "config_file": "/bazarr/data/config/config.yaml",
   "log_file": "/bazarr/data/log/bazarr.log",
   "env": {
     "NO_UPDATE": "true"
@@ -85,6 +87,8 @@ Then complete these steps in Bazarr:
 
 If your Arr instances use non-default ports, use the actual ports shown on their DUMB service pages.
 
+DUMB treats `bazarr.port` as authoritative. If DUMB assigns a different port to avoid a conflict, Bazarr's persisted **Settings -> General -> Port** value is synchronized to the same port during setup. Restart Bazarr after manually changing `bazarr.port` so both the managed launch command and Bazarr's saved setting are updated.
+
 ## Media paths
 
 Bazarr relies on the paths reported by Sonarr and Radarr. Inside DUMB, all three services see the same filesystem, so the reported Arr path should already be valid in Bazarr. Keep the Arr root folders and Bazarr access on the same `/mnt/debrid/...` paths.
@@ -95,7 +99,13 @@ Do not add remote path mappings merely because DUMB itself is running in Docker.
 
 DUMB checks the official Bazarr GitHub release and installs updates according to `auto_update_interval` and `auto_update_start_time`. The Python virtual environment is retained during an application update and its requirements are refreshed from the release.
 
-The Bazarr database and settings remain under `/data/bazarr` across container replacement or application updates. Do not place Bazarr's SQLite configuration directory on NFS.
+Bazarr uses `/bazarr/data/db/bazarr.db` by default. The database and settings remain under `/data/bazarr` across container replacement or application updates. Do not place Bazarr's SQLite configuration directory on NFS.
+
+## PostgreSQL migration
+
+Bazarr supports PostgreSQL, and DUMB exposes the guarded **Database Migration** tool on the Bazarr service page. Run a rehearsal first, review all table counts, then perform cutover. DUMB configures Bazarr's official `POSTGRES_*` environment values and creates the `bazarr` database by default.
+
+Do not set `postgres_enabled: true` directly on an existing installation; that changes the backend without copying `bazarr.db`. Bazarr's upstream guide requires the SQLite database to have been used with Bazarr 1.1.5 or newer before migration. DUMB converts the SQLite timestamp values to the types in Bazarr's current PostgreSQL schema, preserves the SQLite source, and restores SQLite configuration automatically when cutover fails. See [SQLite to PostgreSQL Migration](../../features/arr-postgres-migration.md).
 
 ## Troubleshooting
 
@@ -121,6 +131,7 @@ The Bazarr database and settings remain under `/data/bazarr` across container re
 ## Related links
 
 - [Bazarr setup guide](https://wiki.bazarr.media/Getting-Started/Setup-Guide/)
+- [Bazarr PostgreSQL database](https://wiki.bazarr.media/Additional-Configuration/PostgreSQL-Database/)
 - [Sonarr](../core/sonarr.md)
 - [Radarr](../core/radarr.md)
 - [Embedded service UIs](../../features/embedded-ui.md)

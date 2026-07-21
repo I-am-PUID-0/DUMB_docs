@@ -38,6 +38,8 @@ Seerr provides:
   "instances": {
     "Default": {
       "enabled": false,
+      "postgres_enabled": false,
+      "postgres_database": "",
       "sync_role": "disabled",
       "core_service": "",
       "process_name": "Seerr",
@@ -75,6 +77,8 @@ Seerr provides:
 #### Seerr instance keys
 
 - **`enabled`**: Whether to start this Seerr instance.
+- **`postgres_enabled`**: Select DUMB-managed PostgreSQL after using the guided migration tool. SQLite remains the default.
+- **`postgres_database`**: Optional database-name override. Blank uses a per-instance DUMB default.
 - **`sync_role`**: `disabled`, `primary`, or `subordinate`.
 
 !!! note "No core_service routing for Seerr"
@@ -97,6 +101,12 @@ Seerr provides:
 - **`config_dir`** / **`config_file`**: Where configuration files are stored.
 - **`log_file`**: Path to the Seerr log file.
 - **`env`**: Environment variables passed at runtime.
+
+## PostgreSQL migration
+
+Each Seerr instance can migrate its `/config/db/db.sqlite3` data independently. Open **Database Migration** on that instance's service page, complete rehearsal, review users/media/requests and full table-count validation, then cut over. DUMB lets Seerr initialize its own current PostgreSQL schema and does not copy Seerr's migration bookkeeping table.
+
+Setting `postgres_enabled: true` directly does not copy SQLite data. The preserved SQLite database can be restored, but writes made after PostgreSQL cutover are not merged back. See [SQLite to PostgreSQL Migration](../../features/arr-postgres-migration.md) and [Seerr database configuration](https://docs.seerr.dev/extending-seerr/database-config/).
 
 ---
 

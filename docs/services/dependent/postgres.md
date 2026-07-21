@@ -81,6 +81,8 @@ It is pre-installed and automatically initialized during container startup.
     - `lidarr-main` / `lidarr-log` when a Lidarr instance has `postgres_enabled: true`
     - `prowlarr-main` / `prowlarr-log` when a Prowlarr instance has `postgres_enabled: true`
     - `whisparr-main` / `whisparr-log` when a Whisparr instance has `postgres_enabled: true`
+    - `bazarr`, `pulsarr`, and `altmount` when those services complete PostgreSQL cutover
+    - a per-instance `seerr` database when a Seerr instance completes PostgreSQL cutover
 
 !!! note "Arr PostgreSQL databases"
     DUMB creates the main/log databases and writes the matching Arr `config.xml` entries when `postgres_enabled` is true on a supported Arr instance. SQLite remains the default for new Arr instances, and PostgreSQL is an explicit opt-in.
@@ -88,25 +90,24 @@ It is pre-installed and automatically initialized during container startup.
     In onboarding, enabling `postgres_enabled` on Radarr, Sonarr, Lidarr, Prowlarr, or Whisparr automatically enables and starts PostgreSQL as needed. You do not need to select PostgreSQL separately as an optional service.
 
 !!! danger "The PostgreSQL toggle is not a migration tool"
-    DUMB does not copy an existing Arr SQLite database into PostgreSQL. Setting `postgres_enabled: true` creates/configures PostgreSQL databases and starts the Arr against them; it does not migrate `radarr.db`, `sonarr.db`, `lidarr.db`, `prowlarr.db`, or `whisparr.db`.
+    DUMB does not copy existing SQLite data merely because `postgres_enabled` is set. Directly enabling it creates/configures a PostgreSQL database and starts the service against that database.
 
-    If you switch an existing SQLite-backed Arr instance without a manual migration, the app may start against empty PostgreSQL databases and look like a fresh install.
+    If you switch an existing SQLite-backed service directly, it may start against an empty PostgreSQL database and look like a fresh install.
 
-    For existing Sonarr and Radarr instances, use DUMB's separate [guided SQLite-to-PostgreSQL migration tool](../../features/arr-postgres-migration.md). Upstream Servarr still classifies this migration as unsupported.
+    For Sonarr, Radarr, Lidarr, Prowlarr, Whisparr, Bazarr, Pulsarr, Seerr, and AltMount, use DUMB's separate [guided SQLite-to-PostgreSQL migration tool](../../features/arr-postgres-migration.md). Servarr migration caveats still apply.
 
 !!! warning "No known PostgreSQL-to-SQLite migration"
-    There is no known supported migration path from PostgreSQL back to SQLite for supported Arr services. Treat Arr PostgreSQL mode as a long-term database choice unless you are willing to recreate the affected Arr instance from scratch.
+    DUMB does not reverse-copy PostgreSQL changes into SQLite. Treat PostgreSQL cutover as a long-term database choice unless you are willing to restore the preserved pre-cutover SQLite snapshot and lose later writes.
 
-### Existing Arr SQLite instances
+### Existing SQLite-backed services
 
-For existing Arr instances, use PostgreSQL mode only after deciding how you want to handle the existing SQLite data:
+For an existing supported service, use PostgreSQL mode only after deciding how to handle its SQLite data:
 
 1. Keep SQLite: leave `postgres_enabled: false`.
-2. Start fresh on PostgreSQL: back up the Arr config directory, enable `postgres_enabled`, and accept that the PostgreSQL databases start empty.
-3. Guided migration for Sonarr/Radarr: open the instance service page, select **Database Migration**, complete a rehearsal, and review its validation before cutover.
-4. Attempt manual migration for another supported Arr: back up the Arr config directory and `/postgres_data`, initialize the PostgreSQL schema, then follow that Arr's upstream migration notes.
+2. Start fresh on PostgreSQL: back up the service data/config directory, enable `postgres_enabled`, and accept that the PostgreSQL database starts empty.
+3. Guided migration: open the service page, select **Database Migration**, complete a rehearsal, and review its validation before cutover.
 
-DUMB's guided tool automates consistent SQLite backups, Arr schema initialization, native data-only import, dynamic sequence repair, table-count validation, progress reporting, and configuration rollback for Sonarr and Radarr. Lidarr, Prowlarr, and Whisparr remain manual.
+DUMB's guided tool automates consistent SQLite backups, application-owned schema initialization, native data-only import, type conversion, dynamic sequence repair, table-count validation, progress reporting, and configuration rollback for all nine services listed above.
 
 Upstream PostgreSQL setup and migration references:
 
@@ -115,6 +116,9 @@ Upstream PostgreSQL setup and migration references:
 - [Lidarr PostgreSQL setup](https://wiki.servarr.com/lidarr/postgres-setup)
 - [Prowlarr PostgreSQL setup](https://wiki.servarr.com/prowlarr/postgres-setup)
 - [Whisparr PostgreSQL setup](https://wiki.servarr.com/whisparr/postgres-setup)
+- [Bazarr PostgreSQL database](https://wiki.bazarr.media/Additional-Configuration/PostgreSQL-Database/)
+- [Pulsarr PostgreSQL migration](https://jamcalli.github.io/Pulsarr/docs/installation/postgres-migration/)
+- [Seerr database configuration](https://docs.seerr.dev/extending-seerr/database-config/)
 
 !!! note " Override any of the above using `POSTGRES_USER`, `POSTGRES_PASSWORD`, or `POSTGRES_DB` environment variables."
 

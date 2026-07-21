@@ -90,7 +90,7 @@ During onboarding, enabling `postgres_enabled` for Sonarr is enough; you do not 
 
     If you enable this on an existing SQLite-backed Sonarr instance without doing a manual migration, Sonarr can start against fresh PostgreSQL databases and appear empty or newly initialized.
 
-For an existing instance, use the **Database Migration** tool on its service page. Run a rehearsal first, review its table-count validation, and only then start guarded cutover. See [Arr SQLite to PostgreSQL Migration](../../features/arr-postgres-migration.md).
+For an existing instance, use the **Database Migration** tool on its service page. Run a rehearsal first, review its table-count validation, and only then start guarded cutover. See [SQLite to PostgreSQL Migration](../../features/arr-postgres-migration.md).
 
 Sonarr's upstream documentation still classifies existing SQLite migration as unsupported. Back up `/sonarr/...` and `/postgres_data` before proceeding, even when using DUMB's guarded workflow.
 

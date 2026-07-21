@@ -505,17 +505,17 @@ Rebuilds symlink-backup schedule state from current service config.
 
 ---
 
-## Arr PostgreSQL Migration
+## SQLite-to-PostgreSQL Migration
 
-These endpoints power the guarded Sonarr/Radarr SQLite-to-PostgreSQL workflow. See [Arr SQLite to PostgreSQL Migration](../features/arr-postgres-migration.md) for operator guidance and limitations.
+These endpoints power the guarded migration workflow for Sonarr, Radarr, Lidarr, Prowlarr, Whisparr, Bazarr, Pulsarr, Seerr, and AltMount. See [SQLite to PostgreSQL Migration](../features/arr-postgres-migration.md) for operator guidance and service-specific limitations.
 
-### `GET /process/arr-postgres-migration/preflight`
+### `GET /process/postgres-migration/preflight`
 
 Query parameter: `process_name`.
 
-Returns non-mutating SQLite integrity, Arr version, PostgreSQL connectivity/role, target database, and backup-space checks. `ready` is false when any blocking check fails. The response never includes the PostgreSQL password.
+Returns non-mutating SQLite integrity, detected application version when available, PostgreSQL connectivity/role, target database, and backup-space checks. `ready` is false when any blocking check fails. The response never includes the PostgreSQL password. `supports_log_migration` tells clients whether to offer the separate Arr log-database option.
 
-### `POST /process/arr-postgres-migration/start`
+### `POST /process/postgres-migration/start`
 
 Queues a persisted rehearsal or cutover job.
 
@@ -533,19 +533,19 @@ Queues a persisted rehearsal or cutover job.
 
 `mode` must be `rehearsal` or `cutover`. The backend requires every acknowledgement and exact confirmation text. Jobs and detailed stage events persist under `/config/arr-postgres-migration/jobs`.
 
-### `GET /process/arr-postgres-migration/status`
+### `GET /process/postgres-migration/status`
 
 Query parameter: `job_id`.
 
 Returns stage, percentage, recent detailed events, result counts, errors, and rollback state for one job.
 
-### `GET /process/arr-postgres-migration/latest`
+### `GET /process/postgres-migration/latest`
 
 Query parameter: `process_name`.
 
 Returns the most recently updated migration job for that service so dmbdb can resume visibility after navigation or refresh.
 
-### `POST /process/arr-postgres-migration/rollback`
+### `POST /process/postgres-migration/rollback`
 
 ```json
 {
@@ -554,7 +554,9 @@ Returns the most recently updated migration job for that service so dmbdb can re
 }
 ```
 
-Restores the job's preserved `config.xml`, persists `postgres_enabled: false`, and restarts the service against SQLite when it was running. This does not reverse-copy changes made after PostgreSQL cutover.
+Restores the job's preserved application configuration when applicable, persists `postgres_enabled: false`, and restarts the service against SQLite when it was running. This does not reverse-copy changes made after PostgreSQL cutover.
+
+The former `/process/arr-postgres-migration/*` paths remain available as hidden compatibility aliases for older dmbdb clients and existing Sonarr/Radarr deployments.
 
 ---
 
@@ -586,6 +588,10 @@ Returns backend capabilities and feature flags. Used by the frontend to determin
   "arr_postgres_migration": true,
   "arr_postgres_migration_rehearsal": true,
   "arr_postgres_migration_rollback": true,
+  "postgres_migration": true,
+  "postgres_migration_rehearsal": true,
+  "postgres_migration_rollback": true,
+  "postgres_migration_service_keys": ["altmount", "bazarr", "lidarr", "prowlarr", "pulsarr", "radarr", "seerr", "sonarr", "whisparr"],
   "database_health_metrics": true,
   "metrics_history_storage": true,
   "metrics_history_hot_activation": true,
@@ -614,9 +620,11 @@ Returns backend capabilities and feature flags. Used by the frontend to determin
 | `symlink_backup_schedule` | Whether scheduled symlink backup status/reschedule routes are available |
 | `symlink_backup_manifest_list` | Whether `/process/symlink-backup-manifests` is available |
 | `symlink_manifest_file_list` | Whether `/process/symlink-manifest-files` is available |
-| `arr_postgres_migration` | Whether guarded Sonarr/Radarr SQLite-to-PostgreSQL migration routes are available |
-| `arr_postgres_migration_rehearsal` | Whether isolated rehearsal imports are supported |
-| `arr_postgres_migration_rollback` | Whether jobs can restore preserved SQLite configuration |
+| `postgres_migration` | Whether the generic guarded SQLite-to-PostgreSQL routes are available |
+| `postgres_migration_rehearsal` | Whether isolated rehearsal imports are supported |
+| `postgres_migration_rollback` | Whether jobs can restore preserved SQLite configuration |
+| `postgres_migration_service_keys` | Backend-authoritative service keys offered by the migration UI |
+| `arr_postgres_migration*` | Legacy Sonarr/Radarr capability aliases retained for older clients |
 
 ---
 

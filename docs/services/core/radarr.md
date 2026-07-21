@@ -90,7 +90,7 @@ During onboarding, enabling `postgres_enabled` for Radarr is enough; you do not 
 
     If you enable this on an existing SQLite-backed Radarr instance without doing a manual migration, Radarr can start against fresh PostgreSQL databases and appear empty or newly initialized.
 
-For an existing instance, use the **Database Migration** tool on its service page. Run a rehearsal first, review its table-count validation, and only then start guarded cutover. See [Arr SQLite to PostgreSQL Migration](../../features/arr-postgres-migration.md).
+For an existing instance, use the **Database Migration** tool on its service page. Run a rehearsal first, review its table-count validation, and only then start guarded cutover. See [SQLite to PostgreSQL Migration](../../features/arr-postgres-migration.md).
 
 Radarr's upstream documentation still classifies existing SQLite migration as unsupported. Back up `/radarr/...` and `/postgres_data` before proceeding, even when using DUMB's guarded workflow.
 

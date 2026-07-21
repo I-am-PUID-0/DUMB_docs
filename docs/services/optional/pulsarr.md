@@ -34,6 +34,8 @@ Pulsarr provides:
 ```json
 "pulsarr": {
   "enabled": false,
+  "postgres_enabled": false,
+  "postgres_database": "",
   "process_name": "Pulsarr",
   "repo_owner": "jamcalli",
   "repo_name": "Pulsarr",
@@ -74,6 +76,8 @@ Pulsarr provides:
 ### Configuration key descriptions
 
 - **`enabled`**: Whether to start Pulsarr.
+- **`postgres_enabled`**: Select DUMB-managed PostgreSQL after using the guided migration tool. SQLite remains the default.
+- **`postgres_database`**: Optional target name; blank uses `pulsarr`.
 - **`repo_owner`** / **`repo_name`**: GitHub repository DUMB downloads from.
 - **`release_version_enabled`** / **`release_version`**: Use a tagged release if enabled, or the latest release by default.
 - **`branch_enabled`** / **`branch`**: Use a source branch instead of a release.
@@ -108,6 +112,12 @@ After enabling and starting Pulsarr:
   the retained SQLite database. A migration failure keeps Pulsarr stopped and
   preserves the migration error in DUMB's service log.
 - If you intentionally serve Pulsarr behind a separate subfolder reverse proxy, set Pulsarr's own `basePath` environment variable for that external proxy. DUMB's embedded UI route strips its service prefix and does not need `basePath`.
+
+## PostgreSQL migration
+
+Use **Database Migration** on the Pulsarr service page for an existing SQLite installation. Rehearsal starts Pulsarr against an isolated PostgreSQL database so Pulsarr creates its current schema, imports application data while excluding Knex's migration bookkeeping tables, validates every copied table, and returns production to SQLite. Cutover repeats this from a cold snapshot and enables `postgres_enabled` only after validation.
+
+Do not enable PostgreSQL directly when you need the existing users, settings, requests, or integrations. See [SQLite to PostgreSQL Migration](../../features/arr-postgres-migration.md) and the [upstream Pulsarr migration guide](https://jamcalli.github.io/Pulsarr/docs/installation/postgres-migration/).
 
 ---
 
