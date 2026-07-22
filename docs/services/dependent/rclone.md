@@ -231,9 +231,9 @@ You can apply these flags in three ways:
     !!! note 
         The `command` field is empty by default (`"command": []`) because DUMB generates the rclone command dynamically during setup and applies it in memory.
 
-        If you add custom arguments to the `command` list, it will override the auto-generated defaults. 
-
-        You will be responsible for maintaining all required options, such as `--mount-name` and `--mount-dir`. 
+        Saved tunable arguments in the `command` list are preserved. DUMB still
+        reconciles required mount, identity, cache-path, and provider-specific
+        flags during setup.
 
         To revert to default behavior, simply clear the field again by setting `"command": []`.
 
@@ -298,6 +298,7 @@ You can apply these flags in three ways:
 | `--allow-other`                   | *(enabled)*               | Allows other processes (like Plex) to access the mount.         |
 | `--poll-interval`                 | `0`                       | Disables polling for changes (not supported by debrid remotes). |
 | `--dir-cache-time`                | `10s`                     | Cache directory structure for 10 seconds.                       |
+| `--rc` / `--rc-addr`              | first available from `5572` | Enables the local rclone control API; DUMB avoids configured and active RC ports. |
 | `--allow-non-empty`               | *(enabled)*               | Allows mounting to non-empty directories.                       |
 | `--vfs-cache-mode`                | `full`       | Allows writing & deletion, necessary for media server interaction.         |
 | `--vfs-read-chunk-size`           | `1M`           | Minimizes initial bandwidth usage per file during scans.                   |

@@ -240,6 +240,15 @@ When `key_type` is set to `NzbDAV`, DUMB configures rclone to use:
 
 * `http://127.0.0.1:<frontend_port>/` as the WebDAV URL
 * `WEBDAV_USER` / `WEBDAV_PASSWORD` (or the values stored in the NzbDAV DB)
+* an rclone RC listener on the first available port starting at `5572`
+
+DUMB reserves RC ports already assigned to other managed rclone instances and
+AltMount, and also checks active listeners before selecting the port. On first
+setup, DUMB enables **Settings -> Rclone Server** in NzbDAV and points it at the
+local RC listener so WebDAV changes can invalidate rclone's VFS directory cache.
+Later NzbDAV UI changes to the RC enablement, host, username, or password are
+preserved. A saved `--rc-addr` and `--dir-cache-time` in the rclone command are
+also retained when they remain valid.
 
 Default rclone mount path (if not overridden) is:
 
