@@ -71,7 +71,7 @@ DUMB is built as a collection of microservices that communicate over internal AP
 | [CLI Debrid](../services/core/cli-debrid.md)             | Core      | Debrid orchestrator (list scanning, upgrades, Plex watch) |
 | [Decypharr](../services/core/decypharr.md)               | Core      | Debrid and native Usenet workflow service for Arrs        |
 | [NzbDAV](../services/core/nzbdav.md)                     | Core      | WebDAV gateway for NZB + Arr download client workflows    |
-| [AltMount](../services/core/altmount.md)                 | Core      | Alternative Usenet WebDAV and SABnzbd-compatible workflow |
+| [AltMount](../services/core/altmount.md)                 | Core      | Usenet streaming, WebDAV, mount, and Arr import workflow  |
 | [Plex](../services/core/plex-media-server.md)            | Core      | Media server for hosting and playing content              |
 | [Jellyfin](../services/core/jellyfin.md)                 | Core      | Media server for hosting and playing content              |
 | [Emby](../services/core/emby.md)                         | Core      | Media server for hosting and playing content              |

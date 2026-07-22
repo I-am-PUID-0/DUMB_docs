@@ -20,7 +20,7 @@ You can use it to:
 - Explore and modify database tables and data
 - Run SQL queries manually using the **Query Tool**
 - Schedule tasks using **pgAgent** (optional tool inside pgAdmin)
-- View the [System Stats](../services/optional/pgadmin.md#-system_stats) inside PostgreSQL
+- View the [System Stats](../services/optional/pgadmin.md#system_stats) inside PostgreSQL
 ---
 
 ## Using pgAdmin’s Query Tool

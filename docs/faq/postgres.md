@@ -43,7 +43,7 @@ Both services will start fresh and **reinitialize their databases** upon next la
 !!! warning "Accidental deletion of `postgres_data` is not recoverable"
     Make sure to regularly back up your `postgres_data` directory if long-term retention is important.
 
-    See the [pgAdmin service](pgadmin.md#-example-scheduled-backups-with-pgagent) for details on scheduling backups of the PostgreSQL databases. 
+    See the [pgAdmin service](pgadmin.md#example-scheduled-backups-with-pgagent) for details on scheduling backups of the PostgreSQL databases.
 
 ---
 
@@ -53,9 +53,9 @@ Yes — stopping the stack, deleting the `postgres_data` directory, and starting
 
 Alternatively, use **pgAdmin 4** (if enabled) to drop individual databases manually.
 
-> See the [PostgreSQL Useful Commands](../services/dependent/postgres.md/#-useful-commands) section.
+> See the [PostgreSQL Useful Commands](../services/dependent/postgres.md#useful-commands) section.
 
-> Alternatively, See the [pgAdmin FAQ](pgadmin.md/#-drop-a-database-or-create-a-manual-backup-in-pgadmin) section.
+> Alternatively, see the [pgAdmin FAQ](pgadmin.md#drop-a-database-or-create-a-manual-backup-in-pgadmin) section.
 
 ---
 

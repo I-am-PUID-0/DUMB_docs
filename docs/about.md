@@ -29,7 +29,7 @@ Unlike other solutions that focus on one piece of the puzzle, **DUMB integrates 
 
 *  *Embedded media servers* — Plex, Jellyfin, and Emby run inside the same container, ensuring seamless access to mounted content and full internal control
 *  *Service coordination* — via the internal DUMB API and real-time config management
-*  *Automated acquisition* — with core services for discovery and orchestrators like Riven, CLI Debrid, Decypharr, NzbDAV, and AltMount
+*  *Automated acquisition* — with Riven, CLI Debrid, and Decypharr orchestration plus NzbDAV and AltMount Usenet workflows
 *  *Cloud storage mounting* — through rclone mounts direct to debrid (e.g., Real-Debrid WebDAV) or utilizing Zurg's WebDAV
 *  *Arr automation* — Sonarr, Radarr, Lidarr, and Whisparr handle queues, renaming, and library organization
 *  *Library management* — using symlinks, metadata enrichment, and optional server updates
@@ -42,8 +42,10 @@ All services are configured through a centralized file (`dumb_config.json`) and 
 !!! info "Combined workflows"
 
     You can attach a single Arr instance to multiple workflows by setting
-    `core_service` to a list (for example `["decypharr", "nzbdav", "altmount"]`). When combined,
-    DUMB switches Arr root folders to `/mnt/debrid/combined_symlinks/<slug>`.
+    `core_service` to a list (for example `["decypharr", "nzbdav", "altmount"]`).
+    Combinations that include Decypharr plus NzbDAV or AltMount use
+    `/mnt/debrid/combined_symlinks/<slug>` for the Decypharr-managed Arr root.
+    AltMount's own import strategy and Arr path still require operator review.
 
 ---
 

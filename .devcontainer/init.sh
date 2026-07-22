@@ -1,8 +1,12 @@
 #!/usr/bin/env bash
-set -e
+set -euo pipefail
 
-pip install --upgrade pip
-pip install poetry
+export PATH="$HOME/.local/bin:$PATH"
+export POETRY_VIRTUALENVS_CREATE=true
+export POETRY_VIRTUALENVS_IN_PROJECT=true
 
-poetry config virtualenvs.create false
+if ! command -v poetry >/dev/null 2>&1; then
+    python -m pip install --user poetry
+fi
+
 poetry install --no-interaction --no-root

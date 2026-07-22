@@ -55,4 +55,4 @@ For example:
 
 * [Core Services](../core/index.md)
 * [Optional Services](../optional/index.md)
-* [How Services Work Together](../index.md#-how-the-services-work-together)
+* [How Services Work Together](../index.md#how-the-services-work-together)

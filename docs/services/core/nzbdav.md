@@ -270,14 +270,16 @@ DUMB will:
 * Update Arr permissions (enable chmod + set folder/file modes)
 * Attempt to add an `nzbdav` download client in the Arrs using their API keys
 
-When `core_service` includes multiple workflow services, the root folder base
-shifts to `/mnt/debrid/combined_symlinks/<category>`.
+When `core_service` includes both `decypharr` and `nzbdav`, the root folder base
+shifts to `/mnt/debrid/combined_symlinks/<category>`. Other multi-service
+combinations keep the NzbDAV symlink root unless another workflow owns its own
+root-folder setup.
 
 !!! info "Automatic vs manual wiring"
 
     When `core_service` is set to `nzbdav` (or includes it), DUMB
     automatically configures download clients, root folders, and permissions.
-    If `core_service` includes multiple workflow services, the Arr root folder
+    If `core_service` includes both `decypharr` and `nzbdav`, the Arr root folder
     base switches to `/mnt/debrid/combined_symlinks/<category>`.
     Manual setup is only needed when `core_service` is blank or you want to override
     the combined workflow wiring.

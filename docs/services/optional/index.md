@@ -68,4 +68,4 @@ These services can be disabled at any time without affecting the startup of core
 
 * [Core Services](../core/index.md)
 * [Dependent Services](../dependent/index.md)
-* [How Services Work Together](../index.md#-how-the-services-work-together)
+* [How Services Work Together](../index.md#how-the-services-work-together)

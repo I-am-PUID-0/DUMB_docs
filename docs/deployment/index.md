@@ -38,7 +38,7 @@ All deployment methods provide access to the same integrated services and config
 | Debrid      | API Key (Real-Debrid)                         |
 | GitHub      | Token *(if using the sponsored Zurg repo)*    |
 
- See [Configuration → Integration Tokens](../features/configuration.md#-integration-tokens--credentials)
+ See [Configuration → Integration Tokens](../features/configuration.md#integration-tokens--credentials)
 
 ---
 

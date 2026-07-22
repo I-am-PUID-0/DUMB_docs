@@ -1,4 +1,5 @@
 .vscode
+/.venv
 
 # Ignore local Zensical server files
 /site

@@ -56,4 +56,4 @@ These services talk to each other over localhost and coordinate all other config
 * [Core Services](../core/index.md)
 * [Dependent Services](../dependent/index.md)
 * [Optional Services](../optional/index.md)
-* [How Services Work Together](../index.md#-how-the-services-work-together)
+* [How Services Work Together](../index.md#how-the-services-work-together)

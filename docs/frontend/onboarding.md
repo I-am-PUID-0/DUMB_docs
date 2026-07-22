@@ -152,9 +152,17 @@ Configure additional settings for selected services:
 - **Zurg**: Custom port, log level
 - **rclone**: Mount options, log level
 - **Phalanx DB**: Enable/disable for CLI Debrid
-- **Decypharr**: Use embedded rclone option
+- **Decypharr**: FUSE, embedded rclone, external rclone, or no-mount mode
+- **AltMount**: FUSE, embedded rclone, external rclone, or no-mount mode
 
 Default values are pre-filled but can be customized.
+
+!!! note "AltMount still needs application setup"
+
+    Onboarding selects AltMount's mount mode and wires Arr download clients.
+    After first start, create the AltMount administrator, add an NNTP provider,
+    choose an import strategy, and validate the Arr/media-library paths. See the
+    [AltMount guide](../services/core/altmount.md#first-start-checklist).
 
 !!! info "Instances"
 
@@ -255,7 +263,10 @@ For services that support multiple instances (like Zurg or rclone), the wizard:
 For Arr services and NeutArr, instance names can be used to split workflows (e.g., Debrid vs Usenet, or multiple
 quality tiers). 
 
-Combined Arr workflows use `/mnt/debrid/combined_symlinks/<slug>` for root folders.
+Combined Arr workflows that include Decypharr plus NzbDAV or AltMount use
+`/mnt/debrid/combined_symlinks/<slug>` for the Decypharr-managed root. An
+AltMount-only route—or NzbDAV + AltMount without Decypharr—does not get a
+combined root automatically.
 
 ---
 

@@ -33,7 +33,7 @@ Before you deploy DUMB, make sure your environment and accounts are ready.
 | Debrid      | API Key (Real-Debrid)                         |
 | GitHub      | Token *(if using the sponsored Zurg repo)*    |
 
- See [Configuration → Integration Tokens](../features/configuration.md#-integration-tokens--credentials)
+ See [Configuration → Integration Tokens](../features/configuration.md#integration-tokens--credentials)
 
 ---
 

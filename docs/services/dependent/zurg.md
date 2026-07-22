@@ -20,7 +20,7 @@ There are **two official Zurg repositories**:
 - **[`zurg`](https://github.com/debridmediamanager/zurg)** – The **sponsored-only** repo that includes the latest features, nightly builds, and premium support. DUMB can access it by setting the `DMB_GITHUB_TOKEN` and changing the `repo_name` to `zurg`.
 
 !!! tip "GitHub Token Setup"
-    See [Integration Tokens & Credentials](../../features/configuration.md/#-integration-tokens--credentials) section for details on setting up the `DMB_GITHUB_TOKEN`.
+    See [Integration Tokens & Credentials](../../features/configuration.md#integration-tokens--credentials) for details on setting up the `DMB_GITHUB_TOKEN`.
 
 ---
 

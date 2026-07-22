@@ -28,7 +28,7 @@ Core services are the services that:
 | [CLI Debrid](cli-debrid.md)         | Debrid media scraper, automation engine, and upgrade engine              | CLI Battery, Phalanx DB, rclone, Zurg  | Zilean                  |
 | [Decypharr](decypharr.md)           | Debrid and native Usenet workflow service for Arrs, symlinks, and WebDAV access | rclone when external mount mode is used | Zilean, Sonarr, Radarr, Lidarr, Whisparr |
 | [NzbDAV](nzbdav.md)                 | WebDAV service for NZB access and Arr download client integration         | rclone                            | Sonarr, Radarr, Lidarr, Whisparr |
-| [AltMount](altmount.md)             | Alternative Usenet WebDAV and SABnzbd-compatible workflow                 |                                   | Sonarr, Radarr, Lidarr, Whisparr |
+| [AltMount](altmount.md)             | Usenet streaming, WebDAV, and SABnzbd-compatible Arr workflow             | NNTP provider account             | Sonarr, Radarr, Lidarr, Whisparr |
 | [Plex](plex-media-server.md)        | Hosts media collected by core services               |                                   |                              |
 | [Jellyfin](jellyfin.md)             | Media server for hosting and playing content         |                                   |                              |
 | [Emby](emby.md)                     | Media server for hosting and playing content         |                                   |                              |
@@ -90,9 +90,10 @@ If you enable a core service, be sure to also:
 
 ### [AltMount](altmount.md)
 
-* **Requires:** Arr instances with `core_service: altmount` for DUMB-managed download-client setup
-* **Optionally Uses:** AltMount providers, import strategy, and rclone settings managed in AltMount
-* **Outputs:** SABnzbd-compatible Usenet workflow and WebDAV-backed media access
+* **Requires:** At least one NNTP provider configured in AltMount; linked Arr instances are optional
+* **DUMB Integration:** `core_service: altmount` adds matching Arr instances to AltMount and creates their AltMount download clients
+* **Operator Configuration:** Choose the AltMount import strategy, validate Arr root/import paths, and configure media-server libraries
+* **Outputs:** WebDAV plus the selected FUSE/rclone mount and `NONE`, `SYMLINK`, or `STRM` import flow
 
 ### [Riven Backend](riven-backend.md)
 
@@ -138,4 +139,4 @@ If you enable a core service, be sure to also:
 
 * [Dependent Services](../dependent/index.md)
 * [Optional Services](../optional/index.md)
-* [How Services Work Together](../index.md#-how-the-services-work-together)
+* [How Services Work Together](../index.md#how-the-services-work-together)

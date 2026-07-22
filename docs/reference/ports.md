@@ -219,9 +219,11 @@ http://localhost:3000  # Frontend
 | `port` | `8088` |
 | `config_file` | `/altmount/config.yaml` |
 | `metadata_dir` | `/altmount/metadata` |
+| `mount_path` | `/mnt/debrid/altmount` |
 | `log_file` | `/altmount/logs/altmount.log` |
 
-AltMount also exposes `/live` for DUMB startup/readiness checks.
+AltMount also exposes `/live`; DUMB probes it while completing the post-start
+Arr integration pass.
 
 ---
 

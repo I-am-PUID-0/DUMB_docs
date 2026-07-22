@@ -73,12 +73,16 @@ comma-separated string.
 When `core_service` is set on an Arr instance, DUMB:
 
 - Configures matching download clients (Decypharr, NzbDAV, and/or AltMount).
-- Adds or updates Arr root folders and permissions for each workflow.
+- Adds or updates Arr root folders and permissions where that workflow's setup
+  hook owns them. AltMount configures the download-client connection but leaves
+  its import strategy and Arr root folders operator-managed.
 - Creates Prowlarr apps tagged with the same core service(s) so indexers sync
   only to the intended Arrs.
 
-When `core_service` includes multiple workflow keys, DUMB uses a shared root
-folder base at `/mnt/debrid/combined_symlinks/<slug>` for the Arr instance.
+When `core_service` combines Decypharr with NzbDAV or AltMount, DUMB uses the
+shared `/mnt/debrid/combined_symlinks/<slug>` base for the Decypharr-owned Arr
+root. NzbDAV without Decypharr keeps its NzbDAV symlink root, and AltMount does
+not independently rewrite the Arr root folder.
 
 When `core_service` is set on a NeutArr instance, DUMB:
 
@@ -135,8 +139,10 @@ In this layout:
 }
 ```
 
-In this layout, DUMB wires Decypharr, NzbDAV, and AltMount download clients and
-root folders for the same Sonarr instance.
+In this layout, DUMB wires Decypharr, NzbDAV, and AltMount download clients for
+the same Sonarr instance. Decypharr and NzbDAV coordinate the DUMB-managed
+combined root; AltMount's import strategy and compatible Arr paths still need
+to be reviewed in AltMount.
 
 ---
 

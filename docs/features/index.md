@@ -47,7 +47,7 @@ DUMB integrates the following projects and service families to create a complete
 - **Riven Backend** and **CLI Debrid** provide Debrid-oriented orchestration for searching, collecting, and organizing media.
 - **Decypharr** supports Debrid, native Usenet, and hybrid Arr workflows with torrent/Sabnzbd-compatible endpoints and symlink libraries.
 - **NzbDAV** provides an NZB WebDAV gateway and Arr download-client integration for Usenet workflows.
-- **AltMount** provides an alternate Usenet workflow with WebDAV access, SABnzbd-compatible behavior, metadata storage, and optional rclone mount management.
+- **AltMount** provides a Usenet streaming workflow with WebDAV access, SABnzbd-compatible Arr integration, built-in FUSE/rclone modes, and operator-selected direct, symlink, or STRM imports.
 
 ### **Arr automation**
 
