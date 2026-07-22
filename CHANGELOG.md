@@ -1,6 +1,14 @@
 # Changelog
 
 
+## [1.22.13](https://github.com/I-am-PUID-0/DUMB_docs/compare/1.22.12...1.22.13) (2026-07-22)
+
+
+### 📖 Documentation
+
+* comprehensively align documentation with current DUMB stack ([427ba13](https://github.com/I-am-PUID-0/DUMB_docs/commit/427ba138f9f14d5cbcb994cfa3c8d007646e702c))
+* expand AltMount guide and fix documentation build setup ([9a26d2d](https://github.com/I-am-PUID-0/DUMB_docs/commit/9a26d2ddd49b2f9dda9e80a553b1713d6df51b98))
+
 ## [1.22.12](https://github.com/I-am-PUID-0/DUMB_docs/compare/1.22.11...1.22.12) (2026-07-21)
 
 
