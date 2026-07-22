@@ -74,7 +74,7 @@ flowchart TD
     "repo_owner": "sirrobot01",
     "repo_name": "decypharr",
     "release_version_enabled": false,
-    "release_version": "latest",
+    "release_version": "v1.0.0",
     "branch_enabled": false,
     "branch": "main",
     "suppress_logging": false,
@@ -82,6 +82,16 @@ flowchart TD
     "port": 8282,
     "auto_update": false,
     "auto_update_interval": 24,
+    "auto_update_start_time": "04:00",
+    "symlink_backup_enabled": false,
+    "symlink_backup_interval": 168,
+    "symlink_backup_start_time": "04:00",
+    "symlink_backup_path": "/config/symlink-repair/snapshots/decypharr-{timestamp}.json",
+    "symlink_backup_include_broken": true,
+    "symlink_backup_retention_count": 1,
+    "symlink_backup_roots": [
+        "/mnt/debrid/decypharr_symlinks"
+    ],
     "clear_on_update": false,
     "exclude_dirs": [],
     "command": [
@@ -112,6 +122,8 @@ flowchart TD
 * `mount_path`: Container path for the Decypharr mount (default `/mnt/debrid/decypharr`).
 * `api_keys`: Per-provider API keys used by Decypharr for Debrid providers.
 * `clear_on_update`, `exclude_dirs`: Clean old files during update while protecting data dirs.
+
+Because `release_version_enabled` is `false`, the stored `v1.0.0` value is only the fallback selector; normal stable installs resolve the latest supported GitHub release. Enable the selector only when intentionally pinning a release.
 
 ---
 
@@ -351,7 +363,7 @@ automatically wires the download client and Arr permissions. If `core_service` i
 Manual configuration is only required when `core_service` is left blank or you
 want to override the combined workflow wiring.
 
-Follow the [official usage guide](https://sirrobot01.github.io/decypharr/usage/#connecting-to-sonarrradarr) for step-by-step instructions on connecting your Radarr and Sonarr instances to Decypharr.
+Follow the [official Arr integration guide](https://docs.decypharr.com/guides/arrs/) for current Sonarr and Radarr connection guidance.
 
 !!! tip "Connection Tips"
     This includes setting the correct API keys and ensuring URL paths match the container environments.
@@ -396,4 +408,4 @@ In your media server (Plex/Jellyfin/Emby), add the Decypharr symlink folders as 
 ## Resources
 
 * [Decypharr GitHub](https://github.com/sirrobot01/decypharr)
-* [Decypharr Docs](https://sirrobot01.github.io/decypharr/)
+* [Decypharr Docs](https://docs.decypharr.com/)

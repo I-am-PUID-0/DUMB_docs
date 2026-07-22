@@ -21,7 +21,10 @@ Returns a JSON response indicating whether the container is healthy.
 }
 ```
 
-If the check fails, the status will be `"unhealthy"` and include diagnostic output.
+If a tracked process or one of its configured listener ports fails the check, the
+response remains HTTP 200 with `"status": "unhealthy"` and a sanitized `details`
+field. A health-check timeout returns HTTP 504; an execution failure returns
+HTTP 500.
 
 ---
 
@@ -32,15 +35,16 @@ If the check fails, the status will be `"unhealthy"` and include diagnostic outp
 ---
 
 ## Implementation
-This route executes a background health check script in the container:
+This route executes the container health-check script:
 ```bash
 /healthcheck.py
 ```
-It runs within the same virtual environment as DUMB and ensures all critical files, paths, and subprocesses are functional.
+It reads DUMB's tracked process file, confirms each PID is still running, and
+tests configured service ports when present. It is a stack/process readiness
+signal, not a deep application-data or provider health test.
 
 ---
 
 ## Related
 - [API Overview](index.md)
 - [Process Management](process.md)
-

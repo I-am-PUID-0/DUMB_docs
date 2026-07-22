@@ -10,7 +10,7 @@ The Metrics API provides live snapshots, database-health observations, historica
 ## Current snapshot
 
 ```http
-GET /api/metrics
+GET /metrics
 ```
 
 Returns current system, managed-process, external-process, and configured Database Health data. `system.filesystems` contains one entry per configured `dumb.metrics.filesystem_paths` value. `system.disk` and `system.inode` remain aliases for the first configured path for backward compatibility.
@@ -18,7 +18,7 @@ Returns current system, managed-process, external-process, and configured Databa
 ## Filesystem discovery
 
 ```http
-GET /api/metrics/filesystems
+GET /metrics/filesystems
 ```
 
 Returns `configured_paths` plus eligible filesystem mount points visible inside the DUMB container. The response intentionally uses container paths; Docker host paths that are not mounted into the container cannot be discovered or monitored. Clients should gate this endpoint and the `filesystem_paths` setting on the `metrics_filesystem_selection` capability.
@@ -26,7 +26,7 @@ Returns `configured_paths` plus eligible filesystem mount points visible inside 
 ## Network interface discovery
 
 ```http
-GET /api/metrics/network-interfaces
+GET /metrics/network-interfaces
 ```
 
 Returns `configured_interfaces` plus interfaces visible inside DUMB's network namespace. Candidate entries include interface name, availability/link state, speed, MTU, and cumulative byte/packet/error/drop counters; IP addresses are not returned. Clients should gate this endpoint and `dumb.metrics.network_interfaces` on the `metrics_network_interface_selection` capability.
@@ -36,8 +36,8 @@ In current snapshots, `system.network_interfaces` contains each selected visible
 ## Database Health
 
 ```http
-GET /api/metrics/database-health
-GET /api/metrics/database-health?process_name=NzbDAV&refresh=true
+GET /metrics/database-health
+GET /metrics/database-health?process_name=NzbDAV&refresh=true
 ```
 
 `process_name` limits the response to one managed service. `refresh=true` invalidates the cached bounded probe before collection.
@@ -45,7 +45,7 @@ GET /api/metrics/database-health?process_name=NzbDAV&refresh=true
 ## Raw history
 
 ```http
-GET /api/metrics/history?since=1784300000&limit=5000
+GET /metrics/history?since=1784300000&limit=5000
 ```
 
 | Parameter | Default | Description |
@@ -59,7 +59,7 @@ The response contains ordered `items` and a `truncated` indicator. The configure
 ## Chart history
 
 ```http
-GET /api/metrics/history_series?since=1784300000&bucket_seconds=60&max_points=600
+GET /metrics/history_series?since=1784300000&bucket_seconds=60&max_points=600
 ```
 
 This endpoint returns compact items, timestamps, CPU/memory/disk/inode percentage series, per-selected-filesystem disk/inode series, per-selected-interface send/receive rate series, derived aggregate disk/network rate series, summary statistics, truncation state, and the effective bucket size. DUMB automatically increases the bucket size when necessary to honor `max_points`.
@@ -67,8 +67,8 @@ This endpoint returns compact items, timestamps, CPU/memory/disk/inode percentag
 ## Storage status
 
 ```http
-GET /api/metrics/history/storage
-GET /api/metrics/history/storage?probe_postgresql=true
+GET /metrics/history/storage
+GET /metrics/history/storage?probe_postgresql=true
 ```
 
 The response reports:
@@ -86,8 +86,8 @@ The response reports:
 ## Import legacy JSONL
 
 ```http
-POST /api/metrics/history/migrate
-POST /api/metrics/history/migrate?force=true
+POST /metrics/history/migrate
+POST /metrics/history/migrate?force=true
 ```
 
 The import reads legacy `metrics-YYYYMMDD-NNN.jsonl` files from the configured history directory and upserts snapshots into SQLite by timestamp. It is safe to repeat and preserves source files. DUMB records the migration as complete only when every line decodes and every batch writes successfully. A malformed JSONL record or partial write returns `completed: false` with a nonzero `skipped` count and remains retryable on the next import or DUMB startup. Without `force=true`, only a completed migration returns its recorded result without rescanning all files. When PostgreSQL is configured, a rescan requires a full idempotent SQLite-to-PostgreSQL reconciliation before PostgreSQL can resume serving history reads; this also backfills imported samples older than PostgreSQL's current newest row.
@@ -95,7 +95,7 @@ The import reads legacy `metrics-YYYYMMDD-NNN.jsonl` files from the configured h
 ## Activate PostgreSQL storage
 
 ```http
-POST /api/metrics/history/storage/activate-postgresql
+POST /metrics/history/storage/activate-postgresql
 ```
 
 After `dumb.metrics.storage.provider` has been saved as `postgresql`, this endpoint performs restart-free activation:

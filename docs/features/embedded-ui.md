@@ -66,7 +66,7 @@ The onboarding wizard asks if you want to enable embedded service UIs. Select **
 ### Via API
 
 ```bash
-curl -X POST http://localhost:8000/api/config/service-ui \
+curl -X POST http://localhost:3005/api/config/service-ui \
   -H "Content-Type: application/json" \
   -d '{"enabled": true}'
 ```
@@ -272,7 +272,7 @@ To disable and revert to direct port access:
 Or via API:
 
 ```bash
-curl -X POST http://localhost:8000/api/config/service-ui \
+curl -X POST http://localhost:3005/api/config/service-ui \
   -H "Content-Type: application/json" \
   -d '{"enabled": false}'
 ```

@@ -182,7 +182,7 @@ Compact database-health samples are included in normal metrics history without s
 Metrics are streamed via WebSocket at `/ws/metrics`:
 
 ```javascript
-const ws = new WebSocket('ws://localhost:8000/ws/metrics?interval=2');
+const ws = new WebSocket('ws://localhost:3005/ws/metrics?interval=2');
 
 ws.onmessage = (event) => {
   const data = JSON.parse(event.data);
@@ -277,13 +277,13 @@ Retrieve historical data via API:
 
 ```bash
 # Get history newer than a Unix timestamp
-curl "http://localhost:8000/api/metrics/history?since=1784300000&limit=5000"
+curl "http://localhost:3005/api/metrics/history?since=1784300000&limit=5000"
 
 # Get compact chart series with server-side buckets
-curl "http://localhost:8000/api/metrics/history_series?since=1784300000&bucket_seconds=300&max_points=600"
+curl "http://localhost:3005/api/metrics/history_series?since=1784300000&bucket_seconds=300&max_points=600"
 
 # Inspect configured/active storage and compression
-curl "http://localhost:8000/api/metrics/history/storage?probe_postgresql=true"
+curl "http://localhost:3005/api/metrics/history/storage?probe_postgresql=true"
 ```
 
 ---

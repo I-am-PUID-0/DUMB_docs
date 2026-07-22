@@ -22,7 +22,7 @@ Code, docs, testing feedback, and issue triage are all valuable contributions.
 
 Recommended: use the DUMB devcontainer:
 
-- [.devcontainer/devcontainer.json](https://github.com/I-am-PUID-0/DUMB/tree/master/.devcontainer/devcontainer.json)
+- [.devcontainer/devcontainer.json](https://github.com/I-am-PUID-0/DUMB/blob/dev/.devcontainer/devcontainer.json)
 
 Quick start:
 

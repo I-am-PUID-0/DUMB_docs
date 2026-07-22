@@ -9,13 +9,13 @@ The AI API manages provider settings and service diagnostics. Authentication fol
 
 The backend makes provider requests from inside the DUMB container. Use provider URLs that are reachable from that container, not just from your browser.
 
-## `GET /api/ai/settings`
+## `GET /ai/settings`
 
 Returns the active AI settings without exposing the stored API key.
 
 Response includes `api_key_configured: true` when a key is stored.
 
-## `PUT /api/ai/settings`
+## `PUT /ai/settings`
 
 Updates the `dumb.ai` settings block. Omit `api_key` to keep the existing stored key.
 
@@ -53,7 +53,7 @@ Settings fields:
 | `include_process_list` | Default for including compact stack status context. |
 | `max_docs_chars` | Maximum documentation characters included across selected docs snippets. |
 
-## `POST /api/ai/test`
+## `POST /ai/test`
 
 Tests the configured provider using a short connectivity prompt. The request can include unsaved provider fields, so the frontend can test current form values before saving them.
 
@@ -80,7 +80,7 @@ Response fields:
 | `response` | Provider response text. |
 | `usage` | Best-effort token usage reported by the provider, when available. |
 
-## `POST /api/ai/models`
+## `POST /ai/models`
 
 Lists available models for providers with a compatible model-list endpoint. The request can include unsaved provider fields.
 
@@ -119,7 +119,7 @@ Example response:
 }
 ```
 
-## `POST /api/ai/diagnose`
+## `POST /ai/diagnose`
 
 Builds a redacted service diagnostic bundle. If `dry_run` is true, or if AI is disabled, the endpoint returns the bundle without calling a provider. If AI is enabled and `dry_run` is false, DUMB sends the bundle to the configured provider and returns the analysis.
 
@@ -160,7 +160,7 @@ DUMB prefers local Markdown from `DUMB_DOCS_PATH` or common sibling-repo workben
 
 The bundle also includes DUMB product facts. API clients can use dry-run responses to verify that `dumb_product.expansion` is `Debrid Unlimited Media Bridge` before sending a provider request.
 
-## `POST /api/ai/diagnose-stack`
+## `POST /ai/diagnose-stack`
 
 Builds a stack-wide diagnostic bundle. Use this when the question is about the whole deployment instead of one service.
 

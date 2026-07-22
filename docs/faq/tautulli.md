@@ -17,7 +17,7 @@ Common questions and fixes for Tautulli in DUMB.
 
 !!! tip "Traefik access"
 
-    If Traefik is enabled, you can access Tautulli at `http://<host>/tautulli/`.
+    If Traefik is enabled, you can access Tautulli at `http://<host>:18080/service/ui/tautulli/`.
 
 ---
 

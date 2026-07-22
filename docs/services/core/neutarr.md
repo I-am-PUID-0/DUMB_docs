@@ -110,6 +110,7 @@ Below is a sample configuration for NeutArr within the `dumb_config.json` file:
       "port": 9705,
       "auto_update": false,
       "auto_update_interval": 24,
+      "auto_update_start_time": "04:00",
       "clear_on_update": false,
       "exclude_dirs": [
         "/neutarr/default/config"

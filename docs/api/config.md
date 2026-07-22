@@ -22,7 +22,7 @@ Returns the currently loaded in-memory configuration. You can optionally pass `p
 
 **Usage Example:**
 ```bash
-curl http://localhost:8000/config
+curl http://localhost:3005/api/config
 ```
 
 ---
@@ -44,7 +44,7 @@ Updates config in memory. When `process_name` is provided, it updates only that 
 
 **Usage Example:**
 ```bash
-curl -X POST http://localhost:8000/config \
+curl -X POST http://localhost:3005/api/config \
   -H "Content-Type: application/json" \
   -d '{"process_name":"Riven Backend","updates":{"log_level":"DEBUG"},"persist":true}'
 ```
@@ -57,7 +57,7 @@ Returns the JSON schema used for config validation.
 
 **Usage Example:**
 ```bash
-curl http://localhost:8000/config/schema
+curl http://localhost:3005/api/config/schema
 ```
 
 ---
@@ -75,7 +75,7 @@ Returns the config schema subtree for a specific `process_name`.
 
 **Usage Example:**
 ```bash
-curl -X POST http://localhost:8000/config/process-config/schema \
+curl -X POST http://localhost:3005/api/config/process-config/schema \
   -H "Content-Type: application/json" \
   -d '{"process_name":"Riven Backend"}'
 ```
@@ -96,9 +96,22 @@ Reads or updates a service-specific config file (JSON/YAML/CONF/Python/XML). If 
 
 **Usage Example:**
 ```bash
-curl -X POST http://localhost:8000/config/service-config \
+curl -X POST http://localhost:3005/api/config/service-config \
   -H "Content-Type: application/json" \
   -d '{"service_name":"Zurg w/ RealDebrid"}'
+```
+
+---
+
+### `GET /config/service-ui-map`
+
+Returns the sanitized embedded-UI route name to backend `config_key` mapping used by the dmbdb proxy. Clients should treat this endpoint as the source of truth and use their local service-type fallback only when startup authentication prevents the map from loading.
+
+```json
+{
+  "altmount": "altmount",
+  "traefik_proxy_admin": "traefik_proxy_admin"
+}
 ```
 
 ---
@@ -152,8 +165,9 @@ Enables or disables the embedded service UI feature. When enabled, DUMB writes T
 **Response:**
 ```json
 {
-  "message": "Service UI enabled",
-  "enabled": true
+  "enabled": true,
+  "services": [],
+  "traefik_config": "/config/traefik/dynamic/services.yaml"
 }
 ```
 

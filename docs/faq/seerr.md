@@ -17,7 +17,7 @@ Common questions and fixes for Seerr in DUMB.
 
 !!! tip "Traefik access"
 
-    If Traefik is enabled, you can access Seerr at `http://<host>/seerr/`.
+    If Traefik is enabled, you can access Seerr at `http://<host>:18080/service/ui/seerr/`.
 
 ---
 

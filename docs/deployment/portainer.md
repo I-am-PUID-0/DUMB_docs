@@ -164,7 +164,7 @@ Click **Deploy the stack** to launch DUMB.
 
 ## That’s it!
 
-Once deployed, DUMB will initialize and make its services available at their respective ports (e.g., DUMB Frontend at `:3005`, API at `:8000`, etc.).
+Once deployed, DUMB will initialize and expose the frontend at `:3005`. The frontend proxies DUMB API calls under `/api`; the backend's native `:8000` listener remains container-loopback-only unless you deliberately reconfigure and publish it.
 
 You can now manage DUMB entirely through the **[DUMB Frontend](../services/dumb/dumb-frontend.md)**, or explore the [Configuration](../features/configuration.md) docs to adjust settings as needed.
 
@@ -180,7 +180,6 @@ Example:
 ```yaml
 ports:
   - "3005:3005" # DUMB Frontend
-  - "8000:8000" # DUMB API
   - "7878:7878" # Radarr
 ```
 
@@ -190,6 +189,9 @@ After editing ports, click **Update the stack** to redeploy.
 
     If you use a reverse proxy (Traefik, Nginx, Caddy) or DUMB’s embedded UIs,
     you can avoid exposing every service port directly.
+
+!!! danger "Direct backend API"
+    If a direct API consumer truly requires port `8000`, setting a Portainer mapping alone is not enough. Set `DUMB_API_SERVICE_HOST=0.0.0.0`, publish the port, enable DUMB authentication, and restrict access with a firewall/trusted network. Prefer the frontend's `:3005/api/...` proxy for normal use.
 
 ---
 

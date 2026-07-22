@@ -19,7 +19,7 @@ To mitigate this:
 - Alternatively, you may also need to impose a transactions (requests) per second limit with rclone.
 
 See the [Plex FAQ](plex.md#recommended-library-settings) for more Plex-specific recommendations and details.
-See the [rclone FAQ](../faq/rclone.md#i-think-i-might-be-rate-limited-by-the-debrid-service---seeing-423-errors) for more rclone-specific recommendations and details.
+See the [rclone FAQ](../faq/rclone.md#i-think-i-might-be-rate-limited-by-the-debrid-service-seeing-423-errors) for more rclone-specific recommendations and details.
 
 ---
 

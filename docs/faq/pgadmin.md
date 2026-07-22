@@ -120,48 +120,134 @@ To create a backup of any database using the pgAdmin interface:
 > For more advanced backup configuration and explanation of options, see the [pgAdmin Backup Dialog Documentation](https://www.pgadmin.org/docs/pgadmin4/latest/backup_dialog.html).
 
 
-## ⏱ Optional: Use pgAgent to Schedule Tasks
-
-pgAdmin comes with **pgAgent**, which lets you create recurring jobs.
-
-> This is entirely optional and not required to use DUMB.
-
 ## Example: Scheduled Backups with pgAgent
 
-1. Navigate to `pgAgent Jobs` under your connected DUMB server.
-2. Right-click → `Create → pgAgent Job`
+DUMB includes the pgAgent package, creates its PostgreSQL extension, and starts
+the agent when pgAdmin is enabled. The example below creates daily, compressed
+custom-format dumps for every connectable non-template database, backs up global
+roles, and removes files older than 14 days.
+
+!!! note "Where the backups are stored"
+
+    This example writes to `/pgadmin/data/backups` inside DUMB. In the maintained
+    volume layout that is persisted under `/data/pgadmin/backups`.
+
+    A backup stored beside the same container data is not an off-system backup.
+    Include the host-side `data/pgadmin/backups` directory in separate storage,
+    snapshot, or replication so one disk or filesystem failure cannot destroy
+    both PostgreSQL and its dumps.
+
+1. Enable and start both **PostgreSQL** and **pgAdmin** in DUMB.
+2. Log in to pgAdmin, connect to the preconfigured **DUMB** server, and expand
+   `pgAgent Jobs`. If the node does not appear, refresh the server tree and check
+   the PostgreSQL, pgAdmin, and pgAgent service logs before continuing.
+3. Right-click `pgAgent Jobs` and select **Create → pgAgent Job**.
 
     ![Create Job](../assets/images/pgadmin/pgadmin-create-job.png)
 
-3. Enter the job name and any comments.
+4. Name the job `DUMB PostgreSQL backups`, enable it, and leave **Host Agent**
+   blank unless this database is managed by more than one pgAgent host.
 
     ![Add Job](../assets/images/pgadmin/pgadmin-add-job.png)
 
-4. Go to the **Steps** tab and click the `+` button to **Add row**.
-5. Edit the new row to configure a backup step.
+5. Open **Steps**, add a step, and use these values:
+
+    - **Name:** `01-backup-all-databases`
+    - **Kind:** `Batch`
+    - **Enabled:** Yes
+    - **On error:** Fail
 
     ![Edit Step](../assets/images/pgadmin/pgadmin-edit-step.png)
 
-6. Enter a step name, set `Kind` = `Batch`, and paste your backup command in the **Code** tab:
+6. Paste this shell script into the step's **Code** tab. Change
+   `retention_days` if required:
 
-    ```sql
-    pg_dump --username=DUMB --dbname=riven --clean --file=/pgadmin/data/riven_backup-`date +%Y-%m-%d-%H-%M-%S`.sql
-    pg_dump --username=DUMB --dbname=zilean --clean --file=/pgadmin/data/zilean_backup-`date +%Y-%m-%d-%H-%M-%S`.sql
+    ```bash
+    #!/bin/sh
+    set -eu
+
+    backup_dir=/pgadmin/data/backups
+    retention_days=14
+    timestamp=$(date -u +%Y%m%dT%H%M%SZ)
+    socket_dir=/run/postgresql
+
+    mkdir -p "$backup_dir"
+
+    # Preserve cluster-level roles in addition to the per-database archives.
+    pg_dumpall \
+      --host="$socket_dir" \
+      --username=DUMB \
+      --no-password \
+      --globals-only \
+      --file="$backup_dir/globals-$timestamp.sql"
+
+    psql \
+      --host="$socket_dir" \
+      --username=DUMB \
+      --dbname=postgres \
+      --no-password \
+      --tuples-only \
+      --no-align \
+      --command="SELECT datname FROM pg_database WHERE datallowconn AND NOT datistemplate ORDER BY datname" |
+    while IFS= read -r database; do
+      safe_name=$(printf '%s' "$database" | tr -c 'A-Za-z0-9_.-' '_')
+      pg_dump \
+        --host="$socket_dir" \
+        --username=DUMB \
+        --no-password \
+        --format=custom \
+        --file="$backup_dir/$safe_name-$timestamp.backup" \
+        "$database"
+    done
+
+    find "$backup_dir" -type f \
+      \( -name '*.backup' -o -name 'globals-*.sql' \) \
+      -mtime "+$retention_days" -delete
     ```
 
     ![Step Code](../assets/images/pgadmin/pgadmin-backup-step-code.png)
 
-7. Go to the **Schedules** tab to define when the backup should run.
+    DUMB's default local-socket authentication allows its `DUMB` database role
+    to run these commands without embedding a password in the job. If you have
+    customized `pg_hba.conf` to require a password for local connections, use a
+    root-owned/libpq `.pgpass` file with mode `0600`; do not paste the PostgreSQL
+    password into the pgAgent job.
+
+7. Open **Schedules**, add a schedule, enable it, and choose a start time when
+   database activity is normally low.
 
     ![Add Schedule](../assets/images/pgadmin/pgadmin-schedule-add.png)
 
-8. On the **Repeat** tab, set a repeat interval like daily at midnight.
+8. On **Repeat**, select every day and the desired hour/minute. pgAgent schedule
+   values use the DUMB container's timezone.
 
     ![Repeat Tab](../assets/images/pgadmin/pgadmin-schedule-repeat.png)
 
-9. Save your pgAgent job.
+9. Save the job, right-click it, and select **Run now**. Confirm that the run is
+   successful and that `.backup` files plus a `globals-*.sql` file appeared in
+   `/pgadmin/data/backups`.
 
-!!! tip "Backups are saved in `/pgadmin/data` by default."
+### Test a restore
+
+A successful job only proves that files were written. Periodically restore one
+of the application archives into a disposable database:
+
+1. In pgAdmin, right-click **Databases**, select **Create → Database**, and create
+   a clearly temporary database such as `restore_test`.
+2. Right-click that database and select **Restore**.
+3. Select the matching `.backup` file from `/pgadmin/data/backups`, choose
+   **Custom or tar**, and enable **Exit on error**.
+4. Run the restore and inspect representative tables or application records.
+5. Drop only the disposable `restore_test` database after validation.
+
+Do not test by restoring over a live application database. The separate
+`globals-*.sql` file contains cluster roles and is restored with `psql` only when
+rebuilding a cluster, before restoring the per-database custom archives.
+
+For the underlying behavior, see the official
+[pgAgent job documentation](https://www.pgadmin.org/docs/pgadmin4/latest/pgagent_jobs.html),
+[pg_dump documentation](https://www.postgresql.org/docs/current/app-pgdump.html),
+and [pg_restore documentation](https://www.postgresql.org/docs/current/app-pgrestore.html).
 
 ---
 

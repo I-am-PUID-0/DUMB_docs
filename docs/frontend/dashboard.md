@@ -99,7 +99,7 @@ The connection status is shown in the header area. If disconnected, the frontend
 
 ## Toolbar and log viewer
 
-The toolbar provides quick access to service settings and logs.
+The toolbar and sidebar provide quick access to service settings and logs.
 
 ![Toolbar](../assets/images/frontend/toolbar.png){ .shadow }
 
@@ -124,10 +124,10 @@ The log viewer supports:
 
 ## Filtering and organization
 
-Services are displayed in a grid layout, organized by:
+Enabled services are displayed in a grid layout, organized by:
 
-- **Enabled services first** - Active services appear prominently
-- **Alphabetical order** - Within each group
+- **DUMB services first** - The API/frontend lead the default list
+- **Alphabetical order** - Other services follow by name until you save a custom order
 
 ![Disabled services toggle](../assets/images/frontend/disabled_services.png){ .shadow }
 

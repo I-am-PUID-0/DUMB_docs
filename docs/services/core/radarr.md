@@ -44,6 +44,7 @@ icon: lucide/film
       "suppress_logging": false,
       "auto_update": false,
       "auto_update_interval": 24,
+      "auto_update_start_time": "04:00",
       "pinned_version": "",
       "port": 7878,
       "config_dir": "/radarr/default",
@@ -92,7 +93,7 @@ During onboarding, enabling `postgres_enabled` for Radarr is enough; you do not 
 
 For an existing instance, use the **Database Migration** tool on its service page. Run a rehearsal first, review its table-count validation, and only then start guarded cutover. See [SQLite to PostgreSQL Migration](../../features/arr-postgres-migration.md).
 
-Radarr's upstream documentation still classifies existing SQLite migration as unsupported. Back up `/radarr/...` and `/postgres_data` before proceeding, even when using DUMB's guarded workflow.
+Radarr's upstream documentation still classifies existing SQLite migration as unsupported. Back up Radarr's `/data/radarr` persistence and PostgreSQL's `/data/postgres` persistence (internal paths `/radarr/...` and `/postgres_data`) before proceeding, even when using DUMB's guarded workflow.
 
 !!! warning "PostgreSQL is not a temporary toggle"
     There is no known supported migration path from PostgreSQL back to SQLite for Radarr. Treat `postgres_enabled: true` as a long-term database choice unless you are willing to recreate the Radarr instance from scratch.

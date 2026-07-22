@@ -40,7 +40,7 @@ Optional services are:
 
 Optional services attach to the DUMB ecosystem dynamically:
 
-* **[pgAdmin](../optional/pgadmin.md)** provides a GUI for exploring and managing the PostgreSQL instance used by Riven and Zilean.
+* **[pgAdmin](../optional/pgadmin.md)** provides a GUI for exploring and managing DUMB's shared PostgreSQL cluster and its registered service databases.
 * **[Riven Frontend](../optional/riven-frontend.md)** provides a GUI for exploring and managing content requests that are facilitated by the [Riven Backend](../core/riven-backend.md).
 * **[Tautulli](../optional/tautulli.md)** monitors your Plex server, tracking playback history, user activity, and providing detailed statistics.
 * **[Bazarr](../optional/bazarr.md)** connects to Sonarr and Radarr and manages subtitles for their movie and TV libraries using the same DUMB media paths.

@@ -23,18 +23,19 @@ This reference documents all ports used by DUMB services. Use this guide to conf
 | 3000 | NzbDAV Frontend | Web UI |
 | 3003 | Pulsarr | Web UI |
 | 3004 | Traefik Proxy Admin | Web UI/API |
-| 3005 | DUMB Frontend | Web UI |
+| 3005 | DUMB Frontend and API gateway | Web UI/API |
 | 5000 | CLI Debrid | Web UI |
 | 5001 | CLI Battery | API |
 | 5050 | pgAdmin | Web UI |
 | 5055 | Seerr | Web UI |
 | 5432 | PostgreSQL | Database |
 | 6246 | Maintainerr | Web UI/API |
+| 6767 | Bazarr | Web UI/API |
 | 6969 | Whisparr | Web UI |
 | 7777 | MediaStorm | Web UI/API |
-| 7878 | Radarr (Decypharr) | Web UI |
-| 7879 | Radarr (NzbDAV) | Web UI |
-| 8000 | DUMB API | API |
+| 7878 | Radarr (first/default instance) | Web UI |
+| 7879 | Radarr (typical second instance) | Web UI |
+| 8000 | DUMB API (container loopback by default) | API |
 | 8080 | Riven Backend | API |
 | 8080 | NzbDAV Backend | API |
 | 8088 | AltMount | Web UI/API |
@@ -45,10 +46,10 @@ This reference documents all ports used by DUMB services. Use this guide to conf
 | 8282 | Decypharr | Web UI |
 | 8686 | Lidarr | Web UI |
 | 8888 | Phalanx DB | API |
-| 8989 | Sonarr (Decypharr) | Web UI |
-| 8990 | Sonarr (NzbDAV) | Web UI |
-| 9090 | Zurg (Riven) | API |
-| 9091 | Zurg (CLID) | API |
+| 8989 | Sonarr (first/default instance) | Web UI |
+| 8990 | Sonarr (typical second instance) | Web UI |
+| 9090 | Zurg (first/default instance) | API |
+| 9091 | Zurg (typical second instance) | API |
 | 9696 | Prowlarr | Web UI |
 | 9705 | NeutArr | Web UI |
 | 18080 | Traefik | Proxy |
@@ -73,10 +74,11 @@ This reference documents all ports used by DUMB services. Use this guide to conf
 | **Type** | REST API |
 | **Protocol** | HTTP |
 
-The backend API that powers service management, configuration, and monitoring.
+The backend API that powers service management, configuration, and monitoring. It listens on `127.0.0.1` inside the container and is not host-published by the maintained Compose file.
 
 ```
-http://localhost:8000/api/...
+http://localhost:8000/process/processes  # backend-native, from inside the container
+http://localhost:3005/api/process/processes  # normal frontend proxy
 ```
 
 ### DUMB Frontend
@@ -84,10 +86,14 @@ http://localhost:8000/api/...
 | Property | Value |
 |----------|-------|
 | **Port** | 3005 |
-| **Type** | Web UI |
+| **Type** | Web UI / REST and WebSocket gateway |
 | **Protocol** | HTTP |
 
 The main dashboard for managing DUMB services.
+
+The same listener exposes backend REST routes under `/api/*` and WebSocket
+routes under `/ws/*`. REST requests have `/api` removed before they are sent to
+the loopback-only backend on port `8000`.
 
 ```
 http://localhost:3005
@@ -207,10 +213,10 @@ http://localhost:8282
 http://localhost:3000  # Frontend
 ```
 
-!!! warning "NzbDAV port overlap"
+!!! note "NzbDAV and Riven desired defaults overlap"
 
     The default NzbDAV ports (`3000` and `8080`) overlap with Riven defaults.
-    If you run both services, change one set of ports to avoid conflicts.
+    DUMB's startup port allocator normally moves a conflicting enabled service to the next free port and persists the result. Use the runtime configuration/UI—not this default table—as the authority for a running stack.
 
 ### AltMount
 
@@ -229,30 +235,30 @@ Arr integration pass.
 
 ## Arr suite
 
-The Arr applications support multiple instances for different workflows (for example Decypharr, NzbDAV, or AltMount).
+The Arr applications support multiple instances for different workflows (for example Decypharr, NzbDAV, or AltMount). The first instance starts from the application's base default; additional/conflicting instances are assigned the next free port and saved to `/config/dumb_config.json`.
 
 ### Sonarr (TV shows)
 
-| Instance | Port |
-|----------|------|
-| Decypharr | 8989 |
-| NzbDAV | 8990 |
+| Instance | Typical port |
+|----------|--------------|
+| First/default | 8989 |
+| Second | 8990 |
 
 ```
-http://localhost:8989  # Decypharr instance
-http://localhost:8990  # NzbDAV instance
+http://localhost:8989  # typical first instance
+http://localhost:8990  # typical second instance
 ```
 
 ### Radarr (Movies)
 
-| Instance | Port |
-|----------|------|
-| Decypharr | 7878 |
-| NzbDAV | 7879 |
+| Instance | Typical port |
+|----------|--------------|
+| First/default | 7878 |
+| Second | 7879 |
 
 ```
-http://localhost:7878  # Decypharr instance
-http://localhost:7879  # NzbDAV instance
+http://localhost:7878  # typical first instance
+http://localhost:7879  # typical second instance
 ```
 
 ### Lidarr (Music)
@@ -335,6 +341,30 @@ http://localhost:3003
 http://localhost:6246
 ```
 
+### MediaStorm
+
+| Property | Value |
+|----------|-------|
+| **Port** | 7777 |
+| **Type** | Web UI / API |
+
+The embedded UI opens at `/admin`.
+
+```text
+http://localhost:7777/admin
+```
+
+### Bazarr
+
+| Property | Value |
+|----------|-------|
+| **Port** | 6767 |
+| **Type** | Web UI / API |
+
+```text
+http://localhost:6767
+```
+
 ### Tautulli
 
 | Property | Value |
@@ -380,12 +410,12 @@ Cloudflared does not expose a local web UI port. It opens an outbound tunnel con
 
 | Instance | Port | Use Case |
 |----------|------|----------|
-| Riven | 9090 | Riven workflow |
-| CLID | 9091 | CLI Debrid workflow |
+| First/default | 9090 | Any linked workflow |
+| Typical second | 9091 | Any additional linked workflow |
 
 ```
-http://localhost:9090  # Riven instance
-http://localhost:9091  # CLID instance
+http://localhost:9090  # typical first instance
+http://localhost:9091  # typical second instance
 ```
 
 ### Phalanx DB
@@ -412,7 +442,7 @@ http://localhost:8888
 | **Protocol** | PostgreSQL |
 
 ```
-postgresql://localhost:5432/dumb
+postgresql://<user>:<password>@localhost:5432/<configured_database>
 ```
 
 ### pgAdmin
@@ -455,12 +485,11 @@ http://localhost:5050
 
 ### Minimum required ports
 
-For basic DUMB operation, expose these ports:
+For basic DUMB operation, publish only:
 
 | Port | Required For |
 |------|--------------|
-| 3005 | DUMB Frontend |
-| 8000 | DUMB API |
+| 3005 | DUMB Frontend and its `/api`/`/ws` proxy |
 
 ### Full access
 
@@ -469,10 +498,11 @@ For complete functionality including all service UIs:
 ```bash
 # Example UFW configuration
 sudo ufw allow 3005/tcp  # DUMB Frontend
-sudo ufw allow 8000/tcp  # DUMB API
 sudo ufw allow 18080/tcp # Traefik (embedded UIs)
 sudo ufw allow 32400/tcp # Plex
 ```
+
+The backend port `8000` is loopback-only and unpublished by default. Expose it only when a direct API consumer requires it, after changing `dumb.api_service.host` to `0.0.0.0`, enabling authentication, and restricting network access.
 
 !!! tip "Use Traefik for consolidated access"
 

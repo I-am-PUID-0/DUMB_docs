@@ -49,7 +49,7 @@ For DUMB, Compose:
 - Pulls the DUMB image from a registry
 - Creates a container with your settings
 - Mounts your local folders so configs and logs persist
-- Exposes ports so you can reach the UI and API
+- Exposes the frontend, which also proxies the API and embedded service UIs
 
 ---
 
@@ -208,7 +208,9 @@ The container now runs in the background.
 By default:
 
 - **DUMB Frontend**: `http://<host>:3005`
-- **DUMB API**: `http://<host>:8000`
+- **DUMB API through the frontend**: `http://<host>:3005/api`
+
+The backend-native API listens on container loopback `127.0.0.1:8000` and is not published by the maintained Compose file.
 
 If you do not see the UI:
 
@@ -224,15 +226,18 @@ If you do not see the UI:
 Docker only exposes ports you explicitly map in your `docker-compose.yml`.
 If a UI is not reachable, it usually means the port is not mapped.
 
-Example: expose the DUMB frontend and API.
+The maintained Compose file publishes only the DUMB Frontend:
 
 ```yaml
 services:
   DUMB:
     ports:
       - "3005:3005"
-      - "8000:8000"
 ```
+
+!!! danger "Direct backend API exposure"
+
+    Adding `8000:8000` alone is not sufficient because the API binds to `127.0.0.1` inside the container. If you intentionally need the backend directly, set `DUMB_API_SERVICE_HOST=0.0.0.0`, publish `8000:8000`, enable DUMB authentication, and restrict the port with a firewall or trusted network. Native backend routes do not include `/api`; for example, `/process/processes`.
 
 Example: expose an Arr service UI (Radarr).
 

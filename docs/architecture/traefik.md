@@ -24,8 +24,8 @@ Traefik provides optional reverse-proxy routing for service UIs and user-managed
 | Component | Default |
 |-----------|---------|
 | Traefik entrypoint | `http://<host>:18080/` |
-| DUMB API (Scalar) | `http://<host>/dumb_api_service/scalar` |
-| DUMB Frontend | `http://<host>/dumb_frontend/` |
+| DUMB API (Scalar) | `http://<host>:18080/service/ui/dumb_api_service/scalar` |
+| DUMB Frontend | `http://<host>:3005/` (published directly, not through the embedded-service route set) |
 
 !!! info "Path prefixes"
 
@@ -56,11 +56,47 @@ This split is intentional:
 
 ---
 
+## Default configuration
+
+```json
+"traefik": {
+  "enabled": false,
+  "process_name": "Traefik",
+  "pinned_version": "v3.6.6",
+  "suppress_logging": false,
+  "log_level": "INFO",
+  "log_file": "/log/traefik.log",
+  "access_log_file": "/log/traefik_access.log",
+  "port": 18080,
+  "entrypoints": {
+    "web": {
+      "address": ":18080"
+    }
+  },
+  "command": [
+    "/traefik/traefik",
+    "--configFile=/config/traefik/traefik.yml"
+  ],
+  "config_dir": "/config/traefik",
+  "config_file": "/config/traefik/traefik.yml"
+}
+```
+
+`pinned_version` selects the Traefik binary DUMB installs. The config and both
+log paths live under the persistent `/config` and `/log` mounts. DUMB rewrites
+its generated route files when service UI definitions change; put operator-owned
+host routes in Traefik Proxy Admin rather than editing `services.yaml` by hand.
+
+---
+
 ## Security considerations
 
-!!! warning "No built-in auth"
+!!! warning "Embedded routes do not add auth"
 
-    Most service UIs do not require authentication. If you expose Traefik outside your LAN, add authentication and TLS at the proxy layer.
+    DUMB's generated embedded-service routes do not add an authentication
+    middleware. Some upstream apps have their own login and some do not. If you
+    expose Traefik outside your LAN, use protected TPA routes, Cloudflare Access,
+    or another deliberate authentication layer and verify it before publishing.
 
 ---
 

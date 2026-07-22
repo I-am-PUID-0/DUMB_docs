@@ -37,6 +37,10 @@ The settings menu also includes quick links for:
 - Jumping to Discord, GitHub, docs, and Docker Hub
 - Viewing contributors
 
+## Appearance
+
+Choose **System Default** to follow the browser/operating-system light or dark preference, or select one of the explicit light/dark palettes shown in the theme grid. The choice is stored in browser local storage as `dmbdb.appearance.theme`; it is a per-browser preference and does not modify backend configuration.
+
 ---
 
 ## About section
@@ -125,7 +129,7 @@ Your Plex authentication token, used for:
 
 - Library access
 - Plex API integration
-- Tautulli connection
+- Riven watchlist/library-scan integration when Riven is selected
 
 ### GitHub token
 
@@ -133,12 +137,12 @@ Optional GitHub personal access token for:
 
 - Higher API rate limits
 - Access to private repositories
-- Auto-update functionality
+- Private/sponsored release sources used by update/install workflows
 
 !!! tip "Creating a GitHub token"
 
     1. Go to GitHub Settings :material-arrow-right: Developer Settings :material-arrow-right: Personal Access Tokens
-    2. Create a token with `repo` scope
+    2. Grant only the read access required by the private/sponsored repository. Public release checks normally need no token.
     3. Paste it in the GitHub Token field
 
 ![Token settings](../assets/images/frontend/tokens_settings.png){ .shadow }

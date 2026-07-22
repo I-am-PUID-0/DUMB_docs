@@ -7,6 +7,27 @@ icon: lucide/terminal
 
 **CLI Debrid** is a core content orchestrator in the DUMB ecosystem. It automates media collection and upgrading through Debrid services (e.g. Real-Debrid), working alongside Trakt, Plex, Seerr, and various scrapers. CLI Debrid can either monitor your Plex libraries or generate symlinks for organized media delivery to Plex or similar servers.
 
+!!! info "CLI Battery transition in the v0.7.29 pre-release"
+
+    Upstream [CLI Debrid v0.7.29](https://github.com/godver3/cli_debrid/releases/tag/v0.7.29)
+    is marked as a pre-release. Its
+    [CLI Battery rewrite](https://github.com/godver3/cli_debrid/commit/ef4deb5bbed60826ef2aaa48be0ecb17250ea87e)
+    converts CLI Battery from a separate Flask service on port `5001` into an
+    in-process Python module imported by CLI Debrid.
+
+    DUMB's current configuration model still contains the old standalone CLI
+    Battery process, command, port, and static dependency. If you intentionally
+    select v0.7.29 or a newer pre-release with the in-process rewrite, manually
+    disable `cli_battery`; running both forms is unnecessary and the removed
+    `cli_battery/main.py` command cannot serve that upstream layout. Keep CLI
+    Battery enabled for stable/older CLI Debrid releases that still use port
+    `5001`.
+
+    Normal DUMB startup respects the disabled setting. Until DUMB's dependency
+    graph becomes version-aware, a guided **Start Core Service** or onboarding
+    action can re-enable the static dependency; verify that CLI Battery remains
+    disabled after using those flows with the pre-release.
+
 ---
 
 ## Workflow diagram
@@ -47,7 +68,7 @@ flowchart TD
 | Classification | Role                                                                                                       |
 | -------------- | ---------------------------------------------------------------------------------------------------------- |
 | Core Service   | Debrid Orchestrator                                                                                        |
-| Depends On     | [CLI Battery](../dependent/cli-battery.md), [rclone](../dependent/rclone.md), [Zurg](../dependent/zurg.md) |
+| Depends On     | Stable/older releases: [CLI Battery](../dependent/cli-battery.md); provider path: [rclone](../dependent/rclone.md) and [Zurg](../dependent/zurg.md) |
 | Optional       | [Phalanx DB](../dependent/phalanx-db.md), [Zilean](../optional/zilean.md)                                  |
 | Exposes UI     | Yes (Flask app on port 5000)                                                                               |
 
@@ -70,6 +91,16 @@ flowchart TD
     "port": 5000,
     "auto_update": false,
     "auto_update_interval": 24,
+    "auto_update_start_time": "04:00",
+    "symlink_backup_enabled": false,
+    "symlink_backup_interval": 168,
+    "symlink_backup_start_time": "04:00",
+    "symlink_backup_path": "/config/symlink-repair/snapshots/cli-debrid-{timestamp}.json",
+    "symlink_backup_include_broken": true,
+    "symlink_backup_retention_count": 1,
+    "symlink_backup_roots": [
+        "/mnt/debrid/clid_symlinks"
+    ],
     "clear_on_update": true,
     "exclude_dirs": [
         "/cli_debrid/data"
@@ -88,8 +119,7 @@ flowchart TD
         "USER_CONFIG": "/cli_debrid/data/config/",
         "USER_LOGS": "/cli_debrid/data/logs/",
         "USER_DB_CONTENT": "/cli_debrid/data/db_content/",
-        "CLI_DEBRID_PORT": "{port}",
-        "CLI_DEBRID_BATTERY_PORT": "5001"
+        "CLI_DEBRID_PORT": "{port}"
     }
 },
 ```
@@ -103,7 +133,7 @@ flowchart TD
 * `log_level`, `suppress_logging`: Logging controls.
 * `port`: Flask web interface port.
 * `env`: Environment variable configuration used by CLI Debrid.
-* `env.CLI_DEBRID_BATTERY_PORT`: Battery API port consumed by CLI Debrid; DUMB auto-syncs this to `cli_battery.port`.
+* `env.CLI_DEBRID_BATTERY_PORT`: Battery API port consumed by stable/older CLI Debrid layouts. It is not present in the untouched template; DUMB creates/synchronizes it from `cli_battery.port` during setup and config updates. The v0.7.29 pre-release's in-process layout does not use this network hop.
 * `clear_on_update`, `exclude_dirs`: Clean old files during update while protecting data dirs.
 
 ---
@@ -129,9 +159,14 @@ flowchart TD
 
 ---
 
-## Required Component: CLI Battery
+## Stable/Older Releases: Standalone CLI Battery
 
-!!! warning "CLI Battery must be running for CLI Debrid to function."
+!!! warning "Required only by layouts that still use the standalone service"
+
+    Keep CLI Battery running for stable/older CLI Debrid releases that call its
+    API on port `5001`. For v0.7.29+ pre-releases carrying the in-process rewrite,
+    manually disable the standalone CLI Battery service instead. See the
+    transition note near the top of this page.
 
 ```json
 "cli_battery": {
@@ -423,4 +458,4 @@ You can control which version or branch is deployed by setting:
 * [CLI Debrid GitHub](https://github.com/godver3/cli_debrid)
 * [CLI Battery GitHub](https://github.com/godver3/cli_debrid/tree/main/cli_battery)
 * [Phalanx DB GitHub](https://github.com/godver3/phalanx_db_hyperswarm)
-* [Join the CLI Debrid Community on Discord](https://discord.gg/jAmqZJCZJ4)
+* [Join the CLI Debrid Community on Discord](https://discord.gg/ynqnXGJ4hU)

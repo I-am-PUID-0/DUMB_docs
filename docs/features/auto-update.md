@@ -292,7 +292,11 @@ For higher rate limits, add a GitHub token to your configuration:
 
 !!! tip "Token permissions"
 
-    The GitHub token only needs `public_repo` read access for checking releases.
+    Prefer a fine-grained token restricted to the repositories DUMB must read.
+    Fine-grained tokens already have read-only access to public repositories;
+    for private repos/forks, grant only the minimum read permission required by
+    the GitHub endpoint. Do not grant repository write, package write, workflow,
+    or administration permissions for release checks.
 
 !!! danger "Protect your token"
 

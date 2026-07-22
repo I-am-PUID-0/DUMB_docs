@@ -38,7 +38,10 @@ No — DUMB is modular. You can enable or disable services in `dumb_config.json`
 
 ### What happens when I update DUMB?
 
-The image maintained for DUMB is automatically updated when one of the embedded services (like `riven_backend`, `cli_debrid`, etc.) have a new release available; thus, reducing the need to update to the latest release inside the container. For more info, see the [DUMB FAQ](../faq/dumb.md#does-the-dumb-image-have-the-latest-version-of-x) regarding finding what versions are built into the image. 
+Published DUMB images include a tested snapshot of many service runtimes, but
+image publication does not guarantee an immediate rebuild for every upstream
+release. For more info, see the [DUMB FAQ](../faq/dumb.md#does-the-dumb-image-have-the-latest-version-of-x)
+for how bundled and runtime-installed versions differ.
 
 Alternatively, DUMB also includes **auto-update** functionality for most [services](../services/index.md). Depending on your configuration (`auto_update` and `auto_update_interval`), the system will check for new versions of services like Zurg, Riven, Zilean, etc.
 
@@ -48,12 +51,20 @@ You can configure update frequency and behavior in each service’s section of `
 
 ### Is DUMB secure?
 
-DUMB is intended to run on your **local or private server**. Most services are, by default, bound to `127.0.0.1` and not exposed publicly unless explicitly configured by exposing ports in the Docker compose or changing the bound address.
+DUMB is intended to run on a **local or deliberately protected server**. The
+maintained Compose file publishes only the frontend on port `3005`; the backend
+API is loopback-only and managed service ports are not host-published unless you
+add them.
 
 !!! warning "Security Considerations"
-    Most of the web-based UIs and APIs lack any form of authentication. 
+    DUMB authentication protects the frontend and backend API, but it does not
+    automatically add authentication to every upstream service UI or to DUMB's
+    generated embedded Traefik routes. Some upstream apps have their own login;
+    others do not.
 
-    If you're exposing services externally (e.g., via Traefik or NGINX), consider using authentication layers like OAuth2, HTTPS, and firewalls.
+    Before external exposure, enable DUMB auth, protect each published route
+    with upstream auth, TPA/SSO, Cloudflare Access, or another verified layer,
+    use HTTPS, and restrict unnecessary ports with a firewall.
 
 ---
 
@@ -67,15 +78,20 @@ Yes — you can point most services to a custom branch or fork by editing the `r
 
 Absolutely. The most important files to back up are:
 
-- `dumb_config.json`
-- Any data directories (e.g., `/riven/backend/data`, `/zilean/app/data`, `/pgadmin/data`, `postgres_data`, `plex`, etc)
+- `/config` (including `dumb_config.json`, users, feature state, and jobs)
+- `/data` (the current consolidated persistence root for managed service data)
+- curated symlink/library state below `/mnt/debrid` when it cannot be recreated
+- Any deliberately configured external/direct service-data mounts
 
 !!! tip "Backup Strategy"
     Regularly backing these up allows you to quickly restore your environment.
 
-!!! warning "Exclude Mounted Paths" 
-    Be sure to exclude any mounted paths (e.g., /mnt/debrid) when backing up. 
-    Otherwise, you'll unintentionally download and archive the entire contents of your debrid services, which can be massive and unnecessary.
+!!! warning "Separate links from live mounts"
+    Do not recursively archive a live FUSE/rclone provider submount below
+    `/mnt/debrid`; that can traverse and download the remote library. Back up
+    only the ordinary symlink/manifest directories you need, or stop/unmount the
+    provider and use a backup tool that does not follow symlink targets or cross
+    filesystem boundaries.
 
     Don't believe me? Just ask Mr. Krabs.
 
@@ -109,7 +125,7 @@ DUMB supports **two methods of exposing content to your media server**, each wit
     - Can lead to **Plex/Emby/Jellyfin misidentification**
     - Media scanners may perform poorly due to large, unorganized libraries
 
-=== "Symlinked Mount (Riven/CLI Debrid/Decypharr)"
+=== "Symlinked Mount (Riven/CLI Debrid/Decypharr/NzbDAV)"
 
     Services like Riven, CLI Debrid, or Decypharr create cleanly named **symlinks** pointing to content in the underlying Zurg/rclone mount (usually in a shared directory like `/mnt/debrid/riven`). 
 
@@ -152,14 +168,14 @@ Since Plex (or another media server) and the DUMB container need to both access 
 /docker/DUMB/mnt/debrid:/docker/DUMB/mnt/debrid
 ```
 
-!!! note "This differs from the the default `/docker/DUMB/mnt/debrid:/mnt/debrid` internal path for the container by prepending `/docker/DUMB` or whatever the host side absolute path is for the `/mnt/debrid` directory"
+!!! note "This differs from the default `/docker/DUMB/mnt/debrid:/mnt/debrid` mapping by preserving the host's absolute path inside the container."
 
 
 Then, inside the `dumb_config.json`, you would also need to make sure you define the updated internal path for symlinks:
 
 ```json
 "riven_backend": {
-  "symlink_library_path": "/docker/DUMB/mnt/debrid/riven_symlinks",
+  "symlink_library_path": "/docker/DUMB/mnt/debrid/riven_symlinks"
 }
 ```
 
@@ -183,7 +199,7 @@ And then update the configuration:
 
 ```json
 "riven_backend": {
-  "symlink_library_path": "/mnt/debrid/riven_symlinks",
+  "symlink_library_path": "/mnt/debrid/riven_symlinks"
 }
 ```
 

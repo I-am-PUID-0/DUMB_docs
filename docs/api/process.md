@@ -76,13 +76,6 @@ Fetch details about a specific process.
 
 * `process_name` (string)
 
-#### Optional Query Parameter:
-
-* `scope` (string): `runtime` (default) or `all`
-    * `runtime` returns runtime/configured hard dependencies
-    * `all` additionally includes soft linkage edges (for example optional Zilean integrations)
-* response includes `parallel_groups` metadata to describe concurrent prerequisite/dependent stages around the selected service
-
 #### Example Response:
 
 ```json
@@ -159,6 +152,53 @@ Gets the current status of a process.
   "status": "running"
 }
 ```
+
+---
+
+## Updates and scheduling
+
+### `GET /process/update-status`
+
+Returns the last recorded update state for the required `process_name` query parameter.
+
+### `GET /process/update-notices`
+
+Returns available, informational, and recently applied update notices. `scope=project` (default) limits notices to DUMB/dmbdb; `scope=all` includes managed services.
+
+### `POST /process/update-check`
+
+Runs a manual update check without installing it.
+
+```json
+{
+  "process_name": "AltMount",
+  "force": true
+}
+```
+
+### `POST /process/update-install`
+
+Installs an available update. `allow_override` permits the explicit override/install workflow; `target` optionally supplies a supported release selector.
+
+```json
+{
+  "process_name": "AltMount",
+  "allow_override": false,
+  "target": null
+}
+```
+
+### `POST /process/auto-update/reschedule`
+
+Recomputes the next automatic-update run after changing a service's interval or start time.
+
+```json
+{
+  "process_name": "AltMount"
+}
+```
+
+Clients should gate manual update actions on the `manual_update_check` capability and the start-time control on `auto_update_start_time`.
 
 ---
 
@@ -265,6 +305,15 @@ Returns backend-resolved dependency relationships for a specific process, includ
 #### Required Query Parameter:
 
 * `process_name` (string)
+
+#### Optional Query Parameter:
+
+* `scope` (string): `runtime` (default) or `all`
+    * `runtime` returns runtime/configured hard dependencies
+    * `all` additionally includes soft linkage edges (for example optional Zilean integrations)
+
+The response includes `parallel_groups` metadata describing concurrent
+prerequisite/dependent stages around the selected service.
 
 #### Example Response (shape):
 
@@ -603,9 +652,9 @@ Returns backend capabilities and feature flags. Used by the frontend to determin
 
 `metrics_history_hot_activation` means the frontend can enable, start, and synchronize DUMB-managed PostgreSQL for Metrics history without restarting DUMB. Clients must continue using the restart-based guidance when this flag is absent.
 
-`metrics_filesystem_selection` means the backend accepts `dumb.metrics.filesystem_paths`, returns all selected paths in Metrics snapshots/history, and exposes `GET /api/metrics/filesystems` for container-visible mount discovery. Older backends support only the legacy root-filesystem metrics fields.
+`metrics_filesystem_selection` means the backend accepts `dumb.metrics.filesystem_paths`, returns all selected paths in Metrics snapshots/history, and exposes `GET /metrics/filesystems` for container-visible mount discovery. Older backends support only the legacy root-filesystem metrics fields.
 
-`metrics_network_interface_selection` means the backend accepts `dumb.metrics.network_interfaces`, returns per-interface Metrics data, and exposes `GET /api/metrics/network-interfaces` for network-namespace interface discovery. Older backends expose only the aggregate `system.net_io` counters.
+`metrics_network_interface_selection` means the backend accepts `dumb.metrics.network_interfaces`, returns per-interface Metrics data, and exposes `GET /metrics/network-interfaces` for network-namespace interface discovery. Older backends expose only the aggregate `system.net_io` counters.
 
 | Field | Description |
 |-------|-------------|
@@ -642,5 +691,5 @@ Returns backend capabilities and feature flags. Used by the frontend to determin
 
 ## Related Files
 
-* [`process.py`](https://github.com/I-am-PUID-0/DUMB/blob/master/api/routers/process.py)
+* [`process.py`](https://github.com/I-am-PUID-0/DUMB/blob/dev/api/routers/process.py)
 * [Configuration](config.md)

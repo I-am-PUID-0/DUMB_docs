@@ -6,31 +6,31 @@ icon: lucide/settings
 # Configuration
 
 ## Overview
-DUMB relies on a **centralized configuration file**, `dumb_config.json`, to control its services, logging, API settings, and more. This file allows you to customize the behavior of DUMB without modifying the source code.
+DUMB relies on the runtime configuration file `/config/dumb_config.json` to control its services, logging, API settings, and more. The copy at `utils/dumb_config.json` inside the image or source tree is the default template, not the file DUMB updates at runtime.
 
 DUMB also supports **environment variables, .env files, and Docker secrets**. If the same setting is defined in multiple places, the **precedence is as follows:**
 
 !!! tip "Configuration Precedence"
-    1. **Environment Variables** (highest priority)
-    2. **.env File**
-    3. **Docker Secrets**
+    1. **Docker Secrets** (`/run/secrets/<ENV_VAR>`, highest priority)
+    2. **Container/Process Environment Variables**
+    3. **`/config/.env`**
     4. **`dumb_config.json`** (lowest priority)
 
 ```mermaid
 %%{ init: { "flowchart": { "curve": "basis" } } }%%
 flowchart TD
-    ENV([Environment variables])
-    DOT([.env file])
     SEC([Docker secrets])
+    ENV([Environment variables])
+    DOT([/config/.env])
     CFG[(dumb_config.json)]
     MERGE[Resolved configuration]
     API[DUMB API]
     PH[Process handler]
     SVC[Managed services]
 
+    SEC ==> MERGE
     ENV ==> MERGE
     DOT ==> MERGE
-    SEC ==> MERGE
     CFG ==> MERGE
     MERGE ==> API
     API ==> PH
@@ -44,9 +44,11 @@ flowchart TD
     some changes can cause failures during startup.  
     As such, it is **not recommended** to make modifications unless you fully understand their impact.
     
-Below is the **general structure** of `dumb_config.json`:
+Below is a **schematic** of the main `dumb_config.json` sections. The ellipses
+stand for nested service objects; copy the actual template or query the config
+API when you need valid JSON.
 
-```json
+```text
 {
     "puid": 1000,
     "pgid": 1000,
@@ -74,6 +76,7 @@ Below is the **general structure** of `dumb_config.json`:
     "neutarr": { ... },
     "profilarr": { ... },
     "seerr": { ... },
+    "seerr_sync": { ... },
     "postgres": { ... },
     "pgadmin": { ... },
     "prowlarr": { ... },
@@ -157,15 +160,12 @@ To create a GitHub token:
 
 1. Go to [GitHub Developer Settings → Tokens (Classic)](https://github.com/settings/tokens)
 2. Click **Generate new token (classic)**
-3. Set an expiration and enable the following scopes:
-    - `repo:all`
-    - `write:packages` 
-    - `read:packages`
+3. Set an expiration and grant only the read access required by the repository you need. Public release checks normally require no token. Private or sponsored repositories require read access granted by that repository's owner; DUMB does not require package-write access.
 
     ![GitHub Token](../assets/images/github_token_scope.png)
     
 4. Click **Generate token** and **copy the token** — it will only be shown once
-5. Add the token to your `.env` file or docker compose with `DMB_GITHUB_TOKEN=`, or `dumb_config.json` under `"github_token"`
+5. Add the token to `/config/.env` or your container environment as `DUMB_GITHUB_TOKEN=`, or set `dumb.github_token` in `/config/dumb_config.json`.
 
 ---
 

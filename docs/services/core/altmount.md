@@ -253,7 +253,7 @@ Do not enable `postgres_enabled` directly when existing data must be retained. D
 | `/altmount/version.txt` | DUMB-managed installed-version marker |
 | `/mnt/debrid/altmount` | Default selected mount path |
 
-Back up `/altmount` as sensitive application data. It can contain NNTP credentials, API keys, user data, and the SQLite database.
+In the maintained Compose layout, back up `/data/altmount` (the persistence target behind internal `/altmount`) as sensitive application data. It can contain NNTP credentials, API keys, user data, and the SQLite database.
 
 ## Embedded UI behavior
 

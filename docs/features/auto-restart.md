@@ -92,20 +92,21 @@ Auto-restart is configured globally in `dumb.auto_restart`:
 
 ---
 
-## Exponential backoff
+## Backoff schedule
 
-To prevent rapid restart loops, delays between restarts increase exponentially:
+To prevent rapid restart loops, DUMB selects delays from the configured
+`backoff_seconds` list:
 
 | Attempt | Delay |
 |---------|-------|
 | 1 | 5 seconds |
-| 2 | 10 seconds |
-| 3 | 20 seconds |
-| 4 | 40 seconds |
-| 5 | 80 seconds |
-| 6+ | 120 seconds (max) |
+| 2 | 15 seconds |
+| 3 | 45 seconds |
+| 4+ | 120 seconds |
 
-The formula: `delay = min(initial_delay * (backoff_multiplier ^ attempt), max_delay)`
+This is an explicit list, not a calculated multiplier. You can replace it with
+any ordered list of non-negative delays. Attempts beyond the list use its last
+value.
 
 ---
 
@@ -113,10 +114,12 @@ The formula: `delay = min(initial_delay * (backoff_multiplier ^ attempt), max_de
 
 Services have a maximum number of restart attempts within a time window:
 
-- **Default**: 5 restarts per hour
-- After reaching the limit, auto-restart pauses for that service
-- The counter resets after the window expires
-- Manual restart resets the counter
+- **Default**: 3 restart attempts in a rolling 300-second window
+- After reaching the limit, additional automatic attempts are suppressed while
+  those attempts remain inside the window
+- Old attempts age out of the rolling window automatically
+- A manual start re-enables monitoring after an intentional stop, but does not
+  erase the recorded rolling-window attempts
 
 !!! warning "Restart limit reached"
 
@@ -126,31 +129,30 @@ Services have a maximum number of restart attempts within a time window:
 
 ## Health checks
 
-Services are monitored using health check endpoints or process status:
+For each explicitly selected service, DUMB verifies:
 
-### HTTP health checks
+- the tracked PID still exists and is not a zombie; and
+- each configured `port`, `frontend_port`, `backend_port`, or `webdav_port`
+  (including corresponding values in `env`) accepts a TCP connection.
 
-For services with web interfaces:
-
-```json
-"health_check": {
-  "type": "http",
-  "url": "http://127.0.0.1:8080/health",
-  "timeout": 10,
-  "interval": 30
-}
-```
-
-### Process health checks
-
-For services without HTTP endpoints:
+There is no standalone `health_check` object in the current config. Add a
+service to `dumb.auto_restart.services`; its entry may inherit all global values
+or override selected policy fields:
 
 ```json
-"health_check": {
-  "type": "process",
-  "interval": 30
-}
+"services": [
+  {
+    "process_name": "Riven Backend",
+    "enabled": true,
+    "unhealthy_threshold": 4,
+    "grace_period_seconds": 60
+  }
+]
 ```
+
+An empty `services` list monitors no services even when the global `enabled`
+flag is true. Use exact process names from `GET /process/processes` or select
+services in the frontend panel.
 
 ---
 
@@ -170,7 +172,7 @@ Query restart status via the API:
 
 ```bash
 # Get service status including restart info
-curl http://localhost:8000/api/process/service-status?process_name=Riven%20Backend
+curl 'http://localhost:3005/api/process/service-status?process_name=Riven%20Backend&include_health=true'
 ```
 
 Response includes:
@@ -181,9 +183,19 @@ Response includes:
   "status": "running",
   "healthy": true,
   "restart": {
-    "count": 2,
-    "last_restart": "2025-01-15T10:30:00Z",
-    "enabled": true
+    "restart_attempts": 2,
+    "restart_successes": 2,
+    "restart_failures": 0,
+    "recent_restart_attempts": 2,
+    "pending": false,
+    "next_restart_time": null,
+    "disabled": false,
+    "last_restart_time": 1736937000.0,
+    "last_failure_reason": null,
+    "last_exit_time": 1736936995.0,
+    "last_exit_reason": "Port 127.0.0.1:8080 not responding",
+    "unhealthy_count": 0,
+    "unhealthy_threshold": 3
   }
 }
 ```
@@ -201,9 +213,19 @@ Real-time restart events via `/ws/status`:
       "status": "running",
       "healthy": true,
       "restart": {
-        "count": 2,
-        "last_restart": "2025-01-15T10:30:00Z",
-        "enabled": true
+        "restart_attempts": 2,
+        "restart_successes": 2,
+        "restart_failures": 0,
+        "recent_restart_attempts": 2,
+        "pending": false,
+        "next_restart_time": null,
+        "disabled": false,
+        "last_restart_time": 1736937000.0,
+        "last_failure_reason": null,
+        "last_exit_time": 1736936995.0,
+        "last_exit_reason": "Port 127.0.0.1:8080 not responding",
+        "unhealthy_count": 0,
+        "unhealthy_threshold": 3
       }
     }
   ]
@@ -216,19 +238,22 @@ Real-time restart events via `/ws/status`:
 
 ### Per-service
 
-Disable for a specific service:
+Remove a service from the monitored list, or retain an explicit disabled entry:
 
 ```json
-"riven_backend": {
-  "auto_restart": {
+"services": [
+  {
+    "process_name": "Riven Backend",
     "enabled": false
   }
-}
+]
 ```
 
 ### Globally
 
-To disable auto-restart for all services, set `enabled: false` in each service's auto_restart configuration, or use the Settings page in the frontend.
+To disable auto-restart for all services, set `dumb.auto_restart.enabled` to
+`false`, or use the frontend panel. Per-service entries may remain stored for a
+later re-enable.
 
 ---
 
@@ -265,14 +290,15 @@ To disable auto-restart for all services, set `enabled: false` in each service's
 ### Auto-restart not working
 
 1. Verify `auto_restart.enabled` is `true`
-2. Check if restart limit was reached
-3. Ensure health check is configured correctly
+2. Confirm the exact process name is present and enabled in `auto_restart.services`
+3. Check whether the restart limit was reached
+4. Confirm the configured service port is accurate and reachable on container loopback
 
 ### Restart delay too long
 
-- Reduce `backoff_multiplier`
-- Lower `max_delay`
-- Reset counter with manual restart
+- Shorten the values in `backoff_seconds`
+- Review `max_restarts` and `window_seconds` before changing limits
+- Fix the underlying health failure instead of using a zero-delay retry loop
 
 ---
 

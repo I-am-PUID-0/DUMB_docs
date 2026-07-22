@@ -21,6 +21,8 @@ and metrics in a single interface.
 
 ## Configuration Settings in `dumb_config.json`
 
+This block is nested at `dumb.frontend` in `/config/dumb_config.json`:
+
 ```json
 "frontend": {
     "enabled": true,
@@ -41,6 +43,7 @@ and metrics in a single interface.
     "port": 3005,            
     "auto_update": false,
     "auto_update_interval": 24,
+    "auto_update_start_time": "04:00",
     "clear_on_update": true,
     "exclude_dirs": [],
     "platforms": ["pnpm"],

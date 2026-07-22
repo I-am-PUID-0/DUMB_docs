@@ -28,7 +28,9 @@ The frontend provides:
 |---------|------|
 | DUMB Frontend | 3005 |
 
-When accessed through Traefik, the frontend is available at port `18080`.
+The maintained Compose file publishes the frontend directly on `3005`. Built-in
+Traefik on `18080` routes managed service UIs; it does not replace the normal
+DUMB frontend listener.
 
 ---
 
@@ -39,7 +41,7 @@ When accessed through Traefik, the frontend is available at port `18080`.
 | [Dashboard](dashboard.md) | `/` | Service overview and control |
 | [Onboarding](onboarding.md) | `/onboarding` | Initial setup wizard |
 | [Settings](settings.md) | `/settings` | Configuration and user management |
-| [Service pages](service-pages.md) | `/settings` | Auto-restart, auto-update, config editors |
+| [Service pages](service-pages.md) | `/services/[serviceId]` | Status, logs, embedded UI, updates, and config editors |
 | [Metrics](metrics.md) | `/metrics` | System resource monitoring |
 | Service Detail | `/services/[id]` | Individual service management |
 | Login | `/login` | User authentication |
@@ -113,10 +115,13 @@ Each service has a dedicated detail page with:
 
 The frontend supports optional JWT-based authentication:
 
-- **First-time setup** - Create admin account or skip authentication
+- **First-time setup** - Create the first local account or skip authentication
 - **Login** - Secure access with username/password
 - **Remember me** - Persistent sessions across browser restarts
 - **User management** - Create, disable, and delete users
+
+All enabled DUMB users currently have the same control-plane permissions; there
+is no viewer/operator/admin role split.
 
 See the [Authentication](../features/authentication.md) guide for details.
 

@@ -28,7 +28,7 @@ icon: lucide/disc
 
 !!! info "Traefik access"
 
-    If Traefik is enabled, the Emby UI is proxied at `http://<host>/emby/` (path prefix `/web`).
+    If Traefik is enabled, the Emby UI is proxied at `http://<host>:18080/service/ui/emby/`; DUMB preserves Emby's internal `/web` path handling.
 
 ---
 
@@ -48,6 +48,7 @@ icon: lucide/disc
   "port": 8096,
   "auto_update": false,
   "auto_update_interval": 24,
+  "auto_update_start_time": "04:00",
   "config_dir": "/emby",
   "config_file": "/emby/config/system.xml",
   "log_file": "/emby/log/embyserver.txt",
@@ -73,7 +74,7 @@ icon: lucide/disc
 ## Accessing the UI
 
 * Navigate to: `http://<host>:8096`
-* Traefik proxy: `http://<host>/emby/`
+* Traefik proxy: `http://<host>:18080/service/ui/emby/`
 
 ---
 

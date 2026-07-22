@@ -3,137 +3,133 @@ title: unRAID Deployment
 icon: simple/unraid
 ---
 
-## Deploying DUMB on unRAID
+# Deploy DUMB on Unraid
 
-This guide will walk you through deploying **Debrid Unlimited Media Bridge (DUMB)** on **unRAID** using the Community Applications plugin and Docker.
-
----
+Deploy DUMB from the Community Applications template when it is available, or
+add it as a Compose stack/container using the maintained settings below. The
+same persistence and path rules apply to both methods.
 
 ## Prerequisites
-Before proceeding, ensure you have the following:
 
-- A running **unRAID server** with Docker enabled.
-- The **Community Applications** plugin installed.
-- At least one unRAID **share** for persistent storage (e.g., `/mnt/user/appdata/DUMB`).
-- An understanding of basic Docker container and volume mapping in unRAID.
+- Unraid with Docker enabled
+- Community Applications for the template-based path
+- A persistent appdata directory and sufficient space for selected services
+- A UID/GID that owns the mapped directories
+- `/dev/fuse` access for workflows that create rclone/FUSE mounts
 
-Optional but recommended:
+## Install from Community Applications
 
-- Installed media server such as **Plex**, **Jellyfin**, or **Emby**.
-- A valid **Plex Token** (if using Plex integration).
+1. Open **Apps**, search for `DUMB`, and select the Debrid Unlimited Media Bridge
+   template.
+2. Confirm the image is `iampuid0/dumb:latest` (or the release tag you intend to
+   run).
+3. Configure the four persistent mappings shown below.
+4. Set `TZ`, `PUID`, and `PGID` to values that can access those shares.
+5. Keep `/dev/fuse`, `SYS_ADMIN`, and the required security settings when your
+   workflow uses FUSE.
+6. Apply the template and follow the container log through first startup.
 
----
+The common Unraid `nobody:users` identity is `99:100`, but do not copy those
+values blindly. Use the owner of your appdata/media paths, and correct existing
+directory permissions before starting DUMB.
 
-## Quick Start
+## Persistent path mappings
 
-### 1. **Install the DUMB Template**
-- Navigate to the **Apps** tab in unRAID.
-- Search for `DUMB` and select the **Debrid Unlimited Media Bridge** template.
-- Click **Install**.
+Use a layout such as:
 
-### 2. **Path and Variable Configuration**
+| Unraid host path | Container path | Purpose |
+|---|---|---|
+| `/mnt/user/appdata/DUMB/config` | `/config` | Runtime configuration, auth, metrics, jobs |
+| `/mnt/user/appdata/DUMB/log` | `/log` | DUMB and managed-service logs |
+| `/mnt/user/appdata/DUMB/data` | `/data` | Service-specific persistent application data |
+| `/mnt/user/appdata/DUMB/mnt/debrid` | `/mnt/debrid` | Mounts, links, and library trees |
 
-Ensure your **paths and environment variables** are set correctly:
-- Mount all relevant paths (e.g., `/mnt`, `/config`, `/cache`) to valid unRAID shares.
-- Set your `PUID` to `99` and `PGID` to `100` (used for `nobody:users` on unRAID).
-- Set your timezone (`TZ`) appropriately (e.g., `America/New_York`).
+Do not replace the `/data` mapping with a generic `/mnt` mapping. DUMB maps
+internal paths such as `/plex`, `/altmount`, and `/postgres_data` into the
+persistent `/data` tree.
 
-### 3. **Fix Permissions (First-Time Only)**
+If you deploy through Compose, start from the current
+[DUMB Compose file](https://github.com/I-am-PUID-0/DUMB/blob/master/docker-compose.yml)
+and replace `/home/username/docker/DUMB` with `/mnt/user/appdata/DUMB`.
 
-> Docker on unRAID may create directories as `root`, causing permission issues. Fix this using the following method:
+## Open DUMB
 
-#### Terminal Method:
-```bash
-chown -R 99:100 /mnt/user/appdata/DUMB
+The maintained deployment publishes the frontend at:
+
+```text
+http://<unraid-address>:3005
 ```
 
-#### WebUI Method:
-1. Go to **Shares** > locate your DUMB share.
-2. Click the `+` to expand.
-3. Under **Owner**, set to `nobody` (user ID 99).
+The frontend proxies DUMB API calls under `/api`. The backend-native `8000`
+listener remains private by default; do not publish it for ordinary use.
 
-### 4. **Start the Container**
-- Click **Start** in the Docker tab.
-- Open the **Logs** tab to confirm successful startup.
-- Look for a confirmation message that `riven frontend` has started.
+## Share library paths with another container
 
----
+Use the same container-visible path in DUMB and the external Plex, Jellyfin,
+Emby, Sonarr, Radarr, or other consumer:
 
-## Matching Paths in Plex, Jellyfin, Emby
-
-Your **Media Server (Plex, Jellyfin, or Emby)** must have the same paths as DUMB:
-
-- DUMB mounts:
-  - `/mnt` (contains both Riven and Zurg content)
-- In your media server:
-  - Mount `/mnt` to `/mnt` as well.
-  - Only add the **Riven path** (e.g., `/mnt/movies`, `/mnt/shows`) as libraries.
-
->  Do **NOT** add `/data` or Zurg’s full rclone mount as libraries. Use only the **Riven symlinked** content.
-
----
-
-## Example Screenshots
-
-- DUMB Docker setup:
-
-![unraid-dumb-setup-1](https://github.com/user-attachments/assets/c11f95fa-710f-4b1d-af07-be0a81dbface)
-![unraid-dumb-setup-2](https://github.com/user-attachments/assets/cb0a02b9-c986-4de8-9751-f615d48c2716)
-
-
-- Plex Docker container setup:
-
-![plex-dumb-paths](https://github.com/user-attachments/assets/0f3a9286-f81d-4d24-ab9a-5cf9a5bcee25)
-
-
-- Plex UI Library paths:
-
-![plex-paths1](https://github.com/user-attachments/assets/d5a450fe-33e5-465f-bce8-aca1587723d3)
-![plex-paths2](https://github.com/user-attachments/assets/0af17df8-a0e0-4514-8cb2-090a1e628138)
-
----
-
-## Additional Configuration
-
-### Plex Token Setup
-To enable features like watchlist syncing, you may need your Plex token:
-
-1. Visit `https://plex.tv`, login.
-2. Open any item > click the 3 dots > **View XML**.
-3. At the end of the URL, copy the value after `Plex-Token=`.
-
----
-
-### Advanced Tools
-
-To troubleshoot permissions or inspect mounts:
-```bash
-docker exec -w /mnt/movies dumb ls -Rl
-```
-To enter the container interactively:
-```bash
-docker exec -it dumb sh
-```
-Install Midnight Commander (optional):
-```bash
-apk add mc && mc
+```text
+/mnt/debrid
 ```
 
----
+Then select the curated library produced by your workflow, for example:
 
-## Jellyfin and Emby Notes
+- `/mnt/debrid/riven_symlinks`
+- `/mnt/debrid/clid_symlinks`
+- `/mnt/debrid/decypharr_symlinks`
+- `/mnt/debrid/nzbdav-symlinks`
+- `/mnt/debrid/combined_symlinks`
+- the AltMount import directory configured for that instance
 
-Both **Jellyfin** and **Emby** can work with DUMB:
+Do not point a media library at an entire raw provider mount unless that is
+explicitly the workflow you designed.
 
-- Map `/mnt` into the containers.
-- Add **only the Riven subpaths** (`/mnt/movies`, `/mnt/shows`) as libraries.
+### Mount propagation
 
----
+When DUMB creates a nested FUSE/rclone mount that another container must see:
+
+- DUMB's host bind must be `rshared`.
+- Consumer containers should mount the same host path with `rslave` (or an
+  equivalent slave propagation mode).
+- Restart consumers after changing propagation settings and verify the nested
+  mount from inside each container.
+
+Propagation is unnecessary for ordinary symlink/file trees and when every
+consumer runs inside DUMB.
+
+## Permissions
+
+If Unraid created the DUMB directory with the wrong owner, stop the container
+and correct the exact appdata tree:
+
+```bash
+chown -R <PUID>:<PGID> /mnt/user/appdata/DUMB
+```
+
+Avoid recursive ownership changes over a mounted media library unless you have
+verified the intended scope.
 
 ## Troubleshooting
-- Check logs via **Docker tab** > select DUMB > **Logs**.
-- Use `docker exec` or Midnight Commander to inspect file/folder structure.
-- Common issues:
-  - Wrong `PUID/PGID`
-  - Paths not matching between DUMB and your media server
-  - Invalid Plex token
+
+View the container log from the Docker tab, or inspect from an Unraid terminal:
+
+```bash
+docker logs -f DUMB
+docker exec -it DUMB bash
+docker exec DUMB findmnt -R /mnt/debrid
+```
+
+Do not install ad-hoc tools into the running container; those changes disappear
+on recreation and can alter the supported runtime. Useful checks are already
+available through the DUMB UI, logs, and standard Ubuntu utilities in the image.
+
+Common causes of failure are:
+
+- incorrect appdata ownership or mismatched `PUID`/`PGID`
+- missing `/dev/fuse` or `SYS_ADMIN` for a FUSE workflow
+- inconsistent paths between DUMB and external consumers
+- missing `rshared`/`rslave` propagation for nested mounts
+- a host port already in use
+
+Continue with [Getting Started](../getting-started/index.md), then review
+[Service ports](../reference/ports.md) before publishing any additional UI.

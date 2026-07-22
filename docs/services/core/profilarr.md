@@ -42,7 +42,7 @@ Profilarr provides:
       "repo_owner": "Dictionarry-Hub",
       "repo_name": "profilarr",
       "release_version_enabled": true,
-      "release_version": "latest",
+      "release_version": "v1.1.4",
       "branch_enabled": false,
       "branch": "main",
       "suppress_logging": false,
@@ -50,6 +50,7 @@ Profilarr provides:
       "port": 6868,
       "auto_update": false,
       "auto_update_interval": 24,
+      "auto_update_start_time": "04:00",
       "clear_on_update": true,
       "exclude_dirs": [
         "/profilarr/default/config"
@@ -58,12 +59,22 @@ Profilarr provides:
         "python",
         "pnpm"
       ],
-      "command": ["bash", "entrypoint.sh"],
+      "command": [
+        "/profilarr/default/backend/venv/bin/gunicorn",
+        "--chdir",
+        "/profilarr/default/backend",
+        "--bind",
+        "0.0.0.0:{port}",
+        "--timeout",
+        "600",
+        "app.main:create_app()"
+      ],
       "config_dir": "/profilarr/default",
-      "config_file": "/profilarr/default/config/config.json",
       "log_file": "/profilarr/default/config/log/profilarr.log",
       "env": {
-        "PORT": "{port}"
+        "PROFILARR_CONFIG_DIR": "/profilarr/default/config",
+        "FLASK_ENV": "production",
+        "PYTHONPATH": "/profilarr/default/backend"
       }
     }
   }
@@ -78,8 +89,11 @@ Profilarr provides:
 - **`release_version_enabled` / `release_version`**: Use GitHub releases when enabled.
 - **`branch_enabled` / `branch`**: Use a specific branch if enabled.
 - **`port`**: Port the Profilarr UI is exposed on.
-- **`auto_update` / `auto_update_interval`**: Automatic update settings.
-- **`config_dir` / `config_file` / `log_file`**: Profilarr config and log paths.
+- **`auto_update` / `auto_update_interval` / `auto_update_start_time`**: Automatic update settings.
+- **`config_dir` / `log_file`**: Profilarr installation/config root and log path.
+
+!!! note "Pinned compatibility default"
+    DUMB currently enables the tested `v1.1.4` release selector by default. Do not replace it with an arbitrary current upstream release unless you intend to compatibility-test DUMB's install, launch, and auto-link behavior against that version.
 
 ---
 

@@ -65,10 +65,11 @@ This includes:
 - Unmounting rclone mounts
 - Syncing configuration states
 
-To allow time for clean shutdowns, use:
+The maintained Compose file currently allows 30 seconds for clean shutdown:
 ```yaml
-docker-compose:
-  stop_grace_period: 60s
+services:
+  DUMB:
+    stop_grace_period: 30s
 ```
 
 ---

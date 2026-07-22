@@ -12,13 +12,13 @@ Below are some common questions and solutions related to **DUMB**.
 
 ### Does the **DUMB** image have the latest version of `x`
 
-The GitHub repo for **DUMB** use many continuous integration and continuous deployment (CI/CD) workflows to ensure proper building, reporting, and updating of the images.
+The GitHub repository for **DUMB** uses continuous integration and deployment workflows to build and report image contents.
 
 For example, the [Check for New Release Tags](https://github.com/I-am-PUID-0/DUMB/actions/workflows/fetch-latest-tags.yml) workflow is automated to run every three hours and check for updates to the various services/projects utilized in DUMB. If an update is found, the [Docker Image CI](https://github.com/I-am-PUID-0/DUMB/actions/workflows/docker-image.yml) workflow is called to build a new image with the latest services. 
 
 ### What versions are in the latest **DUMB** image
 
-Similar to the above question, and the answer is usually the latest; however, if there has been a recent release and the [Check for New Release Tags](https://github.com/I-am-PUID-0/DUMB/actions/workflows/fetch-latest-tags.yml) workflow has not run yet, then there my be disparity. 
+The image often contains current upstream releases, but not every service is updated by the same workflow or at the same time. Compatibility pins and services installed at runtime can also differ from the image-build inputs. Treat the running service page/version marker and the relevant Docker build summary as authoritative.
 
 To check, click on one of the [Docker Image CI](https://github.com/I-am-PUID-0/DUMB/actions/workflows/docker-image.yml) jobs to see the `Build Summary`
 
@@ -36,7 +36,7 @@ Authentication can be enabled during the first-time setup or later via Settings:
 1. Navigate to **Settings** in the sidebar
 2. Find the **Authentication** section
 3. Click **Enable Authentication**
-4. If no users exist, create an admin account
+4. If no users exist, create the first local account
 
 See the [Authentication Guide](../features/authentication.md) for details.
 
@@ -46,7 +46,7 @@ If you cannot access your account:
 
 1. Stop the DUMB container
 2. Edit `/config/users.json`
-3. Set `"auth_enabled": false`
+3. Set `"enabled": false`
 4. Restart the container
 5. Access the dashboard and create a new user
 

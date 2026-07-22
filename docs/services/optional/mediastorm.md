@@ -62,7 +62,10 @@ MediaStorm is a self-hosted streaming server and client ecosystem for Debrid, to
     "STRMR_CONFIG": "/mediastorm/settings.json",
     "STRMR_WEB_APP_DIR": "/mediastorm/runtime/web",
     "MEDIASTORM_IROH_DIRECT_DIR": "/mediastorm/runtime/iroh",
-    "DATABASE_URL": ""
+    "DATABASE_URL": "",
+    "PATH": "/mediastorm/runtime/python-venv/bin:/mediastorm/runtime/bin:/usr/local/go/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin",
+    "LIBGL_ALWAYS_SOFTWARE": "1",
+    "VK_ICD_FILENAMES": "/usr/share/vulkan/icd.d/lavapipe_icd.json"
   }
 }
 ```

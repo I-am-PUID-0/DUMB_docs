@@ -5,7 +5,7 @@ icon: lucide/bell
 
 # Notifications API
 
-Notification endpoints are available under `/api/notifications`. They follow the same optional authentication behavior as the other protected DUMB API routes.
+Backend-native notification endpoints are available under `/notifications`. Through the DUMB Frontend proxy they are under `/api/notifications`. They follow the same optional authentication behavior as the other protected DUMB API routes.
 
 If the persistent notification SQLite database is temporarily locked, DUMB
 continues running and retries storage initialization in the background. Endpoints
@@ -14,11 +14,11 @@ configuration and supported-event discovery remain available.
 
 ## Configuration
 
-### `GET /api/notifications/config`
+### `GET /notifications/config`
 
 Returns notification settings with destination URLs and headers removed. Each destination includes `url_configured` and `headers_configured` booleans.
 
-### `POST /api/notifications/config`
+### `POST /notifications/config`
 
 ```json
 {
@@ -47,13 +47,13 @@ Disk and inode thresholds are evaluated independently for every path in `dumb.me
 
 ## Supported events
 
-### `GET /api/notifications/events`
+### `GET /notifications/events`
 
 Returns the backend-supported event types and severity values. Frontends should use this endpoint instead of hard-coding future event support.
 
 ## Test a destination
 
-### `POST /api/notifications/test`
+### `POST /notifications/test`
 
 ```json
 {
@@ -67,7 +67,7 @@ Tests bypass the global enable switch, destination enable switch, severity filte
 
 ## Send a manual notification
 
-### `POST /api/notifications/send`
+### `POST /notifications/send`
 
 ```json
 {
@@ -82,7 +82,7 @@ Omit `destination_ids` or set it to `null` to send to every enabled destination 
 
 ## Delivery history
 
-### `GET /api/notifications/history`
+### `GET /notifications/history`
 
 Query parameters:
 
@@ -94,6 +94,6 @@ Query parameters:
 
 History responses never contain destination URLs or request headers.
 
-### `DELETE /api/notifications/history`
+### `DELETE /notifications/history`
 
 Deletes completed, failed, and suppressed records. Queued and retrying deliveries are preserved.

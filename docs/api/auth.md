@@ -11,13 +11,13 @@ The Authentication API provides endpoints for user management, login, token hand
 
 ## Overview
 
-All authentication endpoints are prefixed with `/api/auth`. When authentication is enabled, most other API endpoints require a valid JWT token in the `Authorization: Bearer <token>` header.
+Backend-native authentication endpoints are prefixed with `/auth`. Through the normal DUMB Frontend proxy, add `/api` (for example, `/api/auth/login`). When authentication is enabled, protected API endpoints require a valid JWT token in the `Authorization: Bearer <token>` header.
 
 ---
 
 ## Endpoints
 
-### `GET /api/auth/status`
+### `GET /auth/status`
 
 Returns the current authentication status.
 
@@ -39,7 +39,7 @@ Returns the current authentication status.
 
 ---
 
-### `POST /api/auth/login`
+### `POST /auth/login`
 
 Authenticates a user and returns JWT tokens.
 
@@ -67,19 +67,29 @@ Authenticates a user and returns JWT tokens.
 | Status | Description |
 |--------|-------------|
 | 401 | Invalid credentials |
-| 403 | User account is disabled |
+| 401 | User account is disabled or the credentials are invalid |
 
 #### Example
 
+Directly against the backend from inside the DUMB container, or after intentionally publishing port `8000`:
+
 ```bash
-curl -X POST http://localhost:8000/api/auth/login \
+curl -X POST http://127.0.0.1:8000/auth/login \
+  -H "Content-Type: application/json" \
+  -d '{"username": "admin", "password": "yourpassword"}'
+```
+
+From the host in the standard deployment, use the DUMB Frontend proxy on the published port:
+
+```bash
+curl -X POST http://localhost:3005/api/auth/login \
   -H "Content-Type: application/json" \
   -d '{"username": "admin", "password": "yourpassword"}'
 ```
 
 ---
 
-### `POST /api/auth/refresh`
+### `POST /auth/refresh`
 
 Exchanges a refresh token for new access and refresh tokens.
 
@@ -109,16 +119,14 @@ Exchanges a refresh token for new access and refresh tokens.
 
 ---
 
-### `POST /api/auth/verify`
+### `POST /auth/verify`
 
 Verifies that an access token is valid.
 
-#### Request body
+Pass the access token in the required `token` query parameter:
 
-```json
-{
-  "token": "eyJhbGciOiJIUzI1NiIs..."
-}
+```text
+POST /auth/verify?token=eyJhbGciOiJIUzI1NiIs...
 ```
 
 #### Response
@@ -132,7 +140,7 @@ Verifies that an access token is valid.
 
 ---
 
-### `POST /api/auth/setup`
+### `POST /auth/setup`
 
 Creates the first user account and enables authentication. Only works when no users exist.
 
@@ -149,9 +157,9 @@ Creates the first user account and enables authentication. Only works when no us
 
 ```json
 {
-  "message": "User created successfully",
   "access_token": "eyJhbGciOiJIUzI1NiIs...",
-  "refresh_token": "eyJhbGciOiJIUzI1NiIs..."
+  "refresh_token": "eyJhbGciOiJIUzI1NiIs...",
+  "token_type": "bearer"
 }
 ```
 
@@ -160,11 +168,11 @@ Creates the first user account and enables authentication. Only works when no us
 | Status | Description |
 |--------|-------------|
 | 400 | Users already exist |
-| 422 | Invalid username or password format |
+| 400 | Username is shorter than 3 characters or password is outside the 8–72 character range |
 
 ---
 
-### `POST /api/auth/skip-setup`
+### `POST /auth/skip-setup`
 
 Skips the initial setup wizard, leaving authentication disabled.
 
@@ -172,13 +180,13 @@ Skips the initial setup wizard, leaving authentication disabled.
 
 ```json
 {
-  "message": "Setup skipped, authentication disabled"
+  "message": "Authentication setup skipped successfully"
 }
 ```
 
 ---
 
-### `POST /api/auth/enable`
+### `POST /auth/enable`
 
 Enables authentication. Requires at least one user to exist.
 
@@ -186,7 +194,7 @@ Enables authentication. Requires at least one user to exist.
 
 ```json
 {
-  "message": "Authentication enabled"
+  "message": "Authentication enabled successfully"
 }
 ```
 
@@ -198,7 +206,7 @@ Enables authentication. Requires at least one user to exist.
 
 ---
 
-### `POST /api/auth/disable`
+### `POST /auth/disable`
 
 Disables authentication, allowing unauthenticated access to all endpoints.
 
@@ -210,7 +218,7 @@ Disables authentication, allowing unauthenticated access to all endpoints.
 
 ```json
 {
-  "message": "Authentication disabled"
+  "message": "Authentication disabled successfully"
 }
 ```
 
@@ -220,7 +228,7 @@ Disables authentication, allowing unauthenticated access to all endpoints.
 
 These endpoints require authentication when auth is enabled.
 
-### `GET /api/auth/users`
+### `GET /auth/users`
 
 Lists all user accounts.
 
@@ -243,7 +251,7 @@ Lists all user accounts.
 
 ---
 
-### `POST /api/auth/users`
+### `POST /auth/users`
 
 Creates a new user account.
 
@@ -260,8 +268,8 @@ Creates a new user account.
 
 ```json
 {
-  "message": "User created successfully",
-  "username": "newuser"
+  "username": "newuser",
+  "disabled": false
 }
 ```
 
@@ -270,11 +278,11 @@ Creates a new user account.
 | Status | Description |
 |--------|-------------|
 | 400 | Username already exists |
-| 422 | Invalid username or password format |
+| 400 | Username is shorter than 3 characters or password is outside the 8–72 character range |
 
 ---
 
-### `PUT /api/auth/users/{username}`
+### `PUT /auth/users/{username}`
 
 Updates a user account (enable/disable).
 
@@ -296,7 +304,6 @@ Updates a user account (enable/disable).
 
 ```json
 {
-  "message": "User updated successfully",
   "username": "readonly",
   "disabled": true
 }
@@ -307,11 +314,11 @@ Updates a user account (enable/disable).
 | Status | Description |
 |--------|-------------|
 | 400 | Cannot disable the last active user |
-| 404 | User not found |
+| 400 | User not found |
 
 ---
 
-### `DELETE /api/auth/users/{username}`
+### `DELETE /auth/users/{username}`
 
 Deletes a user account.
 
@@ -333,8 +340,7 @@ Deletes a user account.
 
 | Status | Description |
 |--------|-------------|
-| 400 | Cannot delete the last active user |
-| 404 | User not found |
+| 400 | Cannot delete yourself, cannot delete the last user, or user not found |
 
 ---
 
@@ -370,7 +376,7 @@ JWT tokens contain the following claims:
 When authentication is enabled, include the access token in the `Authorization` header:
 
 ```bash
-curl -X GET http://localhost:8000/api/process/processes \
+curl -X GET http://localhost:3005/api/process/processes \
   -H "Authorization: Bearer eyJhbGciOiJIUzI1NiIs..."
 ```
 
@@ -379,7 +385,7 @@ curl -X GET http://localhost:8000/api/process/processes \
 For WebSocket connections, pass the token as a query parameter:
 
 ```
-ws://localhost:8000/ws/status?token=eyJhbGciOiJIUzI1NiIs...
+ws://localhost:3005/ws/status?token=eyJhbGciOiJIUzI1NiIs...
 ```
 
 ---
@@ -399,7 +405,7 @@ ws://localhost:8000/ws/status?token=eyJhbGciOiJIUzI1NiIs...
 
 When receiving a 401 response:
 
-1. Send the refresh token to `POST /api/auth/refresh`
+1. Send the refresh token to `POST /auth/refresh` (or `/api/auth/refresh` through the frontend proxy)
 2. If successful, retry the original request with the new access token
 3. If refresh fails, redirect the user to login
 

@@ -44,6 +44,7 @@ icon: lucide/radio
       "suppress_logging": false,
       "auto_update": false,
       "auto_update_interval": 24,
+      "auto_update_start_time": "04:00",
       "pinned_version": "",
       "port": 8989,
       "config_dir": "/sonarr/default",
@@ -92,7 +93,7 @@ During onboarding, enabling `postgres_enabled` for Sonarr is enough; you do not 
 
 For an existing instance, use the **Database Migration** tool on its service page. Run a rehearsal first, review its table-count validation, and only then start guarded cutover. See [SQLite to PostgreSQL Migration](../../features/arr-postgres-migration.md).
 
-Sonarr's upstream documentation still classifies existing SQLite migration as unsupported. Back up `/sonarr/...` and `/postgres_data` before proceeding, even when using DUMB's guarded workflow.
+Sonarr's upstream documentation still classifies existing SQLite migration as unsupported. Back up Sonarr's `/data/sonarr` persistence and PostgreSQL's `/data/postgres` persistence (internal paths `/sonarr/...` and `/postgres_data`) before proceeding, even when using DUMB's guarded workflow.
 
 !!! warning "PostgreSQL is not a temporary toggle"
     There is no known supported migration path from PostgreSQL back to SQLite for Sonarr. Treat `postgres_enabled: true` as a long-term database choice unless you are willing to recreate the Sonarr instance from scratch.

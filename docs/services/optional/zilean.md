@@ -27,6 +27,7 @@ Below is a sample configuration for Zilean within the `dumb_config.json` file:
   "port": 8182,
   "auto_update": false,
   "auto_update_interval": 24,
+  "auto_update_start_time": "04:00",
   "clear_on_update": true,
   "exclude_dirs": ["/zilean/app/data"],
   "env_copy": {

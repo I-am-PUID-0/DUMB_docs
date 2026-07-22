@@ -117,7 +117,7 @@ After enabling and starting Pulsarr:
 
 Use **Database Migration** on the Pulsarr service page for an existing SQLite installation. Rehearsal starts Pulsarr against an isolated PostgreSQL database so Pulsarr creates its current schema, imports application data while excluding Knex's migration bookkeeping tables, validates every copied table, and returns production to SQLite. Cutover repeats this from a cold snapshot and enables `postgres_enabled` only after validation.
 
-Do not enable PostgreSQL directly when you need the existing users, settings, requests, or integrations. See [SQLite to PostgreSQL Migration](../../features/arr-postgres-migration.md) and the [upstream Pulsarr migration guide](https://jamcalli.github.io/Pulsarr/docs/installation/postgres-migration/).
+Do not enable PostgreSQL directly when you need the existing users, settings, requests, or integrations. See [SQLite to PostgreSQL Migration](../../features/arr-postgres-migration.md) and the [upstream Pulsarr migration guide](https://jamcalli.github.io/Pulsarr/docs/installation/postgres-migration).
 
 ---
 

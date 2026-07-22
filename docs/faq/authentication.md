@@ -34,8 +34,11 @@ When DUMB starts with no users:
 
 Currently, password changes require:
 
-1. Deleting the existing user
-2. Creating a new user with the same username
+1. Creating a temporary second user
+2. Signing in as the temporary user
+3. Deleting the original user (users cannot delete their own current account)
+4. Recreating the original username with the new password
+5. Signing in as the recreated user and deleting the temporary account
 
 !!! note "Future feature"
 
@@ -44,6 +47,8 @@ Currently, password changes require:
 ### How many users can I create?
 
 There's no hard limit on the number of user accounts. Create as many as needed for your use case.
+
+All enabled users currently have the same DUMB permissions. Creating another account does not create a read-only role.
 
 ---
 
@@ -57,7 +62,9 @@ There's no hard limit on the number of user accounts. Create as many as needed f
 
 ### "User account is disabled" error
 
-An administrator has disabled your account. Contact an admin to re-enable it via Settings :material-arrow-right: User Management.
+Another authenticated DUMB user has disabled your account. Contact an operator
+with an enabled account to re-enable it via Settings :material-arrow-right: User
+Management.
 
 ### Session expires too quickly
 
@@ -114,10 +121,12 @@ DUMB doesn't have a password reset feature. To recover access:
 
 1. Stop the DUMB container
 2. Edit `/config/users.json`
-3. Set `"auth_enabled": false`
+3. Set `"enabled": false`
 4. Start the container
-5. Access DUMB and create a new user
-6. Re-enable authentication
+5. Access DUMB and create a temporary user with a different username
+6. Re-enable authentication and sign in as the temporary user
+7. Delete the forgotten account and recreate it with a new password
+8. Sign in as the recreated account and delete the temporary user
 
 ### I deleted all users and can't log in
 
@@ -129,11 +138,10 @@ Replace it with a minimal valid file:
 
 ```json
 {
-  "version": 2,
+  "enabled": false,
+  "users": [],
   "jwt_secret": "",
-  "auth_enabled": false,
-  "setup_skipped": false,
-  "users": []
+  "setup_skipped": false
 }
 ```
 
@@ -155,7 +163,7 @@ Then restart DUMB and go through setup again. A new JWT secret will be generated
 Include the access token in the Authorization header:
 
 ```bash
-curl -H "Authorization: Bearer <your_token>" http://localhost:8000/api/...
+curl -H "Authorization: Bearer <your_token>" http://localhost:3005/api/...
 ```
 
 ### How do I authenticate WebSocket connections?
@@ -163,7 +171,7 @@ curl -H "Authorization: Bearer <your_token>" http://localhost:8000/api/...
 Pass the token as a query parameter:
 
 ```
-ws://localhost:8000/ws/status?token=<your_token>
+ws://localhost:3005/ws/status?token=<your_token>
 ```
 
 ### My API calls return 401 Unauthorized

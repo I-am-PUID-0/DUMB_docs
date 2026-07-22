@@ -13,11 +13,12 @@ Before you deploy DUMB, make sure your environment and accounts are ready.
 
 - **Docker or Docker-compatible environment**
 - Linux system (WSL on Windows when using `rshared`)
-- Minimum 2 vCPU, 2GB RAM, SSD recommended
+- A practical minimum of 2 vCPU and 2 GB RAM for a small stack; source builds, PostgreSQL, media servers, and larger service selections need more
+- SSD-backed persistent storage is strongly recommended
 
 
 !!! warning "Docker Desktop" 
-    Docker Desktop **CANNOT** be used to run DUMB when using `rshared` mount propagation. 
+    Docker Desktop cannot support DUMB workflows that require `rshared` mount propagation.
 
     Docker Desktop does not support the [mount propagation](https://docs.docker.com/storage/bind-mounts/#configure-bind-propagation) required for rclone mounts.
 
@@ -28,42 +29,36 @@ Before you deploy DUMB, make sure your environment and accounts are ready.
 
 ## Required Credentials
 
-| Service     | Required Info                                 |
-|------------------|------------------------------------------|
-| Debrid      | API Key (Real-Debrid)                         |
-| GitHub      | Token *(if using the sponsored Zurg repo)*    |
+| Workflow | Required information |
+|---|---|
+| Debrid | API key for each selected debrid provider |
+| Usenet | NNTP provider host, port, credentials, connections, and TLS choice |
+| Plex | Claim/token and server address when the selected workflow needs Plex integration |
+| Private/sponsored GitHub source | Read-capable GitHub token only when the repository requires it |
+| Cloudflared | Cloudflare Tunnel token when enabling the tunnel connector |
 
- See [Configuration → Integration Tokens](../features/configuration.md#integration-tokens--credentials)
+ See [Configuration → Integration Tokens](../features/configuration.md#integration-tokens-credentials)
 
 ---
 
 ## Required Directories
 
-You'll need to bind mount the following volumes when running the container:
+The maintained Compose layout uses four host mounts:
 
 | Container Mount Path       | Description                                       |
 |----------------------------|---------------------------------------------------|
-|`/config`                   | Location for configuration files                  |
-|`/log`                      | Location for logs                                 |
-|`/zurg/RD`                  | Location for Zurg RealDebrid active configuration | 
-|`/riven/backend/data`       | Location for Riven Backend data                   |
-|`/postgres_data`            | Location for PostgreSQL databases                 |
-|`/pgadmin/data`             | Location for pgAdmin 4 data                       |
-|`/zilean/app/data`          | Location for Zilean data                          |
-|`/cli_debrid/data`          | Location for cli_debrid data                      |
-|`/phalanx_db/data`          | Location for phalanx_db data                      |
-|`/decypharr`                | Location for decypharr data                       |
-|`/plex`                     | Location for Plex Media Server data               |
-|`/transcode`                | Optional writable Plex transcoding cache          |
-|`/mnt/debrid`               | Location for raw debrid files/links and symlinks  |
+| `/config` | DUMB configuration, authentication data, migration jobs, snapshots, and feature state |
+| `/log` | DUMB and collected service logs |
+| `/data` | Persistent service data. DUMB maps internal paths such as `/plex`, `/postgres_data`, `/decypharr`, and `/altmount` into service-specific subdirectories here. |
+| `/mnt/debrid` | Mounts, generated links, and symlink libraries shared by media workflows |
 
-!!! note "/config"
-    If a Zurg config.yml and/or Zurg app is placed here, it will be used to override the default configuration and/or app used at startup.
+!!! note "Do not mount every internal service path"
+    Current deployments normally persist those paths through `/data`. Separate direct mounts such as `/postgres_data` or `/plex` are legacy/advanced layouts and can prevent DUMB from creating its managed data symlinks. Keep them only when intentionally migrating an existing deployment and verify the service-specific guide.
 
 !!! important "/mnt/debrid:rshared"    
     The `:rshared` must be included in order to support [mount propagation](https://docs.docker.com/storage/bind-mounts/#configure-bind-propagation) for rclone to the host when exposing the raw debrid files/links to an external container; e.g., the arrs or a media server.
 
-    `:rshared` is not required when using the default configuration leveraging the internal media server or when not utilizing [Decypharr](../services/core/decypharr.md).
+    `:rshared` is not required when all consumers remain inside the DUMB container, when no FUSE/rclone submount is used, or when the selected workflow does not need mount propagation. The requirement is based on mount behavior—not on Decypharr alone.
 ---
 
 ## Preparation Checklist

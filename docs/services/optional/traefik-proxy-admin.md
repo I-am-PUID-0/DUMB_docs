@@ -284,7 +284,16 @@ Full steps are in the [Cloudflared guide](cloudflared.md).
   "auto_update_interval": 24,
   "auto_update_start_time": "04:00",
   "clear_on_update": true,
+  "exclude_dirs": [
+    "/traefik-proxy-admin/.next/cache",
+    "/traefik-proxy-admin/node_modules"
+  ],
   "platforms": ["pnpm"],
+  "command": [
+    "/bin/bash",
+    "-c",
+    "if [ -f .next/standalone/server.js ]; then exec node .next/standalone/server.js; else exec pnpm exec next start -H 0.0.0.0 -p \"$PORT\"; fi"
+  ],
   "config_dir": "/traefik-proxy-admin",
   "log_file": "/log/traefik_proxy_admin.log",
   "env": {
@@ -297,10 +306,29 @@ Full steps are in the [Cloudflared guide](cloudflared.md).
     "TRAEFIK_API_URL": "http://127.0.0.1:18081",
     "TRAEFIK_ACCESS_LOG_PATH": "/log/traefik_access.log",
     "TARGET_TEST_ALLOW_CIDRS": "10.0.0.0/16,172.20.0.0/16,192.168.0.0/16,127.0.0.0/8",
-    "NEXT_TELEMETRY_DISABLED": "1"
-  }
+    "NEXT_TELEMETRY_DISABLED": "1",
+    "HOME": "/traefik-proxy-admin",
+    "PNPM_HOME": "/config/.pnpm-store/traefik-proxy-admin-runtime/pnpm-home",
+    "XDG_DATA_HOME": "/config/.pnpm-store/traefik-proxy-admin-runtime/xdg-data",
+    "XDG_CACHE_HOME": "/config/.pnpm-store/traefik-proxy-admin-runtime/xdg-cache",
+    "npm_config_userconfig": "/traefik-proxy-admin/.npmrc",
+    "npm_config_cache": "/config/.pnpm-store/traefik-proxy-admin-runtime/npm-cache",
+    "npm_config_store_dir": "/config/.pnpm-store/traefik-proxy-admin-runtime/store"
+  },
+  "wait_for_tcp": [
+    {
+      "name": "PostgreSQL",
+      "host": "127.0.0.1",
+      "port": 5432,
+      "timeout": 2
+    }
+  ]
 }
 ```
+
+DUMB may add generated database/auth secrets to the effective environment. Use
+the service editor or `/api/config` as the authority for those secret-bearing
+runtime values rather than copying them from a running instance.
 
 ### Configuration key descriptions
 

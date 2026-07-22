@@ -39,7 +39,24 @@ DUMB is ideal if you:
 
 ## Architecture at a Glance
 
-![DUMB Flow Diagram](../assets/images/under_construction.png)
+```mermaid
+flowchart LR
+    USER([Operator]) --> FE[DUMB Frontend :3005]
+    FE --> API[DUMB API]
+    API --> ORCH[Setup + process orchestration]
+    ORCH --> CORE[Debrid / Usenet workflow]
+    ORCH --> ARR[Arr automation]
+    CORE --> LIB[(Mounts + curated libraries)]
+    ARR --> CORE
+    LIB --> MEDIA[Plex / Jellyfin / Emby]
+    REQUEST[Seerr / lists / watchlists] --> ARR
+    FE -. embedded UI .-> SVC[Managed service UIs]
+```
+
+DUMB coordinates the services and their configuration; each upstream service
+still owns its application-specific behavior and data. See the
+[architecture overview](../architecture/index.md) for the control, storage, and
+proxy layers.
 
 !!! note  "For details on each service, visit the [Services Overview](../services/index.md)."
 

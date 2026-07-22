@@ -59,7 +59,7 @@ flowchart TD
 
 ## Storage and mounts
 
-Most services store state under `/data`, `/config`, or service-specific directories (for example `/riven`, `/cli_debrid`, `/decypharr`, `/nzbdav`, `/altmount`, `/traefik-proxy-admin`, or `/pulsarr`). Media access is typically provided via `/mnt/debrid`, with symlink folders exposed for curated libraries.
+The maintained deployment persists four container paths: `/config`, `/log`, `/data`, and `/mnt/debrid`. Services still use their native internal paths (for example `/riven/backend/data`, `/decypharr`, `/postgres_data`, or `/altmount`), but DUMB maps those paths into service-specific subdirectories below the mounted `/data` root. Media access is provided through `/mnt/debrid`, including mounts and curated symlink libraries.
 
 !!! tip "Mount propagation"
 
@@ -69,7 +69,7 @@ Most services store state under `/data`, `/config`, or service-specific director
 
 ## Networking and proxying
 
-DUMB exposes the frontend and API directly, while Traefik can be enabled to consolidate access to service UIs under a single port and path-based routing. When Traefik Proxy Admin is enabled, Traefik also polls TPA's HTTP provider for user-managed host routes. When Cloudflared is enabled, Cloudflare Tunnel traffic is delivered to the same Traefik entrypoint.
+DUMB publishes the frontend on port `3005`; the frontend proxies REST calls under `/api` and WebSockets under `/ws` to the loopback backend. The native API listener on port `8000` is not published by the maintained Compose file. Traefik can be enabled to consolidate service UIs under a single port and path-based routing. When Traefik Proxy Admin is enabled, Traefik also polls TPA's HTTP provider for user-managed host routes. When Cloudflared is enabled, Cloudflare Tunnel traffic is delivered to the same Traefik entrypoint.
 
 !!! info "Traefik is optional"
 

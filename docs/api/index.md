@@ -7,6 +7,58 @@ icon: lucide/code
 
 DUMB includes a built-in REST API and WebSocket server to allow programmatic control of services, logging, and system state.
 
+## How to reach it
+
+| Access path | Example | Notes |
+|---|---|---|
+| DUMB Frontend proxy | `http://<host>:3005/api/process/processes` | Default and recommended. Add `/api` before the backend-native REST path. |
+| Backend directly | `http://<host>:8000/process/processes` | Port `8000` listens on `127.0.0.1` by default and is not published by the standard Compose file. Direct exposure requires an intentional host/config change. |
+| WebSocket through the frontend | `ws://<host>:3005/ws/status` | WebSocket routes stay under `/ws`; do not add `/api`. |
+
+## How the frontend API gateway works
+
+Port `3005` is not only the dashboard. The dmbdb server also acts as the normal
+gateway to the DUMB backend, so scripts and other API clients can use the same
+published address as the browser UI.
+
+```mermaid
+flowchart LR
+    C[Browser or API client]
+    F[dmbdb<br/>port 3005]
+    B[DUMB FastAPI backend<br/>127.0.0.1:8000]
+
+    C -->|/api/process/processes| F
+    F -->|strip /api<br/>/process/processes| B
+    C -->|/ws/status| F
+    F -->|path unchanged<br/>/ws/status| B
+```
+
+The mapping is:
+
+| Client-facing request on port 3005 | Request received by port 8000 |
+|---|---|
+| `/api/auth/login` | `/auth/login` |
+| `/api/process/processes` | `/process/processes` |
+| `/api/config` | `/config` |
+| `/ws/status` | `/ws/status` |
+
+The proxy changes only the route used to reach the backend. Authentication and
+authorization are still enforced by FastAPI; using port `3005` does not bypass
+JWT requirements or expose a separate API implementation.
+
+Endpoint paths throughout this API reference are **backend-native paths**. When
+using the normal frontend URL, prefix REST paths with `/api`. For example:
+
+```bash
+# Standard deployment: call through the published frontend/API gateway
+curl http://localhost:3005/api/health
+
+# Direct backend: only inside the container or when port 8000 is exposed
+curl http://127.0.0.1:8000/health
+```
+
+WebSocket paths are forwarded without adding or removing `/api`.
+
 The API is enabled and configured using the `dumb_config.json` under the `dumb.api_service` section. For example:
 
 ```json
@@ -38,9 +90,9 @@ The API is enabled and configured using the `dumb_config.json` under the `dumb.a
 
 | Method | Path                      | Description                                |
 |--------|---------------------------|--------------------------------------------|
-| GET    | `/api/auth/status`        | Get authentication status                  |
-| POST   | `/api/auth/login`         | Authenticate and get JWT tokens            |
-| POST   | `/api/auth/refresh`       | Refresh access token                       |
+| GET    | `/auth/status`            | Get authentication status                  |
+| POST   | `/auth/login`             | Authenticate and get JWT tokens            |
+| POST   | `/auth/refresh`           | Refresh access token                       |
 | GET    | `/health`                 | Container health check                     |
 | GET    | `/process/processes`      | List all services in `dumb_config.json`    |
 | GET    | `/process`                | Get a specific service by `process_name`   |
@@ -107,7 +159,7 @@ The DUMB API is split into the following modules:
 
 ## API Documentation
 
-DUMB provides built-in API documentation through two convenient endpoints:
+DUMB provides built-in API documentation on the backend listener through two convenient endpoints. Because the listener is loopback-only by default, use these from inside the container or deliberately expose the backend with authentication and network controls.
 
 - **FastAPI Swagger UI**  
   Accessible at:  

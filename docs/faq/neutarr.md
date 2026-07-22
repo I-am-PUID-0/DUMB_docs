@@ -19,7 +19,7 @@ Check the following:
 
 !!! tip "Traefik access"
 
-    If Traefik is enabled, you can access NeutArr at `http://<host>/neutarr/`.
+    If Traefik is enabled, you can access NeutArr at `http://<host>:18080/service/ui/neutarr/`.
 
 ---
 

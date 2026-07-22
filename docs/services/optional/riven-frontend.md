@@ -29,6 +29,7 @@ DUMB handles automatic installation and updates of the frontend, including versi
     "port": 3000,
     "auto_update": false,
     "auto_update_interval": 24,
+    "auto_update_start_time": "04:00",
     "origin": "",
     "clear_on_update": true,
     "exclude_dirs": [],

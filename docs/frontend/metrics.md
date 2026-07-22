@@ -264,16 +264,16 @@ Metrics are also available via the REST API:
 
 ```bash
 # Current metrics snapshot
-curl http://localhost:8000/api/metrics
+curl http://localhost:3005/api/metrics
 
 # Historical metrics newer than a Unix timestamp
-curl "http://localhost:8000/api/metrics/history?since=1784300000&limit=5000"
+curl "http://localhost:3005/api/metrics/history?since=1784300000&limit=5000"
 
 # Storage, migration, and fallback status
-curl "http://localhost:8000/api/metrics/history/storage?probe_postgresql=true"
+curl "http://localhost:3005/api/metrics/history/storage?probe_postgresql=true"
 
 # Database health, optionally forcing a fresh collection
-curl "http://localhost:8000/api/metrics/database-health?process_name=NzbDAV&refresh=true"
+curl "http://localhost:3005/api/metrics/database-health?process_name=NzbDAV&refresh=true"
 ```
 
 See the [WebSocket API](../api/websocket.md) documentation for real-time streaming.

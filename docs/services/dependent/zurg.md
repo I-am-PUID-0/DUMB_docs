@@ -17,10 +17,10 @@ Zurg is the debrid content fetcher that powers file discovery and caching for DU
 There are **two official Zurg repositories**:
 
 - **[`zurg-testing`](https://github.com/debridmediamanager/zurg-testing)** – The **default** public repo used by DUMB. It contains stable builds accessible to all users.
-- **[`zurg`](https://github.com/debridmediamanager/zurg)** – The **sponsored-only** repo that includes the latest features, nightly builds, and premium support. DUMB can access it by setting the `DMB_GITHUB_TOKEN` and changing the `repo_name` to `zurg`.
+- **[`zurg`](https://github.com/debridmediamanager/zurg)** – The **sponsored-only** repo that includes the latest features, nightly builds, and premium support. DUMB can access it by setting the `DUMB_GITHUB_TOKEN` and changing the `repo_name` to `zurg`.
 
 !!! tip "GitHub Token Setup"
-    See [Integration Tokens & Credentials](../../features/configuration.md#integration-tokens--credentials) for details on setting up the `DMB_GITHUB_TOKEN`.
+    See [Integration Tokens & Credentials](../../features/configuration.md#integration-tokens-credentials) for details on setting up the `DUMB_GITHUB_TOKEN`.
 
 ---
 
@@ -45,6 +45,7 @@ Zurg is configured using the `instances` model to support multiple debrid servic
       "port": 9090,
       "auto_update": false,
       "auto_update_interval": 24,
+      "auto_update_start_time": "04:00",
       "clear_on_update": false,
       "exclude_dirs": ["/zurg/RD"],
       "key_type": "RealDebrid",
@@ -115,6 +116,7 @@ Example:
             "port": 9090,
             "auto_update": false,
             "auto_update_interval": 24,
+            "auto_update_start_time": "04:00",
             "clear_on_update": false,
             "exclude_dirs": ["/zurg/RD"],
             "key_type": "RealDebrid",
@@ -139,6 +141,7 @@ Example:
             "port": 9091,
             "auto_update": false,
             "auto_update_interval": 24,
+            "auto_update_start_time": "04:00",
             "clear_on_update": false,
             "exclude_dirs": ["/zurg/RD2"],
             "key_type": "RealDebrid",

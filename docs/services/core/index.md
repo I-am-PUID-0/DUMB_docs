@@ -25,7 +25,7 @@ Core services are the services that:
 
 | Service                             | Description                                          | Depends On                        | Optional Integrations        |
 | ----------------------------------- | ---------------------------------------------------- | --------------------------------- | ---------------------------- |
-| [CLI Debrid](cli-debrid.md)         | Debrid media scraper, automation engine, and upgrade engine              | CLI Battery, Phalanx DB, rclone, Zurg  | Zilean                  |
+| [CLI Debrid](cli-debrid.md)         | Debrid media scraper, automation engine, and upgrade engine              | CLI Battery for stable/older releases; Phalanx DB, rclone, Zurg | Zilean |
 | [Decypharr](decypharr.md)           | Debrid and native Usenet workflow service for Arrs, symlinks, and WebDAV access | rclone when external mount mode is used | Zilean, Sonarr, Radarr, Lidarr, Whisparr |
 | [NzbDAV](nzbdav.md)                 | WebDAV service for NZB access and Arr download client integration         | rclone                            | Sonarr, Radarr, Lidarr, Whisparr |
 | [AltMount](altmount.md)             | Usenet streaming, WebDAV, and SABnzbd-compatible Arr workflow             | NNTP provider account             | Sonarr, Radarr, Lidarr, Whisparr |
@@ -33,7 +33,7 @@ Core services are the services that:
 | [Jellyfin](jellyfin.md)             | Media server for hosting and playing content         |                                   |                              |
 | [Emby](emby.md)                     | Media server for hosting and playing content         |                                   |                              |
 | [Seerr](seerr.md)                   | Media request and discovery platform                 |                                   | Plex, Radarr, Sonarr          |
-| [Riven Backend](riven-backend.md)   | Debrid media scraper and automation engine           | PostgreSQL, rclone, Zurg          | Zilean, Riven Frontend       |
+| [Riven Backend](riven-backend.md)   | Debrid media scraper and automation engine           | PostgreSQL; stable mode also uses rclone and Zurg | Zilean, Riven Frontend |
 | [Sonarr](sonarr.md)                 | TV automation and organization                        |                                   | Prowlarr, Decypharr, NzbDAV, AltMount  |
 | [Radarr](radarr.md)                 | Movie automation and organization                     |                                   | Prowlarr, Decypharr, NzbDAV, AltMount  |
 | [Lidarr](lidarr.md)                 | Music automation and organization                     |                                   | Prowlarr, Decypharr, NzbDAV, AltMount  |
@@ -57,13 +57,13 @@ If you enable a core service, be sure to also:
 
 ### [CLI Debrid](cli-debrid.md) 
 
-* **Requires:** [CLI Battery](../dependent/cli-battery.md), [Phalanx DB](../dependent/phalanx-db.md), [rclone](../dependent/rclone.md), and [Zurg](../dependent/zurg.md)
+* **Requires:** [CLI Battery](../dependent/cli-battery.md) for stable/older releases (disable it for the v0.7.29+ in-process pre-release layout), [Phalanx DB](../dependent/phalanx-db.md), [rclone](../dependent/rclone.md), and [Zurg](../dependent/zurg.md)
 * **Optionally Uses:** [Zilean](../optional/zilean.md) (as a scraper)
 * **Outputs:** Clean symlinks for Plex/Emby/Jellyfin and/or monitors Plex library for collected media
 
 ### [Decypharr](decypharr.md)
 
-* **Requires:** [rclone](../dependent/rclone.md)
+* **Requires:** No external mount dependency for native DFS, embedded rclone, or no-mount mode; `external_rclone` uses a DUMB-managed [rclone](../dependent/rclone.md) after Decypharr starts
 * **Optionally Uses:** [Zilean](../optional/zilean.md) (as a scraper via the arrs)
 * **Outputs:** Symlinks automatically managed and organized by the arrs (Sonarr/Radarr)
 
@@ -97,7 +97,7 @@ If you enable a core service, be sure to also:
 
 ### [Riven Backend](riven-backend.md)
 
-* **Requires:** [PostgreSQL](../dependent/postgres.md), [rclone](../dependent/rclone.md), and [Zurg](../dependent/zurg.md)
+* **Requires:** [PostgreSQL](../dependent/postgres.md). Stable/release mode also uses [rclone](../dependent/rclone.md) and [Zurg](../dependent/zurg.md); current branch mode uses Riven's native filesystem/debrid-link path instead.
 * **Optionally Uses:** [Zilean](../optional/zilean.md) (as a scraper)
 * **Outputs:** Clean symlinks for Plex/Emby/Jellyfin
 

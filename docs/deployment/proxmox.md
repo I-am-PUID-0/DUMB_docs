@@ -29,7 +29,10 @@ bash -c "$(curl -fsSL https://raw.githubusercontent.com/community-scripts/Proxmo
 
 ## LXC Configuration for Docker + Fuse Support
 
-To ensure DUMB works correctly inside your LXC container (especially with Docker, rclone, and bind mounts), you’ll need to update both the **container config**, the **Proxmox host**, and optionally configure persistence across reboots.
+To run nested Docker and FUSE workflows inside an LXC, update both the
+**container config** and the **Proxmox host**, then make propagation persistent.
+These settings materially reduce LXC isolation. Use a dedicated, trusted LXC;
+do not treat it as a strong security boundary for untrusted workloads.
 
 ---
 
@@ -139,8 +142,12 @@ To persist the `rshared` behavior across boots:
 
 ---
 
-## Add and Configure a User inside the LXC (Required) 
-!!! warning "DUMB must be ran as any user other than root"
+## Add and configure a Docker operator inside the LXC
+
+Use a non-root host/LXC account to manage Compose and set its UID/GID as DUMB's
+`PUID`/`PGID`. The container entrypoint itself still starts with the privileges
+declared by the maintained Compose file so it can prepare users, devices, and
+mounts; `PUID`/`PGID` control the managed service identity.
 
 1. **Start/Restart the container:**
 
@@ -150,35 +157,26 @@ To persist the `rshared` behavior across boots:
 
     !!! note "`systemctl restart pve-container@<CTID>` may need to be used for changes to apply"
 
-2. If not already created in the LXC, add a user (`ubuntu`) and configure passwordless sudo:
+2. If not already created in the LXC, add a user such as `ubuntu`:
 
     ```bash
     adduser ubuntu
     usermod -aG sudo ubuntu
     ```
 
-3. Enable passwordless sudo (Optional):
+    Avoid adding a broad passwordless-sudo rule solely for DUMB.
+
+3. Find the UID/GID needed for Compose `PUID` and `PGID`:
+
+    ```bash
+    id ubuntu
     ```
-    echo "ubuntu ALL=(ALL) NOPASSWD:ALL" > /etc/sudoers.d/ubuntu
-    chmod 440 /etc/sudoers.d/ubuntu
+
+    Example output:
+
+    ```text
+    uid=1000(ubuntu) gid=1000(ubuntu)
     ```
-
-    !!! tip
-        To find the UID and GID (needed for `PUID` and `PGID` in your DUMB config):
-        ```bash
-        id ubuntu
-        ```
-
-        Example output:
-        ```bash
-        uid=1000(ubuntu) gid=1000(ubuntu)
-        ```
-
-        Use these values in your `dumb_config.json` or docker-compose:
-        ```json
-        "puid": 1000,
-        "pgid": 1000,
-        ```
 
 ---
 
@@ -190,7 +188,7 @@ To persist the `rshared` behavior across boots:
 1. Switch to the `ubuntu` user:
 
     ```bash
-    su ubuntu
+    su - ubuntu
     ```
 
 2. Create a directory for docker in your user directory and change directories to docker.
@@ -200,7 +198,7 @@ To persist the `rshared` behavior across boots:
 
 3. Create the DUMB directories.
     ```bash
-    mkdir -p DUMB/config DUMB/log DUMB/Zurg/RD DUMB/Riven/data DUMB/Riven/mnt DUMB/PostgreSQL/data DUMB/pgAdmin4/data DUMB/Zilean/data
+    mkdir -p DUMB/config DUMB/log DUMB/data DUMB/mnt/debrid
     ```
 
 
@@ -223,9 +221,10 @@ To persist the `rshared` behavior across boots:
 
 3. Add your user to the docker group:
     ```bash
-    sudo groupadd docker
     sudo usermod -aG docker $USER
     ```
+
+    Log out and back in before running Docker without `sudo`.
 
 
 ---
@@ -264,21 +263,19 @@ For more, see the [Portainer Deployment Guide](./portainer.md).
 
 ---
 
-## Update Docker Bind Mount (Important)
+## Use the current DUMB mounts
 
-When launching DUMB or your media server, make sure the following mount is used:
+Inside the Docker-capable LXC, use the maintained four-mount layout:
 
-Replace:
 ```yaml
-- /home/username/docker/DUMB/Zurg/mnt:/data:shared
+volumes:
+  - /home/ubuntu/docker/DUMB/config:/config
+  - /home/ubuntu/docker/DUMB/log:/log
+  - /home/ubuntu/docker/DUMB/data:/data
+  - /mnt/docker-mounts:/mnt/debrid:rshared
 ```
 
-With:
-```yaml
-- /mnt/docker-mounts:/data:rshared
-```
-
-!!! tip "This ensures proper visibility between `zurg`, `rclone`, and your media server inside the LXC container."
+The `/data` mount persists service application state. `/mnt/debrid` is the separate mount/link tree; give that mount `rshared` propagation only when DUMB-created FUSE/rclone submounts must appear outside the DUMB container. Consumer containers should normally receive the same host path at `/mnt/debrid` with `rslave` propagation.
 
 ---
 
@@ -287,5 +284,3 @@ Now that Docker (and optionally Portainer) are installed, continue with:
 
 - [Deploy DUMB via Docker Compose](./docker.md)
 - [Configure your stack with Portainer](./portainer.md)
-
-

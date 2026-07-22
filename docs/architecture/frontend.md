@@ -27,18 +27,28 @@ The DUMB frontend is a Nuxt 4 application that renders the dashboard, service co
 ```mermaid
 %%{ init: { "flowchart": { "curve": "basis" } } }%%
 flowchart LR
-    UI([Pages + components])
+    CLIENT([Browser UI or API client])
     ST[Pinia stores]
-    API[API client]
-    BE[[DUMB API]]
-    WS[(WebSocket streams)]
+    FE[dmbdb server<br/>port 3005]
+    BE[[DUMB API<br/>127.0.0.1:8000]]
 
-    UI ==> ST
-    ST ==> API
-    API ==> BE
-    BE ==> WS
-    WS ==> ST
+    CLIENT ==>|UI state| ST
+    ST ==>|REST /api/*| FE
+    CLIENT ==>|external REST /api/*| FE
+    FE ==>|strip /api and forward| BE
+    CLIENT -.->|WebSocket /ws/*| FE
+    FE -.->|forward unchanged| BE
 ```
+
+The frontend server is also the public API gateway. Its `/api/*` middleware
+removes the leading `/api` and forwards the request to the backend-native route
+on port `8000`. For example, `:3005/api/config` becomes `:8000/config`.
+WebSockets use `/ws/*` on both sides and are forwarded without that rewrite.
+
+This same-origin design lets the browser avoid cross-origin API calls and means
+the standard Compose deployment needs to publish only port `3005`. External
+automation can use the gateway too; backend authentication is still applied
+after the request is forwarded.
 
 ---
 

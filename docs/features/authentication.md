@@ -15,9 +15,12 @@ The authentication system provides:
 
 - **JWT token-based security** with access and refresh tokens
 - **User management** with create, update, and delete capabilities
-- **First-time setup wizard** for creating the initial admin user
+- **First-time setup wizard** for creating the initial local user
 - **Optional authentication** - can be skipped for local/trusted environments
 - **Session persistence** with "Remember Me" functionality
+
+!!! important "No role separation"
+    DUMB currently has one authenticated privilege level. Every enabled user can reach the same service-control, configuration, and user-management endpoints; usernames are not viewer/editor/admin roles.
 
 ---
 
@@ -46,7 +49,7 @@ When DUMB starts for the first time, the frontend detects that no users exist an
 
 ### Setup options
 
-=== "Create admin account"
+=== "Create first account"
 
     1. Navigate to the DUMB frontend (default: `http://localhost:3005`)
     2. You will be redirected to `/setup`
@@ -94,7 +97,9 @@ When authentication is enabled, users must log in to access the dashboard and AP
 
 ## User management
 
-Administrators can manage users through the Settings page or API.
+Any authenticated user can manage users through the Settings page or API. This
+is why DUMB should be treated as an operator/admin control plane even when you
+create accounts for multiple people.
 
 ### Available operations
 
@@ -143,12 +148,14 @@ Authentication can be toggled at any time through the Settings page.
 
 ## API authentication
 
-When authentication is enabled, all API requests require a valid JWT token in the `Authorization` header.
+When authentication is enabled, protected API requests require a valid JWT token in the `Authorization` header.
+
+The normal browser-facing API is proxied by the DUMB Frontend at port `3005` under `/api`. The backend-native form, used only when you deliberately expose port `8000`, has no `/api` prefix.
 
 ### Request format
 
 ```bash
-curl -X GET http://localhost:8000/api/process/processes \
+curl -X GET http://localhost:3005/api/process/processes \
   -H "Authorization: Bearer <access_token>"
 ```
 
@@ -157,7 +164,7 @@ curl -X GET http://localhost:8000/api/process/processes \
 WebSocket connections pass the token as a query parameter:
 
 ```javascript
-const ws = new WebSocket('ws://localhost:8000/ws/status?token=<access_token>');
+const ws = new WebSocket('ws://localhost:3005/ws/status?token=<access_token>');
 ```
 
 ### Handling token expiration
@@ -179,27 +186,25 @@ Authentication state is stored in `/config/users.json`:
 
 ```json
 {
-  "version": 2,
-  "jwt_secret": "auto-generated-secret-key",
-  "auth_enabled": true,
-  "setup_skipped": false,
+  "enabled": true,
   "users": [
     {
       "username": "admin",
-      "hashed_password": "$2b$12$...",
+      "password": "$2b$12$...",
       "disabled": false
     }
-  ]
+  ],
+  "jwt_secret": "auto-generated-secret-key",
+  "setup_skipped": false
 }
 ```
 
 | Field | Description |
 |-------|-------------|
-| `version` | Schema version for migrations |
+| `enabled` | Whether authentication is required |
+| `users` | Array of user accounts; `password` contains the bcrypt hash, not plain text |
 | `jwt_secret` | Auto-generated secret for signing tokens |
-| `auth_enabled` | Whether authentication is required |
 | `setup_skipped` | Whether initial setup was skipped |
-| `users` | Array of user accounts |
 
 !!! tip "Password security"
 
@@ -227,9 +232,14 @@ If you cannot access your account:
 
 1. Stop the DUMB container
 2. Edit `/config/users.json`
-3. Set `"auth_enabled": false`
+3. Set `"enabled": false`
 4. Restart the container
 5. Access the dashboard and create a new user or reset your password
+
+Because the current API has no password-change endpoint, recovery means creating
+a temporary user, re-enabling authentication, signing in as that user, and
+recreating the forgotten account. See the [Authentication FAQ](../faq/authentication.md#i-forgot-my-password-how-do-i-reset-it)
+for the safe sequence.
 
 ---
 

@@ -36,6 +36,7 @@ icon: lucide/database
   "port": 8888,
   "auto_update": false,
   "auto_update_interval": 24,
+  "auto_update_start_time": "04:00",
   "clear_on_update": true,
   "exclude_dirs": [
     "/phalanx_db/data"

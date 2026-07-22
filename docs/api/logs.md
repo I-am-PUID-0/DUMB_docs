@@ -44,6 +44,7 @@ Returns a JSON object containing the log chunk and cursor:
 ```json
 {
   "process_name": "Riven Backend",
+  "size": 123456,
   "cursor": 123456,
   "chunk": "Apr 12, 2025 10:04:01 - INFO - Riven Backend started\n",
   "reset": true,
@@ -56,6 +57,7 @@ Returns a JSON object containing the log chunk and cursor:
 !!! note "Important Notes"
     - When `reset` is `true`, clients should replace their log buffer with `chunk`.
     - On incremental requests, pass the returned `cursor` to get only new bytes.
+    - Log content passes through DUMB's sensitive-data redactor before it is returned.
 
 ---
 

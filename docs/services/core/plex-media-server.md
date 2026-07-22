@@ -31,6 +31,7 @@ icon: lucide/tv
   "port": 32400,
   "auto_update": false,
   "auto_update_interval": 24,
+  "auto_update_start_time": "04:00",
   "pinned_version": "",
   "config_dir": "/plex",
   "config_file": "/plex/Plex Media Server/Preferences.xml",
@@ -134,14 +135,14 @@ Copy this entire Plex configuration directory to the DUMB host's Plex directory:
 
 ```bash
 # Replace /path/to/existing/plex with the path from your host or old container
-rsync -a "/path/to/existing/plex/Plex Media Server" "/path/to/DUMB/plex/"
+rsync -a "/path/to/existing/plex/Plex Media Server" "/path/to/DUMB/data/plex/"
 ```
 
 The result should be:
 
 ```
-DUMB/plex/Plex Media Server/Preferences.xml
-DUMB/plex/Plex Media Server/Plug-in Support/Databases/...
+DUMB/data/plex/Plex Media Server/Preferences.xml
+DUMB/data/plex/Plex Media Server/Plug-in Support/Databases/...
 ```
 
 !!! important "The internal path **must** remain `/plex/Plex Media Server/Preferences.xml` inside the container, unless you follow Step 3 below."
@@ -176,8 +177,8 @@ Plex must be able to **read and write** the copied files. If you see permission 
 
     ```bash
     # Replace 1000:1000 with your container PUID:PGID and adjust the path
-    sudo chown -R 1000:1000 /path/to/DUMB/plex
-    sudo chmod -R u+rwX,g+rwX /path/to/DUMB/plex
+    sudo chown -R 1000:1000 /path/to/DUMB/data/plex
+    sudo chmod -R u+rwX,g+rwX /path/to/DUMB/data/plex
     ```
 
     If your container uses a different PUID/PGID (for example, `568:568` on some NAS setups), use that instead.
@@ -235,8 +236,8 @@ This allows you to re-register the server cleanly if needed.
 
 | Migration Source      | Steps                                                          |
 | --------------------- | -------------------------------------------------------------- |
-| Plex Docker Container | Copy container's volume contents to `DUMB/plex`                |
-| Plex on Host          | Copy `/var/lib/plexmediaserver` or equivalent to `DUMB/plex`   |
+| Plex Docker Container | Copy container's volume contents to `DUMB/data/plex`                |
+| Plex on Host          | Copy `/var/lib/plexmediaserver` or equivalent to `DUMB/data/plex`   |
 | Plex Media            | Bind mount original media directories to `/mnt/debrid` in DUMB |
 
 Once complete, your DUMB-based Plex server should fully replicate your prior setup while gaining the integration benefits of the DUMB ecosystem.

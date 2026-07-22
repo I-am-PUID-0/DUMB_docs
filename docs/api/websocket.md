@@ -26,7 +26,7 @@ All WebSocket endpoints support authentication via query parameter when auth is 
 When authentication is enabled, include the access token as a query parameter:
 
 ```
-ws://localhost:8000/ws/status?token=eyJhbGciOiJIUzI1NiIs...
+ws://localhost:3005/ws/status?token=eyJhbGciOiJIUzI1NiIs...
 ```
 
 If the token is missing or invalid, the connection will be rejected with a close code.
@@ -41,20 +41,21 @@ If the token is missing or invalid, the connection will be rejected with a close
 /ws/status
 ```
 
-Streams real-time service status updates including running state, health status, and restart counts.
+Streams the names of tracked running services. Add `health=true` to request the
+expanded health and restart-state objects.
 
 ### Query parameters
 
 | Parameter | Type | Default | Description |
 |-----------|------|---------|-------------|
 | `interval` | float | `2` | Update interval in seconds (0.5-10) |
-| `health` | boolean | `true` | Include health check results |
+| `health` | boolean | `false` | Include health and restart-state details |
 | `token` | string | - | JWT access token (required if auth enabled) |
 
 ### Connection example
 
 ```javascript
-const ws = new WebSocket('ws://localhost:8000/ws/status?interval=2&health=true&token=...');
+const ws = new WebSocket('ws://localhost:3005/ws/status?interval=2&health=true&token=...');
 
 ws.onmessage = (event) => {
   const data = JSON.parse(event.data);
@@ -62,7 +63,21 @@ ws.onmessage = (event) => {
 };
 ```
 
-### Message format
+### Default message format
+
+Without `health=true`, the payload contains only the current running-process
+names:
+
+```json
+{
+  "type": "status",
+  "running": ["DUMB Frontend", "Riven Backend"]
+}
+```
+
+### Expanded message format
+
+With `health=true`, the payload uses `processes`:
 
 ```json
 {
@@ -74,20 +89,19 @@ ws.onmessage = (event) => {
       "healthy": true,
       "health_reason": null,
       "restart": {
-        "count": 0,
-        "last_restart": null,
-        "enabled": true
-      }
-    },
-    {
-      "process_name": "Zurg w/ RealDebrid",
-      "status": "running",
-      "healthy": true,
-      "health_reason": null,
-      "restart": {
-        "count": 2,
-        "last_restart": "2025-01-15T10:30:00Z",
-        "enabled": true
+        "restart_attempts": 0,
+        "restart_successes": 0,
+        "restart_failures": 0,
+        "recent_restart_attempts": 0,
+        "pending": false,
+        "next_restart_time": null,
+        "disabled": false,
+        "last_restart_time": null,
+        "last_failure_reason": null,
+        "last_exit_time": null,
+        "last_exit_reason": null,
+        "unhealthy_count": 0,
+        "unhealthy_threshold": 3
       }
     }
   ]
@@ -99,12 +113,10 @@ ws.onmessage = (event) => {
 | Field | Type | Description |
 |-------|------|-------------|
 | `process_name` | string | Service display name |
-| `status` | string | `running`, `stopped`, or `unknown` |
+| `status` | string | `running` for entries in this running-process snapshot |
 | `healthy` | boolean | Health check result |
 | `health_reason` | string | Reason if unhealthy |
-| `restart.count` | integer | Number of auto-restarts |
-| `restart.last_restart` | string | ISO timestamp of last restart |
-| `restart.enabled` | boolean | Whether auto-restart is enabled |
+| `restart` | object | Current auto-restart counters, pending/disabled state, timestamps, and health threshold |
 
 ---
 
@@ -124,18 +136,26 @@ Streams real-time system metrics including CPU, memory, selected filesystem, and
 |-----------|------|---------|-------------|
 | `interval` | float | `2` | Update interval in seconds (0.5-10) |
 | `history` | boolean | `false` | Include historical metrics on connect |
-| `bootstrap` | boolean | `true` | Send initial snapshot immediately |
+| `bootstrap` | boolean | `false` | Send a snapshot plus prepared history in one initial message |
+| `history_full` | boolean | `false` | Request the full retained history window rather than the default window |
+| `history_limit` | integer | `5000` | Maximum raw history rows read for the initial payload |
+| `history_since` | number | - | Unix timestamp lower bound for history |
+| `history_bucket` | integer | automatic | Requested history bucket size in seconds |
+| `history_points` | integer | `600` | Maximum prepared series points in a bootstrap payload |
 | `token` | string | - | JWT access token (required if auth enabled) |
 
 ### Connection example
 
 ```javascript
-const ws = new WebSocket('ws://localhost:8000/ws/metrics?interval=2&history=true&token=...');
+const ws = new WebSocket('ws://localhost:3005/ws/metrics?interval=2&bootstrap=true&token=...');
 
 ws.onmessage = (event) => {
   const data = JSON.parse(event.data);
 
-  if (data.type === 'snapshot') {
+  if (data.type === 'bootstrap') {
+    initializeCharts(data.items);
+    updateDashboard(data.snapshot);
+  } else if (data.type === 'snapshot') {
     // Current metrics
     updateDashboard(data.data);
   } else if (data.type === 'history') {
@@ -145,58 +165,52 @@ ws.onmessage = (event) => {
 };
 ```
 
-### Snapshot message format
+### Live snapshot message format
 
 ```json
 {
   "type": "snapshot",
   "data": {
-    "timestamp": "2025-01-15T10:30:00Z",
-    "cpu": {
-      "percent": 45.2,
-      "count": 8,
-      "load_avg": [1.5, 1.2, 0.9]
+    "timestamp": 1752575400.0,
+    "system": {
+      "scope": "cgroup",
+      "cpu_percent": 45.2,
+      "cpu_count": 8,
+      "load_avg": [1.5, 1.2, 0.9],
+      "mem": {
+        "total": 17179869184,
+        "used": 8589934592,
+        "percent": 50.0
+      },
+      "disk": {
+        "path": "/",
+        "total": 500107862016,
+        "used": 250053931008,
+        "free": 250053931008,
+        "percent": 50.0
+      },
+      "inode": {"path": "/", "percent": 4.2},
+      "filesystems": [],
+      "net_io": {"sent_bytes": 1073741824, "recv_bytes": 2147483648},
+      "network_interfaces": []
     },
-    "memory": {
-      "total": 17179869184,
-      "available": 8589934592,
-      "percent": 50.0,
-      "used": 8589934592
-    },
-    "swap": {
-      "total": 8589934592,
-      "used": 1073741824,
-      "percent": 12.5
-    },
-    "disk": {
-      "total": 500107862016,
-      "used": 250053931008,
-      "free": 250053931008,
-      "percent": 50.0
-    },
-    "network": {
-      "bytes_sent": 1073741824,
-      "bytes_recv": 2147483648,
-      "packets_sent": 1000000,
-      "packets_recv": 2000000
-    },
-    "processes": [
+    "dumb_managed": [
       {
         "pid": 1234,
         "name": "Riven Backend",
         "cpu_percent": 5.2,
-        "memory_percent": 2.1,
-        "memory_rss": 134217728
+        "rss": 134217728
       }
     ],
-    "boot_time": "2025-01-01T00:00:00Z"
+    "external": [],
+    "database_health": {}
   }
 }
 ```
 
 ### History message format
 
-Sent once on connection when `history=true`:
+Sent once on connection when `history=true` and `bootstrap` is false:
 
 ```json
 {
@@ -213,25 +227,29 @@ Sent once on connection when `history=true`:
       "memory": { "percent": 49.8 }
     }
   ],
-  "bucket_seconds": 5
+  "truncated": false
 }
 ```
+
+When `bootstrap=true`, the initial message has `type: "bootstrap"` and includes
+`snapshot`, `items`, prepared `series`, `timestamps`, `truncated`, `stats`, and
+`bucket_seconds`. Live updates after either initial mode still use
+`type: "snapshot"`.
 
 ### Metric field descriptions
 
 | Category | Field | Description |
 |----------|-------|-------------|
-| **CPU** | `percent` | Overall CPU usage percentage |
-| **CPU** | `count` | Number of CPU cores |
-| **CPU** | `load_avg` | 1, 5, 15 minute load averages |
-| **Memory** | `total` | Total RAM in bytes |
-| **Memory** | `available` | Available RAM in bytes |
-| **Memory** | `percent` | Memory usage percentage |
-| **Disk** | `total` | Total disk space in bytes |
-| **Disk** | `used` | Used disk space in bytes |
-| **Disk** | `percent` | Disk usage percentage |
-| **Network** | `bytes_sent` | Total bytes sent |
-| **Network** | `bytes_recv` | Total bytes received |
+| **CPU** | `system.cpu_percent` | CPU usage for the configured host/cgroup scope |
+| **CPU** | `system.cpu_count` | Logical host CPUs or effective cgroup CPU limit |
+| **CPU** | `system.load_avg` | 1, 5, 15 minute host load averages |
+| **Memory** | `system.mem` | Total, used, and percent for the selected scope |
+| **Filesystem** | `system.filesystems` | Per-selected-path capacity, type, availability, and inode data |
+| **Filesystem** | `system.disk` / `system.inode` | Compatibility aliases for the first selected path |
+| **Network** | `system.network_interfaces` | Per-selected-interface counters and link metadata |
+| **Network** | `system.net_io` | Compatibility aggregate across selected interfaces |
+| **Processes** | `dumb_managed` / `external` | Managed and bounded external process metrics |
+| **Database** | `database_health` | Opt-in database/store health snapshot |
 
 ---
 
@@ -254,7 +272,7 @@ Streams real-time log output from all DUMB-managed services.
 ### Connection example
 
 ```javascript
-const ws = new WebSocket('ws://localhost:8000/ws/logs?token=...');
+const ws = new WebSocket('ws://localhost:3005/ws/logs?token=...');
 
 ws.onmessage = (event) => {
   // Each message is a log line
@@ -284,7 +302,7 @@ Send a ping message to keep the connection alive:
 {"type": "ping"}
 ```
 
-Response:
+Response (the plain-text `ping` input is also accepted):
 
 ```
 pong
@@ -300,7 +318,7 @@ WebSocket connections may drop due to network issues. Implement automatic reconn
 
 ```javascript
 function connectWebSocket() {
-  const ws = new WebSocket('ws://localhost:8000/ws/status?token=...');
+  const ws = new WebSocket('ws://localhost:3005/ws/status?token=...');
 
   ws.onclose = () => {
     // Reconnect after delay with exponential backoff
@@ -333,14 +351,13 @@ The frontend typically maintains separate connections for each WebSocket endpoin
 | 1000 | Normal closure |
 | 1001 | Server going away (shutdown) |
 | 1006 | Abnormal closure (network error) |
-| 4001 | Authentication required |
-| 4003 | Invalid or expired token |
+| 1008 | Authentication required, invalid/expired token, or disabled user |
 
 ### Handling authentication errors
 
 ```javascript
 ws.onclose = (event) => {
-  if (event.code === 4001 || event.code === 4003) {
+  if (event.code === 1008) {
     // Token expired or invalid - refresh and reconnect
     refreshToken().then(() => connectWebSocket());
   }
@@ -357,7 +374,7 @@ import websockets
 import json
 
 async def monitor_status():
-    uri = "ws://localhost:8000/ws/status?interval=2&health=true"
+    uri = "ws://localhost:3005/ws/status?interval=2&health=true"
 
     async with websockets.connect(uri) as websocket:
         async for message in websocket:

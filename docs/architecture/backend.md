@@ -14,8 +14,8 @@ The DUMB backend is a FastAPI service that manages configuration, setup hooks, p
 | Component | Responsibility |
 |-----------|----------------|
 | FastAPI app | HTTP API surface and WebSocket hubs |
-| Routers | `/auth`, `/process`, `/config`, `/logs`, `/metrics`, `/ws/*` |
-| Config manager | Reads/writes `dumb_config.json` and service settings |
+| Routers | `/auth`, `/process`, `/config`, `/logs`, `/metrics`, `/notifications`, `/ai`, `/seerr-sync`, `/ws/*` |
+| Config manager | Reads/writes `/config/dumb_config.json` and service settings |
 | Process handler | Starts/stops services and reports status |
 | Setup modules | Install services and patch service-specific config files |
 | Dependency graph | Resolves hard runtime dependencies, configured links, and optional integrations |
@@ -23,7 +23,9 @@ The DUMB backend is a FastAPI service that manages configuration, setup hooks, p
 | Auto-restart | Monitors service health and applies backoff |
 | Symlink jobs | Runs repair, migration, snapshot backup, and restore operations |
 | Traefik setup | Writes DUMB-owned embedded UI routes and static Traefik config |
-| Metrics | Collects system and service telemetry |
+| Metrics | Collects system, process, filesystem, network, history, and opt-in database-health telemetry |
+| Notifications | Queues and delivers routed Apprise/webhook events when enabled |
+| AI diagnostics | Builds redacted diagnostic bundles for an optional configured model provider |
 
 ---
 

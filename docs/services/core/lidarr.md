@@ -43,6 +43,7 @@ icon: lucide/music
       "suppress_logging": false,
       "auto_update": false,
       "auto_update_interval": 24,
+      "auto_update_start_time": "04:00",
       "pinned_version": "",
       "port": 8686,
       "config_dir": "/lidarr/default",

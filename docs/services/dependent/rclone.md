@@ -29,7 +29,10 @@ Each `rclone` instance is defined under the `rclone.instances` section in `dumb_
             "log_file": "/log/rclone_w_realdebrid.log",
             "zurg_config_file": "/zurg/RD/config.yml",
             "command": [],
-            "api_key": ""
+            "api_key": "",
+            "username": "",
+            "password": "",
+            "customer_id": ""
         }
     }
 },
@@ -99,7 +102,10 @@ Example:
       "log_file": "/log/rclone_w_realdebrid.log",
       "zurg_config_file": "/zurg/RD/config.yml",
       "command": [],
-      "api_key": ""
+      "api_key": "",
+      "username": "",
+      "password": "",
+      "customer_id": ""
     },    
     "AllDebrid": {
       "enabled": false,
@@ -118,7 +124,10 @@ Example:
       "log_file": "/log/rclone_w_alldebrid.log",
       "zurg_config_file": "",
       "command": [],
-      "api_key": "YOUR DEBRID API KEY"
+      "api_key": "YOUR DEBRID API KEY",
+      "username": "",
+      "password": "",
+      "customer_id": ""
     },
     "TorBox": {
       "enabled": false,
@@ -139,7 +148,8 @@ Example:
       "command": [],
       "api_key": "",
       "username": "YOUR TORBOX EMAIL",
-      "password": "YOUR TORBOX PASSWORD"
+      "password": "YOUR TORBOX PASSWORD",
+      "customer_id": ""
     }
   }
 }
@@ -395,7 +405,7 @@ Use `:rslave` **only if** you do not need to propagate mounts **from the host in
 
     Most Linux distributions support mount propagation. However, the base path must be a shared or slave mount, or mount propagation will not function correctly.
 
-    See the [rclone FAQ](../../faq/rclone.md#error-response-from-daemon-path-yourhostpathmnt-is-mounted-on--but-it-is-not-a-shared-mount) for related troubleshooting.
+    See the [rclone FAQ](../../faq/rclone.md#error-response-from-daemon-path-yourhostpathmnt-is-mounted-on-but-it-is-not-a-shared-mount) for related troubleshooting.
 
 To use mount propagation:
 
@@ -439,7 +449,7 @@ mount --make-rshared /
 !!! warning
     These commands modify mount flags at runtime and will not persist across reboots. To persist them, you may need to update your systemd unit files or `/etc/fstab` with the appropriate `shared` propagation settings.
 
-    See the [rclone FAQ](../../faq/rclone.md#error-response-from-daemon-path-yourhostpathmnt-is-mounted-on--but-it-is-not-a-shared-mount) for additional details
+    See the [rclone FAQ](../../faq/rclone.md#error-response-from-daemon-path-yourhostpathmnt-is-mounted-on-but-it-is-not-a-shared-mount) for additional details
 
 
 ### Best Practices

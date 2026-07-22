@@ -5,14 +5,36 @@ icon: lucide/battery-charging
 
 # CLI Battery Configuration
 
-The **CLI Battery** is a Flask-based companion application required by CLI Debrid. It provides metadata services and background processing, integrates with Trakt, and exposes a lightweight web API for managing movies and TV shows. This service must be running for CLI Debrid to operate properly.
+In the CLI Debrid layout currently managed by DUMB, **CLI Battery** is a separate
+Flask-based companion application. It provides metadata services and background
+processing, integrates with Trakt, and exposes a lightweight web API for managing
+movies and TV shows. This service must be running for the current DUMB-supported
+CLI Debrid layout to operate properly.
+
+!!! info "Upstream pre-release architecture change"
+
+    [CLI Debrid v0.7.29](https://github.com/godver3/cli_debrid/releases/tag/v0.7.29)
+    is an upstream pre-release. Commit
+    [`ef4deb5`](https://github.com/godver3/cli_debrid/commit/ef4deb5bbed60826ef2aaa48be0ecb17250ea87e)
+    replaces the standalone Flask/HTTP service with an in-process Python module,
+    removing the separate port and process from that upstream layout.
+
+    DUMB has not yet made its dependency graph version-aware: its configuration
+    still contains `cli_battery/main.py`, port `5001`, and CLI Battery as a
+    prerequisite. Keep this service enabled for stable/older CLI Debrid releases.
+    If you intentionally use v0.7.29 or a newer pre-release with the in-process
+    rewrite, manually disable the standalone CLI Battery service.
+
+    Normal DUMB startup skips a disabled CLI Battery. A guided **Start Core
+    Service** or onboarding action may re-enable it from the current static
+    dependency map, so re-check the toggle after using those flows.
 
 ## Service relationships
 
 | Classification | Role |
 | -------------- | ---- |
 | Dependent | CLI Debrid companion service |
-| Depends On | [CLI Debrid](../core/cli-debrid.md) |
+| Used By | Stable/older [CLI Debrid](../core/cli-debrid.md) layouts that use the separate port-5001 service |
 | Exposes UI | Yes |
 
 ---
@@ -70,9 +92,11 @@ The **CLI Battery** is a Flask-based companion application required by CLI Debri
 
 ---
 
-## Required by CLI Debrid
+## Required by stable/older CLI Debrid layouts
 
-CLI Battery must be running **before** CLI Debrid launches, as the latter depends on it for coordination and metadata resolution.
+CLI Battery must be running **before** a CLI Debrid release that depends on its
+standalone API launches. This ordering does not apply to the in-process v0.7.29+
+pre-release design; disable this separate DUMB service for that layout.
 
 ---
 
@@ -108,7 +132,7 @@ CLI Battery is a Flask web app exposing a browser UI and REST API:
 If Traefik is enabled in DUMB, CLI Battery can be reached via the proxy path:
 
 ```
-http://<host>/cli_battery/
+http://<host>:18080/service/ui/cli_battery/
 ```
 
 ---

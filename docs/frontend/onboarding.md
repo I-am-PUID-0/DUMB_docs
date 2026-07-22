@@ -95,13 +95,13 @@ Choose one or more core services:
 
 ### Step 2: Preflight checks
 
-The wizard verifies key backend readiness signals before proceeding:
+The wizard performs these blocking frontend-proxied requests before proceeding:
 
-- DUMB API health endpoint response
-- Backend capabilities endpoint availability
-- Core service catalog loading
-- Existing mount/symlink path configuration visibility
-- Embedded UI endpoint availability
+- `GET /api/health`
+- `GET /api/process/capabilities`
+- `GET /api/process/core-services`
+- `GET /api/config`
+- `GET /api/config/service-ui`
 
 Blocking check failures must be resolved before moving to the next step.
 
@@ -130,10 +130,13 @@ Choose additional services to enable:
 
 | Category | Services |
 |----------|----------|
-| **Utilities** | Zilean, pgAdmin, Riven Frontend, PostgreSQL |
-| **Monitoring** | Tautulli |
+| **Database/discovery** | PostgreSQL, pgAdmin, Zilean |
+| **Riven UI** | Riven Frontend |
+| **Media automation** | Tautulli, Bazarr, Pulsarr, Maintainerr |
+| **Streaming** | MediaStorm |
+| **Reverse proxy/exposure** | Traefik Proxy Admin, Cloudflared |
 
-Optional services are filtered based on your core services and automatically configured with appropriate connections.
+Optional services are filtered based on core dependencies and earlier selections. For example, PostgreSQL may be enabled/hidden automatically when a selected service requires it.
 
 !!! warning "MediaStorm first login"
 

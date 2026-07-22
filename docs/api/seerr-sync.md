@@ -13,7 +13,7 @@ It polls the primary at a configurable interval, fingerprints requests using `{m
 
 ## Endpoints
 
-### GET `/api/seerr-sync/status`
+### GET `/seerr-sync/status`
 
 Summary status of the sync service.
 
@@ -56,7 +56,7 @@ Response (initializing):
 
 ---
 
-### GET `/api/seerr-sync/failed`
+### GET `/seerr-sync/failed`
 
 List failed sync attempts with details.
 
@@ -78,7 +78,7 @@ List failed sync attempts with details.
 
 ---
 
-### GET `/api/seerr-sync/state`
+### GET `/seerr-sync/state`
 
 Raw sync state (debugging).
 
@@ -106,7 +106,7 @@ Raw sync state (debugging).
 
 ---
 
-### POST `/api/seerr-sync/test`
+### POST `/seerr-sync/test`
 
 Test connectivity to a Seerr instance using a URL and API key.
 
@@ -140,7 +140,7 @@ Response (failure):
 
 ---
 
-### DELETE `/api/seerr-sync/failed`
+### DELETE `/seerr-sync/failed`
 
 Clear failed requests so they are retried on the next poll.
 

@@ -117,7 +117,7 @@ Upstream PostgreSQL setup and migration references:
 - [Prowlarr PostgreSQL setup](https://wiki.servarr.com/prowlarr/postgres-setup)
 - [Whisparr PostgreSQL setup](https://wiki.servarr.com/whisparr/postgres-setup)
 - [Bazarr PostgreSQL database](https://wiki.bazarr.media/Additional-Configuration/PostgreSQL-Database/)
-- [Pulsarr PostgreSQL migration](https://jamcalli.github.io/Pulsarr/docs/installation/postgres-migration/)
+- [Pulsarr PostgreSQL migration](https://jamcalli.github.io/Pulsarr/docs/installation/postgres-migration)
 - [Seerr database configuration](https://docs.seerr.dev/extending-seerr/database-config/)
 
 !!! note " Override any of the above using `POSTGRES_USER`, `POSTGRES_PASSWORD`, or `POSTGRES_DB` environment variables."
@@ -131,6 +131,18 @@ Upstream PostgreSQL setup and migration references:
 | Config File          | `/postgres_data/postgresql.conf` |
 | Runtime Directory    | `/run/postgresql`         |
 | Log File             | `/log/postgres.log`       |
+
+## Backups and restore testing
+
+Persisting `/data/postgres` protects the cluster across container recreation,
+but it is not a complete logical backup strategy for a running database. Create
+scheduled custom-format `pg_dump` archives for each important database, retain
+copies outside the DUMB data filesystem, and periodically restore an archive
+into a disposable database.
+
+Follow the [scheduled pgAdmin and pgAgent example](../../faq/pgadmin.md#example-scheduled-backups-with-pgagent)
+for a ready-to-use all-database job, global-role backup, retention rotation, and
+safe restore test.
 
 ---
 
@@ -166,7 +178,7 @@ DROP DATABASE riven;
 
 ## Tips
 - Always restart the container after modifying config files in `/postgres_data`.
-- Ensure you mount `/postgres_data` if you want persistent databases.
+- In the maintained Compose layout, `/postgres_data` is mapped by DUMB into `/data/postgres`, so persisting `/data` persists PostgreSQL. A direct `/postgres_data` bind mount is only needed for an intentional legacy/advanced layout.
 - [pgAdmin](../optional/pgadmin.md) is the easiest way to visually explore and manage PostgreSQL.
 
 ### Pre-existing shared memory block

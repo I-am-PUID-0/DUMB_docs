@@ -42,7 +42,7 @@ Open the Bazarr service page in the DUMB frontend, enable the service in **DUMB 
   "suppress_logging": false,
   "log_level": "INFO",
   "port": 6767,
-  "auto_update": true,
+  "auto_update": false,
   "auto_update_interval": 24,
   "auto_update_start_time": "04:00",
   "clear_on_update": true,

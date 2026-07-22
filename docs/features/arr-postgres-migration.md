@@ -85,7 +85,9 @@ Downtime depends mainly on SQLite size and storage speed.
 
 Check the service's important objects and integrations, then perform a harmless write such as saving an unchanged setting. For an Arr, verify libraries, files, root folders, profiles, indexers, download clients, and history. For Bazarr, verify shows/movies, providers, history, and subtitle searches. For request services, verify users, requests, settings, and integrations.
 
-Keep the SQLite backup until PostgreSQL and its backup schedule have been proven.
+Keep the SQLite backup until PostgreSQL and its
+[backup schedule](../faq/pgadmin.md#example-scheduled-backups-with-pgagent) have
+been proven with a test restore.
 
 ## Arr log databases are optional
 
@@ -104,7 +106,12 @@ An active job is marked `interrupted` if the DUMB API restarts. Inspect its back
 
 ## PostgreSQL backups after migration
 
-Application-native backups generally do not contain PostgreSQL data. Configure scheduled `pg_dump` backups for every migrated database and protect `/postgres_data` with the normal host/container backup plan.
+Application-native backups generally do not contain PostgreSQL data. Configure
+scheduled `pg_dump` backups for every migrated database by following the
+[pgAdmin and pgAgent example](../faq/pgadmin.md#example-scheduled-backups-with-pgagent),
+including retention and restore testing. Also protect the mounted data
+directory's `postgres` subtree (container path `/data/postgres`, service path
+`/postgres_data`) with the normal backup plan.
 
 ## Upstream references
 
@@ -114,5 +121,5 @@ Application-native backups generally do not contain PostgreSQL data. Configure s
 - [Prowlarr PostgreSQL setup](https://wiki.servarr.com/prowlarr/postgres-setup)
 - [Whisparr PostgreSQL setup](https://wiki.servarr.com/whisparr/postgres-setup)
 - [Bazarr PostgreSQL database](https://wiki.bazarr.media/Additional-Configuration/PostgreSQL-Database/)
-- [Pulsarr SQLite-to-PostgreSQL migration](https://jamcalli.github.io/Pulsarr/docs/installation/postgres-migration/)
+- [Pulsarr SQLite-to-PostgreSQL migration](https://jamcalli.github.io/Pulsarr/docs/installation/postgres-migration)
 - [Seerr database configuration and migration](https://docs.seerr.dev/extending-seerr/database-config/)

@@ -105,6 +105,16 @@ NzbDAV also exposes a **Usenet download client** path in Arr by emulating a Sabn
     "backend_port": 8080,
     "auto_update": false,
     "auto_update_interval": 24,
+    "auto_update_start_time": "04:00",
+    "symlink_backup_enabled": false,
+    "symlink_backup_interval": 168,
+    "symlink_backup_start_time": "04:00",
+    "symlink_backup_path": "/config/symlink-repair/snapshots/nzbdav-{timestamp}.json",
+    "symlink_backup_include_broken": true,
+    "symlink_backup_retention_count": 1,
+    "symlink_backup_roots": [
+        "/mnt/debrid/nzbdav-symlinks"
+    ],
     "clear_on_update": false,
     "exclude_dirs": [],
     "platforms": [

@@ -9,6 +9,13 @@ pgAdmin 4 is a web-based administration tool for managing PostgreSQL databases.
 
 DUMB includes pgAdmin pre-installed and configured to work out of the box, allowing you to inspect, query, and back up your databases directly from a browser.
 
+!!! danger "Change the bootstrap credentials"
+
+    The documented defaults are public bootstrap values. Change them before
+    exposing pgAdmin beyond a trusted local network, and prefer keeping pgAdmin
+    disabled when it is not actively needed. pgAdmin can read and modify every
+    registered database in the shared DUMB PostgreSQL cluster.
+
 ---
 
 ## Configuration Settings in `dumb_config.json`
@@ -52,6 +59,13 @@ DUMB includes pgAdmin pre-installed and configured to work out of the box, allow
 
 !!! tip "The email is used as the username. It does not need to be a real email address."
 
+In the maintained volume layout, `/pgadmin/data` persists under the mounted
+`/data/pgadmin` subtree. Backing up pgAdmin's own data does not back up the
+PostgreSQL databases it administers. Use logical `pg_dump` backups for those;
+the [scheduled pgAdmin/pgAgent example](../../faq/pgadmin.md#example-scheduled-backups-with-pgagent)
+includes all-database discovery, retention, off-system-copy guidance, and a
+restore test.
+
 ![Login Screen](../../assets/images/pgadmin/pgadmin-login.png)
 
 ---
@@ -82,6 +96,8 @@ A job scheduler for PostgreSQL. Useful for:
 - Scheduling backups
 - Routine maintenance
 
+See the [complete scheduled-backup example](../../faq/pgadmin.md#example-scheduled-backups-with-pgagent).
+
 ![pgAgent Jobs](../../assets/images/pgadmin/pgadmin-pgagent-jobs.png)
 
 ---
@@ -92,7 +108,7 @@ A job scheduler for PostgreSQL. Useful for:
 
 - [pgAdmin Docs](https://www.pgadmin.org/docs/pgadmin4/latest/index.html)
 
-- [pgAgent Job Scheduler](https://www.pgadmin.org/docs/pgadmin4/development/pgagent_jobs.html)
+- [pgAgent Job Scheduler](https://www.pgadmin.org/docs/pgadmin4/latest/pgagent_jobs.html)
 
 ---
 

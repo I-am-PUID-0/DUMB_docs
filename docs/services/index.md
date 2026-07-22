@@ -45,12 +45,12 @@ DUMB is built as a collection of microservices that communicate over internal AP
 
 5. **Metadata & Caching**
 
-    *  **CLI Battery** and  **Phalanx DB** serve as local or distributed metadata stores
+    *  **CLI Battery** serves as the standalone local metadata layer for stable/older CLI Debrid releases; v0.7.29+ pre-releases move it in-process. **Phalanx DB** provides distributed metadata.
     *  **Zilean** caches metadata and exposes a Torznab-compatible indexer for scraping optimization
 
 6. **Database Layer**
 
-    *  **PostgreSQL** stores metadata for Riven, Zilean, and pgAdmin
+    *  **PostgreSQL** stores data for Riven, Zilean, pgAdmin, Traefik Proxy Admin, MediaStorm, optional Metrics history, and services deliberately migrated from SQLite
     *  **pgAdmin** is a GUI for exploring PostgreSQL databases
 
 7. **Access Layer**
@@ -86,7 +86,7 @@ DUMB is built as a collection of microservices that communicate over internal AP
 | [rclone](../services/dependent/rclone.md)                | Dependent | Mount Debrid storage                                      |
 | [Zurg](../services/dependent/zurg.md)                    | Dependent | Serve Debrid content via WebDAV                           |
 | [PostgreSQL](../services/dependent/postgres.md)          | Dependent | Persistent metadata database                              |
-| [CLI Battery](../services/dependent/cli-battery.md)      | Dependent | Metadata service for CLI Debrid                           |
+| [CLI Battery](../services/dependent/cli-battery.md)      | Dependent | Standalone metadata service for stable/older CLI Debrid releases |
 | [Phalanx DB](../services/dependent/phalanx-db.md)        | Dependent | Distributed metadata storage                              |
 | [Zilean](../services/optional/zilean.md)                 | Optional  | Metadata cache and scraping backend                       |
 | [pgAdmin](../services/optional/pgadmin.md)               | Optional  | PostgreSQL GUI                                            |
