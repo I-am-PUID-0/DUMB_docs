@@ -1,6 +1,13 @@
 # Changelog
 
 
+## [1.22.14](https://github.com/I-am-PUID-0/DUMB_docs/compare/1.22.13...1.22.14) (2026-07-22)
+
+
+### 📖 Documentation
+
+* **nzbdav:** document managed rclone RC behavior ([66fbd2a](https://github.com/I-am-PUID-0/DUMB_docs/commit/66fbd2a6c80eed0e0c390a5d3e50c804142f6797))
+
 ## [1.22.13](https://github.com/I-am-PUID-0/DUMB_docs/compare/1.22.12...1.22.13) (2026-07-22)
 
 
