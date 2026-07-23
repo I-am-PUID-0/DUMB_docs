@@ -57,7 +57,9 @@ Returns a JSON object containing the log chunk and cursor:
 !!! note "Important Notes"
     - When `reset` is `true`, clients should replace their log buffer with `chunk`.
     - On incremental requests, pass the returned `cursor` to get only new bytes.
-    - Log content passes through DUMB's sensitive-data redactor before it is returned.
+    - Log content passes through DUMB's sensitive-data redactor before it is returned. This covers credential-bearing HTTP headers, session cookies, common URL/config secrets, email addresses, and Plex account/server identifiers.
+    - DUMB returns only complete log lines so a sensitive value split across two polling responses cannot bypass redaction.
+    - Prefer logs viewed or downloaded through DUMB when sharing diagnostics. An application's native log file on disk is owned by that application and may not have DUMB's response-time redaction applied.
 
 ---
 

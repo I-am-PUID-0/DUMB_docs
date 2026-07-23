@@ -259,6 +259,8 @@ is allowlisted for logs:
 - Manual refresh
 - Download logs
 
+Logs viewed or downloaded here pass through DUMB's sensitive-data redactor. It removes credential-bearing headers and cookies, common URL/config secrets, email addresses, and Plex account/server identifiers. Prefer this download path over sharing an application's native log file directly from disk.
+
 Service-aware parsing promotes inner application metadata when a service wraps its own log format. Bazarr rows use Bazarr's real timestamp and severity, preserve useful logger names such as `waitress`, and group SQL/parameters/traceback continuation lines into the originating error instead of showing each physical line as a current-time `INFO` row.
 
 ### Special log tabs
