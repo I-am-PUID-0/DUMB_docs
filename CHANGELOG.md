@@ -1,6 +1,13 @@
 # Changelog
 
 
+## [1.22.16](https://github.com/I-am-PUID-0/DUMB_docs/compare/1.22.15...1.22.16) (2026-07-23)
+
+
+### 📖 Documentation
+
+* document exact commit SHA pinning ([8a8c60b](https://github.com/I-am-PUID-0/DUMB_docs/commit/8a8c60b1296990a54d93e8ff89a8335b94107dc3))
+
 ## [1.22.15](https://github.com/I-am-PUID-0/DUMB_docs/compare/1.22.14...1.22.15) (2026-07-23)
 
 
