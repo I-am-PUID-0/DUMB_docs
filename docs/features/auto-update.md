@@ -114,8 +114,11 @@ Auto-update settings are configured per-service in `dumb_config.json`:
 
 !!! warning "Auto-update and strategy interaction"
 
-    Automatic scheduling is disabled when `pinned_version`, `commit_sha`, `release_version_enabled`, or `branch_enabled` are set.
-    The only exception is when `release_version` is `nightly` or `prerelease`, which keeps scheduled checks enabled.
+    Automatic scheduling is disabled when `pinned_version`, `commit_sha`,
+    `release_version_enabled`, or `branch_enabled` are set. The only exception is
+    a `nightly` or `prerelease` release selector with no commit, pinned-version,
+    or branch selector taking precedence. A non-empty `commit_sha` always
+    disables moving update checks, including the initial post-setup check.
 
 ---
 
@@ -205,7 +208,12 @@ Source-build services can be pinned to an immutable GitHub revision:
 it takes precedence over release and branch settings. DUMB downloads that exact
 GitHub source archive, builds it through the service's normal source-build path,
 records a `commit-<short-sha>` version marker where supported, and disables
-automatic updates until the field is changed or cleared.
+automatic updates until the field is changed or cleared. This block applies to
+scheduled checks, the initial post-setup check, and normal direct update checks.
+An explicit **Override + install** action can temporarily bypass the pin, but it
+does not clear the saved SHA. If source settings are saved while an update is
+already running, DUMB preserves the newer saved selection rather than restoring
+the update operation's older selection over it.
 
 Supported source-build services are:
 
