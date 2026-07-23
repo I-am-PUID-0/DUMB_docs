@@ -178,13 +178,16 @@ Runs a manual update check without installing it.
 
 ### `POST /process/update-install`
 
-Installs an available update. `allow_override` permits the explicit override/install workflow; `target` optionally supplies a supported release selector.
+Installs an available update. `allow_override` permits the explicit
+override/install-latest workflow. `target` optionally supplies a supported
+release selector; `target: "configured"` applies the currently configured
+pinned commit/release/branch without clearing or bypassing it.
 
 ```json
 {
-  "process_name": "AltMount",
+  "process_name": "NzbDAV",
   "allow_override": false,
-  "target": null
+  "target": "configured"
 }
 ```
 
@@ -198,7 +201,9 @@ Recomputes the next automatic-update run after changing a service's interval or 
 }
 ```
 
-Clients should gate manual update actions on the `manual_update_check` capability and the start-time control on `auto_update_start_time`.
+Clients should gate manual update actions on the `manual_update_check`
+capability, configured-target installation on `configured_source_install`, and
+the start-time control on `auto_update_start_time`.
 
 ---
 
@@ -620,6 +625,8 @@ Returns backend capabilities and feature flags. Used by the frontend to determin
   "optional_only_onboarding": true,
   "optional_service_options": true,
   "manual_update_check": true,
+  "configured_source_install": true,
+  "commit_sha_pinning": true,
   "seerr_sync": true,
   "auto_update_start_time": true,
   "symlink_repair": true,
@@ -661,6 +668,8 @@ Returns backend capabilities and feature flags. Used by the frontend to determin
 | `optional_only_onboarding` | Whether onboarding can skip core service selection |
 | `optional_service_options` | Whether optional service options are exposed for onboarding |
 | `manual_update_check` | Whether manual update check/install routes are available |
+| `configured_source_install` | Whether `target: "configured"` can install a saved pinned source target without overriding it |
+| `commit_sha_pinning` | Whether exact GitHub commit SHA source pins are supported |
 | `seerr_sync` | Whether Seerr sync feature routes are available |
 | `auto_update_start_time` | Whether anchored auto-update start time is supported |
 | `symlink_repair` | Whether `/process/symlink-repair` is available |

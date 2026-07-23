@@ -210,10 +210,13 @@ GitHub source archive, builds it through the service's normal source-build path,
 records a `commit-<short-sha>` version marker where supported, and disables
 automatic updates until the field is changed or cleared. This block applies to
 scheduled checks, the initial post-setup check, and normal direct update checks.
-An explicit **Override + install** action can temporarily bypass the pin, but it
-does not clear the saved SHA. If source settings are saved while an update is
-already running, DUMB preserves the newer saved selection rather than restoring
-the update operation's older selection over it.
+When the configured commit differs from the installed version, use **Install
+configured commit** to build and restart on that SHA without clearing or
+bypassing the pin. **Override + latest** is a separate explicit action that
+temporarily bypasses the pin and installs the moving latest release; it does not
+clear the saved SHA. If source settings are saved while an update is already
+running, DUMB preserves the newer saved selection rather than restoring the
+update operation's older selection over it.
 
 Supported source-build services are:
 

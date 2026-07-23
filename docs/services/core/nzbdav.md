@@ -165,6 +165,11 @@ Automatic updates stay disabled while the pin is present. Change the SHA to
 move deliberately to another revision, or clear it to return to the configured
 release/branch strategy.
 
+After saving a new SHA, open **Updates** and select **Install configured
+commit**. This installs and restarts NzbDAV on the saved commit. Do not use
+**Override + latest** for this operation; that action intentionally installs the
+latest moving release while leaving the saved pin in place for a later restart.
+
 ### Environment Variables
 
 * `LOG_LEVEL`: Logging level for NzbDAV (defaults to `INFO`).

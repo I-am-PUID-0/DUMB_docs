@@ -167,8 +167,11 @@ Manual update actions:
 
 - **Check for updates** runs a one-time update check even if auto-update is disabled.
 - **Install update** applies the latest available update when allowed.
-- **Override + install** appears when a service is pinned to a release, exact
-  commit, or branch and you explicitly choose to bypass the block.
+- **Install configured commit** appears when an exact commit pin differs from
+  the installed marker and the backend advertises `configured_source_install`.
+  It installs the saved SHA and keeps the pin active.
+- **Override + latest** appears when a service is pinned and explicitly installs
+  the moving latest release without clearing the saved pin.
 
 Automatic update settings:
 
