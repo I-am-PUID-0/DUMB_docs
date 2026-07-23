@@ -1,5 +1,6 @@
 ---
 title: SQLite to PostgreSQL Migration
+icon: lucide/database-backup
 ---
 
 # SQLite to PostgreSQL Migration

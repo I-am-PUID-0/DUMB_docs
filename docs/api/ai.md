@@ -52,6 +52,17 @@ Settings fields:
 | `include_docs_context` | Default for including selected DUMB_docs snippets in diagnostic bundles. |
 | `include_process_list` | Default for including compact stack status context. |
 | `max_docs_chars` | Maximum documentation characters included across selected docs snippets. |
+| `diagnostic_window_hours` | Default analysis window from `0.25` through `720` hours. |
+| `comparison_mode` | `previous_period`, `since_change`, or `none`. |
+| `deep_log_scan` | Enables bounded scanning of retained and rotated service logs. |
+| `max_log_scan_mb` | Maximum retained-log data read per service request, or shared across targeted stack scans. |
+| `include_metrics` | Includes current-versus-baseline process metrics when history is available. |
+| `include_change_history` | Includes redacted configuration changes saved through DUMB. |
+| `include_native_diagnostics` | Includes allowlisted read-only native service telemetry where supported. |
+
+## `GET /ai/presets`
+
+Returns backend-provided prompt presets grouped under `service` and `stack`. Each item contains `id`, `label`, and `question`.
 
 ## `POST /ai/test`
 
@@ -136,7 +147,14 @@ Example payload:
   "include_service_config": true,
   "include_dependency_graph": true,
   "include_docs_context": true,
-  "max_log_chars": 20000
+  "max_log_chars": 20000,
+  "window_hours": 24,
+  "comparison": "previous_period",
+  "deep_log_scan": true,
+  "max_log_scan_mb": 128,
+  "include_metrics": true,
+  "include_change_history": true,
+  "include_native_diagnostics": true
 }
 ```
 
@@ -151,14 +169,30 @@ Response fields:
 | `bundle` | Redacted diagnostic bundle. |
 | `usage` | Best-effort token usage reported by the provider, empty for dry runs or providers that do not return usage. |
 | `dry_run` | True when no provider call was made. |
+| `session_id` | Short-lived in-memory session identifier returned after a provider analysis. Empty for previews. |
 
 ### Diagnostic Bundle Context
 
 The bundle can include `docs_context` when `include_docs_context` is enabled. This block contains selected DUMB_docs excerpts with source paths and public documentation URLs. The backend chooses snippets using the service/config key, status, question text, and included logs.
 
-DUMB prefers local Markdown from `DUMB_DOCS_PATH` or common sibling-repo workbench paths. If local docs are unavailable, it falls back to the matching public pages on `https://dumbarr.com`.
+DUMB prefers local Markdown from `DUMB_DOCS_PATH`, the Markdown-only snapshot bundled in official images at `/usr/share/dumb/docs`, or common sibling-repo workbench paths. Documentation images and other site assets are not included in the image snapshot.
+
+If local docs are unavailable, DUMB falls back to matching public pages on `https://dumbarr.com`. The fallback extracts article content and removes navigation, scripts, page chrome, and whitespace-only lines before building excerpts. The raw response is processed in memory and is not cloned or cached to disk.
 
 The bundle also includes DUMB product facts. API clients can use dry-run responses to verify that `dumb_product.expansion` is `Debrid Unlimited Media Bridge` before sending a provider request.
+
+Evidence-enabled service bundles may also include:
+
+| Field | Description |
+| --- | --- |
+| `diagnostic_window` | Current and baseline boundaries plus the selected comparison mode. |
+| `log_analysis` | Bounded retained-log coverage, severity counts, restart markers, error signatures, and cited excerpts. |
+| `runtime_metrics` | Process CPU, RSS, disk activity, PID observations, sample coverage, and calculated changes. |
+| `database_health` | Existing read-only Database Health evidence when available. |
+| `change_history` | Redacted configuration changes recorded when settings are saved through DUMB. |
+| `native_diagnostics` | Allowlisted service-specific evidence. NzbDAV currently includes metrics SQLite and queue-log comparisons. |
+| `diagnostic_coverage` | Source availability and a deterministic confidence hint. |
+| `recommendations` | Review-only deterministic next-action context. No action is applied automatically. |
 
 ## `POST /ai/diagnose-stack`
 
@@ -178,7 +212,14 @@ Example payload:
   "include_docs_context": true,
   "include_process_list": true,
   "max_log_chars": 20000,
-  "max_docs_chars": 12000
+  "max_docs_chars": 12000,
+  "window_hours": 24,
+  "comparison": "previous_period",
+  "deep_log_scan": true,
+  "max_log_scan_mb": 128,
+  "include_metrics": true,
+  "include_change_history": true,
+  "include_native_diagnostics": true
 }
 ```
 
@@ -194,6 +235,11 @@ Stack bundles include:
 | `logs` | Short targeted log tails for services needing attention when enabled. |
 | `service_configs` | Optional redacted configs for enabled services. Disabled by default for stack requests. |
 | `docs_context` | Selected DUMB_docs snippets when enabled and available. |
+| `runtime_metrics` | One bounded Metrics-history read summarized per enabled process. |
+| `log_analysis` | Bounded retained-log summaries for attention services and services selected by the question. |
+| `change_history` | Redacted stack-wide configuration events in the analysis and baseline windows. |
+| `native_diagnostics` | Available native collector output for enabled supported services. |
+| `diagnostic_coverage` | Counts and availability for the evidence sources used. |
 
 When `dry_run` is false, DUMB compacts stack bundles before sending them to the provider. The API response still includes the full built bundle, but the provider prompt uses shortened docs excerpts, targeted log snippets, capped graph nodes/edges, and omits full service configs with a note. This avoids common context-length failures with local models.
 
@@ -207,3 +253,32 @@ For selected stack questions, DUMB may post-process the provider response before
 - DUMB Usenet planning questions are grounded around Decypharr, NzbDAV, AltMount, Arr apps, Prowlarr, and rclone. If a provider recommends SABnzbd, NZBGet, or NZBHydra as the primary DUMB path, DUMB replaces that with the DUMB-native workflow answer.
 
 The original diagnostic bundle remains available in the response for review. Token `usage` still reflects the provider request when a provider call was made.
+
+## `POST /ai/follow-up`
+
+Continues a completed provider analysis using the same cached evidence bundle and recent conversation turns.
+
+```json
+{
+  "session_id": "8d9f5a...",
+  "question": "Did the service recover after those errors?"
+}
+```
+
+The response contains `analysis`, `usage`, `provider`, `model`, and the same `session_id`.
+
+Sessions:
+
+- Exist in backend memory only
+- Expire after one hour
+- Keep at most eight recent turns
+- Are bounded to 50 active sessions per backend process
+- Are cleared by a backend restart
+
+A follow-up does not rescan logs. Run a new diagnosis when you need a newer time window or additional evidence.
+
+## Safety Boundary
+
+The AI provider receives a redacted bundle, not runtime tools. The API does not expose unrestricted shell execution, arbitrary SQL, arbitrary filesystem paths, or configuration mutation to the model.
+
+Retained logs are scanned on demand within the byte budget. The small `/config/ai-diagnostics/events.sqlite` ledger stores redacted change metadata only; it does not duplicate full logs. NzbDAV native database access opens fixed service databases in SQLite read-only/query-only mode.

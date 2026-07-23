@@ -226,6 +226,26 @@ Service configs should be saved to file.
 
 ---
 
+## AI Assist
+
+When the backend exposes `ai_diagnostics`, service pages include an **AI Assist** tab.
+
+The primary workflow is:
+
+1. Choose a health, performance, recent-change, or error-recovery preset.
+2. Select the current time window and comparison period.
+3. Use **Preview bundle** to inspect the redacted evidence without contacting a provider.
+4. Use **Analyze** when provider calls are enabled.
+5. Review source coverage and confidence, then ask follow-up questions from the same evidence session.
+
+Provider and evidence settings are collapsed by default so routine diagnostics stay focused on the question and measured result. Reports render sanitized Markdown with working tables and include copy/download controls. The raw redacted bundle remains available in an expandable section.
+
+Deep log scans are performed by the backend against retained files and are not limited by the frontend log table's displayed row count. The configured MiB budget bounds each scan.
+
+See [AI Assistant](../features/ai-assistant.md) for evidence sources, provider configuration, privacy, and safety boundaries.
+
+---
+
 ## Logs
 
 Service pages include log viewers when a log file is configured or when the service

@@ -53,6 +53,45 @@ Stack diagnostic bundles can include:
 
 DUMB redacts common secret fields and sensitive log patterns before the bundle is returned or sent to a provider. This includes common API key, password, token, cookie, authorization, OAuth client secret, GitHub token, Plex token, and Cloudflare tunnel token fields.
 
+## Evidence Over Time
+
+AI Assist can compare a selected current window with the previous matching period or with the period before the latest configuration change saved through DUMB.
+
+The generic collector works for every managed service and can include:
+
+- Current status and health
+- Bounded scans of current and rotated log files
+- Error counts, recurring signatures, newly observed signatures, restart markers, and selected cited excerpts
+- Process CPU, memory, disk activity, PID changes, and sample coverage from DUMB Metrics history
+- Existing read-only Database Health evidence when that service is opted into monitoring
+- A redacted timeline of settings changes plus API-driven start, stop, restart, and manual update events
+- Backend dependency and documentation context
+
+The evidence summary reports the exact time window, sources that were available, log files and bytes scanned, and a deterministic confidence hint. The model is instructed to cite timestamps and measurements, distinguish facts from correlations, and say when evidence is insufficient.
+
+Deep log scanning is independent of the truncated frontend log table. The backend reads retained files directly within `max_log_scan_mb`, then includes aggregates and selected redacted excerpts. It does not give the model arbitrary filesystem access.
+
+### NzbDAV Native Evidence
+
+NzbDAV has an additional read-only native collector for the maintained `nzbdav/nzbdav` fork. When available, it reads the existing NzbDAV SQLite stores and queue logs to compare:
+
+- Concurrent queue worker count and connection budget context
+- Segment success, missing article, error, retry, and provider latency rates
+- Read session volume, duration, and errors
+- Queue completion/failure counts, long-running processors, first-segment timing, and busy-period throughput
+
+These metrics do not measure Plex click-to-first-frame latency. AI Assist labels that limitation and treats before/after results as correlation unless a recorded setting change provides a known boundary.
+
+Native collectors are allowlisted and read-only. Services without a native collector still receive the generic diagnostics above.
+
+## Guided Workflow
+
+Both service and stack assistants provide presets for health, performance, recent changes, errors, and dependencies. Choose a time window and baseline, preview the evidence, then analyze it.
+
+Provider results render as sanitized Markdown, including tables. You can copy or download the report, download the redacted JSON bundle, and ask follow-up questions using a short-lived in-memory diagnostic session. Follow-ups reuse the same evidence instead of rescanning logs or silently changing the comparison window.
+
+Sessions expire after one hour and are not written to disk. Starting a new backend process also clears them.
+
 ### Docs Context
 
 When **Include docs context** is enabled, DUMB adds a `docs_context` block to the preview/analyze bundle. The backend selects a small set of DUMB_docs Markdown pages based on:
@@ -64,7 +103,9 @@ When **Include docs context** is enabled, DUMB adds a `docs_context` block to th
 
 Docs context is included in **Preview bundle**, so you can see exactly which pages and excerpts would be sent before using **Analyze**.
 
-The backend looks for the docs directory in common dev/workbench locations and also honors `DUMB_DOCS_PATH`. If the docs directory is not mounted in the DUMB container, the bundle includes a note that docs were unavailable instead of silently omitting that fact.
+Official DUMB images include a Markdown-only snapshot of DUMB_docs at `/usr/share/dumb/docs`; images and other documentation assets are excluded to keep the image-size increase small. The backend prefers `DUMB_DOCS_PATH`, then this bundled snapshot and common dev/workbench locations.
+
+If no local docs are available, DUMB fetches the matching public page from `https://dumbarr.com`, extracts its article content, and removes navigation, scripts, page chrome, and whitespace-only lines before adding the excerpt. The raw page is processed in memory and is not cloned or cached to disk. If neither source is available, the bundle includes an explicit note instead of silently omitting docs context.
 
 ## Providers
 
@@ -140,6 +181,13 @@ Small local models may still lean on generic training data. To keep important an
 | **Test provider** | Sends a short connectivity prompt using the current provider settings. |
 | **API key** | Stored in DUMB config. Leave blank when saving to keep an existing stored key unchanged. |
 | **Log characters** | Maximum recent log characters included in the diagnostic bundle. |
+| **Deep-scan budget** | Maximum retained-log data read across current and rotated files. This bounds work; it does not reserve storage. |
+| **Current window** | Period analyzed, from one hour through 30 days. Actual coverage depends on retained logs and Metrics history. |
+| **Compare with** | Previous matching period, the period before the latest recorded change, or no baseline. |
+| **Retained log scan** | Builds bounded aggregates and cited excerpts from retained log files. |
+| **Metrics history** | Adds current-versus-baseline process measurements when DUMB Metrics history is available. |
+| **Change history** | Adds redacted configuration changes saved through DUMB. |
+| **Native telemetry** | Adds allowlisted read-only service evidence when a native collector exists. |
 | **Docs characters** | Maximum documentation characters included across selected snippets. |
 | **Timeout seconds** | How long DUMB waits for the provider response. |
 
@@ -183,7 +231,14 @@ Settings are stored under `dumb.ai` in `dumb_config.json`:
   "include_dependency_graph": true,
   "include_docs_context": true,
   "include_process_list": false,
-  "max_docs_chars": 12000
+  "max_docs_chars": 12000,
+  "diagnostic_window_hours": 24,
+  "comparison_mode": "previous_period",
+  "deep_log_scan": true,
+  "max_log_scan_mb": 128,
+  "include_metrics": true,
+  "include_change_history": true,
+  "include_native_diagnostics": true
 }
 ```
 
@@ -263,3 +318,7 @@ Open WebUI:
 AI diagnostics are most useful when logs and config context are included, but those can contain deployment-specific details. Keep provider calls disabled if you only want local preview, use a local model for private analysis, and avoid enabling the compact process list unless the wider stack context is needed.
 
 The assistant suggests next steps only. It does not apply configuration changes, restart services, or modify files.
+
+The change ledger uses a small SQLite database under `/config/ai-diagnostics`. It stores redacted change metadata, not copied log content. Log scans are performed on demand, and follow-up sessions remain bounded in memory. The feature therefore does not create a second full-log archive or materially multiply normal log storage.
+
+AI Assist does not expose unrestricted shell commands, arbitrary SQL, arbitrary path reads, or config mutation tools to the model. Recommendations are review-only and include risk and restart context when the evidence supports them.

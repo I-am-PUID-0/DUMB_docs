@@ -335,6 +335,16 @@ Instance names are slugified into categories if present (for example, `Radarr 4K
 
 ## Troubleshooting Tips
 
+### Compare NzbDAV performance
+
+Open the NzbDAV service page's **AI Assist** tab and choose **Performance** to compare a selected window with the previous matching period or with the period before the latest DUMB-saved setting change.
+
+In addition to generic logs and process metrics, DUMB can read the maintained fork's `metrics.sqlite` and `db.sqlite` in read-only mode. The evidence includes queue worker settings, segment success/missing/error/retry rates, provider latency, read-session activity, queue completion/failure timing, long-running queue processors, and busy-period throughput.
+
+Use **Preview bundle** first to confirm native telemetry is available and check the exact coverage. These metrics do not measure Plex click-to-first-frame latency, so playback-start conclusions should remain qualified unless Plex-side timing is correlated separately.
+
+See [AI Assistant](../../features/ai-assistant.md#nzbdav-native-evidence) for the full evidence and safety model.
+
 ### Assess SQLite pressure
 
 NzbDAV currently stores its operational and metrics data in SQLite. DUMB can optionally monitor both databases from **Metrics → Settings → Database Health Monitoring** or the NzbDAV service page's **Database Health** panel.

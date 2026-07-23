@@ -1,6 +1,6 @@
 ---
 title: AltMount
-icon: lucide/mountain
+icon: lucide/hard-drive-download
 ---
 
 # AltMount (Core Service)
