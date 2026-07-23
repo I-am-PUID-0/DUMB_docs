@@ -1,6 +1,15 @@
 # Changelog
 
 
+## [1.22.17](https://github.com/I-am-PUID-0/DUMB_docs/compare/1.22.16...1.22.17) (2026-07-23)
+
+
+### 📖 Documentation
+
+* **auto-update:** clarify immutable commit update behavior ([1303ae8](https://github.com/I-am-PUID-0/DUMB_docs/commit/1303ae8bbc9ad487b2f3ad588771386f192c1ebb))
+* clarify configured-target and latest-override updates ([9f660ef](https://github.com/I-am-PUID-0/DUMB_docs/commit/9f660ef766b4ea10fb0fedab75534d952d42fe2e))
+* **updates:** document configured commit installation flow ([3118f06](https://github.com/I-am-PUID-0/DUMB_docs/commit/3118f06b18252fcac24ccd3481c4a04f13ef9f37))
+
 ## [1.22.16](https://github.com/I-am-PUID-0/DUMB_docs/compare/1.22.15...1.22.16) (2026-07-23)
 
 
