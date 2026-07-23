@@ -178,10 +178,17 @@ Runs a manual update check without installing it.
 
 ### `POST /process/update-install`
 
-Installs an available update. `allow_override` permits the explicit
-override/install-latest workflow. `target` optionally supplies a supported
-release selector; `target: "configured"` applies the currently configured
-pinned commit/release/branch without clearing or bypassing it.
+Installs an available update. `allow_override: true` temporarily ignores the
+saved release, branch, commit, or pinned-version selection and installs the
+latest stable release; DUMB restores the saved configuration afterward.
+`target` optionally supplies a supported release selector; `target:
+"configured"` applies the currently configured pinned commit/release/branch
+without clearing or bypassing it.
+
+Configured-target update-check responses include
+`configured_target_kind` (`release`, `branch`, or `commit`) and
+`configured_target_installed`. Clients can use these fields to offer the
+matching configured-target installation action only when it is needed.
 
 ```json
 {

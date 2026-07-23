@@ -167,11 +167,16 @@ Manual update actions:
 
 - **Check for updates** runs a one-time update check even if auto-update is disabled.
 - **Install update** applies the latest available update when allowed.
-- **Install configured commit** appears when an exact commit pin differs from
-  the installed marker and the backend advertises `configured_source_install`.
-  It installs the saved SHA and keeps the pin active.
-- **Override + latest** appears when a service is pinned and explicitly installs
-  the moving latest release without clearing the saved pin.
+- **Install configured release**, **Install configured branch**, or **Install
+  configured commit** appears when that saved source selection differs from the
+  installed version and the backend advertises `configured_source_install`.
+  It installs the displayed configured target and keeps the selection active.
+- **Override + latest** appears when a service is pinned and temporarily ignores
+  any saved release, branch, commit, or pinned-version selection to install the
+  latest stable release. The saved configuration is restored afterward.
+
+Hover either configured-target action or **Override + latest** for a concise
+summary before choosing an installation path.
 
 Automatic update settings:
 

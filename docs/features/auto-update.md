@@ -120,6 +120,15 @@ Auto-update settings are configured per-service in `dumb_config.json`:
     or branch selector taking precedence. A non-empty `commit_sha` always
     disables moving update checks, including the initial post-setup check.
 
+After changing a fixed release, branch, or commit selection, use **Check for
+updates**. When the configured target differs from the installed version, the
+Updates panel shows **Install configured release**, **Install configured
+branch**, or **Install configured commit**. This applies the saved selection
+without clearing it. **Override + latest** is a separate escape hatch that
+temporarily bypasses any saved release, branch, commit, or pinned-version
+selection and installs the latest stable release. DUMB restores the saved
+configuration after that one installation.
+
 ---
 
 ## Update strategies
