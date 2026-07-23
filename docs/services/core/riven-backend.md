@@ -50,6 +50,7 @@ flowchart TD
     "repo_name": "riven",
     "release_version_enabled": false,
     "release_version": "v0.20.1",
+    "commit_sha": "",
     "branch_enabled": false,
     "branch": "release-please--branches--main",
     "suppress_logging": false,
@@ -110,6 +111,7 @@ flowchart TD
 - **`port`**: Port exposed for the API.
 - **`repo_owner`** / **`repo_name`**: GitHub repo to pull from.
 - **`release_version_enabled`** / **`release_version`**: Use a tagged release if enabled.
+- **`commit_sha`**: Builds an exact Riven revision from its full 40-character GitHub SHA.
 - **`branch_enabled`** / **`branch`**: Use a specific branch if enabled.
 - **`suppress_logging`**: If `true`, disables log output for this service.
 - **`log_level`**: Logging verbosity level (e.g., `DEBUG`, `INFO`).
@@ -130,11 +132,16 @@ flowchart TD
 
 ---
 
-## Branch / Version Targeting
-You can control which version or branch of the backend is deployed by setting:
+## Commit / Branch / Version Targeting
+You can control which source revision of the backend is deployed by setting:
 
+- `commit_sha` to a full 40-character SHA for an immutable source pin
 - `branch_enabled: true` and specifying a `branch`
 - or `release_version_enabled: true` and specifying a `release_version`
+
+The commit pin has highest precedence and disables automatic updates until it
+is changed or cleared. Commit builds use the same source-build runtime path as
+Riven branch builds.
 
 ---
 

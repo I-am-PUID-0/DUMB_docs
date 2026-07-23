@@ -45,6 +45,7 @@ Maintainerr's primary SQLite database is `/maintainerr/data/maintainerr.sqlite`.
   "repo_name": "Maintainerr",
   "release_version_enabled": false,
   "release_version": "latest",
+  "commit_sha": "",
   "branch_enabled": false,
   "branch": "development",
   "suppress_logging": false,
@@ -80,6 +81,7 @@ Maintainerr's primary SQLite database is `/maintainerr/data/maintainerr.sqlite`.
 
 - **`enabled`**: Whether DUMB starts Maintainerr.
 - **`release_version_enabled`** / **`release_version`**: Pin a tagged upstream release. With pinning disabled, DUMB bootstraps the latest stable release on first install.
+- **`commit_sha`**: Build an exact Maintainerr revision from its full 40-character GitHub SHA. It overrides release/branch selection, disables automatic updates, and is treated as a development/source build for data compatibility.
 - **`branch_enabled`** / **`branch`**: Build an upstream source branch instead of a stable release. Upstream does not support moving a development data directory back to stable.
 - **`port`**: Maintainerr's web UI and API port.
 - **`auto_update`**: Check for and install newer releases using DUMB's update scheduler.

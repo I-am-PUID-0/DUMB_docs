@@ -144,6 +144,11 @@ Optional services are filtered based on core dependencies and earlier selections
 
 MediaStorm's service-options step also allows its OCI runtime to follow `latest` or be pinned to a release tag, full commit SHA, or OCI digest. Leave release pinning disabled for normal automatic updates. See the [MediaStorm version-selection guide](../services/optional/mediastorm.md#version-selection) before selecting a fixed build.
 
+For GitHub source-build services, the service-options step also exposes
+`commit_sha`. Paste the full 40-character SHA to select an immutable source
+revision. Once the SHA is complete, onboarding clears competing release and
+branch selections; enabling a release or branch clears the commit pin.
+
 ---
 
 ### Step 5: Service-specific options

@@ -275,6 +275,7 @@ Full steps are in the [Cloudflared guide](cloudflared.md).
   "repo_name": "traefik-proxy-admin",
   "release_version_enabled": false,
   "release_version": "latest",
+  "commit_sha": "",
   "branch_enabled": false,
   "branch": "main",
   "suppress_logging": false,
@@ -333,6 +334,7 @@ runtime values rather than copying them from a running instance.
 ### Configuration key descriptions
 
 - **`enabled`**: Whether to install and start TPA.
+- **`commit_sha`**: Optional full 40-character GitHub SHA for an exact TPA source build.
 - **`port`**: TPA web UI port.
 - **`platforms`**: Uses DUMB's pnpm setup path.
 - **`config_dir`**: TPA source and build directory.
@@ -342,6 +344,12 @@ runtime values rather than copying them from a running instance.
 - **`env.TRAEFIK_API_URL`**: Internal URL for TPA to inspect DUMB Traefik's live API.
 - **`env.TRAEFIK_ACCESS_LOG_PATH`**: DUMB Traefik access log path for TPA diagnostics.
 - **`env.TARGET_TEST_ALLOW_CIDRS`**: Private CIDR allowlist used by TPA target reachability tests.
+
+!!! info "Exact commit pin"
+
+    Set `commit_sha` to the complete SHA from `repo_owner`/`repo_name` to deploy
+    that immutable TPA revision. It overrides release and branch selection and
+    disables automatic updates until changed or cleared.
 
 ---
 

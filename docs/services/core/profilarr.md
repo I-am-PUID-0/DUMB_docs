@@ -43,6 +43,7 @@ Profilarr provides:
       "repo_name": "profilarr",
       "release_version_enabled": true,
       "release_version": "v1.1.4",
+      "commit_sha": "",
       "branch_enabled": false,
       "branch": "main",
       "suppress_logging": false,
@@ -87,6 +88,7 @@ Profilarr provides:
 - **`core_service`**: Filters which Arr instances are auto‑linked (see below).
 - **`repo_owner` / `repo_name`**: GitHub repository for Profilarr itself.
 - **`release_version_enabled` / `release_version`**: Use GitHub releases when enabled.
+- **`commit_sha`**: Build this Profilarr instance from an exact full 40-character GitHub SHA. It overrides release/branch selection and disables automatic updates for that instance until cleared.
 - **`branch_enabled` / `branch`**: Use a specific branch if enabled.
 - **`port`**: Port the Profilarr UI is exposed on.
 - **`auto_update` / `auto_update_interval` / `auto_update_start_time`**: Automatic update settings.

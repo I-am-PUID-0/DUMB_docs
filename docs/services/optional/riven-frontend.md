@@ -21,6 +21,7 @@ DUMB handles automatic installation and updates of the frontend, including versi
     "repo_name": "riven-frontend",
     "release_version_enabled": false,
     "release_version": "v0.17.0",
+    "commit_sha": "",
     "branch_enabled": false,
     "branch": "release-please--branches--main",
     "suppress_logging": false,
@@ -60,6 +61,7 @@ DUMB handles automatic installation and updates of the frontend, including versi
 - **`process_name`**: Used in logs and process tracking.
 - **`repo_owner`** / **`repo_name`**: GitHub repo to pull from.
 - **`release_version_enabled`** / **`release_version`**: Use a tagged GitHub release if enabled.
+- **`commit_sha`**: Builds an exact frontend revision from its full 40-character GitHub SHA.
 - **`branch_enabled`** / **`branch`**: Pull a specific GitHub branch if enabled.
 - **`suppress_logging`**: If `true`, disables log output for this service.
 - **`log_level`**: Logging verbosity level (e.g., `DEBUG`, `INFO`).
@@ -83,11 +85,15 @@ The `ORIGIN` key must match the public-facing URL used to access the frontend. I
 
 ---
 
-## Branch / Version Targeting
-You can control which version or branch of the frontend is deployed by setting:
+## Commit / Branch / Version Targeting
+You can control which source revision of the frontend is deployed by setting:
 
+- `commit_sha` to a full 40-character SHA for an immutable source pin
 - `branch_enabled: true` and specifying a `branch`
 - or `release_version_enabled: true` and specifying a `release_version`
+
+`commit_sha` takes precedence over release and branch settings and disables
+automatic updates until changed or cleared.
 
 ---
 

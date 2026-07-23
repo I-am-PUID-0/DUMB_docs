@@ -167,7 +167,8 @@ Manual update actions:
 
 - **Check for updates** runs a one-time update check even if auto-update is disabled.
 - **Install update** applies the latest available update when allowed.
-- **Override + install** appears when a service is pinned to a release/branch and you explicitly choose to bypass the block.
+- **Override + install** appears when a service is pinned to a release, exact
+  commit, or branch and you explicitly choose to bypass the block.
 
 Automatic update settings:
 

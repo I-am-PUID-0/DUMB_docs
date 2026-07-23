@@ -31,6 +31,7 @@ This block is nested at `dumb.frontend` in `/config/dumb_config.json`:
     "repo_name": "dmbdb",
     "release_version_enabled": false,
     "release_version": "v1.2.0",
+    "commit_sha": "",
     "branch_enabled": false,
     "branch": "main",
     "suppress_logging": false,
@@ -59,6 +60,7 @@ This block is nested at `dumb.frontend` in `/config/dumb_config.json`:
 - **`process_name`**: Name used in logs and process tracking.
 - **`repo_owner`** / **`repo_name`**: Specifies the GitHub repository to clone for the frontend.
 - **`release_version_enabled`** / **`release_version`**: Indicates if a specific release version should be used.
+- **`commit_sha`**: Builds an exact GitHub revision. Use the complete 40-character hexadecimal SHA.
 - **`branch_enabled`** / **`branch`**: Specifies the branch to use if enabled.
 - **`suppress_logging`**: If `true`, disables log output for this service.
 - **`log_level`**: Logging verbosity level (e.g., `DEBUG`, `INFO`).
@@ -75,11 +77,15 @@ This block is nested at `dumb.frontend` in `/config/dumb_config.json`:
 
 ---
 
-## Branch / Version Targeting
-You can control which version or branch of the frontend is deployed by setting:
+## Commit / Branch / Version Targeting
+You can control which source revision of the frontend is deployed by setting:
 
+- `commit_sha` to a full 40-character SHA for an immutable source pin
 - `branch_enabled: true` and specifying a `branch`
 - or `release_version_enabled: true` and specifying a `release_version`
+
+`commit_sha` takes precedence over release and branch settings. Automatic
+updates remain disabled until the commit pin is changed or cleared.
 
 ---
 

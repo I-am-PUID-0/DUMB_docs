@@ -41,6 +41,7 @@ Pulsarr provides:
   "repo_name": "Pulsarr",
   "release_version_enabled": false,
   "release_version": "latest",
+  "commit_sha": "",
   "branch_enabled": false,
   "branch": "master",
   "suppress_logging": false,
@@ -80,6 +81,7 @@ Pulsarr provides:
 - **`postgres_database`**: Optional target name; blank uses `pulsarr`.
 - **`repo_owner`** / **`repo_name`**: GitHub repository DUMB downloads from.
 - **`release_version_enabled`** / **`release_version`**: Use a tagged release if enabled, or the latest release by default.
+- **`commit_sha`**: Build an exact Pulsarr revision from its full 40-character GitHub SHA. It overrides release/branch selection and disables automatic updates until cleared.
 - **`branch_enabled`** / **`branch`**: Use a source branch instead of a release.
 - **`port`**: Pulsarr web UI port.
 - **`platforms`**: Uses DUMB's Bun setup path.

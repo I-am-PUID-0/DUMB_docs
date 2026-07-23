@@ -48,11 +48,13 @@ Enable by setting:
 
 Services use one of these update modes depending on how upstream ships them:
 
-- **GitHub release or branch services** use `release_version_enabled`, `release_version`, `branch_enabled`, and `branch`.
+- **GitHub source/release services** use `release_version_enabled`, `release_version`, exact `commit_sha` pins, `branch_enabled`, and `branch`.
 - **Pinned binary services** use `pinned_version`.
 - **Instance-based services** store the same update fields inside each instance.
 
-Use the service page's **Updates** panel to see whether an update is available, whether a pin or branch blocks automatic installation, and when the next scheduled check will run.
+Use the service page's **Updates** panel to see whether an update is available,
+whether a version, exact commit, or branch blocks automatic installation, and
+when the next scheduled check will run.
 
 ---
 

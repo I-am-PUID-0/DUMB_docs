@@ -84,6 +84,7 @@ flowchart TD
     "repo_name": "cli_debrid",
     "release_version_enabled": false,
     "release_version": "v0.6.07",
+    "commit_sha": "",
     "branch_enabled": false,
     "branch": "main",
     "suppress_logging": false,
@@ -130,6 +131,7 @@ flowchart TD
 * `process_name`: Used for display and logs.
 * `repo_owner`, `repo_name`: GitHub repo to use for updates.
 * `release_version_enabled`, `branch_enabled`: Target a specific tag or branch.
+* `commit_sha`: Build an exact CLI Debrid revision from its full 40-character GitHub SHA.
 * `log_level`, `suppress_logging`: Logging controls.
 * `port`: Flask web interface port.
 * `env`: Environment variable configuration used by CLI Debrid.
@@ -210,6 +212,7 @@ CLI Battery provides local metadata storage and Trakt integration, acting as the
     "repo_name": "phalanx_db_hyperswarm",
     "release_version_enabled": false,
     "release_version": "v0.50",
+    "commit_sha": "",
     "branch_enabled": false,
     "branch": "main",
     "suppress_logging": false,
@@ -389,11 +392,15 @@ done
 echo "Webhook update complete."
 ```
 
-## Branch / Version Targeting
-You can control which version or branch is deployed by setting:
+## Commit / Branch / Version Targeting
+You can control which source revision is deployed by setting:
 
+- `commit_sha` to a full 40-character SHA for an immutable source pin
 - `branch_enabled: true` and specifying a `branch`
 - or `release_version_enabled: true` and specifying a `release_version`
+
+The exact commit overrides release and branch selection and disables automatic
+updates until the pin is changed or cleared.
 
 !!! info "Dev releases use the prerelease tag"
 
@@ -410,6 +417,7 @@ You can control which version or branch is deployed by setting:
         "repo_name": "cli_debrid",
         "release_version_enabled": true,
         "release_version": "prerelease",
+        "commit_sha": "",
         "branch_enabled": false,
         "branch": "main",
         "suppress_logging": false,
@@ -430,6 +438,7 @@ You can control which version or branch is deployed by setting:
         "repo_name": "cli_debrid",
         "release_version_enabled": false,
         "release_version": "v0.6.07",
+        "commit_sha": "",
         "branch_enabled": false,
         "branch": "main",
         "suppress_logging": false,

@@ -103,6 +103,7 @@ Below is a sample configuration for NeutArr within the `dumb_config.json` file:
       "repo_name": "NeutArr",
       "release_version_enabled": false,
       "release_version": "latest",
+      "commit_sha": "",
       "branch_enabled": false,
       "branch": "main",
       "suppress_logging": false,
@@ -140,6 +141,7 @@ Below is a sample configuration for NeutArr within the `dumb_config.json` file:
 - **`process_name`**: Display name used in logs and the frontend.
 - **`repo_owner`** / **`repo_name`**: GitHub repository to pull from.
 - **`release_version_enabled`** / **`release_version`**: Use a tagged release if enabled.
+- **`commit_sha`**: Build this instance from an exact full 40-character GitHub SHA. It overrides release/branch selection and disables automatic updates for that instance until cleared.
 - **`branch_enabled`** / **`branch`**: Use a specific branch if enabled.
 - **`suppress_logging`**: If `true`, disables log output for this service.
 - **`log_level`**: Logging verbosity (e.g., `DEBUG`, `INFO`).

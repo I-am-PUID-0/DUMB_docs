@@ -86,6 +86,7 @@ Auto-update settings are configured per-service in `dumb_config.json`:
     "auto_update_interval": 24,
     "release_version_enabled": false,
     "release_version": "latest",
+    "commit_sha": "",
     "branch_enabled": false,
     "branch": "main",
     "pinned_version": "",
@@ -104,6 +105,7 @@ Auto-update settings are configured per-service in `dumb_config.json`:
 | `auto_update_interval` | number | `24` | Hours between update checks |
 | `release_version_enabled` | boolean | `false` | Use release version strategy |
 | `release_version` | string | `"latest"` | Target version: `latest`, `nightly`, `prerelease`, or specific version |
+| `commit_sha` | string | `""` | Exact full 40-character GitHub commit to deploy |
 | `branch_enabled` | boolean | `false` | Use branch-based deployment |
 | `branch` | string | `"main"` | Git branch to track |
 | `pinned_version` | string | `""` | Pin to specific version (disables auto-update) |
@@ -112,7 +114,7 @@ Auto-update settings are configured per-service in `dumb_config.json`:
 
 !!! warning "Auto-update and strategy interaction"
 
-    Automatic scheduling is disabled when `pinned_version`, `release_version_enabled`, or `branch_enabled` are set.
+    Automatic scheduling is disabled when `pinned_version`, `commit_sha`, `release_version_enabled`, or `branch_enabled` are set.
     The only exception is when `release_version` is `nightly` or `prerelease`, which keeps scheduled checks enabled.
 
 ---
@@ -186,6 +188,44 @@ Track a specific Git branch for development or testing:
 
     Branch-based deployment downloads the latest commit from the specified branch during setup/startup.
     Scheduled auto-update checks are disabled when `branch_enabled` is true.
+
+### Exact commit pinning
+
+Source-build services can be pinned to an immutable GitHub revision:
+
+```json
+{
+  "nzbdav": {
+    "commit_sha": "0123456789abcdef0123456789abcdef01234567"
+  }
+}
+```
+
+`commit_sha` must be the complete 40-character hexadecimal SHA. When non-empty,
+it takes precedence over release and branch settings. DUMB downloads that exact
+GitHub source archive, builds it through the service's normal source-build path,
+records a `commit-<short-sha>` version marker where supported, and disables
+automatic updates until the field is changed or cleared.
+
+Supported source-build services are:
+
+- DUMB Frontend
+- Traefik Proxy Admin
+- CLI Debrid
+- Decypharr
+- NzbDAV
+- Phalanx DB
+- Tautulli
+- Pulsarr
+- Maintainerr
+- NeutArr
+- Profilarr
+- Seerr
+- Riven Backend and Riven Frontend
+- Zilean
+
+Arr applications and binary-only services such as Zurg do not use this source
+commit strategy.
 
 ### Version pinning
 

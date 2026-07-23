@@ -50,7 +50,10 @@ The API exposes the current schema at native `GET /config/schema` (frontend prox
 - Validate JSON changes before restart to avoid startup failures.
 - Back up `/config/dumb_config.json` before large manual edits; use the frontend editor for normal service changes.
 - Keep `config_dir`, `log_file`, and `port` unique for each service instance.
-- Use `release_version_enabled` or `branch_enabled` when pinning versions.
+- Use `release_version_enabled` for release tags, `commit_sha` for an exact
+  40-character GitHub source revision, or `branch_enabled` for a moving branch.
+- A non-empty `commit_sha` takes precedence over release and branch settings and
+  disables automatic updates until changed or cleared.
 - Do not edit `utils/dumb_config.json` expecting a persistent runtime change.
 
 ---

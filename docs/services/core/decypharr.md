@@ -75,6 +75,7 @@ flowchart TD
     "repo_name": "decypharr",
     "release_version_enabled": false,
     "release_version": "v1.0.0",
+    "commit_sha": "",
     "branch_enabled": false,
     "branch": "main",
     "suppress_logging": false,
@@ -115,6 +116,7 @@ flowchart TD
 * `process_name`: Used for display and logs.
 * `repo_owner`, `repo_name`: GitHub repo to use for updates.
 * `release_version_enabled`, `branch_enabled`: Target a specific tag or branch.
+* `commit_sha`: Build an exact Decypharr source revision from its full 40-character GitHub SHA.
 * `log_level`, `suppress_logging`: Logging controls.
 * `port`: Web UI port.
 * `env`: Environment variables passed to Decypharr.
@@ -124,6 +126,13 @@ flowchart TD
 * `clear_on_update`, `exclude_dirs`: Clean old files during update while protecting data dirs.
 
 Because `release_version_enabled` is `false`, the stored `v1.0.0` value is only the fallback selector; normal stable installs resolve the latest supported GitHub release. Enable the selector only when intentionally pinning a release.
+
+!!! info "Exact commit pin"
+
+    Set `commit_sha` to a full 40-character SHA to build that immutable
+    Decypharr revision. The commit pin overrides release and branch settings,
+    uses Decypharr's source-build path, and disables automatic updates until
+    changed or cleared.
 
 ---
 

@@ -29,6 +29,7 @@ icon: lucide/database
   "repo_name": "phalanx_db_hyperswarm",
   "release_version_enabled": false,
   "release_version": "v0.50",
+  "commit_sha": "",
   "branch_enabled": false,
   "branch": "main",
   "suppress_logging": false,
@@ -55,6 +56,7 @@ icon: lucide/database
 * **`process_name`**: Label used for logging and monitoring.
 * **`repo_owner`** / **`repo_name`**: Source GitHub repo for updates.
 * **`release_version_enabled`** / **`release_version`**: Targets a specific version release.
+* **`commit_sha`**: Builds an exact Phalanx DB revision from its full 40-character GitHub SHA.
 * **`branch_enabled`** / **`branch`**: If true, uses a GitHub branch instead of a release.
 * **`suppress_logging`**: Suppresses logs from this service.
 * **`log_level`**: Verbosity level.
@@ -101,11 +103,15 @@ When Phalanx DB starts, DUMB:
 
 ---
 
-## Branch / Version Targeting
-You can control which version or branch is deployed by setting:
+## Commit / Branch / Version Targeting
+You can control which source revision is deployed by setting:
 
+- `commit_sha` to a full 40-character SHA for an immutable source pin
 - `branch_enabled: true` and specifying a `branch`
 - or `release_version_enabled: true` and specifying a `release_version`
+
+The commit pin overrides the release and branch selectors and disables
+automatic updates until changed or cleared.
 
 ---
 

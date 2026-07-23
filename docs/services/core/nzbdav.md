@@ -97,6 +97,7 @@ NzbDAV also exposes a **Usenet download client** path in Arr by emulating a Sabn
     "repo_name": "nzbdav",
     "release_version_enabled": false,
     "release_version": "latest",
+    "commit_sha": "",
     "branch_enabled": false,
     "branch": "main",
     "suppress_logging": false,
@@ -134,6 +135,8 @@ NzbDAV also exposes a **Usenet download client** path in Arr by emulating a Sabn
 * `enabled`: Toggle to run NzbDAV via DUMB.
 * `frontend_port`: Port for the Web UI and WebDAV endpoint.
 * `backend_port`: Port for the backend API.
+* `commit_sha`: Optional full 40-character GitHub SHA. When set, DUMB builds
+  that exact NzbDAV revision instead of selecting a release or branch.
 * `webdav_password`: Default WebDAV password (overridden by `WEBDAV_PASSWORD`).
 * `config_dir`: Path where NzbDAV data is stored.
 * `log_file`: Path for the consolidated NzbDAV log.
@@ -143,6 +146,24 @@ NzbDAV also exposes a **Usenet download client** path in Arr by emulating a Sabn
 
     If `webdav_password` is blank, DUMB generates one at startup and stores it in the config.
     Change the password before exposing NzbDAV outside your trusted network.
+
+### Pinning an exact NzbDAV commit
+
+Set `commit_sha` to the complete SHA from the configured `repo_owner` and
+`repo_name`:
+
+```json
+"nzbdav": {
+    "repo_owner": "nzbdav",
+    "repo_name": "nzbdav",
+    "commit_sha": "0123456789abcdef0123456789abcdef01234567"
+}
+```
+
+The commit pin overrides `release_version_enabled` and `branch_enabled`.
+Automatic updates stay disabled while the pin is present. Change the SHA to
+move deliberately to another revision, or clear it to return to the configured
+release/branch strategy.
 
 ### Environment Variables
 
