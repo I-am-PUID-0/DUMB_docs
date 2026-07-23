@@ -1,6 +1,15 @@
 # Changelog
 
 
+## [1.22.15](https://github.com/I-am-PUID-0/DUMB_docs/compare/1.22.14...1.22.15) (2026-07-23)
+
+
+### 📖 Documentation
+
+* **ai:** document evidence-backed diagnostics and bundled context ([f573919](https://github.com/I-am-PUID-0/DUMB_docs/commit/f573919a195e910e6e187128708e60816ed4df5b))
+* **logging:** document service-log redaction and safe sharing guidance ([29b3e32](https://github.com/I-am-PUID-0/DUMB_docs/commit/29b3e326ebb140ee51cae1a3de7cae34552e6267))
+* **metrics:** document optional Plex cloud status ([0356b03](https://github.com/I-am-PUID-0/DUMB_docs/commit/0356b0363849a680955a104e1583f240df143ac1))
+
 ## [1.22.14](https://github.com/I-am-PUID-0/DUMB_docs/compare/1.22.13...1.22.14) (2026-07-22)
 
 
