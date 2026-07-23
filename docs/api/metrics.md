@@ -5,7 +5,7 @@ icon: lucide/activity
 
 # Metrics API
 
-The Metrics API provides live snapshots, database-health observations, historical series, storage status, and legacy-history migration. Authentication follows the normal DUMB API configuration.
+The Metrics API provides live snapshots, optional Plex cloud status, database-health observations, historical series, storage status, and legacy-history migration. Authentication follows the normal DUMB API configuration.
 
 ## Current snapshot
 
@@ -13,7 +13,7 @@ The Metrics API provides live snapshots, database-health observations, historica
 GET /metrics
 ```
 
-Returns current system, managed-process, external-process, and configured Database Health data. `system.filesystems` contains one entry per configured `dumb.metrics.filesystem_paths` value. `system.disk` and `system.inode` remain aliases for the first configured path for backward compatibility.
+Returns current system, managed-process, external-process, configured Database Health, and configured Plex cloud-status data. `system.filesystems` contains one entry per configured `dumb.metrics.filesystem_paths` value. `system.disk` and `system.inode` remain aliases for the first configured path for backward compatibility.
 
 ## Filesystem discovery
 
@@ -41,6 +41,23 @@ GET /metrics/database-health?process_name=NzbDAV&refresh=true
 ```
 
 `process_name` limits the response to one managed service. `refresh=true` invalidates the cached bounded probe before collection.
+
+## Plex Cloud Status
+
+```http
+GET /metrics/plex-status
+GET /metrics/plex-status?refresh=true
+```
+
+The endpoint returns the optional cached status from Plex's public status feed. `refresh=true` invalidates the cached result and attempts an immediate server-side fetch when `dumb.metrics.plex_status.enabled=true`. The response includes:
+
+- `enabled`, `available`, `refreshing`, `stale`, and `operational`;
+- Plex's `indicator` and `description`;
+- `affected_components`, `active_incidents`, and `scheduled_maintenances`;
+- component status counts;
+- source/fetch timestamps, response time, cache age, and polling interval.
+
+When collection is disabled, the endpoint performs no outbound request and returns `indicator: "disabled"`. A failed refresh preserves a prior successful sample with `stale: true`; without a prior sample it returns a safe unavailable result. Clients should gate this endpoint and its UI on the `plex_status_metric` process capability.
 
 ## Raw history
 

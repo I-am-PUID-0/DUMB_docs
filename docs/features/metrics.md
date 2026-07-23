@@ -17,6 +17,7 @@ The metrics system provides:
 - **Historical tracking** - Time-series data storage for trend analysis
 - **Per-process metrics** - Resource usage by individual service
 - **Optional database health** - Per-service SQL and persistent-store pressure indicators
+- **Optional Plex cloud status** - Cached public Plex service health, incidents, and maintenance
 - **WebSocket streaming** - Push updates to connected clients
 - **cgroup awareness** - Accurate reporting in containerized environments
 
@@ -96,6 +97,10 @@ Metrics are configured in `dumb_config.json`:
           "mode": "enhanced"
         }
       }
+    },
+    "plex_status": {
+      "enabled": false,
+      "interval_sec": 300
     }
   }
 }
@@ -125,6 +130,24 @@ Metrics are configured in `dumb_config.json`:
 | `database_health.interval_sec` | `60` | Seconds between database collections (15-3600) |
 | `database_health.log_tail_bytes` | `262144` | Maximum new/recent service-log bytes examined per collection |
 | `database_health.services` | `{}` | Per-service/instance settings keyed by the ID reported in `/api/metrics` |
+| `plex_status.enabled` | `false` | Poll and cache Plex's public cloud-service status |
+| `plex_status.interval_sec` | `300` | Minimum seconds between Plex status feed requests (60-3600) |
+
+### Plex Cloud Status
+
+Plex Cloud Status is disabled by default. Enable it from **Metrics → Settings → Plex Cloud Status** or from the Plex service page's **Plex Status** panel. DUMB then polls the fixed public summary feed behind [status.plex.tv](https://status.plex.tv/) from the backend, caches the normalized result, and includes it in live metrics snapshots.
+
+The local view reports:
+
+- Plex's overall cloud-service indicator and description;
+- counts of reported components and any components that are not operational;
+- active incident names, impact, status, and official incident links;
+- scheduled maintenance;
+- collection time, response time, and whether a failed refresh is showing a stale last-known-good sample.
+
+No Plex token, local service configuration, hostname, library information, or usage data is sent with this request. The metric describes Plex-operated services such as authentication, hosted apps, metadata, messaging, and remote-access infrastructure. It does **not** test the local Plex Media Server process, the DUMB host, LAN clients, port forwarding, DNS, or the complete playback path. Use the normal service status, logs, and local/network diagnostics for those checks.
+
+When the status feed cannot be refreshed, DUMB retains the last successful sample and marks it stale. If no successful sample exists, it reports the feed as unavailable without exposing the raw network exception.
 
 ### Database Health Monitoring
 

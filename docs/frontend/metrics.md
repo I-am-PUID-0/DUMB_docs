@@ -17,6 +17,7 @@ The metrics dashboard shows:
 - **Historical charts** - Usage trends over time
 - **Process details** - Per-service resource consumption
 - **Database health** - Optional SQL and persistent-store pressure summaries
+- **Plex cloud status** - Optional cached status for Plex-operated services
 - **System information** - Container and host details
 
 ![Metrics dashboard](../assets/images/frontend/metrics.png)
@@ -133,11 +134,26 @@ Sort by any column to identify resource-intensive services.
 
 ---
 
+## Plex cloud status
+
+Enable **Plex Cloud Status** from **Metrics → Settings** or open the Plex service page and choose **Plex Status**. After it is enabled, the Metrics page shows Plex's overall public status, the latest collection time, affected components, active incidents, scheduled maintenance, and links to the official status entry.
+
+The existing Metrics alert banner adds a Plex cloud alert when the enabled feed reports a disruption. A temporary refresh failure shows the last successful sample as **Stale** instead of replacing it with a false operational state.
+
+This panel is deliberately separate from the local Plex service indicator:
+
+- **Plex service status** tells you whether the DUMB-managed Plex process is running and healthy.
+- **Plex Cloud Status** summarizes infrastructure operated by Plex.
+
+An operational cloud status does not prove that local playback, remote access, DNS, routing, or port forwarding is working. The metric is disabled by default and sends no Plex token or local library/service data.
+
+---
+
 ## Database health
 
 Only services explicitly opted into Database Health monitoring appear in the **Database Health** table on the Metrics page. Supported services with monitoring disabled remain available in **Metrics → Settings** and the service page's **Database Health** panel so they can be enabled, but they are omitted from the results table. When no services are monitored, the section shows a concise empty state with a **Configure** action instead of disabled service rows.
 
-The Database Health section appears immediately above **System** at the bottom of the live Metrics content. Click or keyboard-activate any service row to expand or collapse its full details. Expanded details match the service-page panel and include the recommendation, score reasons, database paths/names, provider metadata, filesystem capacity, inode pressure, read-only/network state, probe results, and observed log signals. Column headers, settings, status badges, and detail fields include tooltips, and the section links directly to the Database Health documentation.
+The Database Health section appears near the bottom of the live Metrics content. When Plex Cloud Status is enabled, its card follows Database Health; **System** remains last. Click or keyboard-activate any service row to expand or collapse its full details. Expanded details match the service-page panel and include the recommendation, score reasons, database paths/names, provider metadata, filesystem capacity, inode pressure, read-only/network state, probe results, and observed log signals. Column headers, settings, status badges, and detail fields include tooltips, and the section links directly to the Database Health documentation.
 
 The table shows:
 

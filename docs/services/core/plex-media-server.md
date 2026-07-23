@@ -81,6 +81,14 @@ icon: lucide/tv
 
 ## Setup & Behavior
 
+### Optional Plex Cloud Status
+
+The Plex service page includes a capability-gated **Plex Status** panel on current DUMB/dmbdb versions. It can enable a cached metric sourced from [Plex's official status page](https://status.plex.tv/), choose a 60-3600 second polling interval, refresh the sample, and show affected components, incidents, or scheduled maintenance without leaving dmbdb.
+
+This option is disabled by default and lives under `dumb.metrics.plex_status`; it is not a Plex process setting. DUMB makes the public request without a Plex token or local server data. Treat it as cloud-service context only: the local Plex process can be healthy during a Plex cloud incident, and Plex can report all systems operational while a local DUMB, network, remote-access, or playback problem remains.
+
+See [Metrics Collection](../../features/metrics.md#plex-cloud-status) for configuration and failure behavior.
+
 ### Requirements
 
 Plex must have access to:
