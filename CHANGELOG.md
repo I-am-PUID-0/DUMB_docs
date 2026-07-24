@@ -1,6 +1,14 @@
 # Changelog
 
 
+## [1.22.18](https://github.com/I-am-PUID-0/DUMB_docs/compare/1.22.17...1.22.18) (2026-07-24)
+
+
+### 📖 Documentation
+
+* **ai:** document Gemini profiles and model lifecycle safeguards ([148de54](https://github.com/I-am-PUID-0/DUMB_docs/commit/148de5442daab85dac31baf5dce031c006be2945))
+* **mediastorm:** document generated bootstrap credentials ([968a098](https://github.com/I-am-PUID-0/DUMB_docs/commit/968a098a4398431f6e575e4ccf4236688200a11f))
+
 ## [1.22.17](https://github.com/I-am-PUID-0/DUMB_docs/compare/1.22.16...1.22.17) (2026-07-23)
 
 
