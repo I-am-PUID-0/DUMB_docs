@@ -47,6 +47,21 @@ Action buttons:
 
 ---
 
+## MediaStorm first-login credential
+
+On a new MediaStorm installation, MediaStorm generates a one-time password for username `admin`.
+When the backend advertises `mediastorm_initial_admin_password`, the MediaStorm service page shows
+a prominent credential notice with masked reveal and copy controls. The password is fetched only
+through the DUMB process API under the same authentication policy as other process endpoints, is
+not stored in browser preferences, and is refreshed while the notice is visible.
+
+Change the password under **Admin UI → Accounts → Change Password**. MediaStorm then removes
+`/data/mediastorm/cache/initial_admin_password.txt`; the next frontend refresh detects that removal,
+clears the password from page state, and hides the notice. Some MediaStorm builds use the
+extensionless compatibility filename `initial_admin_password`, which DUMB also recognizes.
+
+---
+
 ## Database Migration panel
 
 On Sonarr, Radarr, Lidarr, Prowlarr, Whisparr, Bazarr, Pulsarr, Seerr, and AltMount service pages, **Database Migration** opens a guided SQLite-to-PostgreSQL workflow when the backend advertises `postgres_migration` and includes the service in `postgres_migration_service_keys`. Older backends retain the legacy Sonarr/Radarr capability path.

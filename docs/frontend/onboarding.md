@@ -140,7 +140,7 @@ Optional services are filtered based on core dependencies and earlier selections
 
 !!! warning "MediaStorm first login"
 
-    When MediaStorm is selected, its initial admin username and password are both `admin`. The Optional Services step displays this reminder. Change the public default password immediately after first login and before exposing MediaStorm outside your trusted network.
+    MediaStorm keeps the initial username `admin` but generates a unique bootstrap password on first start. The Optional Services step directs you to the MediaStorm service page, where DUMB shows the password while `/data/mediastorm/cache/initial_admin_password.txt` exists. Change it immediately after first login and before exposing MediaStorm outside your trusted network; MediaStorm removes the file and DUMB hides the notice after the password changes.
 
 MediaStorm's service-options step also allows its OCI runtime to follow `latest` or be pinned to a release tag, full commit SHA, or OCI digest. Leave release pinning disabled for normal automatic updates. See the [MediaStorm version-selection guide](../services/optional/mediastorm.md#version-selection) before selecting a fixed build.
 

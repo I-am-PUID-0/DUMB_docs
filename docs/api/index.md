@@ -100,6 +100,7 @@ The API is enabled and configured using the `dumb_config.json` under the `dumb.a
 | POST   | `/process/stop-service`   | Stop a specific service                    |
 | POST   | `/process/restart-service`| Restart a specific service                 |
 | GET    | `/process/service-status` | Get the current status of a service        |
+| GET    | `/process/mediastorm-initial-admin-password` | Read MediaStorm's one-time first-login credential while available |
 | POST   | `/process/start-core-service` | Start core services + dependencies     |
 | GET    | `/process/capabilities`   | Get backend feature flags                  |
 | GET    | `/process/postgres-migration/preflight` | Check supported service migration readiness |
