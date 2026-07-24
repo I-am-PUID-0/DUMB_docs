@@ -13,11 +13,13 @@ The backend makes provider requests from inside the DUMB container. Use provider
 
 Returns the active AI settings without exposing the stored API key.
 
-Response includes `api_key_configured: true` when a key is stored.
+Response includes `api_key_configured: true` when the active key is stored. It also includes `active_profile_id` and a `profiles` array. Each public profile contains provider metadata and `api_key_configured`, but never the stored `api_key`.
 
 ## `PUT /ai/settings`
 
 Updates the `dumb.ai` settings block. Omit `api_key` to keep the existing stored key.
+
+When `active_profile_id` identifies a saved profile, that profile is authoritative when settings are loaded, and changes to provider, base URL, model, API key, timeout, or temperature are synchronized back into it when settings are saved. Send `active_profile_id` as an empty string to save the top-level provider fields as an unsaved provider without modifying any saved profile.
 
 Example payload:
 
@@ -39,12 +41,12 @@ Settings fields:
 | Field | Description |
 | --- | --- |
 | `enabled` | Allows non-dry-run provider calls. Dry-run previews work even when this is false. |
-| `provider` | `ollama`, `open_webui`, `openai`, `openai_compatible`, `compatible`, `litellm`, `anthropic`, or `claude`. |
-| `base_url` | Provider endpoint reachable from the DUMB backend container. |
+| `provider` | `ollama`, `gemini` (or `google_gemini`), `open_webui`, `openai`, `openai_compatible`, `compatible`, `litellm`, `anthropic`, or `claude`. |
+| `base_url` | Provider endpoint reachable from the DUMB backend container. For native Gemini, OpenAI, and Anthropic, DUMB ignores custom values and uses the corresponding official endpoint. |
 | `model` | Provider model name. |
-| `api_key` | Optional for local providers; required for hosted OpenAI/Anthropic modes. Omit to preserve a stored key. |
+| `api_key` | Optional for local providers; required for Gemini and hosted OpenAI/Anthropic modes. Omit to preserve a stored key. |
 | `timeout_sec` | Provider request timeout, clamped by the backend. |
-| `temperature` | Provider temperature setting. |
+| `temperature` | Provider temperature setting where supported. Native Gemini, OpenAI Responses, and Anthropic adapters leave sampling at the model default for compatibility with current models. |
 | `max_log_chars` | Default maximum recent log characters included in diagnostic bundles. |
 | `include_logs` | Default for including redacted service logs. |
 | `include_service_config` | Default for including redacted service config. |
@@ -59,6 +61,41 @@ Settings fields:
 | `include_metrics` | Includes current-versus-baseline process metrics when history is available. |
 | `include_change_history` | Includes redacted configuration changes saved through DUMB. |
 | `include_native_diagnostics` | Includes allowlisted read-only native service telemetry where supported. |
+
+## Provider Profile Endpoints
+
+Provider profiles store multiple named AI providers while preserving the existing top-level active-provider fields for backward compatibility. A maximum of 20 profiles can be saved.
+
+Frontend clients should gate this UI with process capability `ai_provider_profiles`.
+
+### `POST /ai/profiles`
+
+Creates a new profile when `id` is omitted, or updates an existing profile when its `id` is supplied. The saved profile becomes active.
+
+```json
+{
+  "name": "Free Gemini",
+  "provider": "gemini",
+  "model": "gemini-3.5-flash-lite",
+  "api_key": "YOUR_GEMINI_API_KEY",
+  "timeout_sec": 60,
+  "temperature": 0.2
+}
+```
+
+Profile names must be unique and no longer than 80 characters. Omit `api_key`, or send it blank, to preserve an existing profile key during an update. Native Gemini, OpenAI, and Anthropic profiles always store and use DUMB's managed official endpoints; use the `litellm` or `openai_compatible` provider for gateway URLs.
+
+The response is the complete public AI settings object with keys removed and `api_key_configured` flags added.
+
+### `POST /ai/profiles/{profile_id}/activate`
+
+Activates a saved profile and mirrors its provider-specific values into the top-level active AI settings used by tests, diagnostics, and follow-ups.
+
+### `DELETE /ai/profiles/{profile_id}`
+
+Deletes a saved profile. If the deleted profile was active, DUMB activates the first remaining profile. If none remain, it clears the active profile and restores the default Ollama provider fields.
+
+Profile operations follow the normal DUMB API authentication policy and are recorded in the redacted AI configuration-change ledger.
 
 ## `GET /ai/presets`
 
@@ -100,8 +137,10 @@ Supported discovery modes:
 | Provider | Endpoint called from the DUMB backend |
 | --- | --- |
 | `ollama` | `{base_url}/api/tags` |
+| `gemini` / `google_gemini` | Official Google Gemini `/models?pageSize=1000`, filtered to `generateContent` models |
+| `anthropic` / `claude` | Managed official `https://api.anthropic.com/v1/models?limit=1000` endpoint |
 | `open_webui` | `{base_url}/api/models` |
-| `openai` | `https://api.openai.com/v1/models` unless a custom base URL is provided |
+| `openai` | Managed official `https://api.openai.com/v1/models` endpoint |
 | `litellm` | `{base_url}/models` |
 | `openai_compatible` / `compatible` | `{base_url}/models` |
 
@@ -129,6 +168,40 @@ Example response:
   ]
 }
 ```
+
+Native Gemini, OpenAI, and Anthropic model entries can include a `lifecycle` object when the model appears in that provider's published retirement schedule:
+
+```json
+{
+  "name": "gemini-2.0-flash-lite",
+  "source": "external",
+  "source_detail": "google",
+  "lifecycle": {
+    "model": "gemini-2.0-flash-lite",
+    "status": "retired",
+    "shutdown_date": "2026-06-01",
+    "replacement": "gemini-3.1-flash-lite",
+    "source_url": "https://ai.google.dev/gemini-api/docs/deprecations"
+  }
+}
+```
+
+`status` is `deprecated` before the published shutdown date and `retired` on or after that date. DUMB preserves lifecycle-marked entries in discovery results because providers can continue returning shut-down IDs, but calls using a known retired model are rejected with HTTP 400 and replacement guidance before contacting the provider. DUMB's weekly `AI model lifecycle` workflow compares the maintained catalog with the official Google, OpenAI, and Anthropic tables.
+
+Native provider model entries can also include:
+
+```json
+{
+  "compatibility": {
+    "model": "text-embedding-3-small",
+    "status": "unsupported",
+    "api_surface": "responses",
+    "reason": "This is an embedding or moderation model. DUMB AI Assist requires a model that returns diagnostic text."
+  }
+}
+```
+
+The frontend marks incompatible entries and disables provider tests/analysis for them. Native OpenAI text and Codex requests use `POST https://api.openai.com/v1/responses`; Open WebUI, LiteLLM, and generic OpenAI-compatible providers retain `/chat/completions`.
 
 ## `POST /ai/diagnose`
 
@@ -244,6 +317,10 @@ Stack bundles include:
 When `dry_run` is false, DUMB compacts stack bundles before sending them to the provider. The API response still includes the full built bundle, but the provider prompt uses shortened docs excerpts, targeted log snippets, capped graph nodes/edges, and omits full service configs with a note. This avoids common context-length failures with local models.
 
 Provider responses include a `usage` object when the provider reports token or evaluation counts. OpenAI-compatible providers usually return `prompt_tokens`, `completion_tokens`, and `total_tokens`. Ollama native responses return `prompt_eval_count` and `eval_count`; DUMB maps those to prompt/completion/total token fields and preserves timing fields such as `total_duration`.
+
+Native OpenAI Responses usage (`input_tokens`, `output_tokens`, and `total_tokens`) is mapped into the same common fields. DUMB sends `store: false` and converts system messages to Responses API developer messages.
+
+Gemini native responses expose `usageMetadata`. DUMB maps `promptTokenCount`, `candidatesTokenCount`, and `totalTokenCount` to the common prompt/completion/total fields and preserves cached/thought-token counts when Google returns them. Gemini requests use `POST https://generativelanguage.googleapis.com/v1beta/models/{model}:generateContent` with the API key in the `x-goog-api-key` header.
 
 ### Deterministic Finalizers
 

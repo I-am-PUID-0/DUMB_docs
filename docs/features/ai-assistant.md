@@ -16,11 +16,12 @@ The assistant is disabled by default. You can still use **Preview bundle** witho
 1. Open any service page in the DUMB frontend.
 2. Select the **AI Assist** tab.
 3. Choose a provider and model.
-4. For Ollama or OpenAI-compatible providers, use **Load models** if you want DUMB to ask the provider for available model names.
+4. For Anthropic, Gemini, Ollama, OpenAI, or OpenAI-compatible providers, use **Load models** if you want DUMB to ask the provider for available model names.
 5. Use **Test provider** to confirm the base URL, model, and API key work.
-6. Use **Preview bundle** before enabling provider calls.
-7. Confirm the redacted bundle only includes context you are comfortable sharing.
-8. Enable **Provider calls**, save settings, then use **Analyze**.
+6. Enter a profile name and choose **Save profile** if you want to retain this provider alongside other local or cloud providers.
+7. Use **Preview bundle** before enabling provider calls.
+8. Confirm the redacted bundle only includes context you are comfortable sharing.
+9. Enable **Provider calls**, save settings, then use **Analyze**.
 
 !!! tip "Start local first"
     A local Ollama or OpenAI-compatible endpoint is the safest first test because logs and config context stay on your own machine or LAN.
@@ -114,11 +115,33 @@ Supported provider modes:
 | Provider | Use case | Notes |
 | --- | --- | --- |
 | Local Ollama | Private local diagnostics | Calls `/api/chat`. The base URL must be reachable from the DUMB backend container. |
+| Google Gemini | Hosted Gemini Developer API models | Calls Google's native `generateContent` API and model-list endpoint through a DUMB-managed official endpoint; requires a Gemini API key. Limited free-tier access is available for eligible models and regions. |
 | Open WebUI | Use models exposed through Open WebUI | Calls Open WebUI's `/api/chat/completions` and `/api/models`; requires an Open WebUI API key. |
-| OpenAI | Hosted OpenAI models | Uses `/v1/chat/completions`; requires an API key. |
+| OpenAI | Hosted OpenAI models | Uses DUMB's managed official OpenAI endpoint and the Responses API for text/Codex models; requires an API key. |
 | OpenAI-compatible | Local or hosted compatible APIs | Set the base URL to the provider root, such as `http://localhost:1234/v1`. |
 | LiteLLM | LiteLLM proxy/gateway deployments | Uses OpenAI-compatible `/chat/completions` and `/models`; set the base URL to the LiteLLM `/v1` root, such as `http://litellm:4000/v1`. |
-| Anthropic / Claude | Hosted Claude models | Uses `/v1/messages`; requires an API key. |
+| Anthropic / Claude | Hosted Claude models | Uses DUMB's managed official Anthropic `/v1/messages` endpoint and `/v1/models` discovery; requires an API key. |
+
+### Saved Provider Profiles
+
+AI Assist can save up to 20 named provider profiles. Each profile retains:
+
+- Provider type
+- Base URL, except for native Gemini, OpenAI, and Anthropic where DUMB manages the official endpoint
+- Model
+- API key
+- Request timeout
+- Temperature, where supported
+
+Use **Saved provider** to activate a profile. Activation happens in the DUMB backend, reloads that profile's provider details into the form, and immediately updates both service-page AI Assist and Stack AI Assist. On every settings load, the active saved profile is authoritative over the backward-compatible top-level provider fields, preventing stale provider/model values from appearing beside a different selected profile. Selecting the already-active profile also reloads its stored values, which discards any unsaved form changes.
+
+Changing a selected profile's name, endpoint, model, key, timeout, or temperature changes the **Saved provider** selector to **Unsaved provider** and shows which profile has unsaved changes. Choose **Update profile** to write those changes back to the original profile. Changing the provider type detaches it as a new provider instead, clears the old profile name/key state, and uses **Save profile** to create it.
+
+Use **New** to explicitly start an unsaved profile from the values currently visible in the form, **Save profile** to create it, **Update profile** to update the profile being edited, and **Delete** to remove the currently selected saved profile. Saving general AI settings while the selector shows **Unsaved provider** preserves the saved profiles without overwriting them.
+
+Provider-call enablement and evidence settings remain global. They are not duplicated per profile, so switching from a local Ollama profile to Gemini does not silently change which logs, configs, metrics, or docs are included.
+
+Stored profile API keys are never returned by the AI settings API. The frontend receives only `api_key_configured`, and leaving the key field blank while saving preserves the existing stored key.
 
 ### Container Reachability
 
@@ -126,6 +149,8 @@ The AI request is made by the DUMB backend, not by your browser. That means:
 
 - `http://127.0.0.1:11434` points to the DUMB container itself.
 - If Ollama runs as another container on the same Docker network, use that container name, for example `http://ollama:11434`.
+- For Gemini, DUMB always uses the official `https://generativelanguage.googleapis.com/v1beta` endpoint and does not expose it as an editable field. DUMB sends the key in the `x-goog-api-key` header rather than the URL.
+- Native OpenAI and Anthropic also use managed official endpoints. Native OpenAI requests use `/v1/responses`; LiteLLM, Open WebUI, and generic OpenAI-compatible gateways continue using their Chat Completions compatibility routes. To route either model family through a gateway, select **LiteLLM** or **OpenAI-compatible** instead.
 - If the provider runs on the Docker host, use a host-reachable address from inside the DUMB container.
 - For Open WebUI, set provider to **Open WebUI**, set the base URL to the Open WebUI root reachable from DUMB, for example `http://open-webui:3000`, and paste an Open WebUI API key.
 - For LiteLLM, choose **LiteLLM** or **OpenAI-compatible**, set the base URL to the `/v1` root, and use the LiteLLM model alias from your proxy config.
@@ -133,19 +158,38 @@ The AI request is made by the DUMB backend, not by your browser. That means:
 
 ### Testing and Model Discovery
 
-Use **Test provider** after entering the provider, base URL, model, and API key. This sends a short connectivity prompt only. It does not include service logs, service config, dependency graph data, or your diagnostic question.
+Use **Test provider** after entering the provider, model, API key, and a base URL when that provider exposes one. This sends a short connectivity prompt only. It does not include service logs, service config, dependency graph data, or your diagnostic question.
 
-When the provider reports usage, DUMB shows token counts with the provider test and analysis result. OpenAI-compatible providers usually report prompt, completion, and total tokens. Ollama reports prompt/eval counts and timing data; DUMB maps those into the same display where possible. Some providers or proxy layers may not return usage.
+When the provider reports usage, DUMB shows token counts with the provider test and analysis result. Gemini reports prompt, candidate, thought, and total token counts; DUMB maps prompt/candidate/total into the common display and preserves thought-token usage. OpenAI-compatible providers usually report prompt, completion, and total tokens. Ollama reports prompt/eval counts and timing data; DUMB maps those into the same display where possible. Some providers or proxy layers may not return usage.
 
 Use **Load models** to populate the model picker from providers that expose a simple model-list endpoint:
 
 - Ollama: DUMB calls `{base_url}/api/tags`.
+- Gemini: DUMB calls the managed Google endpoint's `/models` route, filters for models that support `generateContent`, and removes the `models/` resource prefix before displaying names.
+- Anthropic: DUMB calls the managed official `/v1/models?limit=1000` endpoint.
 - Open WebUI: DUMB calls `{base_url}/api/models`.
-- LiteLLM, OpenAI, and OpenAI-compatible providers: DUMB calls `{base_url}/models`.
+- LiteLLM and OpenAI-compatible providers: DUMB calls `{base_url}/models`.
+- OpenAI: DUMB calls the managed official OpenAI `/v1/models` endpoint.
 
 When Open WebUI returns model metadata, DUMB labels discovered models as local, external, or unknown in the picker. This is best-effort because Open WebUI model metadata can differ by version and connection type.
 
-Anthropic/Claude model discovery is not currently exposed by this DUMB UI; enter the model name manually.
+Providers can continue returning model IDs that are retired, scheduled for retirement, or unsuitable for DUMB's text-diagnostics request path. DUMB keeps those entries visible so existing profiles remain understandable, but marks known retired models, scheduled shutdown dates, and unsupported non-text/specialized models. **Test provider** and **Analyze** are disabled for retired or incompatible selections, and the backend rejects those requests with replacement or compatibility guidance before contacting the provider.
+
+The maintained catalog follows [Google's Gemini schedule](https://ai.google.dev/gemini-api/docs/deprecations), [OpenAI's deprecation schedule](https://developers.openai.com/api/docs/deprecations), and [Anthropic's model retirement schedule](https://platform.claude.com/docs/en/about-claude/model-deprecations). A weekly repository workflow compares the catalog with those official tables and fails when a supported text model is added or its date/replacement changes. Runtime model refresh still asks the configured provider every time; it is not a cached DUMB list.
+
+Gemini model discovery remains the preferred way to choose a model because free-tier eligibility and model availability can differ by project, region, and current Google policy, but appearing in a provider response alone does not prove the model can accept DUMB's request type. Native OpenAI text and Codex models use the Responses API. Embedding, moderation, image/video, audio/realtime, and specialized tool-only OpenAI entries are marked unsupported for AI Assist rather than being sent to an incompatible endpoint.
+
+### Gemini Free-Tier Setup
+
+1. Create a Gemini API key in [Google AI Studio](https://aistudio.google.com/app/apikey).
+2. Restrict the key to Gemini API use and do not put it in logs, screenshots, or tracked config examples.
+3. Select **Google Gemini** in AI Assist. DUMB manages the official Google API endpoint and starts with `gemini-3.5-flash-lite`.
+4. Enter the key, select **Load models**, and choose a `generateContent` model actually returned for your project.
+5. Use **Test provider**, then **Preview bundle**, before enabling provider calls.
+
+The [Gemini API pricing page](https://ai.google.dev/gemini-api/docs/pricing) describes the current free and paid tiers. Free access is limited to certain models and changing quotas; active limits are shown in Google AI Studio. The free tier does not require DUMB-specific billing, but availability depends on Google's region and account rules. Google states that free-tier content may be used to improve its products, while paid-tier content is not used for that purpose. Treat any cloud-provider diagnostic request as a data disclosure even after DUMB redaction.
+
+If Google returns `429` with a quota `limit: 0`, first check whether the selected model is marked retired. That response can mean the endpoint was shut down rather than that recent requests consumed an allowance.
 
 ### Testing Context Quality
 
@@ -175,11 +219,17 @@ Small local models may still lean on generic training data. To keep important an
 | **Include dependency graph** | Adds backend-resolved dependency context, including missing or stopped upstream services. |
 | **Include docs context** | Adds selected DUMB_docs snippets that match the service, question, status, and logs. |
 | **Include compact process list** | Adds a compact status list for other services. Use it for stack-wide startup issues, but disable it if you only want single-service context. |
-| **Base URL** | Provider endpoint reachable from the DUMB backend container. |
+| **Base URL** | Provider endpoint reachable from the DUMB backend container. Native Gemini, OpenAI, and Anthropic manage this automatically and hide the editable field. |
 | **Model** | Model name sent to the provider. |
-| **Load models** | Fetches available model names from Ollama or OpenAI-compatible providers. |
+| **Load models** | Fetches current model names from Anthropic, Gemini, Ollama, OpenAI, or OpenAI-compatible providers and annotates known lifecycle/compatibility issues. |
 | **Test provider** | Sends a short connectivity prompt using the current provider settings. |
 | **API key** | Stored in DUMB config. Leave blank when saving to keep an existing stored key unchanged. |
+| **Saved provider** | Activates a previously saved provider profile across service and stack AI Assist. |
+| **Profile name** | Human-readable unique name for a saved provider configuration. |
+| **New** | Starts an unsaved provider profile using the current visible provider values. |
+| **Save profile** | Creates or updates the selected profile and makes it active. |
+| **Update profile** | Writes unsaved edits back to the saved profile that populated the form and makes it active again. |
+| **Delete** | Removes the selected profile. If it was active, DUMB activates the first remaining profile or returns to the default Ollama settings. |
 | **Log characters** | Maximum recent log characters included in the diagnostic bundle. |
 | **Deep-scan budget** | Maximum retained-log data read across current and rotated files. This bounds work; it does not reserve storage. |
 | **Current window** | Period analyzed, from one hour through 30 days. Actual coverage depends on retained logs and Metrics history. |
@@ -223,6 +273,8 @@ Settings are stored under `dumb.ai` in `dumb_config.json`:
   "base_url": "http://127.0.0.1:11434",
   "model": "",
   "api_key": "",
+  "active_profile_id": "",
+  "profiles": [],
   "timeout_sec": 60,
   "temperature": 0.2,
   "max_log_chars": 20000,
@@ -268,13 +320,26 @@ OpenAI:
 }
 ```
 
+Google Gemini free-tier starting point:
+
+```json
+{
+  "enabled": true,
+  "provider": "gemini",
+  "model": "gemini-3.5-flash-lite",
+  "api_key": "YOUR_GEMINI_API_KEY"
+}
+```
+
+Use **Load models** instead of assuming that this example model remains available to every project.
+
 Anthropic / Claude:
 
 ```json
 {
   "enabled": true,
   "provider": "anthropic",
-  "model": "claude-3-5-sonnet-latest",
+  "model": "claude-sonnet-4-6",
   "api_key": "YOUR_ANTHROPIC_API_KEY"
 }
 ```
@@ -315,7 +380,7 @@ Open WebUI:
 
 ## Privacy Notes
 
-AI diagnostics are most useful when logs and config context are included, but those can contain deployment-specific details. Keep provider calls disabled if you only want local preview, use a local model for private analysis, and avoid enabling the compact process list unless the wider stack context is needed.
+AI diagnostics are most useful when logs and config context are included, but those can contain deployment-specific details. Keep provider calls disabled if you only want local preview, use a local model for private analysis, and avoid enabling the compact process list unless the wider stack context is needed. Google states that Gemini free-tier content may be used to improve its products, so do not treat free-tier Gemini as equivalent to a local/private provider.
 
 The assistant suggests next steps only. It does not apply configuration changes, restart services, or modify files.
 

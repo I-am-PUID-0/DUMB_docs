@@ -264,6 +264,10 @@ The primary workflow is:
 
 Provider and evidence settings are collapsed by default so routine diagnostics stay focused on the question and measured result. Reports render sanitized Markdown with working tables and include copy/download controls. The raw redacted bundle remains available in an expandable section.
 
+Provider settings support named saved profiles. Selecting a profile activates it in the backend for both this service page and Stack AI Assist and always repopulates its stored details. Editing those details changes the selector to **Unsaved provider** until the profile is updated; changing the provider type starts a new unsaved provider instead of silently rewriting the prior profile. Provider keys remain stored server-side and are represented in the UI only by a configured-key indicator. Native Gemini, OpenAI, and Anthropic profiles show a managed endpoint instead of an editable Base URL; gateway profiles continue to expose their URL.
+
+Model discovery retains provider-returned entries but labels known retirements, scheduled shutdown dates, and models incompatible with DUMB's text-diagnostics request. The metadata follows the official Google, OpenAI, and Anthropic lifecycle tables. Retired or incompatible models cannot be tested or used for analysis. Native OpenAI text/Codex models use the Responses API, while embeddings, moderation, media, realtime, and specialized tool-only entries are marked unsupported.
+
 Deep log scans are performed by the backend against retained files and are not limited by the frontend log table's displayed row count. The configured MiB budget bounds each scan.
 
 See [AI Assistant](../features/ai-assistant.md) for evidence sources, provider configuration, privacy, and safety boundaries.
