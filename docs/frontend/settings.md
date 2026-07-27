@@ -114,6 +114,12 @@ Saved destination URLs and webhook headers are not returned to the browser. The 
 
 Each event-routing choice shows its runtime severity, trigger, and prerequisites. The section warns when the selected minimum severity filters otherwise-selected events; the default **Warning** minimum excludes normal `Success` events such as a successful Auto-restart. A service-down guidance callout distinguishes unexpected exits from the dashboard's ordinary `Stopped` display and links directly to Auto-restart configuration. Setup/build helper subprocesses are not treated as managed-service exits. Update-available notices are emitted only when a service first enters that state or its available version changes. **Save & test** explains that its one-time test bypasses enable switches and routing filters, while normal manual messages still skip disabled destinations.
 
+On lifecycle-capable backends, the app displays the current startup phase until
+the stack is ready. Transient automatic health/database/resource events and
+Auto-restart are paused during startup; monitoring establishes a fresh
+baseline afterward, and a degraded startup is reported once as a consolidated
+result.
+
 The setup screen also explains that Apprise is an embedded DUMB library, not a third-party relay: normal provider URLs are delivered directly from the DUMB container. It identifies `apprise://` and `apprises://` as the explicit Apprise API-server exception and links the official Apprise URL Builder beside the destination controls.
 
 See [Notifications](../features/notifications.md) for provider setup, event behavior, payloads, security guidance, and troubleshooting.

@@ -19,6 +19,8 @@ The auto-restart system provides:
 - **Exponential backoff** - Increasing delays between restart attempts
 - **Restart limits** - Prevent infinite restart loops
 - **Grace periods** - Allow services time to initialize
+- **Startup lifecycle gating** - Do not restart services while the stack is still assembling
+- **Verified recovery** - Count success only after the restarted service is healthy
 
 ![Auto-restart status](../assets/images/features/auto_restart.png){ .shadow }
 ![Auto-restart indicators](../assets/images/features/auto_restart_indicators.png){ .shadow }
@@ -49,11 +51,13 @@ flowchart TD
     G ==> B
 ```
 
-1. **Health check** - Service is periodically checked for responsiveness
-2. **Unhealthy detection** - Multiple consecutive failures trigger action
-3. **Restart attempt** - Service is stopped and restarted
-4. **Grace period** - Wait for service to initialize
-5. **Repeat** - Continue monitoring after restart
+1. **Startup gate** - Monitoring waits until DUMB startup is `ready` or `degraded`
+2. **Grace period** - Each service receives its configured post-start grace
+3. **Health check** - Service is periodically checked for responsiveness
+4. **Unhealthy detection** - Multiple consecutive failures trigger action
+5. **Restart attempt** - Service is stopped and restarted
+6. **Recovery verification** - Success is recorded only after health checks pass
+7. **Repeat** - Continue monitoring after restart
 
 ---
 
@@ -88,7 +92,7 @@ Auto-restart is configured globally in `dumb.auto_restart`:
 | `max_restarts` | `3` | Maximum restarts within the window |
 | `window_seconds` | `300` | Time window in seconds |
 | `backoff_seconds` | `[5, 15, 45, 120]` | Backoff delays between restarts |
-| `grace_period_seconds` | `30` | Seconds to wait after restart before health checks |
+| `grace_period_seconds` | `30` | Seconds to wait after stack readiness or a later service launch before health checks |
 | `services` | `[]` | Limit auto-restart to these process names |
 
 ---
@@ -154,6 +158,12 @@ or override selected policy fields:
 An empty `services` list monitors no services even when the global `enabled`
 flag is true. Use exact process names from `GET /process/processes` or select
 services in the frontend panel.
+
+Slow applications can use a longer service override without delaying checks
+for the rest of the stack. A 300-second override is a reasonable starting point
+for a Seerr instance that performs migrations or a first-run frontend build.
+The stack-wide readiness deadline is configured separately under
+`dumb.startup`; see [Startup lifecycle](startup-lifecycle.md).
 
 ---
 

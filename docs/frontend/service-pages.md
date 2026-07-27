@@ -154,7 +154,7 @@ Configure the global auto-restart behavior:
 | **Enabled** | Auto-restart failed services |
 | **Max Restarts** | Maximum restart attempts |
 | **Cooldown** | Time between restart attempts |
-| **Grace Period** | Wait time before health checks |
+| **Grace Period** | Wait time after stack readiness or a later service launch before health checks |
 
 The auto-restart modal includes a contextual **Why this matters** callout linking to this section.
 
@@ -167,6 +167,10 @@ Service pages can also override auto-restart settings per service:
 - Enable/disable auto-restart for the current service
 - Override defaults (intervals, thresholds, backoff)
 - Apply in memory or save to file
+
+The backend pauses Auto-restart during stack startup. A restart attempt is
+shown as successful only after the service passes its health checks; slow
+services can use a longer per-service grace override.
 
 ---
 

@@ -21,6 +21,7 @@ Notifications are disabled by default.
 - Per-event cooldown suppression
 - Recovery notifications when monitored pressure clears
 - Manual messages and destination tests from **Settings → Notifications**
+- Startup-aware baselining that avoids transient failure/recovery noise
 - Redacted API responses and logs for destination URLs and request headers
 
 ## Configure a destination
@@ -94,8 +95,9 @@ TLS certificate verification is enabled by default. Disable it only for a delibe
 
 | Event | Severity | Trigger and prerequisites |
 |-------|----------|---------------------------|
-| Degraded DUMB startup | Critical | Startup completes with one or more failed service preinstalls while the API and frontend remain available |
-| Service preinstall failure | Critical | One service fails its preinstall phase |
+| DUMB startup ready | Success | Every enabled service passes readiness for the configured stabilization window |
+| Degraded DUMB startup | Critical | The startup readiness deadline expires with one or more services unavailable while the API and frontend remain available |
+| Service preinstall failure | Critical | Supported for direct lifecycle events, but transient automatic startup events are consolidated during container startup |
 | Service start failure | Critical | Setup fails, the process exits during startup, or DUMB otherwise cannot start it |
 | Service unhealthy | Critical | Requires [Auto-restart](auto-restart.md) health monitoring for the exact service; emitted after the configured consecutive unhealthy-check threshold |
 | Unexpected service stop | Critical | A managed process exits unexpectedly; emitted before any eligible restart is scheduled |
@@ -106,7 +108,7 @@ TLS certificate verification is enabled by default. Disable it only for a delibe
 
 !!! note "What counts as down"
 
-    Notifications do not poll the dashboard's displayed `Stopped` state as a generic down alarm. A deliberately disabled service or a service intentionally stopped by an operator is not a generic service-down event. Unexpected process exits notify immediately. Health-based unhealthy and restart events require Auto-restart to be enabled globally and for the exact service.
+    Notifications do not poll the dashboard's displayed `Stopped` state as a generic down alarm. A deliberately disabled service or a service intentionally stopped by an operator is not a generic service-down event. During container startup, transient lifecycle events are suppressed and represented by the final ready/degraded result. After startup, unexpected process exits notify immediately. Health-based unhealthy and restart events require Auto-restart to be enabled globally and for the exact service.
 
 ### Update events
 
@@ -132,6 +134,17 @@ TLS certificate verification is enabled by default. Disable it only for a delibe
 Persistent conditions must remain active for `duration_sec` before DUMB sends them. This prevents a short spike from producing a notification.
 
 Database events require Database Health collection to be enabled for the relevant service. Notification monitoring does not silently enable Database Health.
+
+### Startup baselining
+
+Automatic service, resource, database, and recovery events are paused while
+DUMB is `initializing`, `preinstalling`, `starting_services`, or `stabilizing`.
+Manual destination tests remain available. When startup becomes `ready` or
+`degraded`, DUMB records current conditions as a new baseline and starts their
+normal duration timers. It does not send a recovery for a startup-only failure
+that was never alerted.
+
+See [Startup lifecycle](startup-lifecycle.md).
 
 ## Severity and routing
 

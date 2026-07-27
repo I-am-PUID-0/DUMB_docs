@@ -155,6 +155,29 @@ Gets the current status of a process.
 
 ---
 
+### `GET /process/startup-status`
+
+Returns the readiness-aware container startup lifecycle when capability
+`startup_lifecycle` is true. The response includes phase/timestamps, expected
+service names, each service's `pending`, `starting`, or `ready` state, and
+terminal failure summaries.
+
+```json
+{
+  "phase": "stabilizing",
+  "terminal": false,
+  "expected_services": ["DUMB API", "DUMB Frontend", "NzbDAV"],
+  "services": {
+    "DUMB API": {"state": "ready", "reason": null},
+    "DUMB Frontend": {"state": "ready", "reason": null},
+    "NzbDAV": {"state": "starting", "reason": "Port 127.0.0.1:3000 not responding"}
+  },
+  "failures": {}
+}
+```
+
+---
+
 ## Updates and scheduling
 
 ### `GET /process/update-status`
@@ -695,7 +718,8 @@ Returns backend capabilities and feature flags. Used by the frontend to determin
   "metrics_filesystem_selection": true,
   "metrics_network_interface_selection": true,
   "mediastorm_initial_admin_password": true,
-  "notifications": true
+  "notifications": true,
+  "startup_lifecycle": true
 }
 ```
 
@@ -714,6 +738,7 @@ Returns backend capabilities and feature flags. Used by the frontend to determin
 | `commit_sha_pinning` | Whether exact GitHub commit SHA source pins are supported |
 | `seerr_sync` | Whether Seerr sync feature routes are available |
 | `auto_update_start_time` | Whether anchored auto-update start time is supported |
+| `startup_lifecycle` | Whether `GET /process/startup-status` exposes readiness-aware startup phases |
 | `symlink_repair` | Whether `/process/symlink-repair` is available |
 | `symlink_repair_async` | Whether `/process/symlink-repair-async` is available |
 | `symlink_manifest_backup` | Whether `/process/symlink-manifest/backup` is available |

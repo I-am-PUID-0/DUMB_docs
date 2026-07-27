@@ -96,6 +96,12 @@ Service lifecycle is centralized in the process handler, which:
   during longer service preparation
 - Records individual service preinstall failures without shutting down the
   control plane; failed services retry through their normal startup path
+- Preinstalls every enabled instance, serializing instances that share a
+  service key while retaining cross-service parallelism
+- Publishes lifecycle phases and waits for enabled-service readiness plus a
+  stabilization window before declaring startup ready
+- Holds Auto-restart and automatic notification/database probes behind that
+  lifecycle gate
 - Applies auto-update scheduling
 - Enforces shutdown ordering
 

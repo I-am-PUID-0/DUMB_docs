@@ -18,6 +18,7 @@ nav:
       - Usage: features/usage.md
       - Authentication: features/authentication.md
       - Auto-restart: features/auto-restart.md
+      - Startup lifecycle: features/startup-lifecycle.md
       - Auto-update: features/auto-update.md
       - PostgreSQL Migration: features/arr-postgres-migration.md
       - Symlink Operations: features/symlinks.md
