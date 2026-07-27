@@ -23,7 +23,7 @@ This tool is deliberately separate from `postgres_enabled`. Enabling PostgreSQL 
 | Seerr | `/seerr/config/db/db.sqlite3` | Per-instance database | Migration metadata is recreated by Seerr and is not copied |
 | AltMount | Configured `database.path` | `altmount` by default | AltMount supports both providers; DUMB validates the data-only conversion against AltMount's current schema |
 
-Services that use PostgreSQL only, such as MediaStorm, Riven Backend, Zilean, and Traefik Proxy Admin, do not have a SQLite source to migrate. Services without a confirmed PostgreSQL backend are not offered the tool.
+Services that use PostgreSQL only, such as mediastorm, Riven Backend, Zilean, and Traefik Proxy Admin, do not have a SQLite source to migrate. Services without a confirmed PostgreSQL backend are not offered the tool.
 
 ## What DUMB automates
 

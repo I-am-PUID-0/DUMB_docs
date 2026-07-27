@@ -24,7 +24,7 @@ A service is considered **dependent** if:
 | ------------------------------------------ | --------------------------------------------------- | ----------------------------------------- |
 | [CLI Battery](../dependent/cli-battery.md) | Standalone metadata and Trakt layer for stable/older CLI Debrid releases | CLI Debrid before the v0.7.29 in-process pre-release layout |
 | [Phalanx DB](../dependent/phalanx-db.md)   | Distributed metadata store for CLI Debrid           | CLI Debrid (optional but often used)      |
-| [PostgreSQL](../dependent/postgres.md)     | Shared database engine for required and optional service backends | Riven, Zilean, pgAdmin, TPA, MediaStorm, migrated services, optional Metrics history |
+| [PostgreSQL](../dependent/postgres.md)     | Shared database engine for required and optional service backends | Riven, Zilean, pgAdmin, TPA, mediastorm, migrated services, optional Metrics history |
 | [rclone](../dependent/rclone.md)           | Mounts Debrid/Usenet WebDAV storage                  | CLI Debrid, stable Riven, NzbDAV, Decypharr external-rclone mode |
 | [Zurg](../dependent/zurg.md)               | Debrid-backed WebDAV provider for use with rclone   | CLI Debrid, Riven            |
 

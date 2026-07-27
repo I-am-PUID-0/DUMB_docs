@@ -19,7 +19,7 @@ same persistence and path rules apply to both methods.
 
 ## Install from Community Applications
 
-1. Open **Apps**, search for `DUMB`, and select the Debrid Unlimited Media Bridge
+1. Open **Apps**, search for `DUMB`, and select the Distributed Unlimited Media Bridge
    template.
 2. Confirm the image is `iampuid0/dumb:latest` (or the release tag you intend to
    run).

@@ -133,16 +133,16 @@ Choose additional services to enable:
 | **Database/discovery** | PostgreSQL, pgAdmin, Zilean |
 | **Riven UI** | Riven Frontend |
 | **Media automation** | Tautulli, Bazarr, Pulsarr, Maintainerr |
-| **Streaming** | MediaStorm |
+| **Streaming** | mediastorm |
 | **Reverse proxy/exposure** | Traefik Proxy Admin, Cloudflared |
 
 Optional services are filtered based on core dependencies and earlier selections. For example, PostgreSQL may be enabled/hidden automatically when a selected service requires it.
 
-!!! warning "MediaStorm first login"
+!!! warning "mediastorm first login"
 
-    MediaStorm keeps the initial username `admin` but generates a unique bootstrap password on first start. The Optional Services step directs you to the MediaStorm service page, where DUMB shows the password while `/data/mediastorm/cache/initial_admin_password.txt` exists. Change it immediately after first login and before exposing MediaStorm outside your trusted network; MediaStorm removes the file and DUMB hides the notice after the password changes.
+    mediastorm keeps the initial username `admin` but generates a unique bootstrap password on first start. The Optional Services step directs you to the mediastorm service page, where DUMB shows the password while `/data/mediastorm/cache/initial_admin_password.txt` exists. Change it immediately after first login and before exposing mediastorm outside your trusted network; mediastorm removes the file and DUMB hides the notice after the password changes.
 
-MediaStorm's service-options step also allows its OCI runtime to follow `latest` or be pinned to a release tag, full commit SHA, or OCI digest. Leave release pinning disabled for normal automatic updates. See the [MediaStorm version-selection guide](../services/optional/mediastorm.md#version-selection) before selecting a fixed build.
+mediastorm's service-options step also allows its OCI runtime to follow `latest` or be pinned to a release tag, full commit SHA, or OCI digest. Leave release pinning disabled for normal automatic updates. See the [mediastorm version-selection guide](../services/optional/mediastorm.md#version-selection) before selecting a fixed build.
 
 For GitHub source-build services, the service-options step also exposes
 `commit_sha`. Paste the full 40-character SHA to select an immutable source

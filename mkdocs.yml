@@ -1,4 +1,4 @@
-site_name: Debrid Unlimited Media Bridge
+site_name: Distributed Unlimited Media Bridge
 site_description: DUMB Documentation
 site_author: DUMB Team
 site_url: "https://dumbarr.com/"
@@ -75,7 +75,7 @@ nav:
         - Bazarr: services/optional/bazarr.md
         - Pulsarr: services/optional/pulsarr.md
         - Maintainerr: services/optional/maintainerr.md
-        - MediaStorm: services/optional/mediastorm.md
+        - mediastorm: services/optional/mediastorm.md
         - Traefik Proxy Admin: services/optional/traefik-proxy-admin.md
         - Cloudflared: services/optional/cloudflared.md
         - Zilean: services/optional/zilean.md
@@ -132,7 +132,7 @@ nav:
 
 theme:
   name: material
-  logo: assets/images/DUMB.png
+  logo: assets/images/logo.png
   favicon: assets/images/favicon.ico
   icon:
     repo: fontawesome/brands/github

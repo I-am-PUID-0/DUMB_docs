@@ -252,7 +252,7 @@ DUMB prefers local Markdown from `DUMB_DOCS_PATH`, the Markdown-only snapshot bu
 
 If local docs are unavailable, DUMB falls back to matching public pages on `https://dumbarr.com`. The fallback extracts article content and removes navigation, scripts, page chrome, and whitespace-only lines before building excerpts. The raw response is processed in memory and is not cloned or cached to disk.
 
-The bundle also includes DUMB product facts. API clients can use dry-run responses to verify that `dumb_product.expansion` is `Debrid Unlimited Media Bridge` before sending a provider request.
+The bundle also includes DUMB product facts. API clients can use dry-run responses to verify that `dumb_product.expansion` is `Distributed Unlimited Media Bridge` before sending a provider request.
 
 Evidence-enabled service bundles may also include:
 
@@ -326,7 +326,7 @@ Gemini native responses expose `usageMetadata`. DUMB maps `promptTokenCount`, `c
 
 For selected stack questions, DUMB may post-process the provider response before returning `analysis`:
 
-- Product identity questions such as `What does DUMB stand for?` return the canonical product fact, `Debrid Unlimited Media Bridge`, even if the provider invents another acronym expansion.
+- Product identity questions such as `What does DUMB stand for?` return the canonical product fact, `Distributed Unlimited Media Bridge`, even if the provider invents another acronym expansion.
 - DUMB Usenet planning questions are grounded around Decypharr, NzbDAV, AltMount, Arr apps, Prowlarr, and rclone. If a provider recommends SABnzbd, NZBGet, or NZBHydra as the primary DUMB path, DUMB replaces that with the DUMB-native workflow answer.
 
 The original diagnostic bundle remains available in the response for review. Token `usage` still reflects the provider request when a provider call was made.

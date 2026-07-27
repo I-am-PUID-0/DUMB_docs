@@ -7,7 +7,7 @@ hide:
 
 ## Contributing to DUMB
 
-Thanks for helping improve **Debrid Unlimited Media Bridge (DUMB)**.
+Thanks for helping improve **Distributed Unlimited Media Bridge (DUMB)**.
 
 Code, docs, testing feedback, and issue triage are all valuable contributions.
 

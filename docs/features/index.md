@@ -7,7 +7,7 @@ icon: lucide/list
 
 ## What is DUMB?
 
-DUMB (Debrid Unlimited Media Bridge) is an all-in-one media management solution designed to streamline the process of **finding, downloading, organizing, and streaming media content**. It integrates multiple services into a **single Docker image**, providing automation and efficiency for managing media libraries.
+DUMB (Distributed Unlimited Media Bridge) is an all-in-one media management solution designed to streamline the process of **finding, downloading, organizing, and streaming media content**. It integrates multiple services into a **single Docker image**, providing automation and efficiency for managing media libraries.
 
 ### Key Features
 
@@ -18,7 +18,7 @@ DUMB (Debrid Unlimited Media Bridge) is an all-in-one media management solution 
 * **NeutArr automation** – Core backlog-search automation to fill missing content and upgrade quality.
 * **Pulsarr watchlist automation** – Optional Plex watchlist request flow that can route requests into Sonarr and Radarr.
 * **Maintainerr library cleanup** – Optional rule-based review collections and delayed cleanup actions for Plex, Jellyfin, or Emby libraries.
-* **MediaStorm streaming** – Optional self-hosted clients and server for Debrid, torrent, and Usenet playback.
+* **mediastorm streaming** – Optional self-hosted clients and server for Debrid, torrent, and Usenet playback.
 * **[Seerr Sync](seerr-sync.md)** – One-way request replication from a primary Seerr to subordinate instances for multi-household or multi-stack setups.
 * **Integrated Web UI** – Control and manage services through a simple **web-based interface** with embedded service UIs.
 * **Traefik access layer** – DUMB-managed embedded UI routes, optional Traefik Proxy Admin user routes, and optional Cloudflared tunnel ingress all share the bundled Traefik entrypoint while keeping ownership boundaries clear.
@@ -63,7 +63,7 @@ During onboarding, selecting Decypharr, NzbDAV, AltMount, or combinations of the
 - **Seerr** provides a request and discovery portal that can feed Sonarr/Radarr.
 - **Pulsarr** monitors Plex watchlists and routes requests to Sonarr and Radarr when Plex is the request front door.
 - **Maintainerr** evaluates library and automation metadata to create review collections and apply operator-defined cleanup actions.
-- **MediaStorm** provides PostgreSQL-backed accounts, watch state, and streaming clients for configured Debrid, torrent, and Usenet sources.
+- **mediastorm** provides PostgreSQL-backed accounts, watch state, and streaming clients for configured Debrid, torrent, and Usenet sources.
 - Plex Discover watchlists, Trakt, MDBList, and similar list sources can feed supported workflow engines.
 
 ### **Media servers**

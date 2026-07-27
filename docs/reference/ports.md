@@ -32,7 +32,7 @@ This reference documents all ports used by DUMB services. Use this guide to conf
 | 6246 | Maintainerr | Web UI/API |
 | 6767 | Bazarr | Web UI/API |
 | 6969 | Whisparr | Web UI |
-| 7777 | MediaStorm | Web UI/API |
+| 7777 | mediastorm | Web UI/API |
 | 7878 | Radarr (first/default instance) | Web UI |
 | 7879 | Radarr (typical second instance) | Web UI |
 | 8000 | DUMB API (container loopback by default) | API |
@@ -341,7 +341,7 @@ http://localhost:3003
 http://localhost:6246
 ```
 
-### MediaStorm
+### mediastorm
 
 | Property | Value |
 |----------|-------|

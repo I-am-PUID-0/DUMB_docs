@@ -1,5 +1,5 @@
 ---
-title: Debrid Unlimited Media Bridge
+title: Distributed Unlimited Media Bridge
 icon: lucide/home
 hide:
   - navigation
@@ -13,7 +13,7 @@ hide:
   <picture>
     <img
       class="hero"
-      alt="DUMB"
+      alt="Distributed Unlimited Media Bridge ecosystem banner"
       src="assets/images/DUMB.png"
     >
   </picture>

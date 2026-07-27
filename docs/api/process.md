@@ -623,7 +623,7 @@ The former `/process/arr-postgres-migration/*` paths remain available as hidden 
 
 ### `GET /process/mediastorm-initial-admin-password`
 
-Returns MediaStorm's generated bootstrap credential while its one-time password file exists:
+Returns mediastorm's generated bootstrap credential while its one-time password file exists:
 
 ```json
 {
@@ -633,7 +633,7 @@ Returns MediaStorm's generated bootstrap credential while its one-time password 
 }
 ```
 
-After the administrator changes the password, MediaStorm deletes the file and the endpoint returns:
+After the administrator changes the password, mediastorm deletes the file and the endpoint returns:
 
 ```json
 {
@@ -644,11 +644,11 @@ After the administrator changes the password, MediaStorm deletes the file and th
 ```
 
 The endpoint uses the existing DUMB authentication dependency, accepts no caller-supplied path, and
-reads only the fixed MediaStorm cache credential. It refuses symlinks, non-regular files, oversized
+reads only the fixed mediastorm cache credential. It refuses symlinks, non-regular files, oversized
 values, and multiline values. Responses include `Cache-Control: no-store, private` and
 `Pragma: no-cache`; clients must not persist the password.
 
-DUMB checks `/data/mediastorm/cache/initial_admin_password.txt` through MediaStorm's configured
+DUMB checks `/data/mediastorm/cache/initial_admin_password.txt` through mediastorm's configured
 persistent directory and also recognizes the extensionless `initial_admin_password` filename used
 by some upstream builds. Clients should gate this endpoint on the
 `mediastorm_initial_admin_password` capability.
@@ -731,7 +731,7 @@ Returns backend capabilities and feature flags. Used by the frontend to determin
 | `postgres_migration_rollback` | Whether jobs can restore preserved SQLite configuration |
 | `postgres_migration_service_keys` | Backend-authoritative service keys offered by the migration UI |
 | `arr_postgres_migration*` | Legacy Sonarr/Radarr capability aliases retained for older clients |
-| `mediastorm_initial_admin_password` | Whether the no-store MediaStorm bootstrap credential endpoint is available |
+| `mediastorm_initial_admin_password` | Whether the no-store mediastorm bootstrap credential endpoint is available |
 
 ---
 

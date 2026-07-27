@@ -7,9 +7,9 @@ hide:
 
 ---
 
-## About DUMB (Debrid Unlimited Media Bridge)
+## About DUMB (Distributed Unlimited Media Bridge)
 
-**Debrid Unlimited Media Bridge (DUMB)** is an all-in-one, containerized platform for managing and automating media workflows using premium debrid services (like Real-Debrid) and Usenet. Whether you're looking to automate downloads, organize libraries, mount remote content, or just reduce manual steps, DUMB aims to unify it all into a seamless experience.
+**Distributed Unlimited Media Bridge (DUMB)** is an all-in-one, containerized platform for managing and automating media workflows using premium debrid services (like Real-Debrid) and Usenet. Whether you're looking to automate downloads, organize libraries, mount remote content, or just reduce manual steps, DUMB aims to unify it all into a seamless experience.
 
 ---
 

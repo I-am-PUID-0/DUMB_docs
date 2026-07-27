@@ -5,7 +5,7 @@ icon: lucide/rocket
 
 # Getting Started with DUMB
 
-Welcome to **DUMB – Debrid Unlimited Media Bridge**: a unified media management and automation platform designed for users who want to streamline content discovery, acquisition, organization, playback, and service access using Debrid, Usenet, Arrs, media servers, request tools, and embedded service UIs.
+Welcome to **DUMB – Distributed Unlimited Media Bridge**: a unified media management and automation platform designed for users who want to streamline content discovery, acquisition, organization, playback, and service access using Debrid, Usenet, Arrs, media servers, request tools, and embedded service UIs.
 
 ---
 

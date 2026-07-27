@@ -30,7 +30,7 @@ The assistant is disabled by default. You can still use **Preview bundle** witho
 
 Service diagnostic bundles can include:
 
-- DUMB product facts, including the canonical expansion: Debrid Unlimited Media Bridge
+- DUMB product facts, including the canonical expansion: Distributed Unlimited Media Bridge
 - Current service status and health details
 - Recent redacted service logs
 - Redacted service configuration
@@ -41,7 +41,7 @@ Service diagnostic bundles can include:
 
 Stack diagnostic bundles can include:
 
-- DUMB product facts, including the canonical expansion: Debrid Unlimited Media Bridge
+- DUMB product facts, including the canonical expansion: Distributed Unlimited Media Bridge
 - Stack-wide service status counts
 - Services needing attention, grouped by unhealthy, stopped, or unknown state
 - Compact process list for the included services
@@ -197,7 +197,7 @@ Use **Preview bundle** to prove DUMB is collecting the right context before you 
 
 Good context checks:
 
-- Ask `What does DUMB stand for?` and confirm the bundle includes `dumb_product.expansion` as `Debrid Unlimited Media Bridge`.
+- Ask `What does DUMB stand for?` and confirm the bundle includes `dumb_product.expansion` as `Distributed Unlimited Media Bridge`.
 - Ask `What services should I use for Usenet in DUMB?` and confirm the bundle includes `dumb_service_catalog`, `dumb_workflow_rules`, and docs snippets for Decypharr, NzbDAV, AltMount, Prowlarr, or core-service routing.
 - Toggle **Docs context** off and on, then compare the preview bundle. With docs enabled, the bundle should include a `docs_context` block with source paths and excerpts.
 - Keep **Include configs** off for broad stack planning until you specifically need redacted configuration details.
@@ -260,7 +260,7 @@ For provider calls, Stack AI Assist compacts the preview bundle before sending i
 
 Stack workflow prompts also include a DUMB-specific service catalog. For example, Usenet planning is grounded around DUMB services such as Decypharr, NzbDAV, AltMount, Arr apps, Prowlarr, and rclone instead of generic external download-client advice. If a provider returns a generic Usenet answer that recommends SABnzbd, NZBGet, or NZBHydra as the primary path, DUMB replaces it with the DUMB-native planning answer.
 
-Product identity prompts are also guarded. If a provider invents a different acronym expansion, DUMB returns the canonical product fact instead: **Debrid Unlimited Media Bridge**.
+Product identity prompts are also guarded. If a provider invents a different acronym expansion, DUMB returns the canonical product fact instead: **Distributed Unlimited Media Bridge**.
 
 ## Configuration
 

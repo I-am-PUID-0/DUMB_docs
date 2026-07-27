@@ -13,7 +13,7 @@ Below are common questions and explanations related to **PostgreSQL**, which is 
 
 PostgreSQL stores persistent data for services that require it and for optional SQLite-to-PostgreSQL cutovers. Current integrations include:
 
-- **Riven Backend**, **Zilean**, **Traefik Proxy Admin**, and **MediaStorm**
+- **Riven Backend**, **Zilean**, **Traefik Proxy Admin**, and **mediastorm**
 - Optional PostgreSQL modes for **Sonarr, Radarr, Lidarr, Prowlarr, Whisparr, Bazarr, Pulsarr, Seerr, and AltMount** after a guarded migration
 - Optional DUMB Metrics history storage
 - **pgAdmin**'s own database when pgAdmin is enabled
@@ -26,7 +26,7 @@ Each service has its **own database**, created automatically when DUMB starts:
 | Zilean         | `zilean`       |
 | pgAdmin (optional) | `pgadmin`   |
 | Traefik Proxy Admin | `traefik_proxy_admin` |
-| MediaStorm | `mediastorm` |
+| mediastorm | `mediastorm` |
 | Metrics history (optional default) | `dumb_metrics` |
 
 Additional databases are registered from service configuration. PostgreSQL's internal data directory defaults to `/postgres_data`; the maintained Compose layout persists it at `/data/postgres` through DUMB's managed data mapping.

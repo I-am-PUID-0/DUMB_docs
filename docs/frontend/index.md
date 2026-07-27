@@ -85,12 +85,12 @@ When enabled, access service web interfaces directly within DUMB:
 - Tautulli
 - Pulsarr
 - Maintainerr
-- MediaStorm
+- mediastorm
 - Traefik Proxy Admin
 - Arr services (Radarr, Sonarr, etc.)
 - And more
 
-This provides a unified experience without exposing individual service ports. Root-route applications such as Pulsarr, Maintainerr, MediaStorm, AltMount, Traefik Proxy Admin, and the Traefik dashboard are kept in iframe context by the frontend proxy so their root-relative assets, APIs, and navigations do not collide with DUMB's own routes.
+This provides a unified experience without exposing individual service ports. Root-route applications such as Pulsarr, Maintainerr, mediastorm, AltMount, Traefik Proxy Admin, and the Traefik dashboard are kept in iframe context by the frontend proxy so their root-relative assets, APIs, and navigations do not collide with DUMB's own routes.
 
 ### Split view mode
 

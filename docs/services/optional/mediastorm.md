@@ -1,29 +1,29 @@
 ---
-title: MediaStorm
+title: mediastorm
 icon: lucide/clapperboard
 ---
 
-# MediaStorm
+# mediastorm
 
-MediaStorm is a self-hosted streaming server and client ecosystem for Debrid, torrent, and Usenet sources. DUMB installs its server, browser client, subtitle helpers, Deno runtime, and Iroh companion from MediaStorm's official OCI image, then runs it as an optional PostgreSQL-backed service.
+mediastorm is a self-hosted streaming server and client ecosystem for Debrid, torrent, and Usenet sources. DUMB installs its server, browser client, subtitle helpers, Deno runtime, and Iroh companion from mediastorm's official OCI image, then runs it as an optional PostgreSQL-backed service.
 
 ---
 
 ## What DUMB manages
 
-- MediaStorm listens on port `7777`.
+- mediastorm listens on port `7777`.
 - The embedded service UI opens the administrative interface at `/admin`.
 - The browser player is available at `/watch`.
 - DUMB automatically enables its managed PostgreSQL service and creates the `mediastorm` database.
 - Account, watch-history, and playback data live in PostgreSQL. Settings and application cache persist under `/mediastorm`, which maps to DUMB's persistent `/data/mediastorm` service directory.
-- DUMB downloads the correct `linux/amd64` or `linux/arm64` MediaStorm OCI runtime on first install and stores it under `/mediastorm/runtime`.
-- OCI manifests and layers are SHA-256 verified, only MediaStorm's allowlisted runtime paths are extracted, and release selections must match the image's internal version before DUMB activates them.
-- MediaStorm supports DUMB's manual and scheduled update checks. Branch installs are not supported because upstream's complete runtime is published as an OCI image rather than a reproducible GitHub source release.
-- MediaStorm can follow `latest` or be pinned to a published OCI release tag, commit-specific OCI tag, or immutable OCI digest.
+- DUMB downloads the correct `linux/amd64` or `linux/arm64` mediastorm OCI runtime on first install and stores it under `/mediastorm/runtime`.
+- OCI manifests and layers are SHA-256 verified, only mediastorm's allowlisted runtime paths are extracted, and release selections must match the image's internal version before DUMB activates them.
+- mediastorm supports DUMB's manual and scheduled update checks. Branch installs are not supported because upstream's complete runtime is published as an OCI image rather than a reproducible GitHub source release.
+- mediastorm can follow `latest` or be pinned to a published OCI release tag, commit-specific OCI tag, or immutable OCI digest.
 
 | Service | Default port | Embedded entry | Persistent state |
 |---------|--------------|----------------|------------------|
-| MediaStorm | 7777 | `/admin` | PostgreSQL plus `/mediastorm` |
+| mediastorm | 7777 | `/admin` | PostgreSQL plus `/mediastorm` |
 
 ---
 
@@ -32,7 +32,7 @@ MediaStorm is a self-hosted streaming server and client ecosystem for Debrid, to
 ```json
 "mediastorm": {
   "enabled": false,
-  "process_name": "MediaStorm",
+  "process_name": "mediastorm",
   "repo_owner": "godver3",
   "repo_name": "mediastorm",
   "release_version_enabled": false,
@@ -78,7 +78,7 @@ Leave `release_version_enabled` set to `false` to follow `godver3/mediastorm:lat
 
 | Selection | Example | Behavior |
 |-----------|---------|----------|
-| OCI release tag | `1.5.0` | Installs the published MediaStorm release tag and accepts its dated internal version. |
+| OCI release tag | `1.5.0` | Installs the published mediastorm release tag and accepts its dated internal version. |
 | GitHub release | `v1.5.0-20260711` | Resolves the matching dated or semantic OCI release tag and requires the exact internal version. |
 | Full commit tag | `2e4fdf5f08146795d455604ec16233050b43465a` | Installs the OCI tag published for that full upstream commit. Use a digest when registry-level immutability is required. |
 | OCI digest | `sha256:<64 lowercase hex characters>` | Installs the exact immutable image manifest. |
@@ -94,51 +94,51 @@ Pinned releases, commits, and digests disable automatic updates through DUMB's s
 !!! warning "First login credentials"
 
     - **Username:** `admin`
-    - **Password:** generated uniquely by MediaStorm on first start
+    - **Password:** generated uniquely by mediastorm on first start
 
-    DUMB displays the generated password in a warning on the MediaStorm service page while
+    DUMB displays the generated password in a warning on the mediastorm service page while
     `/data/mediastorm/cache/initial_admin_password.txt` exists. Reveal or copy it there, sign in,
-    and change the password immediately. MediaStorm deletes the bootstrap credential file after
+    and change the password immediately. mediastorm deletes the bootstrap credential file after
     the password changes, and the DUMB warning then disappears automatically.
 
     Some upstream builds use the compatibility filename `initial_admin_password` without the
     `.txt` suffix. DUMB recognizes either filename.
 
-1. Select **MediaStorm** under Optional Services during onboarding, or enable it from its DUMB service configuration.
-2. Start MediaStorm. On first install, DUMB downloads and verifies the architecture-specific OCI layers, builds the local Python subtitle-helper environment, starts PostgreSQL, and waits for it before launching the service. The initial download is several hundred MiB.
-3. Open the MediaStorm embedded UI. It starts at `/admin`.
+1. Select **mediastorm** under Optional Services during onboarding, or enable it from its DUMB service configuration.
+2. Start mediastorm. On first install, DUMB downloads and verifies the architecture-specific OCI layers, builds the local Python subtitle-helper environment, starts PostgreSQL, and waits for it before launching the service. The initial download is several hundred MiB.
+3. Open the mediastorm embedded UI. It starts at `/admin`.
 4. Sign in as `admin` with the generated password shown on the DUMB service page, then change the password under **Admin UI → Accounts → Change Password**.
-5. Add TMDB and TVDB API keys in MediaStorm's admin settings. Media discovery will be incomplete until both are configured.
+5. Add TMDB and TVDB API keys in mediastorm's admin settings. Media discovery will be incomplete until both are configured.
 6. Configure the Debrid, torrent, or Usenet providers you intend to use.
-7. Open `/watch` for the browser client, or point a supported MediaStorm mobile/TV client at the reachable DUMB host and MediaStorm port.
+7. Open `/watch` for the browser client, or point a supported mediastorm mobile/TV client at the reachable DUMB host and mediastorm port.
 
 !!! warning "Secure the administrative interface"
 
-    The generated bootstrap password is a sensitive credential, and `/admin` controls providers and users. Do not copy it into logs, screenshots, or support bundles. Change it before exposing MediaStorm beyond a trusted network. Prefer a VPN or a carefully tested authenticated reverse-proxy route; never publish the raw port before completing first-login setup.
+    The generated bootstrap password is a sensitive credential, and `/admin` controls providers and users. Do not copy it into logs, screenshots, or support bundles. Change it before exposing mediastorm beyond a trusted network. Prefer a VPN or a carefully tested authenticated reverse-proxy route; never publish the raw port before completing first-login setup.
 
 ---
 
 ## Backups and updates
 
-Back up both parts of MediaStorm state:
+Back up both parts of mediastorm state:
 
 - the DUMB-managed PostgreSQL `mediastorm` database; and
 - the persistent `/mediastorm` directory, especially `settings.json` and cached application state. `/mediastorm/runtime` can be excluded when your backup process supports exclusions because DUMB can reinstall it.
 
 Before first-login setup is complete, backups of the cache may contain
 `initial_admin_password.txt` (or the extensionless compatibility filename). Treat that backup as
-credential-bearing data. The live bootstrap file is removed by MediaStorm after the admin password
+credential-bearing data. The live bootstrap file is removed by mediastorm after the admin password
 changes.
 
-When following `latest`, use **Check for updates** and **Install update** on the MediaStorm service page for one-time updates, or enable `auto_update` for scheduled checks. DUMB compares `/mediastorm/runtime/version.txt` with the latest GitHub release, downloads the official OCI runtime into a staging directory, verifies it, and atomically replaces the old runtime only after validation succeeds. A pin blocks normal update installation until you change/disable the pin or explicitly approve the frontend's override action. Before a major upgrade or rollback, preserve a matching database and settings/cache backup because application migrations can make rollback depend on restoring both together.
+When following `latest`, use **Check for updates** and **Install update** on the mediastorm service page for one-time updates, or enable `auto_update` for scheduled checks. DUMB compares `/mediastorm/runtime/version.txt` with the latest GitHub release, downloads the official OCI runtime into a staging directory, verifies it, and atomically replaces the old runtime only after validation succeeds. A pin blocks normal update installation until you change/disable the pin or explicitly approve the frontend's override action. Before a major upgrade or rollback, preserve a matching database and settings/cache backup because application migrations can make rollback depend on restoring both together.
 
-Database Health Monitoring can observe the MediaStorm PostgreSQL database in Standard or Enhanced read-only mode when monitoring is explicitly enabled for the service.
+Database Health Monitoring can observe the mediastorm PostgreSQL database in Standard or Enhanced read-only mode when monitoring is explicitly enabled for the service.
 
 ---
 
 ## Embedded UI and direct access
 
-MediaStorm uses root-relative routes for `/admin`, `/watch`, accounts, sharing, and `/api/*`. The DUMB Frontend keeps those requests attached to the active MediaStorm iframe so they do not collide with DUMB's own routes.
+mediastorm uses root-relative routes for `/admin`, `/watch`, accounts, sharing, and `/api/*`. The DUMB Frontend keeps those requests attached to the active mediastorm iframe so they do not collide with DUMB's own routes.
 
 For troubleshooting, direct access is `http://<host>:7777` when you publish that port. DUMB's embedded UI does not require the port to be published separately.
 
@@ -146,21 +146,21 @@ For troubleshooting, direct access is `http://<host>:7777` when you publish that
 
 ## Troubleshooting
 
-- **Service waits or exits at startup:** Check PostgreSQL status first, then inspect the MediaStorm service log. DUMB creates the database and connection URL during setup.
-- **First-login password is not shown:** Confirm MediaStorm has completed its first start, then refresh the service page. If the password was already changed, the bootstrap file and DUMB warning are expected to be gone. Otherwise verify that `/data/mediastorm/cache/initial_admin_password.txt` exists and is readable by the DUMB container.
+- **Service waits or exits at startup:** Check PostgreSQL status first, then inspect the mediastorm service log. DUMB creates the database and connection URL during setup.
+- **First-login password is not shown:** Confirm mediastorm has completed its first start, then refresh the service page. If the password was already changed, the bootstrap file and DUMB warning are expected to be gone. Otherwise verify that `/data/mediastorm/cache/initial_admin_password.txt` exists and is readable by the DUMB container.
 - **Install fails during an OCI layer download:** Confirm the DUMB container can reach Docker Hub and has enough free space for the compressed image plus the staged runtime. Retrying the start repeats the verified install.
 - **OCI version mismatch:** Upstream's `latest` image does not yet match its latest GitHub release. DUMB preserves the existing runtime and refuses to activate the mismatched image; retry after upstream finishes publishing.
-- **Pinned version cannot be resolved:** Confirm the value is a published MediaStorm release tag, full 40-character commit tag, or complete `sha256:` digest. Short commit hashes and branch names are intentionally rejected.
+- **Pinned version cannot be resolved:** Confirm the value is a published mediastorm release tag, full 40-character commit tag, or complete `sha256:` digest. Short commit hashes and branch names are intentionally rejected.
 - **Discovery is empty or metadata is missing:** Verify both TMDB and TVDB keys in `/admin`.
-- **An embedded link opens the DUMB page instead:** Refresh the MediaStorm service page to renew iframe context, then retry. Report the exact MediaStorm path that escaped the iframe.
+- **An embedded link opens the DUMB page instead:** Refresh the mediastorm service page to renew iframe context, then retry. Report the exact mediastorm path that escaped the iframe.
 - **A client cannot connect:** Use an address reachable from that device, confirm port `7777` is exposed or reverse proxied, and do not use `127.0.0.1` from another device.
-- **Remote invitation fails:** Check the MediaStorm log for Iroh errors and confirm outbound networking is available from the DUMB container.
+- **Remote invitation fails:** Check the mediastorm log for Iroh errors and confirm outbound networking is available from the DUMB container.
 
 ---
 
 ## Related links
 
-- [MediaStorm repository](https://github.com/godver3/mediastorm)
-- [MediaStorm releases](https://github.com/godver3/mediastorm/releases)
+- [mediastorm repository](https://github.com/godver3/mediastorm)
+- [mediastorm releases](https://github.com/godver3/mediastorm/releases)
 - [PostgreSQL](../dependent/postgres.md)
 - [Embedded service UIs](../../features/embedded-ui.md)
