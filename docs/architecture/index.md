@@ -1,5 +1,6 @@
 ---
 title: Architecture overview
+description: See how the DUMB FastAPI backend, Nuxt frontend, Traefik proxy, storage paths, and managed media services work together.
 icon: lucide/network
 ---
 

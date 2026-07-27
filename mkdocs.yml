@@ -1,5 +1,5 @@
 site_name: Distributed Unlimited Media Bridge
-site_description: DUMB Documentation
+site_description: Documentation for DUMB, an all-in-one Docker media automation platform for Debrid, Usenet, Arr apps, Plex, Jellyfin, and Emby.
 site_author: DUMB Team
 site_url: "https://dumbarr.com/"
 repo_name: "I-am-PUID-0/DUMB"

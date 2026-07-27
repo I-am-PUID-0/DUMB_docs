@@ -1,5 +1,6 @@
 ---
 title: Deployment
+description: Compare supported ways to deploy DUMB with Docker, Portainer, Unraid, TrueNAS, Proxmox, Synology, QNAP, Dockge, or WSL2.
 icon: lucide/server
 ---
 

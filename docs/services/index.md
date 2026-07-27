@@ -1,5 +1,6 @@
 ---
 title: Services Overview
+description: Understand the core, dependent, and optional services DUMB can manage for Debrid, Usenet, Arr automation, media playback, and access.
 icon: lucide/layers
 ---
 

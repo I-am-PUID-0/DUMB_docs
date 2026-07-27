@@ -1,5 +1,6 @@
 ---
-title: Distributed Unlimited Media Bridge
+title: DUMB Media Automation
+description: Deploy and manage Debrid or Usenet media automation, Arr apps, Plex, Jellyfin, Emby, monitoring, and service UIs in one guided Docker platform.
 icon: lucide/home
 hide:
   - navigation
@@ -11,18 +12,26 @@ hide:
 <div class="hero-container" markdown>
 <a href="https://github.com/I-am-PUID-0/DUMB">
   <picture>
+    <source
+      type="image/webp"
+      srcset="assets/images/DUMB.webp"
+    >
     <img
       class="hero"
       alt="Distributed Unlimited Media Bridge ecosystem banner"
       src="assets/images/DUMB.png"
+      width="1536"
+      height="1024"
+      decoding="async"
+      fetchpriority="high"
     >
   </picture>
 </a>
 
 <div class="hero-text" markdown>
-<h1>DUMB - A Unified Media Solution</h1>
+<h1>DUMB — All-in-One Media Automation for Debrid and Usenet</h1>
 
-**DUMB** is an all-in-one media management and streaming solution that integrates multiple services into a single Docker image for streamlined deployment. Automate discovery, downloads, and library organization using Debrid and Usenet services, Plex Discover Watchlists, Trakt lists, Seerr, and more.
+**Distributed Unlimited Media Bridge (DUMB)** is an open-source, all-in-one Docker media automation platform. Deploy and manage Debrid or Usenet workflows, Sonarr, Radarr and other Arr apps, Plex, Jellyfin, Emby, request tools, logs, metrics, notifications, and embedded service UIs from one guided dashboard.
 
 <div class="hero-actions" markdown>
 [:octicons-arrow-right-24: Deployment Guide](deployment/index.md){ .md-button .md-button--primary }

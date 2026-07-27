@@ -1,5 +1,6 @@
 ---
 title: General FAQ
+description: Answers to common DUMB questions about storage, required services, offline use, updates, media workflows, and troubleshooting.
 icon: lucide/help-circle
 ---
 

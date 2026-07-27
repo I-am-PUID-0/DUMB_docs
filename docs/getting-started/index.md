@@ -1,5 +1,6 @@
 ---
 title: Introduction
+description: Learn how DUMB combines Debrid, Usenet, Arr automation, Plex, Jellyfin, Emby, request tools, and service management in one Docker platform.
 icon: lucide/rocket
 ---
 

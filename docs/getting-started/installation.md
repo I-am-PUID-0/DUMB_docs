@@ -1,5 +1,6 @@
 ---
 title: Installation
+description: Prepare Docker, storage, credentials, networking, and system requirements before installing the DUMB media automation platform.
 icon: lucide/download
 ---
 

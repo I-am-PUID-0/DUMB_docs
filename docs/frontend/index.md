@@ -1,5 +1,6 @@
 ---
 title: Frontend Overview
+description: Use the DUMB Nuxt dashboard for guided onboarding, service controls, live logs, metrics, configuration, and embedded service interfaces.
 icon: lucide/layout-dashboard
 ---
 

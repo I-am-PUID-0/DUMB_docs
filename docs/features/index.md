@@ -1,5 +1,6 @@
 ---
 title: Features Overview
+description: Explore DUMB features for Debrid and Usenet automation, Arr apps, media servers, guided onboarding, monitoring, notifications, and embedded UIs.
 icon: lucide/list
 ---
 

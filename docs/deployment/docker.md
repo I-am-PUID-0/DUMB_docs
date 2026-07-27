@@ -1,5 +1,6 @@
 ---
 title: Deploy with Docker
+description: Install DUMB with Docker Compose on Linux using persistent storage, required mounts, ports, credentials, and guided first-run setup.
 icon: fontawesome/brands/docker
 ---
 
