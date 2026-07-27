@@ -1,5 +1,6 @@
 ---
 title: Traefik Proxy Admin
+description: Configure Traefik Proxy Admin in DUMB to publish authenticated LAN or public service routes while preserving DUMB-owned embedded UI routing.
 icon: lucide/shield-check
 ---
 

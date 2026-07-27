@@ -1,5 +1,6 @@
 ---
 title: Embedded Service UIs
+description: Access DUMB-managed service interfaces through Traefik iframe routes while preserving root APIs, WebSockets, navigation, and routing isolation.
 icon: lucide/layout-panel-left
 ---
 

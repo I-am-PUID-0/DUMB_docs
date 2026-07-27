@@ -1,5 +1,6 @@
 ---
 title: Deploy with WSL
+description: Install DUMB on Windows through WSL2 and Docker Engine with systemd, storage mounts, networking, permissions, and startup configuration.
 icon: fontawesome/brands/windows
 ---
 

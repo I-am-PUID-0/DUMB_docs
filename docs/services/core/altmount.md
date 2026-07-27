@@ -1,5 +1,6 @@
 ---
 title: AltMount
+description: Configure AltMount in DUMB for Usenet streaming through WebDAV, FUSE, rclone, symlinks, or STRM files with Arr and NNTP provider integration.
 icon: lucide/hard-drive-download
 ---
 

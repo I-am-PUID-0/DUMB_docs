@@ -1,5 +1,6 @@
 ---
 title: Cloudflared
+description: Configure a Cloudflare Tunnel inside DUMB to route public hostnames through the built-in Traefik proxy without direct router port forwarding.
 icon: lucide/cloud
 ---
 

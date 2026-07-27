@@ -1,5 +1,6 @@
 ---
 title: Symlink Operations
+description: Repair, migrate, copy, snapshot, restore, and schedule backups for DUMB-managed symlink libraries with dry runs and recovery playbooks.
 icon: lucide/link
 ---
 

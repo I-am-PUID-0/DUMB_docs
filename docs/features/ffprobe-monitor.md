@@ -1,5 +1,6 @@
 ---
 title: FFprobe Monitor
+description: Monitor and recover stuck ffprobe processes from Sonarr or Radarr so media analysis and library import workflows do not remain blocked.
 icon: lucide/activity
 ---
 

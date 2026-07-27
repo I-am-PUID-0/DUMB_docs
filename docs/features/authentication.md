@@ -1,5 +1,6 @@
 ---
 title: Authentication
+description: Secure the DUMB dashboard and API with optional JWT authentication, local users, token lifetimes, setup controls, and protected routes.
 icon: lucide/lock
 ---
 

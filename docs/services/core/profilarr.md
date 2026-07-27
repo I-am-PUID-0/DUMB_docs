@@ -1,5 +1,6 @@
 ---
 title: Profilarr
+description: Configure Profilarr in DUMB to synchronize Sonarr and Radarr quality profiles, custom formats, regex patterns, and media-management settings.
 icon: lucide/sliders
 ---
 

@@ -1,5 +1,6 @@
 ---
 title: Deploy with Synology
+description: Deploy DUMB with Synology DSM Container Manager using a Compose project, persistent folders, mounts, permissions, and required ports.
 icon: simple/synology
 ---
 

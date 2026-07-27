@@ -1,5 +1,6 @@
 ---
 title: Prowlarr
+description: Configure Prowlarr in DUMB to centralize indexers and synchronize applications with Sonarr, Radarr, Lidarr, Whisparr, and download clients.
 icon: lucide/search
 ---
 

@@ -1,5 +1,6 @@
 ---
 title: Seerr
+description: Configure Seerr in DUMB for Plex or Jellyfin discovery, Sonarr and Radarr requests, guided onboarding, embedded access, and request synchronization.
 icon: lucide/clapperboard
 ---
 

@@ -1,5 +1,6 @@
 ---
 title: Configuration
+description: Configure DUMB services, ports, paths, credentials, logging, authentication, automation, and runtime settings in dumb_config.json.
 icon: lucide/settings
 ---
 

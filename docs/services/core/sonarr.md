@@ -1,5 +1,6 @@
 ---
 title: Sonarr
+description: Configure Sonarr in DUMB for automated TV monitoring, indexers, download clients, root folders, quality profiles, and PostgreSQL migration.
 icon: lucide/radio
 ---
 

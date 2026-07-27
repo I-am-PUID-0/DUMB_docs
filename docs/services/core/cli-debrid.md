@@ -1,5 +1,6 @@
 ---
 title: CLI Debrid
+description: Configure CLI Debrid in DUMB for Debrid automation, Trakt and Plex discovery, scraping, upgrades, symlink libraries, and service integrations.
 icon: lucide/terminal
 ---
 

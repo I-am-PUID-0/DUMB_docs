@@ -1,5 +1,6 @@
 ---
 title: AI Assistant
+description: Diagnose DUMB services and whole-stack problems with optional local or cloud AI using previewable, redacted logs, config, metrics, and docs context.
 icon: lucide/brain
 ---
 

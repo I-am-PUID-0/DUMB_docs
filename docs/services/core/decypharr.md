@@ -1,5 +1,6 @@
 ---
 title: Decypharr
+description: Configure Decypharr in DUMB for Debrid and Usenet workflows, DFS or rclone mounts, Arr download-client emulation, and library linking.
 icon: lucide/shield
 ---
 

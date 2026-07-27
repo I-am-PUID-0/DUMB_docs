@@ -1,5 +1,6 @@
 ---
 title: unRAID Deployment
+description: Install DUMB on Unraid through Community Applications or Docker Compose with correct paths, mount propagation, ports, and persistence.
 icon: simple/unraid
 ---
 

@@ -1,5 +1,6 @@
 ---
 title: Plex Media Server
+description: Run Plex Media Server inside DUMB with shared media paths, Debrid or Usenet libraries, embedded access, hardware devices, and service integration.
 icon: lucide/tv
 ---
 

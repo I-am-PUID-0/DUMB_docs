@@ -1,4 +1,6 @@
 ---
+title: DUMB Changelog
+description: Review DUMB releases, new media automation features, bug fixes, performance improvements, dependency updates, and other project changes.
 hide:
   - navigation
 ---

@@ -1,6 +1,7 @@
 ---
 
 title: About
+description: Learn what Distributed Unlimited Media Bridge is, why it combines media automation services in one Docker platform, and how the project is maintained.
 icon: lucide/info
 hide:
   - navigation

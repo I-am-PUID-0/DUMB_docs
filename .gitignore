@@ -1,6 +1,10 @@
 .vscode
 /.venv
 
+# Ignore generated Python bytecode and cache directories
+__pycache__/
+*.py[cod]
+
 # Ignore local Zensical server files
 /site
 

@@ -1,5 +1,6 @@
 ---
 title: Pulsarr
+description: Configure Pulsarr in DUMB to route Plex watchlist activity into Sonarr and Radarr with approvals, quotas, notifications, and PostgreSQL support.
 icon: lucide/radio-tower
 ---
 

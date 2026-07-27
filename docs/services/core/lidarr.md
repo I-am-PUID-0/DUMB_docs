@@ -1,5 +1,6 @@
 ---
 title: Lidarr
+description: Configure Lidarr in DUMB for automated music monitoring, indexers, download clients, root folders, profiles, and linked workflow services.
 icon: lucide/music
 ---
 

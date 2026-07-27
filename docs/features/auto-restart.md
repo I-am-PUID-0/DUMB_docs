@@ -1,5 +1,6 @@
 ---
 title: Auto-restart
+description: Configure DUMB service health monitoring, restart thresholds, retry backoff, recovery tracking, and automatic failure notifications.
 icon: lucide/refresh-cw
 ---
 

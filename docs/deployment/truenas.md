@@ -1,5 +1,6 @@
 ---
 title: Deploy with TrueNAS
+description: Deploy DUMB on TrueNAS SCALE with Docker Compose, persistent datasets, mount propagation, permissions, networking, and optional devices.
 icon: simple/truenas
 ---
 

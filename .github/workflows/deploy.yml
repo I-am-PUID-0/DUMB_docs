@@ -71,6 +71,9 @@ jobs:
       - name: Build Zensical
         run: poetry run zensical build --clean
 
+      - name: Audit generated SEO metadata
+        run: poetry run python scripts/audit_seo.py site
+
       - name: Upload pages
         uses: actions/upload-pages-artifact@v5
         with:

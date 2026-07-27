@@ -1,5 +1,6 @@
 ---
 title: SQLite to PostgreSQL Migration
+description: Rehearse, validate, cut over, and roll back supported DUMB services from SQLite to managed PostgreSQL with persistent backups and job status.
 icon: lucide/database-backup
 ---
 

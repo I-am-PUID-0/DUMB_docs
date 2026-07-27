@@ -1,5 +1,6 @@
 ---
 title: Riven Backend
+description: Configure the Riven Backend in DUMB for Debrid automation, scraping, Plex and Trakt integration, virtual filesystems, and PostgreSQL storage.
 icon: lucide/database
 ---
 

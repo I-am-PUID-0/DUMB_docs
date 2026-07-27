@@ -1,5 +1,6 @@
 ---
 title: Auto-update
+description: Configure scheduled DUMB service updates, release and branch selection, immutable commit pins, update windows, and safe override actions.
 icon: lucide/download
 ---
 

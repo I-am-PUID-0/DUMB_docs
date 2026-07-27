@@ -1,5 +1,6 @@
 ---
 title: Maintainerr
+description: Configure Maintainerr in DUMB to identify, collect, unmonitor, and remove media through rules that use Plex, Jellyfin, Emby, Arr, and Tautulli data.
 icon: lucide/archive-restore
 ---
 

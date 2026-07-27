@@ -1,5 +1,6 @@
 ---
 title: NeutArr
+description: Configure NeutArr in DUMB to search Arr backlogs, fill missing media, upgrade existing releases, manage schedules, and target selected instances.
 icon: lucide/radar
 ---
 

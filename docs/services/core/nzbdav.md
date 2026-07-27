@@ -1,5 +1,6 @@
 ---
 title: NzbDAV
+description: Configure NzbDAV in DUMB for Usenet streaming, WebDAV access, NNTP providers, Arr integration, rclone mounts, metrics, and database migration.
 icon: lucide/cloud
 ---
 

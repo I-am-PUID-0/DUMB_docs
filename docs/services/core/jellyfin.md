@@ -1,5 +1,6 @@
 ---
 title: Jellyfin
+description: Run Jellyfin inside DUMB as an open-source media server with shared library paths, embedded access, hardware devices, and automated workflows.
 icon: lucide/play
 ---
 

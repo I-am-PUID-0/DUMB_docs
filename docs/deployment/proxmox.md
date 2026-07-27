@@ -1,5 +1,6 @@
 ---
 title: Deploying on Proxmox
+description: Deploy DUMB in a Proxmox VE Ubuntu LXC with Docker, nesting, FUSE access, mount propagation, persistent storage, and networking.
 icon: simple/proxmox
 ---
 

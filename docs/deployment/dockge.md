@@ -1,5 +1,6 @@
 ---
 title: Deploy with Dockge
+description: Deploy DUMB as a file-backed Dockge Compose stack with persistent host paths, required mounts, environment settings, and update guidance.
 icon: lucide/box
 ---
 

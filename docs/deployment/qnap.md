@@ -1,5 +1,6 @@
 ---
 title: Deploy with QNAP
+description: Deploy DUMB with QNAP Container Station using Docker Compose, persistent shares, mount paths, permissions, networking, and first-run setup.
 icon: simple/qnap
 ---
 

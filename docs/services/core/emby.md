@@ -1,5 +1,6 @@
 ---
 title: Emby
+description: Run Emby inside DUMB with shared media-library paths, embedded dashboard access, hardware devices, and Debrid or Usenet automation workflows.
 icon: lucide/disc
 ---
 

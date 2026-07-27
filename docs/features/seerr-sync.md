@@ -1,5 +1,5 @@
 ---
-title: Seerr Sync
+title: Seerr Sync Guide
 description: Configure one-way Seerr request replication across multiple DUMB-managed households or media stacks, with filtering and persistent sync state.
 icon: lucide/refresh-ccw
 ---

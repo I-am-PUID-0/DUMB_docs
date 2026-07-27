@@ -1,5 +1,6 @@
 ---
 title: Notifications
+description: Send DUMB health and operational alerts through Apprise or JSON webhooks with routing, severity filters, retries, cooldowns, and recovery events.
 icon: lucide/bell-ring
 ---
 

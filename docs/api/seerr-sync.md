@@ -1,5 +1,5 @@
 ---
-title: Seerr Sync
+title: Seerr Sync API
 description: API reference for configuring, running, and inspecting DUMB Seerr Sync request replication jobs and their persisted synchronization state.
 icon: lucide/refresh-ccw
 ---

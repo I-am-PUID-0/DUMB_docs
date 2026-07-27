@@ -1,5 +1,6 @@
 ---
 title: Metrics Collection
+description: Monitor DUMB CPU, memory, storage, inodes, networks, processes, databases, and Plex cloud status with live and historical metrics.
 icon: lucide/gauge
 ---
 

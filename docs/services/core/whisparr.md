@@ -1,5 +1,6 @@
 ---
 title: Whisparr
+description: Configure Whisparr in DUMB for automated library monitoring, indexers, download clients, root folders, profiles, and linked workflow services.
 icon: lucide/eye
 ---
 

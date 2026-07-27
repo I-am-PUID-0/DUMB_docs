@@ -1,12 +1,13 @@
 ---
 title: Deploy with Portainer
+description: Deploy DUMB as a Portainer stack with persistent volumes, required mounts, ports, environment variables, and guided first-run setup.
 icon: simple/portainer
 ---
 
 ## Deploying DUMB with Portainer
 
 Portainer provides a user-friendly web interface for managing Docker containers
-and stacks. This guide walks you through deploying **Debrid Unlimited Media
+and stacks. This guide walks you through deploying **Distributed Unlimited Media
 Bridge (DUMB)** using Portainer's stack deployment feature.
 
 ---

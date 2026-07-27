@@ -1,5 +1,6 @@
 ---
 title: mediastorm
+description: Configure mediastorm in DUMB for PostgreSQL-backed Debrid, torrent, and Usenet streaming with verified OCI updates and embedded client access.
 icon: lucide/clapperboard
 ---
 

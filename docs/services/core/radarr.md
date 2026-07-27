@@ -1,5 +1,6 @@
 ---
 title: Radarr
+description: Configure Radarr in DUMB for automated movie monitoring, indexers, download clients, root folders, quality profiles, and PostgreSQL migration.
 icon: lucide/film
 ---
 

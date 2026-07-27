@@ -1,5 +1,6 @@
 ---
 title: Usage
+description: Operate DUMB through its dashboard and API, manage individual services, inspect status and logs, and understand normal startup behavior.
 icon: lucide/play-circle
 ---
 
