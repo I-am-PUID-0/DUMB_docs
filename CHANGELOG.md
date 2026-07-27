@@ -1,6 +1,19 @@
 # Changelog
 
 
+## [1.23.0](https://github.com/I-am-PUID-0/DUMB_docs/compare/1.22.18...1.23.0) (2026-07-27)
+
+
+### ✨ Features
+
+* **seo:** add site-wide search metadata and optimize the homepage ([1c6e98c](https://github.com/I-am-PUID-0/DUMB_docs/commit/1c6e98c009c5c8096a9de010ac2a4887edef1c35))
+* **seo:** strengthen documentation metadata and release validation ([7bce89e](https://github.com/I-am-PUID-0/DUMB_docs/commit/7bce89e529330bf0f9e7508292461a296309e1da))
+
+
+### 📖 Documentation
+
+* apply Distributed DUMB branding and mediastorm naming ([d31111d](https://github.com/I-am-PUID-0/DUMB_docs/commit/d31111db119431a5298a8d1ebfc7840a6d0569ae))
+
 ## [1.22.18](https://github.com/I-am-PUID-0/DUMB_docs/compare/1.22.17...1.22.18) (2026-07-24)
 
 
