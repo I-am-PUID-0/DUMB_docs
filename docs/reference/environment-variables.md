@@ -13,12 +13,16 @@ Every scalar/list setting in DUMB's configuration can be overridden at startup w
 
 | Variable | Default | Description |
 |----------|---------|-------------|
-| `PUID` | `1000` | Container user ID |
-| `PGID` | `1000` | Container group ID |
+| `PUID` | `1000` | Managed-service user ID; must be greater than `0` |
+| `PGID` | `1000` | Managed-service group ID; must be greater than `0` |
 | `TZ` | unset | Time zone (for example `America/New_York`) |
 | `DUMB_PNPM_STORE_ROOT` | `/config/.pnpm-store` | Persistent pnpm package store root used during service setup/builds. Override only if `/config` is not suitable. |
 | `DUMB_BUN_CACHE_ROOT` | `/config/.bun-cache` | Persistent Bun package cache root used during Bun-based service setup/builds, such as Pulsarr. Override only if `/config` is not suitable. |
 | `DUMB_YARN_CACHE_ROOT` | `/config/.yarn-cache` | Persistent Yarn package cache root used during source builds, such as Maintainerr. Override when `/config` is on slower network storage. |
+
+!!! warning "Root IDs are rejected"
+
+    DUMB's controller starts with the container privileges needed to prepare users, ownership, devices, and mounts, then launches managed services with `PUID` and `PGID`. DUMB refuses to start when either value is `0`; choose a non-root host user and group that can access the mounted paths.
 
 !!! tip "Complete generated reference"
 
