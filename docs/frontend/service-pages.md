@@ -49,16 +49,21 @@ Action buttons:
 
 ## mediastorm first-login credential
 
-On a new mediastorm installation, mediastorm generates a one-time password for username `admin`.
-When the backend advertises `mediastorm_initial_admin_password`, the mediastorm service page shows
-a prominent credential notice with masked reveal and copy controls. The password is fetched only
-through the DUMB process API under the same authentication policy as other process endpoints, is
-not stored in browser preferences, and is refreshed while the notice is visible.
+Current mediastorm builds initialize username `admin` with the public password `admin`. When the
+backend advertises `mediastorm_initial_admin_password`, the mediastorm service page shows a
+prominent credential notice with masked reveal and copy controls. The API identifies whether the
+file contains the current default or an installation-specific credential from an older, pinned, or
+customized build. The password is fetched only through the DUMB process API under the same
+authentication policy as other process endpoints, is not stored in browser preferences, and is
+refreshed while the notice is visible.
 
-Change the password under **Admin UI → Accounts → Change Password**. mediastorm then removes
-`/data/mediastorm/cache/initial_admin_password.txt`; the next frontend refresh detects that removal,
-clears the password from page state, and hides the notice. Some mediastorm builds use the
-extensionless compatibility filename `initial_admin_password`, which DUMB also recognizes.
+Current mediastorm builds accept the first login through Docker and reverse proxies, but require the
+same login form to include and confirm a replacement password before creating the admin session.
+Pinned builds without those additional fields should be changed under
+**Admin UI → Accounts → Change Password** immediately after sign-in. mediastorm then removes the
+bootstrap file; the next frontend refresh detects that removal, clears the password from page
+state, and hides the notice. DUMB recognizes both `initial_admin_password` and
+`initial_admin_password.txt`.
 
 ---
 

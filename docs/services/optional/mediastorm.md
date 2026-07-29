@@ -95,27 +95,34 @@ Pinned releases, commits, and digests disable automatic updates through DUMB's s
 !!! warning "First login credentials"
 
     - **Username:** `admin`
-    - **Password:** generated uniquely by mediastorm on first start
+    - **Password:** `admin` on current mediastorm builds
 
-    DUMB displays the generated password in a warning on the mediastorm service page while
-    `/data/mediastorm/cache/initial_admin_password.txt` exists. Reveal or copy it there, sign in,
-    and change the password immediately. mediastorm deletes the bootstrap credential file after
-    the password changes, and the DUMB warning then disappears automatically.
+    This is a public bootstrap credential. Current mediastorm builds require the first-login form
+    to include a new password and confirmation; the default is replaced atomically before the
+    first admin session is created. This flow works through Docker and reverse proxies.
 
-    Some upstream builds use the compatibility filename `initial_admin_password` without the
-    `.txt` suffix. DUMB recognizes either filename.
+    mediastorm writes the active first-login password to its protected bootstrap credential file.
+    DUMB displays that value on the mediastorm service page while the file exists, which keeps
+    pinned builds and installations using `STRMR_INITIAL_ADMIN_PASSWORD` compatible. mediastorm
+    deletes the file after the password changes, and the DUMB warning then disappears automatically.
+    DUMB recognizes both `initial_admin_password.txt` and the current extensionless
+    `initial_admin_password` filename.
 
 1. Select **mediastorm** under Optional Services during onboarding, or enable it from its DUMB service configuration.
 2. Start mediastorm. On first install, DUMB downloads and verifies the architecture-specific OCI layers, builds the local Python subtitle-helper environment, starts PostgreSQL, and waits for it before launching the service. The initial download is several hundred MiB.
 3. Open the mediastorm embedded UI. It starts at `/admin`.
-4. Sign in as `admin` with the generated password shown on the DUMB service page, then change the password under **Admin UI → Accounts → Change Password**.
+4. Sign in as `admin` with the password shown on the DUMB service page. For current builds this is `admin`; enter and confirm a replacement password in the additional first-login fields. Pinned builds without those fields should be changed immediately under **Admin UI → Accounts → Change Password**.
 5. Add TMDB and TVDB API keys in mediastorm's admin settings. Media discovery will be incomplete until both are configured.
 6. Configure the Debrid, torrent, or Usenet providers you intend to use.
 7. Open `/watch` for the browser client, or point a supported mediastorm mobile/TV client at the reachable DUMB host and mediastorm port.
 
 !!! warning "Secure the administrative interface"
 
-    The generated bootstrap password is a sensitive credential, and `/admin` controls providers and users. Do not copy it into logs, screenshots, or support bundles. Change it before exposing mediastorm beyond a trusted network. Prefer a VPN or a carefully tested authenticated reverse-proxy route; never publish the raw port before completing first-login setup.
+    The `admin` / `admin` bootstrap is publicly known, and `/admin` controls providers and users.
+    Change it before exposing mediastorm beyond a trusted network. Do not copy a customized
+    first-login password into logs, screenshots, or support bundles. Prefer a VPN or a carefully
+    tested authenticated reverse-proxy route; never publish the raw port before completing
+    first-login setup.
 
 ---
 
@@ -127,9 +134,9 @@ Back up both parts of mediastorm state:
 - the persistent `/mediastorm` directory, especially `settings.json` and cached application state. `/mediastorm/runtime` can be excluded when your backup process supports exclusions because DUMB can reinstall it.
 
 Before first-login setup is complete, backups of the cache may contain
-`initial_admin_password.txt` (or the extensionless compatibility filename). Treat that backup as
-credential-bearing data. The live bootstrap file is removed by mediastorm after the admin password
-changes.
+`initial_admin_password.txt` or `initial_admin_password`. Treat that backup as credential-bearing
+data, especially when an installation-specific password is configured. The live bootstrap file is
+removed by mediastorm after the admin password changes.
 
 When following `latest`, use **Check for updates** and **Install update** on the mediastorm service page for one-time updates, or enable `auto_update` for scheduled checks. DUMB compares `/mediastorm/runtime/version.txt` with the latest GitHub release, downloads the official OCI runtime into a staging directory, verifies it, and atomically replaces the old runtime only after validation succeeds. A pin blocks normal update installation until you change/disable the pin or explicitly approve the frontend's override action. Before a major upgrade or rollback, preserve a matching database and settings/cache backup because application migrations can make rollback depend on restoring both together.
 
@@ -148,7 +155,9 @@ For troubleshooting, direct access is `http://<host>:7777` when you publish that
 ## Troubleshooting
 
 - **Service waits or exits at startup:** Check PostgreSQL status first, then inspect the mediastorm service log. DUMB creates the database and connection URL during setup.
-- **First-login password is not shown:** Confirm mediastorm has completed its first start, then refresh the service page. If the password was already changed, the bootstrap file and DUMB warning are expected to be gone. Otherwise verify that `/data/mediastorm/cache/initial_admin_password.txt` exists and is readable by the DUMB container.
+- **First-login password is not shown:** Current builds use `admin` / `admin`. If the password was already replaced, the bootstrap file and DUMB warning are expected to be gone. Otherwise confirm mediastorm completed its first start and verify that `/data/mediastorm/cache/initial_admin_password` (or the `.txt` compatibility filename) is readable by the DUMB container.
+- **`admin` / `admin` is rejected:** On current builds, entering only the public default is intentionally incomplete. Fill the **New admin password** and **Confirm new password** fields on the same login form. API clients receive HTTP `428` with code `password_change_required` and must resubmit the login with `newPassword`.
+- **Onboarding asks for another password change:** Update mediastorm. Current onboarding recognizes that the password was already secured during first sign-in and leaves the second password change optional.
 - **Install fails during an OCI layer download:** Confirm the DUMB container can reach Docker Hub and has enough free space for the compressed image plus the staged runtime. Retrying the start repeats the verified install.
 - **OCI version mismatch:** Upstream's `latest` image does not yet match its latest GitHub release. DUMB preserves the existing runtime and refuses to activate the mismatched image; retry after upstream finishes publishing.
 - **Pinned version cannot be resolved:** Confirm the value is a published mediastorm release tag, full 40-character commit tag, or complete `sha256:` digest. Short commit hashes and branch names are intentionally rejected.

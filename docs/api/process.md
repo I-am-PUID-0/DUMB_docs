@@ -676,13 +676,14 @@ The former `/process/arr-postgres-migration/*` paths remain available as hidden 
 
 ### `GET /process/mediastorm-initial-admin-password`
 
-Returns mediastorm's generated bootstrap credential while its one-time password file exists:
+Returns mediastorm's active bootstrap credential while its first-login password file exists:
 
 ```json
 {
   "available": true,
   "username": "admin",
-  "password": "generated-bootstrap-password"
+  "password": "admin",
+  "credential_kind": "default"
 }
 ```
 
@@ -692,18 +693,27 @@ After the administrator changes the password, mediastorm deletes the file and th
 {
   "available": false,
   "username": "admin",
-  "password": null
+  "password": null,
+  "credential_kind": null
 }
 ```
+
+`credential_kind` is `default` when the file contains mediastorm's current public `admin` password
+and `installation_specific` for an older generated password or an explicit
+`STRMR_INITIAL_ADMIN_PASSWORD` value.
+
+On current mediastorm builds, clients using the public default must provide a replacement
+`newPassword` in the same login request. A login containing only `admin` / `admin` returns HTTP
+`428` with code `password_change_required`; the replacement is committed before the first session
+is created.
 
 The endpoint uses the existing DUMB authentication dependency, accepts no caller-supplied path, and
 reads only the fixed mediastorm cache credential. It refuses symlinks, non-regular files, oversized
 values, and multiline values. Responses include `Cache-Control: no-store, private` and
 `Pragma: no-cache`; clients must not persist the password.
 
-DUMB checks `/data/mediastorm/cache/initial_admin_password.txt` through mediastorm's configured
-persistent directory and also recognizes the extensionless `initial_admin_password` filename used
-by some upstream builds. Clients should gate this endpoint on the
+DUMB checks both `initial_admin_password` and `initial_admin_password.txt` through mediastorm's
+configured persistent cache directory. Clients should gate this endpoint on the
 `mediastorm_initial_admin_password` capability.
 
 ---
