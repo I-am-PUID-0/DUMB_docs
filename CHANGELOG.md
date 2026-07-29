@@ -1,6 +1,13 @@
 # Changelog
 
 
+## [1.23.2](https://github.com/I-am-PUID-0/DUMB_docs/compare/1.23.1...1.23.2) (2026-07-29)
+
+
+### 📖 Documentation
+
+* **deployment:** clarify WSL networking and Portainer paths ([dce6a97](https://github.com/I-am-PUID-0/DUMB_docs/commit/dce6a979836c118735edb089ec49dcf9356aeb81))
+
 ## [1.23.1](https://github.com/I-am-PUID-0/DUMB_docs/compare/1.23.0...1.23.1) (2026-07-29)
 
 
