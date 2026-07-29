@@ -11,6 +11,15 @@ icon: fontawesome/brands/windows
 
 This guide will walk you through setting up DUMB on a Windows system using a **lightweight Docker + WSL2 setup**, without relying on Docker Desktop. 
 
+!!! tip "Want a graphical Docker experience?"
+
+    Use [Portainer](portainer.md) if you want to manage containers, stacks,
+    logs, and updates through a web interface. Complete the **WSL Install**,
+    **Docker Install**, and **Mirrored Mode Networking** sections below, then
+    switch to the
+    [Portainer deployment guide](portainer.md) before deploying DUMB. Do not
+    deploy DUMB with the CLI Compose guide first.
+
 ----
 
 ### WSL Install
@@ -100,7 +109,7 @@ Starting with **Windows 11 22H2**, WSL2 supports a new networking mode called **
 -  Access **Windows services** from WSL using `127.0.0.1`  
 -  Improved VPN support (VPNs work in both Windows and WSL)  
 -  Multicast compatibility  
--  Reach WSL directly from your **local LAN**
+-  Reach WSL services through the Windows host's network interfaces
 
 ---
 
@@ -112,16 +121,25 @@ Starting with **Windows 11 22H2**, WSL2 supports a new networking mode called **
     notepad $env:USERPROFILE\.wslconfig
     ```
 
-2. Add the following section:
+2. Add the following sections:
 
     ```ini
     [wsl2]
     networkingMode=mirrored
+
+    [experimental]
+    hostAddressLoopback=true
     ```
 
-3. Restart WSL for the changes to take effect:
+    `hostAddressLoopback=true` allows Windows and WSL to reach each other by an
+    IPv4 address assigned to the Windows host, such as
+    `http://<windows-ip>:3005`. Without it, `localhost` still works, but the
+    Windows host's other IPv4 addresses do not loop back into WSL. This setting
+    only applies when `networkingMode=mirrored`.
 
-    ```bash
+3. Save the file, then restart WSL for the changes to take effect:
+
+    ```powershell
     wsl --shutdown
     ```
 
@@ -135,43 +153,16 @@ Starting with **Windows 11 22H2**, WSL2 supports a new networking mode called **
 
 #### Additional Notes
 
+- [`hostAddressLoopback`](https://learn.microsoft.com/en-us/windows/wsl/wsl-config#experimental-settings)
+  currently supports only IPv4 host addresses.
 - You can combine this with [`autoProxy=true`](https://learn.microsoft.com/en-us/windows/wsl/wsl-config#configuration-settings-for-wslconfig) if you're using a proxy.
 - This setting applies globally across all WSL2 instances.
+- Windows Firewall and the Hyper-V firewall can still restrict inbound
+  connections. Allow only the DUMB ports and trusted network profiles you
+  intend to expose.
 
-
-
-### Extra Credit
-
-If you want to manage Docker visually via Portainer:
-
-1. Create the Portainer data volume:
-    ```bash
-    docker volume create portainer_data
-    ```
-
-2. Start the Portainer container:
-
-    ```bash
-    docker run -d \
-    -p 8000:8000 \
-    -p 9443:9443 \
-    --name portainer \
-    --restart=always \
-    -v /var/run/docker.sock:/var/run/docker.sock \
-    -v portainer_data:/data \
-    portainer/portainer-ce:latest
-    ```
-
-You can now manage Docker containers via the browser at: `https://<ip>:9443`
-
-!!! note 
-    On the first run of Portainer, you need to access the Web UI quickly to create your initial administrator user, which is crucial for accessing and managing your Docker environment. 
-    
-!!! tip
-    If you can't access the UI after the initial setup, ensure the Portainer container is running and that the correct port is open. 
-    You might need to restart the container if it timed out. 
-
-For more, see the [Portainer Deployment Guide](./portainer.md).
+Next, choose whether to publish selected ports or use host networking in
+[Docker Networking and Ports](networking.md).
 
 ---
 

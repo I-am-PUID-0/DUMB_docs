@@ -10,7 +10,7 @@ This guide assumes you have never used Docker before. It walks through what Dock
 is, how Docker Compose works, how to install Docker on Ubuntu, and how to deploy
 DUMB cleanly with persistent storage.
 
-!!! tip "Prefer a UI?"
+!!! tip "Want a graphical Docker experience?"
 
     [Portainer](portainer.md) is a great option if you want a web UI for managing
     containers, logs, and volumes. If you want to deploy DUMB with Portainer
@@ -226,6 +226,9 @@ If you do not see the UI:
 
 Docker only exposes ports you explicitly map in your `docker-compose.yml`.
 If a UI is not reachable, it usually means the port is not mapped.
+
+See [Docker Networking and Ports](networking.md) for a complete comparison of
+selected port publishing and `network_mode: host`.
 
 The maintained Compose file publishes only the DUMB Frontend:
 

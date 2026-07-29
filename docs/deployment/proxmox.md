@@ -8,6 +8,15 @@ icon: simple/proxmox
 
 This guide will walk you through deploying **DUMB** inside a lightweight **Ubuntu-based LXC container** on **Proxmox VE**.
 
+!!! tip "Want a graphical Docker experience?"
+
+    Use [Portainer](portainer.md) if you want to manage containers, stacks,
+    logs, and updates through a web interface. Complete the LXC and Docker
+    preparation in this guide, and use the paths under
+    **Use the current DUMB mounts** when editing the Portainer stack. Then follow
+    the [Portainer deployment guide](portainer.md) before deploying DUMB. Do
+    not deploy DUMB with the CLI Compose guide first.
+
 ---
 
 ## Prerequisites
@@ -227,41 +236,6 @@ mounts; `PUID`/`PGID` control the managed service identity.
 
     Log out and back in before running Docker without `sudo`.
 
-
----
-
-## Install Portainer inside the LXC (Optional) 
-If you want to manage Docker visually via Portainer:
-
-1. Create the Portainer data volume:
-    ```bash
-    docker volume create portainer_data
-    ```
-
-2. Start the Portainer container:
-
-    ```bash
-    docker run -d \
-    -p 8000:8000 \
-    -p 9443:9443 \
-    --name portainer \
-    --restart=always \
-    -v /var/run/docker.sock:/var/run/docker.sock \
-    -v portainer_data:/data \
-    portainer/portainer-ce:latest
-    ```
-
-You can now manage Docker containers via the browser at: `https://<ip>:9443`
-
-!!! note 
-    On the first run of Portainer, you need to access the Web UI quickly to create your initial administrator user, which is crucial for accessing and managing your Docker environment. 
-    
-!!! tip
-    If you can't access the UI after the initial setup, ensure the Portainer container is running and that the correct port is open. 
-    You might need to restart the container if it timed out. 
-
-For more, see the [Portainer Deployment Guide](./portainer.md).
-
 ---
 
 ## Use the current DUMB mounts
@@ -281,7 +255,7 @@ The `/data` mount persists service application state. `/mnt/debrid` is the separ
 ---
 
 ## Next Steps
-Now that Docker (and optionally Portainer) are installed, continue with:
+Now that the LXC and Docker are ready, choose one deployment path:
 
-- [Deploy DUMB via Docker Compose](./docker.md)
-- [Configure your stack with Portainer](./portainer.md)
+- **Command line:** [Deploy DUMB via Docker Compose](docker.md)
+- **Graphical management:** [Install Portainer and deploy a stack](portainer.md)

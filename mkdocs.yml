@@ -86,6 +86,7 @@ nav:
   - Deployment:
       - Overview: deployment/index.md
       - Docker: deployment/docker.md
+      - Networking and Ports: deployment/networking.md
       - Portainer: deployment/portainer.md 
       - Unraid: deployment/unraid.md     
       - WSL: deployment/wsl.md
