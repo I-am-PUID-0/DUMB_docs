@@ -83,7 +83,9 @@ Fetch details about a specific process.
   "process_name": "rclone w/ RealDebrid",
   "config": { "enabled": true, "...": "..." },
   "version": "1.65.1",
-  "config_key": "rclone"
+  "config_key": "rclone",
+  "repo_url": "https://rclone.org",
+  "sponsorship_url": "https://rclone.org/sponsor/"
 }
 ```
 

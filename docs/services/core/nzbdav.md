@@ -90,6 +90,12 @@ NzbDAV also exposes a **Usenet download client** path in Arr by emulating a Sabn
     The `repo_owner: "nzbdav"` and `repo_name: "nzbdav"` values below select
     that fork for release, branch, and update operations.
 
+!!! tip "Support the maintained fork"
+
+    If NzbDAV is useful to your stack, you can support the fork maintainer through
+    [Buy Me a Coffee](https://buymeacoffee.com/hoivikaj). DUMB also exposes this
+    link through the frontend's NzbDAV service page and **Settings → About**.
+
 ```json
 "nzbdav": {
     "enabled": false,
@@ -412,5 +418,6 @@ Start with **Standard / passive** mode and collect through normal imports, healt
 ## Resources
 
 * [NzbDAV fork used by DUMB (default)](https://github.com/nzbdav/nzbdav)
+* [Support the NzbDAV fork maintainer](https://buymeacoffee.com/hoivikaj)
 * [Original NzbDAV repository (not the DUMB default)](https://github.com/nzbdav-dev/nzbdav)
 * [Upstream migration progress integration issue](https://github.com/nzbdav/nzbdav/issues/268)

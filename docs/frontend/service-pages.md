@@ -22,6 +22,7 @@ Each service page includes:
 - Dependency graph view for core/dependency startup relationships
 - Per-service auto-restart overrides
 - On-demand update checks and auto-update scheduling
+- A **Sponsor** action when the backend publishes a support link for the service
 - Seerr Sync controls when viewing a Seerr instance
 - Symlink Job Center (for symlink-capable services) with active jobs, recent history, retry, and failure clearing
 - Guided SQLite-to-PostgreSQL rehearsal/cutover panel on every backend-advertised supported service, with explicit rehearsal/cutover success notices, automatic cutover selection, close-while-active confirmation, and persistent background running/completion indicators
@@ -40,6 +41,8 @@ Action buttons:
 
 - **Start**, **Stop**, **Restart** for the current service
 - **Auto-restart** opens per-service overrides (if supported)
+- **Docs** opens DUMB's guide for the current service
+- **Sponsor** opens the service developer's support page when one is available
 
 !!! note "API service controls"
 
