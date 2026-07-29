@@ -172,6 +172,11 @@ The backend pauses Auto-restart during stack startup. A restart attempt is
 shown as successful only after the service passes its health checks; slow
 services can use a longer per-service grace override.
 
+Service-page health badges distinguish **Healthy**, **Degraded**, **Starting**,
+and **Unhealthy**. Hover the badge for the backend's application-probe reason
+and component summary. Degraded and starting states remain visible but do not
+increment the Auto-restart unhealthy threshold.
+
 ---
 
 ## Auto-update settings

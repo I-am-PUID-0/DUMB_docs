@@ -87,7 +87,12 @@ With `health=true`, the payload uses `processes`:
       "process_name": "Riven Backend",
       "status": "running",
       "healthy": true,
+      "health_status": "healthy",
       "health_reason": null,
+      "health_details": {
+        "probe": "process_and_ports",
+        "ports": [8080]
+      },
       "restart": {
         "restart_attempts": 0,
         "restart_successes": 0,
@@ -114,8 +119,10 @@ With `health=true`, the payload uses `processes`:
 |-------|------|-------------|
 | `process_name` | string | Service display name |
 | `status` | string | `running` for entries in this running-process snapshot |
-| `healthy` | boolean | Health check result |
-| `health_reason` | string | Reason if unhealthy |
+| `healthy` | boolean | Backward-compatible operational result |
+| `health_status` | string | `healthy`, `degraded`, `starting`, or `unhealthy` |
+| `health_reason` | string | Operator-facing explanation for non-healthy states |
+| `health_details` | object | Bounded probe type, endpoint path, response status, latency, and component states when available |
 | `restart` | object | Current auto-restart counters, pending/disabled state, timestamps, and health threshold |
 
 ---

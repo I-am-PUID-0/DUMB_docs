@@ -31,8 +31,10 @@ Each service is represented by a card with the following elements:
 | Color | Status |
 |-------|--------|
 | :material-circle:{style="color: #4caf50"} Green | Running and healthy |
+| :material-circle:{style="color: #ff9800"} Amber | Running but degraded |
+| :material-circle:{style="color: #29b6f6"} Blue | Application is starting or migrating |
+| :material-circle:{style="color: #e91e63"} Rose | Running but application health is unhealthy |
 | :material-circle:{style="color: #f44336"} Red | Stopped |
-| :material-circle:{style="color: #ff9800"} Amber | Running but unhealthy |
 | :material-circle:{style="color: #9e9e9e"} Gray | Unknown status |
 
 ### Health badge
@@ -40,7 +42,13 @@ Each service is represented by a card with the following elements:
 When a service has health checks enabled, you'll see:
 
 - **Healthy** - Service is responding correctly
-- **Unhealthy** - Service failed health check (with reason on hover)
+- **Degraded** - Application is reachable but reports a warning
+- **Starting** - Application is initializing or migrating
+- **Unhealthy** - Application failed a restart-relevant health check
+
+Hover the indicator or health badge to see the probe, reason, and component
+states supplied by the backend. The sidebar's **Unhealthy** filter includes
+only restart-relevant unhealthy states, not degraded or starting services.
 
 ### Auto-restart badge
 

@@ -144,14 +144,34 @@ Restarts a running process.
 
 Gets the current status of a process.
 
+Pass `include_health=true` to include structured health and Auto-restart state.
+The `health_status` value is `healthy`, `degraded`, `starting`, or `unhealthy`.
+`healthy` remains for backward compatibility; use `health_status` when the
+difference between an application starting, degraded, and restart-worthy
+unhealthy state matters.
+
 #### Example Response:
 
 ```json
 {
-  "process_name": "rclone w/ RealDebrid",
-  "status": "running"
+  "process_name": "NzbDAV",
+  "status": "running",
+  "healthy": true,
+  "health_status": "starting",
+  "health_reason": "NzbDAV reports migrating",
+  "health_details": {
+    "probe": "NzbDAV backend health",
+    "endpoint": "/health",
+    "supported": true,
+    "http_status": 503,
+    "reported_status": "migrating"
+  },
+  "restart": {}
 }
 ```
+
+Health details expose only bounded probe metadata and component names/statuses.
+They do not include response bodies, credentials, or arbitrary remote URLs.
 
 ---
 
@@ -170,7 +190,17 @@ terminal failure summaries.
   "services": {
     "DUMB API": {"state": "ready", "reason": null},
     "DUMB Frontend": {"state": "ready", "reason": null},
-    "NzbDAV": {"state": "starting", "reason": "Port 127.0.0.1:3000 not responding"}
+    "NzbDAV": {
+      "state": "starting",
+      "reason": "NzbDAV reports migrating",
+      "health_status": "starting",
+      "health_details": {
+        "probe": "NzbDAV backend health",
+        "endpoint": "/health",
+        "http_status": 503,
+        "reported_status": "migrating"
+      }
+    }
   },
   "failures": {}
 }

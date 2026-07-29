@@ -18,7 +18,7 @@ The embedded UI feature provides:
 - **Simplified networking** - No need to expose multiple ports
 - **Integrated experience** - Access services without leaving DUMB
 - **Traefik routing** - Dynamic path-based routing to services
-- **Root-app handling** - Services such as AltMount, Pulsarr, Traefik Proxy Admin, and Traefik Dashboard can load root-relative assets and APIs while staying inside the embedded service context
+- **Root-app handling** - Services such as NzbDAV, AltMount, Pulsarr, Traefik Proxy Admin, and Traefik Dashboard can load root-relative assets, APIs, and WebSockets while staying inside the embedded service context
 
 ![Embedded UIs in DUMB](../assets/images/features/embedded_ui.png){ .shadow }
 
@@ -86,6 +86,13 @@ The DUMB frontend also proxies UI requests through a `/ui/<service_name>` path f
 
 Some embedded services are root-style web apps. Their JavaScript may call paths such as `/api/*`, `/_next/*`, `/dashboard`, or `/auth/login` instead of paths under the service prefix. The dmbdb proxy uses iframe context, referer, and the `dumb_ui_service` cookie to route those requests back to the active service instead of sending them to DUMB's own API.
 
+NzbDAV's frontend uses root `/api/*` requests and a root `/ws` WebSocket. In an
+embedded NzbDAV tab, dmbdb routes those paths to NzbDAV while reserving
+`/ws/status`, `/ws/metrics`, and `/ws/logs` for DUMB's own live updates.
+When you leave a service page, dmbdb clears the embedded-service context before
+the destination page loads so normal DUMB API and metrics requests immediately
+return to the DUMB backend without requiring a full-page refresh.
+
 ### Available services
 
 | Service | Path | Native Port |
@@ -109,6 +116,7 @@ Some embedded services are root-style web apps. Their JavaScript may call paths 
 | Zilean | `/service/ui/zilean` | 8182 |
 | CLI Debrid | `/service/ui/cli_debrid` | 5000 |
 | CLI Battery | `/service/ui/cli_battery` | 5001 |
+| NzbDAV | `/service/ui/nzbdav` | 3000 |
 | NeutArr (instance) | `/service/ui/neutarr_<instance>` | 9705 |
 | Traefik Dashboard | `/service/ui/traefik` | 18081 |
 | Traefik Proxy Admin | `/service/ui/traefik_proxy_admin` | 3004 |

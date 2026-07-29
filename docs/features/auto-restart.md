@@ -53,11 +53,47 @@ flowchart TD
 
 1. **Startup gate** - Monitoring waits until DUMB startup is `ready` or `degraded`
 2. **Grace period** - Each service receives its configured post-start grace
-3. **Health check** - Service is periodically checked for responsiveness
+3. **Health check** - DUMB verifies the process, configured ports, and—where a
+   safe local endpoint exists—the application itself
 4. **Unhealthy detection** - Multiple consecutive failures trigger action
 5. **Restart attempt** - Service is stopped and restarted
 6. **Recovery verification** - Success is recorded only after health checks pass
 7. **Repeat** - Continue monitoring after restart
+
+---
+
+## Health states and application probes
+
+DUMB reports four application health states:
+
+| State | Meaning | Auto-restart behavior |
+|-------|---------|-----------------------|
+| **Healthy** | Process, ports, and application probe passed | Reset the consecutive-failure counter |
+| **Degraded** | The application is reachable but reports a warning, or an optional probe is unsupported/protected | Keep the service running and show the reason |
+| **Starting** | The application explicitly reports initialization or migration work | Keep waiting; do not count it as an Auto-restart failure |
+| **Unhealthy** | The process/port failed or the application endpoint reports a real failure | Count toward `unhealthy_threshold` |
+
+Application probes are bounded, read-only, loopback requests cached briefly by
+the backend. Current probes include:
+
+- NzbDAV backend `/health`
+- Servarr `/ping` for Sonarr, Radarr, Lidarr, Prowlarr, and Whisparr
+- Jellyfin `/health`, Emby application ping, and Plex `/identity`
+- Seerr status and Traefik Proxy Admin health
+- PostgreSQL `pg_isready` and pgAdmin ping
+- rclone's local RC version endpoint when RC is enabled
+
+Services without a known safe application endpoint retain process and port
+checks. DUMB deliberately does not use content health, missing articles,
+indexer/provider warnings, or other external-integration checks as restart
+signals. Those conditions may require operator action, but restarting a healthy
+application usually does not fix them and can create a restart loop.
+
+For NzbDAV specifically, the maintained fork can keep its backend port open
+during a blocking database migration while `/health` returns
+`503 {"status":"migrating"}`. DUMB reports this as **Starting**, so stack
+readiness waits for the real backend without repeatedly restarting a legitimate
+migration.
 
 ---
 
@@ -193,6 +229,12 @@ Response includes:
   "process_name": "Riven Backend",
   "status": "running",
   "healthy": true,
+  "health_status": "healthy",
+  "health_reason": null,
+  "health_details": {
+    "probe": "process_and_ports",
+    "ports": [8080]
+  },
   "restart": {
     "restart_attempts": 2,
     "restart_successes": 2,

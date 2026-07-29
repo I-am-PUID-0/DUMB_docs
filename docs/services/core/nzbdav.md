@@ -362,6 +362,19 @@ Instance names are slugified into categories if present (for example, `Radarr 4K
 
 ## Troubleshooting Tips
 
+### NzbDAV starts but its port is already open
+
+The maintained NzbDAV fork serves a controlled migration status responder while
+blocking database migrations run. During that phase the backend port can accept
+connections, but `/health` returns HTTP `503` with
+`{"status":"migrating"}`. DUMB's service health shows **Starting** and keeps
+stack readiness open until NzbDAV's real backend returns `Healthy`.
+
+This is not an Auto-restart failure. Do not repeatedly restart or interrupt a
+legitimate migration. Open NzbDAV's embedded UI to view its migration progress.
+If the state never advances, inspect NzbDAV logs and available storage before
+deciding whether recovery is required.
+
 ### Compare NzbDAV performance
 
 Open the NzbDAV service page's **AI Assist** tab and choose **Performance** to compare a selected window with the previous matching period or with the period before the latest DUMB-saved setting change.
