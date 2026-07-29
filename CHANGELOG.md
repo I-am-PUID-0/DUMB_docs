@@ -1,6 +1,16 @@
 # Changelog
 
 
+## [1.23.1](https://github.com/I-am-PUID-0/DUMB_docs/compare/1.23.0...1.23.1) (2026-07-29)
+
+
+### 📖 Documentation
+
+* **health:** document application-aware service monitoring ([9cab3d9](https://github.com/I-am-PUID-0/DUMB_docs/commit/9cab3d96ea9034ebe7017437bc75eeee407452bf))
+* **mediastorm:** document current first-login replacement flow ([3244739](https://github.com/I-am-PUID-0/DUMB_docs/commit/3244739e26b3de4ec93059ba13adf31e61935f8f))
+* **nzbdav:** document maintainer sponsorship link ([f793484](https://github.com/I-am-PUID-0/DUMB_docs/commit/f793484249ff5825af967684692df20ad9154470))
+* **startup:** document readiness lifecycle and monitoring gates ([7dc9022](https://github.com/I-am-PUID-0/DUMB_docs/commit/7dc90222e9477d10d0cf41964092cf4a4106531c))
+
 ## [1.23.0](https://github.com/I-am-PUID-0/DUMB_docs/compare/1.22.18...1.23.0) (2026-07-27)
 
 
