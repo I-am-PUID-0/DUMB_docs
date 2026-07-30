@@ -1,6 +1,13 @@
 # Changelog
 
 
+## [1.23.3](https://github.com/I-am-PUID-0/DUMB_docs/compare/1.23.2...1.23.3) (2026-07-30)
+
+
+### 📖 Documentation
+
+* **config:** document non-root PUID and PGID requirement ([6a0c000](https://github.com/I-am-PUID-0/DUMB_docs/commit/6a0c000c8591f5b7c69f1f1ef34ae7f75f9f3834))
+
 ## [1.23.2](https://github.com/I-am-PUID-0/DUMB_docs/compare/1.23.1...1.23.2) (2026-07-29)
 
 
