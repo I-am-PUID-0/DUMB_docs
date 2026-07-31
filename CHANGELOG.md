@@ -1,6 +1,13 @@
 # Changelog
 
 
+## [1.23.4](https://github.com/I-am-PUID-0/DUMB_docs/compare/1.23.3...1.23.4) (2026-07-31)
+
+
+### 📖 Documentation
+
+* **auth:** document managed Authelia and OIDC workflows ([e2425a9](https://github.com/I-am-PUID-0/DUMB_docs/commit/e2425a98919b0e8f9129c8332403aaa91f7de79a))
+
 ## [1.23.3](https://github.com/I-am-PUID-0/DUMB_docs/compare/1.23.2...1.23.3) (2026-07-30)
 
 
