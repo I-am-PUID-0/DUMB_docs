@@ -31,6 +31,7 @@ Optional services are:
 | [Maintainerr](../optional/maintainerr.md) | Rule-based library cleanup and leaving-soon collections | Plex/Jellyfin/Emby, Sonarr, Radarr, Seerr, Tautulli |
 | [mediastorm](../optional/mediastorm.md) | Self-hosted streaming for Debrid, torrent, and Usenet sources | PostgreSQL, playback providers |
 | [Traefik Proxy Admin](../optional/traefik-proxy-admin.md) | User-managed Traefik reverse proxy routes | Traefik, PostgreSQL |
+| [Authelia](../optional/authelia.md) | Identity provider, DUMB/TPA OIDC, and Traefik ForwardAuth | Traefik, PostgreSQL |
 | [Cloudflared](../optional/cloudflared.md) | Cloudflare Tunnel connector for DUMB Traefik | Traefik |
 | [Zilean](../optional/zilean.md)   | Debrid scraper and metadata cache for various core services | Riven, CLI Debrid |
 
@@ -48,6 +49,7 @@ Optional services attach to the DUMB ecosystem dynamically:
 * **[Maintainerr](../optional/maintainerr.md)** builds review collections from media-server and automation data, then applies delayed cleanup actions you explicitly configure.
 * **[mediastorm](../optional/mediastorm.md)** provides its own accounts and clients for streaming from configured Debrid, torrent, and Usenet sources.
 * **[Traefik Proxy Admin](../optional/traefik-proxy-admin.md)** lets operators create Traefik reverse proxy routes for services inside or outside the DUMB container. It owns user-managed host routes while DUMB continues to own embedded UI routes.
+* **[Authelia](../optional/authelia.md)** provides a DUMB-managed identity portal, native OIDC sign-in for DUMB and TPA, and an optional ForwardAuth middleware for selected Traefik routes.
 * **[Cloudflared](../optional/cloudflared.md)** runs a Cloudflare Tunnel connector inside DUMB so public traffic can reach the built-in Traefik entrypoint without direct port forwarding. Cloudflared carries traffic to Traefik; Traefik and TPA still decide which service receives it.
 * **[Zilean](../optional/zilean.md)** improves scraping efficiency by caching previous results from [Debrid Media Manager](https://debridmediamanager.com/) hash lists shared by users and reducing redundant queries. Core services like Riven and CLI Debrid can use it as a scraping backend.
 

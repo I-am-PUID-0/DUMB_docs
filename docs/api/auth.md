@@ -5,7 +5,8 @@ icon: lucide/key
 
 # Authentication API
 
-The Authentication API provides endpoints for user management, login, token handling, and authentication configuration.
+The Authentication API provides local login, OIDC Authorization Code with PKCE,
+DUMB token handling, provider configuration, and user management.
 
 ---
 
@@ -27,7 +28,11 @@ Returns the current authentication status.
 {
   "enabled": true,
   "has_users": true,
-  "setup_skipped": false
+  "setup_skipped": false,
+  "mode": "hybrid",
+  "local_login_enabled": true,
+  "oidc_login_enabled": true,
+  "oidc_provider_name": "Authelia"
 }
 ```
 
@@ -36,6 +41,64 @@ Returns the current authentication status.
 | `enabled` | boolean | Whether authentication is currently required |
 | `has_users` | boolean | Whether any user accounts exist |
 | `setup_skipped` | boolean | Whether initial setup was skipped |
+| `mode` | string | `local`, `hybrid`, or `oidc` |
+| `local_login_enabled` | boolean | Whether password login is available |
+| `oidc_login_enabled` | boolean | Whether the OIDC login flow is available |
+| `oidc_provider_name` | string | Display name shown by the login UI |
+
+---
+
+### `GET /auth/provider`
+
+Returns the current mode and redacted OIDC provider configuration. The stored
+client secret is never returned; `client_secret_configured` indicates whether
+one exists.
+
+### `PUT /auth/provider`
+
+Saves local, hybrid, or OIDC-only authentication. OIDC and hybrid requests
+include the issuer, client credentials, callback URL, scopes, claim mapping,
+optional allowed groups, and transport policy.
+
+The callback must be the exact `/api/auth/oidc/callback` path on DUMB's
+browser-facing HTTPS FQDN. The API rejects HTTP, `localhost`, IP addresses,
+single-label hostnames, credentials, query strings, and fragments.
+
+Set `confirm_oidc_only=true` when selecting OIDC-only mode. A blank
+`client_secret` preserves the existing stored secret.
+
+### `POST /auth/oidc/test`
+
+Validates the proposed OIDC configuration and resolves provider metadata without
+saving it.
+
+### `GET /auth/oidc/start?return_to=/`
+
+Creates bounded state, nonce, and PKCE values and returns:
+
+```json
+{
+  "authorization_url": "https://auth.example.com/api/oidc/authorization?..."
+}
+```
+
+### `GET /auth/oidc/callback`
+
+Browser callback registered with the identity provider. DUMB validates the
+provider response and redirects to `/login` with a short-lived one-time exchange
+code in the URL fragment.
+
+### `POST /auth/oidc/exchange`
+
+Redeems the one-time callback code for DUMB access and refresh tokens:
+
+```json
+{
+  "code": "<one-time-exchange-code>"
+}
+```
+
+The code is single-use and does not contain provider tokens.
 
 ---
 

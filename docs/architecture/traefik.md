@@ -15,6 +15,7 @@ Traefik provides optional reverse-proxy routing for service UIs and user-managed
 - Adds path prefixes for UI services under `/service/ui/<service>`
 - Supports embedded iframes in the frontend
 - Can poll Traefik Proxy Admin for user-managed host-based reverse proxy routes
+- Can load the optional DUMB-managed Authelia ForwardAuth middleware
 - Can receive public traffic through the optional Cloudflared service
 
 ---
@@ -44,6 +45,7 @@ DUMB separates Traefik configuration ownership into lanes:
 | DUMB | Static Traefik configuration | `/config/traefik/traefik.yml` |
 | DUMB | Embedded UI dynamic routes | `/config/traefik/dynamic/services.yaml` |
 | DUMB | Optional custom dynamic routes from `traefik.services`/`traefik.middlewares` | `/config/traefik/dynamic/dynamic_config.yml` |
+| DUMB | Optional Authelia ForwardAuth middleware | `/config/traefik/dynamic/authelia.yml` |
 | Traefik Proxy Admin | User-managed reverse proxy routes | `http://127.0.0.1:3004/api/traefik/config` |
 
 Traefik watches `/config/traefik/dynamic` with the file provider. When Traefik Proxy Admin is enabled, DUMB also adds Traefik's HTTP provider pointed at TPA's generated config endpoint.
@@ -52,6 +54,8 @@ This split is intentional:
 
 - DUMB can safely regenerate embedded UI routes whenever services change.
 - TPA can manage host-based routes, auth, and middleware without DUMB overwriting them.
+- The Authelia wizard can publish `dumb-authelia-forward-auth@file`, which TPA
+  may attach to selected routes.
 - Cloudflared can bring external traffic to Traefik without replacing either DUMB's routes or TPA's routes.
 
 ---
@@ -98,11 +102,16 @@ host routes in Traefik Proxy Admin rather than editing `services.yaml` by hand.
     expose Traefik outside your LAN, use protected TPA routes, Cloudflare Access,
     or another deliberate authentication layer and verify it before publishing.
 
+Do not protect the Authelia portal with its own ForwardAuth middleware. Also
+avoid combining the Authelia ForwardAuth middleware with TPA Service SSO on one
+router unless two sequential login gates are intentional.
+
 ---
 
 ## Related pages
 
 - [Embedded UIs](../features/embedded-ui.md)
 - [Traefik Proxy Admin](../services/optional/traefik-proxy-admin.md)
+- [Authelia](../services/optional/authelia.md)
 - [Cloudflared](../services/optional/cloudflared.md)
 - [Service ports](../reference/ports.md)

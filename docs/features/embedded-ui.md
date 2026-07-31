@@ -118,6 +118,7 @@ return to the DUMB backend without requiring a full-page refresh.
 | CLI Battery | `/service/ui/cli_battery` | 5001 |
 | NzbDAV | `/service/ui/nzbdav` | 3000 |
 | NeutArr (instance) | `/service/ui/neutarr_<instance>` | 9705 |
+| Authelia | `/service/ui/authelia` | 9091 |
 | Traefik Dashboard | `/service/ui/traefik` | 18081 |
 | Traefik Proxy Admin | `/service/ui/traefik_proxy_admin` | 3004 |
 
@@ -186,8 +187,30 @@ The DUMB frontend can display service UIs in iframes for a seamless experience:
 Each service page includes an embedded UI tab when the service exposes a UI. From there you can:
 
 - Switch between available UI base paths when the service exposes multiple entry points
-- Open the UI in a new browser tab using the proxied direct link
+- Open an enabled matching TPA public HTTPS route in a new browser tab
+- Fall back to the local/private direct link when no public route is configured
 - Expand the UI into a full-window view without leaving the service page
+
+Public links are discovered through DUMB's authenticated loopback integration
+with TPA. dmbdb receives only sanitized route names, ports, loopback flags, and
+HTTPS origins; it never receives the integration token or TPA authentication
+configuration. DUMB requires a matching target port and, for non-loopback
+targets, a matching service name before the action appears.
+
+Root-path applications are routed with their active service context so their
+assets, navigation, and APIs remain inside the iframe.
+
+Authelia is an intentional exception. Its public responses use anti-framing
+controls such as `frame-ancestors 'none'` and `X-Frame-Options: DENY` to protect
+password and 2FA screens from clickjacking. DUMB preserves those protections.
+The Authelia service tab is therefore a secure launcher for the configured
+public HTTPS portal, not an iframe containing the login page.
+
+The same boundary applies to Traefik Proxy Admin admin SSO. The embedded TPA UI
+remains available for local break-glass login and normal administration, but
+**Continue with SSO** must be used from TPA's public HTTPS URL. The Authelia
+authorization page and TPA callback then remain top-level pages on their
+registered public origins.
 
 ### Split view mode
 
@@ -249,6 +272,22 @@ When DUMB authentication is enabled:
 - Check if the path prefix is correct
 - Ensure Traefik has reloaded the configuration
 - For root-style apps, reload from the service page so the frontend can refresh the active embedded UI context cookie
+
+### TPA SSO started from Embedded UI fails or Authelia refuses to connect
+
+- Use **Open TPA for SSO** and complete authentication in the new top-level tab.
+- Do not remove or override Authelia's `frame-ancestors` or `X-Frame-Options`
+  protections to make the identity provider render inside DUMB.
+- Verify TPA's configured callback is its browser-facing HTTPS FQDN, for example
+  `https://proxy.example.com/api/auth/sso/callback`.
+
+### Authelia is not shown inside the Embedded UI frame
+
+- This is expected. Select **Open Authelia Portal** to use its public HTTPS URL.
+- If no launch button is available, finish Step 1 of the managed Authelia setup
+  and publish its public route first.
+- Never add ForwardAuth, TPA Service SSO, or another authentication middleware
+  to the Authelia route itself.
 
 ### Slow loading
 

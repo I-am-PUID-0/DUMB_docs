@@ -216,6 +216,53 @@ Geek Mode is disabled by default. Toggle it from the **Advanced** section on the
 
 ## Authentication settings
 
+### Authentication provider
+
+Local authentication settings remain available on older DUMB backends. The
+provider editor is mounted only when the backend advertises `auth_oidc`, so
+dmbdb does not probe unsupported `/api/auth/provider` endpoints. When
+available, choose **Local** or **OIDC only**; **Hybrid** is offered only when
+the backend also advertises `auth_hybrid`. The provider editor supports an
+external Authelia deployment or another OIDC provider, discovery testing,
+claim mapping, optional allowed groups, and explicit connection-safety
+overrides.
+
+Hybrid mode is recommended because it retains local password login for recovery.
+OIDC-only mode requires an explicit lockout-risk confirmation.
+
+The provider dropdown includes DUMB-managed Authelia, external Authelia,
+Google, Authentik, Keycloak, Microsoft Entra ID, Auth0, Okta, ZITADEL, Dex, and
+a custom OIDC choice. Google has fixed issuer/discovery values; providers with
+a deployment-specific tenant, realm, or domain receive a matching URL example
+instead. Every external provider still requires an OIDC/OAuth web application,
+client ID, client secret, and exact DUMB redirect URI.
+
+The redirect URI must use DUMB's browser-facing HTTPS FQDN and exact
+`/api/auth/oidc/callback` path. If Settings is opened through `localhost` or an
+IP address, dmbdb leaves the field blank and asks for the real FQDN instead of
+silently registering the local origin.
+
+When the backend reports a bootstrapped managed Authelia instance, that choice
+appears automatically and is preselected when no provider has already been
+saved. Its issuer and client ID are read-only; **Link managed Authelia** creates
+or reuses the dedicated client and stores the generated secret without showing
+it in the browser. The
+[Authelia service-page wizard](../services/optional/authelia.md) remains the
+place to bootstrap Authelia or configure TPA and ForwardAuth integrations.
+
+The connection-safety checkboxes affect outbound requests from DUMB to the
+identity provider:
+
+| Option | Meaning |
+| --- | --- |
+| **Verify provider TLS** | Verify the HTTPS certificate and hostname; keep enabled |
+| **Allow private endpoint IPs** | Permit loopback/private/reserved targets for a trusted self-hosted provider |
+| **Allow HTTP** | Permit an unencrypted provider endpoint on a trusted isolated network |
+
+Selecting another preset resets these exceptions to their secure defaults.
+**Check discovery** validates the issuer metadata and endpoint policy without
+saving or changing the current login.
+
 ### Enable/disable authentication
 
 Toggle the authentication requirement for accessing DUMB:

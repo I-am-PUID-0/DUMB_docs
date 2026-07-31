@@ -18,6 +18,9 @@ TPA provides:
 - **Built-in Traefik integration** - DUMB enables Traefik and points Traefik's HTTP provider at TPA's generated config endpoint.
 - **Persistent storage** - TPA uses DUMB PostgreSQL database `traefik_proxy_admin`.
 - **Admin authentication** - TPA defaults to local admin auth and generates a persistent `ADMIN_AUTH_SECRET` on first setup.
+- **Authelia linking** - DUMB can create a reusable TPA SSO provider and
+  optionally make it the TPA admin provider without exposing the generated
+  client secret in the browser.
 - **External-service support** - Routes can target services outside the DUMB container when the target host is reachable from the DUMB container.
 - **Target reachability tests** - TPA can test TCP connectivity to allowed private ranges before you save a service.
 
@@ -85,6 +88,64 @@ After this, TPA admin auth protects the TPA UI and API.
 
 !!! tip "SSO can come later"
     Start with local admin auth so you have a known-good break-glass login. You can configure admin SSO later from TPA's Security page.
+
+## Link DUMB-managed Authelia
+
+After creating the first local TPA admin, open the Authelia service page in DUMB
+and use **Set up this DUMB-managed Authelia instance**:
+
+1. Select an existing TPA root domain during bootstrap. DUMB prefills the
+   Authelia hostname and cookie domain and can create or reuse its HTTPS route.
+2. Link DUMB authentication.
+3. Enter TPA's public browser/OAuth URL and select **Link TPA**.
+4. Keep **Allow local fallback** enabled until SSO login is proven.
+
+DUMB discovers the safe domain choices and provisions the portal route through
+`GET/POST /api/integrations/dumb/authelia/route`. Route creation preserves the
+selected domain's certificate resolver, entry points, and other TLS settings,
+uses the DUMB loopback Authelia target, and never attaches authentication to
+Authelia itself. A compatible route is reused; a conflicting hostname is
+reported without modifying the existing service.
+
+DUMB creates a distinct OIDC client for TPA and sends its configuration over
+the container loopback endpoint
+`POST /api/integrations/dumb/authelia/link`. All three integration requests
+require the DUMB-generated `DUMB_INTEGRATION_TOKEN`; normal browser requests
+cannot use them without that bearer token. TPA upserts the reusable provider
+named **DUMB-managed Authelia** and can select it for admin SSO.
+
+The managed client uses Authelia's declared `client_secret_basic` token-endpoint
+authentication. TPA stores that method with the provider and sends the client
+credentials in the HTTP Basic authorization header during the authorization-code
+exchange. Other providers retain their configured/default
+`client_secret_post` behavior.
+
+The managed link uses the public HTTPS Authelia issuer for authorization, token
+exchange, and userinfo. Keeping all provider endpoints under the same issuer
+avoids an internal HTTP request being rejected by Authelia as the wrong
+effective issuer. DUMB preserves existing `SSO_ENDPOINT_ALLOW_HOSTS` entries
+and adds the public issuer hostname once the managed TPA client exists. This
+also supports trusted split-DNS deployments where that hostname resolves to a
+private address inside the DUMB container.
+
+This allowlist permits private resolution for that exact hostname; it does not
+disable TLS certificate validation or allow arbitrary loopback destinations.
+External Authelia and other OIDC providers must still present certificates
+trusted by TPA. DUMB persists the TPA environment before linking, but TPA must
+restart before changed environment values are active. The wizard's **Link and
+restart TPA** action performs that restart. API callers that set `restart_tpa`
+to `false` receive `restartRequired: true` and `integrationActive: false` when
+an environment change remains unloaded.
+
+The TPA callback URL is:
+
+```text
+https://tpa.example.com/api/auth/sso/callback
+```
+
+Standalone TPA deployments can leave `DUMB_INTEGRATION_TOKEN` unset and
+configure external Authelia or another OIDC provider from **Security → Admin
+Authentication** instead.
 
 ---
 
@@ -360,6 +421,8 @@ runtime values rather than copying them from a running instance.
 |---------|--------------|---------------|
 | TPA starts but logs database connection errors | PostgreSQL is not ready or database was not created | Restart TPA after PostgreSQL is healthy. DUMB should auto-enable PostgreSQL and create `traefik_proxy_admin`. |
 | TPA login returns to the login page over HTTP | Browser is not sending a secure admin session cookie over plain HTTP | Keep `ADMIN_COOKIE_SECURE=false` for local HTTP access, or access TPA through HTTPS and set it to `true`. Clear the old `tpa-admin-session` cookie after changing this value. |
+| Authelia accepts 2FA but TPA reports `token_exchange_failed` / `invalid_request` | TPA has an older managed provider record that submits the secret with the wrong token authentication method | Update TPA, then run **Link and restart TPA** again from DUMB's Authelia wizard so the provider is saved as `client_secret_basic`. Keep local fallback available until the next login succeeds. |
+| Embedded TPA SSO shows Authelia refused to connect | Authelia correctly blocks its sign-in page from running inside an iframe | Select **Open TPA for SSO** and sign in through TPA's public HTTPS URL. Keep the embedded TPA view for local break-glass login and normal administration; do not weaken Authelia's anti-framing headers. |
 | Traefik logs HTTP provider decode errors | TPA provider endpoint returned invalid or partial config | Restart TPA, then Traefik. DUMB waits for a top-level `http` provider response before starting Traefik. |
 | Target test is blocked | Target IP is outside `TARGET_TEST_ALLOW_CIDRS` | Add the private subnet CIDR to the allowlist and restart TPA. |
 | Browser shows 404 from Traefik | No matching router for the requested host | Check the TPA service hostname, domain, enabled state, and Traefik access logs. |

@@ -1,12 +1,13 @@
 ---
 title: Authentication
-description: Secure the DUMB dashboard and API with optional JWT authentication, local users, token lifetimes, setup controls, and protected routes.
+description: Secure DUMB with local accounts, external OpenID Connect, or hybrid sign-in while preserving a deliberate recovery path.
 icon: lucide/lock
 ---
 
 # Authentication
 
-DUMB includes an optional JWT-based authentication system to secure access to the API and web interface. Authentication can be enabled during initial setup or at any time through the settings page.
+DUMB includes optional authentication for the API and web interface. It can use
+local accounts, an external OpenID Connect (OIDC) provider, or both.
 
 ---
 
@@ -14,9 +15,12 @@ DUMB includes an optional JWT-based authentication system to secure access to th
 
 The authentication system provides:
 
-- **JWT token-based security** with access and refresh tokens
+- **Local, OIDC, or hybrid sign-in**
+- **JWT token-based DUMB sessions** after either login method succeeds
 - **User management** with create, update, and delete capabilities
 - **First-time setup wizard** for creating the initial local user
+- **External Authelia and generic standards-compatible OIDC providers**
+- **DUMB-managed Authelia linking** from the Authelia service page
 - **Optional authentication** - can be skipped for local/trusted environments
 - **Session persistence** with "Remember Me" functionality
 
@@ -25,12 +29,29 @@ The authentication system provides:
 
 ---
 
+## Authentication modes
+
+| Mode | Sign-in choices | Recommended use |
+|------|-----------------|-----------------|
+| **Local** | DUMB username and password | Simple trusted-LAN deployments |
+| **Hybrid** | OIDC plus local accounts | Recommended while introducing or operating SSO |
+| **OIDC only** | External identity provider | Only after provider login and recovery access are proven |
+
+Hybrid mode keeps local password login as a break-glass path if DNS, TLS, the
+identity provider, or its database is unavailable. OIDC-only mode requires an
+explicit lockout-risk confirmation in Settings or the Authelia wizard.
+
+!!! important "One DUMB privilege level"
+    OIDC groups can limit who may sign in, but DUMB does not currently map
+    groups to viewer/editor/admin roles. Every accepted identity receives the
+    same DUMB operator privilege.
+
 ## Authentication flow
 
 ```mermaid
 flowchart TD
     A[App Start] --> B{Auth Status Check}
-    B -->|No Users Exist| C[Setup Page]
+    B -->|No Local Users and no OIDC| C[Setup Page]
     B -->|Auth Disabled| D[Dashboard]
     B -->|Auth Enabled| E{Token Valid?}
     E -->|Yes| D
@@ -39,7 +60,7 @@ flowchart TD
     C -->|Skip Setup| H[Auth Disabled]
     G --> D
     H --> D
-    F -->|Login Success| D
+    F -->|Local or OIDC login succeeds| D
 ```
 
 ---
@@ -77,19 +98,33 @@ When DUMB starts for the first time, the frontend detects that no users exist an
 
 When authentication is enabled, users must log in to access the dashboard and API.
 
-### Login steps
+### Local login
 
 1. Navigate to the DUMB frontend
 2. Enter your username and password
 3. Optionally check **Remember Me** for persistent sessions
 4. Click **Login**
 
+### OIDC login
+
+1. Select **Continue with _provider_**.
+2. DUMB starts Authorization Code flow with PKCE and redirects to the provider.
+3. Complete the provider's authentication policy.
+4. The provider returns to `/api/auth/oidc/callback`.
+5. DUMB validates state, nonce, issuer, audience, signature, token lifetime, and
+   any configured group restriction.
+6. The browser redeems a short-lived, one-time exchange code for DUMB tokens.
+
+Provider tokens are not placed in the browser URL. DUMB issues its own access
+and refresh tokens after successful OIDC validation.
+
 ### Token management
 
 | Token Type | Lifetime | Storage | Purpose |
 |------------|----------|---------|---------|
 | Access Token | 60 minutes | Session/Local Storage | API requests |
-| Refresh Token | 30 days | Session/Local Storage | Obtain new access tokens |
+| Local refresh token | 30 days | Session/Local Storage | Renew a local session |
+| OIDC refresh token | 1 day | Session/Local Storage | Renew a provider-backed DUMB session |
 
 - **Remember Me checked**: Tokens stored in `localStorage` (persist across browser sessions)
 - **Remember Me unchecked**: Tokens stored in `sessionStorage` (cleared when browser closes)
@@ -188,6 +223,7 @@ Authentication state is stored in `/config/users.json`:
 ```json
 {
   "enabled": true,
+  "mode": "hybrid",
   "users": [
     {
       "username": "admin",
@@ -195,6 +231,19 @@ Authentication state is stored in `/config/users.json`:
       "disabled": false
     }
   ],
+  "oidc": {
+    "enabled": true,
+    "provider_name": "Authelia",
+    "source": "external_authelia",
+    "issuer_url": "https://auth.example.com",
+    "client_id": "dumb",
+    "client_secret": "<stored-secret>",
+    "redirect_uri": "https://dumb.example.com/api/auth/oidc/callback",
+    "scopes": ["openid", "profile", "email", "groups"],
+    "username_claim": "preferred_username",
+    "groups_claim": "groups",
+    "allowed_groups": ["dumb-users"]
+  },
   "jwt_secret": "auto-generated-secret-key",
   "setup_skipped": false
 }
@@ -203,13 +252,94 @@ Authentication state is stored in `/config/users.json`:
 | Field | Description |
 |-------|-------------|
 | `enabled` | Whether authentication is required |
+| `mode` | `local`, `hybrid`, or `oidc` |
 | `users` | Array of user accounts; `password` contains the bcrypt hash, not plain text |
+| `oidc` | Provider endpoints, client credentials, claim mapping, and optional allowed groups |
 | `jwt_secret` | Auto-generated secret for signing tokens |
 | `setup_skipped` | Whether initial setup was skipped |
 
 !!! tip "Password security"
 
     Passwords are hashed using bcrypt with automatic salt generation. The original password is never stored.
+
+`users.json` contains the OIDC client secret and DUMB JWT signing secret. Keep
+the file private and include it in protected configuration backups.
+
+## Configure an OIDC provider
+
+Open **Settings → Authentication → Sign-in provider**. The **Provider preset**
+list includes:
+
+- DUMB-managed Authelia, when DUMB reports that its managed instance has been
+  bootstrapped;
+- external Authelia;
+- Google, Authentik, Keycloak, Microsoft Entra ID, Auth0, Okta, ZITADEL, and
+  Dex;
+- Custom / Generic OIDC for another standards-compatible provider.
+
+Presets fill safe known values, labels, claim defaults, scopes, and
+provider-specific examples. Some providers have tenant-, realm-, or
+deployment-specific issuers, so those presets explain the expected URL rather
+than guessing it. The Google preset fills its fixed issuer and
+[official discovery URL](https://developers.google.com/identity/openid-connect/reference).
+
+Except for DUMB-managed Authelia, first create an OIDC/OAuth **web
+application** at the provider. Then supply:
+
+- provider and issuer names;
+- issuer URL, or an explicit discovery URL when necessary;
+- client ID and secret;
+- the exact browser-facing DUMB callback URL;
+- scopes and username/groups claim names;
+- optional allowed groups.
+
+Register the **Redirect URI** shown in DUMB as an exact allowed callback at the
+provider. It normally has this form:
+
+```text
+https://<dumb-public-host>/api/auth/oidc/callback
+```
+
+Use the normal browser-facing HTTPS FQDN. DUMB does not accept `localhost`, an
+IP address, a single-label hostname, HTTP, or a DUMB embedded-service URL as an
+OIDC callback. Opening Settings through a local/IP address therefore leaves the
+field blank instead of presenting that origin as a usable default.
+
+For Google, standard OpenID Connect does not return Google Group membership in
+DUMB's `groups` claim. Leave **Allowed groups** blank unless an intermediary or
+custom provider mapping deliberately supplies that claim.
+
+Use **Check discovery** before saving. This fetches and validates provider
+metadata without changing the active login configuration.
+
+### Provider connection safety
+
+| Option | What it does | Recommended state |
+| --- | --- | --- |
+| **Verify provider TLS** | Validates the provider HTTPS certificate and hostname | On |
+| **Allow private endpoint IPs** | Allows DUMB's backend to contact provider endpoints that resolve to loopback, RFC1918, or other private addresses | Off unless using a trusted self-hosted provider |
+| **Allow HTTP** | Allows unencrypted provider endpoints | Off; use only on an isolated trusted network when HTTPS is unavailable |
+
+These controls apply to outbound DUMB-to-provider requests, not
+browser-to-DUMB TLS. Changing provider presets resets them to the safe defaults
+so an exception intended for an internal provider is not silently carried to a
+different provider.
+
+When a bootstrapped DUMB-managed Authelia instance is available, its preset
+fills the issuer and `dumb` client ID automatically. **Link managed Authelia**
+creates or reuses the dedicated client and transfers its generated secret
+without exposing it in the browser. Use the
+[Authelia service-page wizard](../services/optional/authelia.md) for the initial
+bootstrap, TPA linking, ForwardAuth publishing, or later integration changes.
+
+## OIDC versus ForwardAuth
+
+OIDC changes how users sign in to DUMB or TPA. ForwardAuth is a Traefik
+middleware that protects a routed service before its upstream receives the
+request. They solve different problems and may be enabled independently.
+
+Do not attach both Authelia ForwardAuth and TPA Service SSO to the same router
+unless you intentionally want two authentication gates.
 
 ---
 
@@ -233,7 +363,8 @@ If you cannot access your account:
 
 1. Stop the DUMB container
 2. Edit `/config/users.json`
-3. Set `"enabled": false`
+3. Set `"mode": "local"` if a working local account remains, or set
+   `"enabled": false` for emergency recovery
 4. Restart the container
 5. Access the dashboard and create a new user or reset your password
 

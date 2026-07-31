@@ -48,8 +48,9 @@ This reference documents all ports used by DUMB services. Use this guide to conf
 | 8888 | Phalanx DB | API |
 | 8989 | Sonarr (first/default instance) | Web UI |
 | 8990 | Sonarr (typical second instance) | Web UI |
+| 9091 | Authelia | Identity portal/API |
 | 9090 | Zurg (first/default instance) | API |
-| 9091 | Zurg (typical second instance) | API |
+| 9091 | Zurg (typical second instance; dynamically reassigned on conflict) | API |
 | 9696 | Prowlarr | Web UI |
 | 9705 | NeutArr | Web UI |
 | 18080 | Traefik | Proxy |

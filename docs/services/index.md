@@ -51,12 +51,13 @@ DUMB is built as a collection of microservices that communicate over internal AP
 
 6. **Database Layer**
 
-    *  **PostgreSQL** stores data for Riven, Zilean, pgAdmin, Traefik Proxy Admin, mediastorm, optional Metrics history, and services deliberately migrated from SQLite
+    *  **PostgreSQL** stores data for Riven, Zilean, pgAdmin, Authelia, Traefik Proxy Admin, mediastorm, optional Metrics history, and services deliberately migrated from SQLite
     *  **pgAdmin** is a GUI for exploring PostgreSQL databases
 
 7. **Access Layer**
 
     *  **Traefik** serves DUMB-owned embedded UI routes from `/config/traefik/dynamic/services.yaml`
+    *  **Authelia** can provide DUMB/TPA OIDC and a reusable Traefik ForwardAuth middleware
     *  **Traefik Proxy Admin** owns user-managed LAN or public host routes through Traefik's HTTP provider
     *  **Cloudflared** can carry Cloudflare Tunnel traffic to DUMB Traefik without direct port forwarding
 
@@ -96,6 +97,7 @@ DUMB is built as a collection of microservices that communicate over internal AP
 | [Pulsarr](../services/optional/pulsarr.md)               | Optional  | Plex watchlist request automation                         |
 | [Maintainerr](../services/optional/maintainerr.md)       | Optional  | Rule-based library cleanup and review collections         |
 | [mediastorm](../services/optional/mediastorm.md)         | Optional  | Self-hosted Debrid, torrent, and Usenet streaming         |
+| [Authelia](../services/optional/authelia.md)             | Optional  | OIDC identity provider and Traefik ForwardAuth            |
 | [Traefik Proxy Admin](../services/optional/traefik-proxy-admin.md) | Optional  | User-managed Traefik reverse proxy routes                 |
 | [Cloudflared](../services/optional/cloudflared.md)       | Optional  | Cloudflare Tunnel connector for DUMB Traefik              |
 

@@ -134,9 +134,21 @@ Choose additional services to enable:
 | **Riven UI** | Riven Frontend |
 | **Media automation** | Tautulli, Bazarr, Pulsarr, Maintainerr |
 | **Streaming** | mediastorm |
-| **Reverse proxy/exposure** | Traefik Proxy Admin, Cloudflared |
+| **Identity/reverse proxy/exposure** | Authelia, Traefik Proxy Admin, Cloudflared |
 
 Optional services are filtered based on core dependencies and earlier selections. For example, PostgreSQL may be enabled/hidden automatically when a selected service requires it.
+
+Authelia is additionally gated by the backend's `authelia_integration`
+capability. dmbdb removes it from the Optional Services list when connected to
+an older backend instead of submitting unsupported setup options.
+
+Selecting Authelia enables PostgreSQL and installs the Authelia runtime, but
+intentionally does not start Authelia during onboarding. After onboarding, a
+**Stopped** or **Unhealthy** Authelia status is expected until you open its
+service page and complete **Step 1: Configure and start Authelia**. Only that
+first step is required; the DUMB OIDC, TPA OIDC, and ForwardAuth steps are
+optional. DNS and an HTTPS Traefik route are required before browser SSO can
+work.
 
 !!! warning "mediastorm first login"
 

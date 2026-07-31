@@ -322,11 +322,25 @@ tab appears.
 
 Features:
 
-- **Open in new tab** (only shown for local/private access)
+- **Open Public URL** when an enabled TPA route matches the service
+- **Open in new tab** for a local/private direct address when no public route is available
 - **Full window** toggle
 - UI path selector for services with multiple entry points (for example Zilean)
 
 NzbDAV uses a trailing slash in its embedded UI path to match its frontend routing.
+
+DUMB discovers public routes through its authenticated loopback integration
+with TPA. A route must be enabled and match the managed service's target port;
+non-loopback targets must also match the service name. dmbdb never guesses a
+domain and never receives TPA's integration token. Services without a confirmed
+TPA match retain their existing local/direct behavior.
+
+Authelia is a security-specific exception. Its service tab launches the
+configured public HTTPS portal instead of framing the login page because
+Authelia deliberately sends anti-clickjacking headers that prohibit iframe
+embedding. TPA's embedded UI remains usable with a local break-glass account;
+start Authelia-backed TPA SSO from **Open TPA for SSO** so both authorization
+and callback run on their registered public HTTPS origins.
 
 ---
 
@@ -345,6 +359,9 @@ The services sidebar includes faster navigation controls for large stacks:
 - **Search filter** for process name/config key matching
 - **Saved views** to store and re-apply filter/search/toggle combinations
 - **Compact mode** to reduce service-row density in the sidebar
+- **Auto-hide on navigation** to close the sidebar after opening DUMB, Stack AI
+  Assist, RTL, or a service; enabled by default and safe to disable for a
+  permanently open desktop sidebar
 - **Command palette** (`Ctrl/Cmd + K`) to jump directly to service pages
 - **Assignable service shortcuts** configured from command-palette results by entering shortcut-capture mode and pressing the combo
 - **Collapsible Sidebar tools** section to keep controls hidden when not needed
