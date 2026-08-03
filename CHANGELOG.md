@@ -1,6 +1,13 @@
 # Changelog
 
 
+## [1.23.9](https://github.com/I-am-PUID-0/DUMB_docs/compare/1.23.8...1.23.9) (2026-08-03)
+
+
+### 📖 Documentation
+
+* **rclone:** document optimizer comparison roles and verified cleanup ([123386a](https://github.com/I-am-PUID-0/DUMB_docs/commit/123386a884cf7fd7d31bc645d68afe287753ed00))
+
 ## [1.23.8](https://github.com/I-am-PUID-0/DUMB_docs/compare/1.23.7...1.23.8) (2026-08-03)
 
 
