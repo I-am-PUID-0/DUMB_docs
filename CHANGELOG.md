@@ -1,6 +1,13 @@
 # Changelog
 
 
+## [1.23.8](https://github.com/I-am-PUID-0/DUMB_docs/compare/1.23.7...1.23.8) (2026-08-03)
+
+
+### 📖 Documentation
+
+* **rclone:** expand optimizer selection and evidence guidance ([c4467ae](https://github.com/I-am-PUID-0/DUMB_docs/commit/c4467aee11326242d4c4dd4ca437d2e992ade694))
+
 ## [1.23.7](https://github.com/I-am-PUID-0/DUMB_docs/compare/1.23.6...1.23.7) (2026-08-03)
 
 
