@@ -15,7 +15,10 @@ The optimizer is currently limited to NzbDAV. It appears on the specific **rclon
 Each candidate uses this path:
 
 ```text
-optimizer reader
+DUMB-managed Arr instance -> active NzbDAV category
+  -> production rclone mount/content/<category> (metadata discovery only)
+  -> safe mount-relative read path
+  -> optimizer reader
   -> isolated read-only rclone shadow mount
   -> NzbDAV WebDAV
   -> NzbDAV's configured Usenet provider(s)
@@ -23,7 +26,27 @@ optimizer reader
 
 The shadow mount uses the same rclone remote/configuration as the production mount, but has its own mount path, VFS cache directory, and loopback RC port. It does not stop the production mount, purge its cache, or reuse its cache for candidate reads.
 
+DUMB uses the production mount only for bounded directory metadata discovery.
+It does not measure file reads there because that would reuse the production VFS
+cache and make candidate comparisons unreliable. Each category entry is resolved
+to a safe mount-relative read path and opened on every isolated shadow mount. For
+a regular entry this can be `content/radarr-nzbdav/example.mkv`; a symlink-backed
+entry can resolve to its mount-internal backing path while the UI retains the
+friendly category path.
+
 These are **real provider reads**. They can consume provider traffic and are subject to provider connection, automation, and acceptable-use policies.
+
+!!! warning "Stop media activity before testing"
+
+    Stop Plex, Jellyfin, Emby, and any other media server before starting the
+    optimizer. Wait until NzbDAV is idle with no active imports, library
+    ingestion, or unrelated reads. In particular, do not benchmark while NzbDAV
+    is importing an entire existing library.
+
+    Playback, media-library scans, imports, and other reads compete for the same
+    provider connections, bandwidth, CPU, memory, cache storage, and disks. This
+    can distort startup and throughput measurements, produce an unsuitable
+    recommendation, and add unnecessary load against the configured providers.
 
 ## Measurements
 
@@ -41,7 +64,16 @@ Failed or unavailable files remain visible in the report but are excluded from p
 
 ## Content selection
 
-Open the NzbDAV-backed rclone service and select **Rclone Optimizer**. DUMB performs a bounded scan of media files already visible in that rclone mount and suggests a small, stratified set:
+Open the NzbDAV-backed rclone service and select **Rclone Optimizer**. DUMB first
+reuses the same Arr-to-NzbDAV category derivation used during integration setup.
+Only enabled Radarr, Sonarr, Lidarr, and Whisparr instances whose `core_service`
+includes `nzbdav` contribute categories. For example, a Radarr instance named
+`NzbDAV` produces `radarr-nzbdav`.
+
+The configured rclone instance supplies the user-defined mount base through
+`mount_dir` plus `mount_name`. DUMB scans only
+`<mount>/content/<active-category>`, reports missing/empty categories in the
+panel, and suggests a small, stratified set:
 
 - recently modified content, which is more likely to be warm;
 - older content, which is more likely to be cold;
@@ -50,7 +82,7 @@ Open the NzbDAV-backed rclone service and select **Rclone Optimizer**. DUMB perf
 
 Age is only a **cache-likelihood heuristic**. It does not prove whether an article is cached by NzbDAV or a provider. The report keeps recent/likely-warm and older/likely-cold startup results separate, while NzbDAV's live metrics and stream traces explain what happened during the reads.
 
-You can replace the automatic selection with any listed media files. Select between one and eight files. The scan is intentionally bounded by file count and time so discovering content does not recursively enumerate an unlimited remote library.
+You can replace the automatic selection with any listed media files. Select between one and eight files. The scan is intentionally bounded by file count and time so discovering content does not recursively enumerate an unlimited remote library. No `/mnt/debrid/...` mount path or category name is hard-coded into the optimizer.
 
 ## Candidate matrix
 

@@ -729,7 +729,7 @@ whose `key_type` is `NzbDAV` are eligible.
 | Method | Route | Purpose |
 |---|---|---|
 | `GET` | `/process/rclone-optimizer/instances` | List eligible NzbDAV rclone instances and mount state |
-| `GET` | `/process/rclone-optimizer/content?process_name=...` | Perform bounded media discovery and return automatic recent/older/large/typical suggestions |
+| `GET` | `/process/rclone-optimizer/content?process_name=...` | Derive active NzbDAV Arr categories, perform bounded `content/<category>` discovery, and return automatic recent/older/large/typical suggestions |
 | `POST` | `/process/rclone-optimizer/jobs` | Start a persistent background benchmark job |
 | `GET` | `/process/rclone-optimizer/jobs?limit=20` | List recent jobs for frontend notifications/history |
 | `GET` | `/process/rclone-optimizer/jobs/{job_id}` | Return live progress, results, and report |
@@ -743,7 +743,7 @@ Start request:
 ```json
 {
   "process_name": "rclone w/ NzbDAV",
-  "selected_paths": ["movies/Example Movie (2026)/Example Movie (2026).mkv"],
+  "selected_paths": ["content/radarr-nzbdav/Example Movie (2026).mkv"],
   "depth": "standard",
   "limits": {
     "max_vfs_cache_gib": 5,
@@ -757,6 +757,11 @@ Start request:
   }
 }
 ```
+
+Content discovery returns `discovery_mode=active_arr_categories`, `content_base`,
+and an `active_categories` list containing service, instance, category,
+availability, and discovered-file count. Each file includes the mount-relative
+`path` used by the job and a friendly `display_path` under NzbDAV `content`.
 
 The response never returns the full saved, recommended, or rollback rclone command
 because commands may contain RC credentials or other private values. Public job

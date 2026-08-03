@@ -199,7 +199,12 @@ For an NzbDAV-backed rclone instance, DUMB can benchmark bounded profiles agains
 the live WebDAV/provider path and produce a deployment-specific report. Open the
 **Rclone Optimizer** tab on that rclone service page. The job uses an isolated
 read-only shadow mount/cache, measures first byte and startup-buffer time, and
-never applies its recommendation automatically. See the
+never applies its recommendation automatically. Content discovery scans the
+NzbDAV `content/<category>` paths DUMB derives from enabled Arr instances, but
+measured reads use safely resolved mount-relative paths on isolated shadow mounts
+instead of the production mount. Stop the media server and wait until NzbDAV has
+no imports, library ingestion, or unrelated active reads before starting a test;
+concurrent activity skews results and increases provider load. See the
 [Rclone Streaming Optimizer](../../features/rclone-optimizer.md) guide for content
 selection, provider-risk limits, reports, apply, and rollback behavior.
 

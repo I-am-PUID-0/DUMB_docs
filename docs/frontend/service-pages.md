@@ -51,9 +51,11 @@ Action buttons:
 
 ### Rclone Optimizer tab
 
-NzbDAV-backed rclone pages expose content selection, safety limits, live job
-progress, candidate results, warm/cold startup comparison, and explicit
-apply/rollback controls. Jobs continue when the tab or page closes. A global
+NzbDAV-backed rclone pages expose active Arr-category content selection, the
+content base and per-category discovery counts, safety limits, live job progress,
+candidate results, warm/cold startup comparison, and explicit apply/rollback
+controls. Safely resolved mount-relative NzbDAV read paths are opened on isolated
+rclone shadow mounts; the production mount is used only for metadata discovery. Jobs continue when the tab or page closes. A global
 frontend poll posts a toast when an observed job completes or fails, while the
 rclone page's banner remains the primary active-job indicator. See
 [Rclone Streaming Optimizer](../features/rclone-optimizer.md).
