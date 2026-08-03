@@ -1,6 +1,13 @@
 # Changelog
 
 
+## [1.23.6](https://github.com/I-am-PUID-0/DUMB_docs/compare/1.23.5...1.23.6) (2026-08-03)
+
+
+### 📖 Documentation
+
+* **nzbdav:** document automatic updates for moving release tags ([2a3de9b](https://github.com/I-am-PUID-0/DUMB_docs/commit/2a3de9b1e5d0e8c272fb642a40183dcb11bfb2a6))
+
 ## [1.23.5](https://github.com/I-am-PUID-0/DUMB_docs/compare/1.23.4...1.23.5) (2026-08-03)
 
 
