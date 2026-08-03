@@ -1,6 +1,14 @@
 # Changelog
 
 
+## [1.23.5](https://github.com/I-am-PUID-0/DUMB_docs/compare/1.23.4...1.23.5) (2026-08-03)
+
+
+### 📖 Documentation
+
+* **metrics:** document database health table sorting ([daf1f44](https://github.com/I-am-PUID-0/DUMB_docs/commit/daf1f449137dc0c5a4c3412cb4efa68bde033561))
+* **rclone:** document NzbDAV streaming optimizer ([a2e00d0](https://github.com/I-am-PUID-0/DUMB_docs/commit/a2e00d092ab51b69032ed64aa0db31fd2a4c4e12))
+
 ## [1.23.4](https://github.com/I-am-PUID-0/DUMB_docs/compare/1.23.3...1.23.4) (2026-07-31)
 
 
