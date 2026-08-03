@@ -62,6 +62,31 @@ For every candidate and selected file, DUMB records:
 
 Failed or unavailable files remain visible in the report but are excluded from performance scoring. The recommendation score favors startup time and first-byte latency while also considering seek latency, throughput, resource use, and excluded/error samples.
 
+The report distinguishes **trace capture unavailable** from **no matching retained
+trace**. If NzbDAV tracing cannot be enabled, rclone performance measurements can
+still complete, but provider-level event correlation is explicitly marked
+unavailable instead of being presented as a path-matching result.
+
+### Reading NzbDAV provider evidence
+
+The four summary values in each expanded provider-evidence panel come from the
+NzbDAV overview window captured after that candidate. They are not isolated to
+the candidate and can include unrelated NzbDAV traffic. Candidate-specific
+evidence appears in the matched retained stream traces below them. This is one
+reason the media server and NzbDAV should be idle during testing.
+
+| Field | Meaning |
+|---|---|
+| Provider p50 | Median provider-fetch latency in NzbDAV's overview window; half of observed provider fetches completed at or below this duration |
+| Provider p95 | 95th-percentile provider-fetch latency; 95% completed at or below this duration and the slowest 5% took longer |
+| Errors/min | NzbDAV's recent error rate per minute across the overview window, including any unrelated activity |
+| Throttle events | NzbDAV in-flight article throttle events reported by the overview snapshot |
+| Providers | Provider nicknames recorded in a candidate-matched retained stream session |
+| Retries | Sum of retry counts in the matched session's retained events |
+| Bytes | Bytes served recorded by retained events in that matched trace |
+| Provider wait | Cumulative retained-event time spent waiting on provider work |
+| Connection wait | Cumulative retained-event time spent acquiring a provider connection |
+
 ## Content selection
 
 Open the NzbDAV-backed rclone service and select **Rclone Optimizer**. DUMB first
@@ -80,6 +105,14 @@ panel, and suggests a small, stratified set:
 - a large/high-bitrate candidate; and
 - a typical file near the middle of the observed set.
 
+These files are representative automatic suggestions, not mandatory choices.
+They are pinned to the top of the picker and labeled with the selection reason,
+such as **Recent / likely warm**, **Older / likely cold**, **Largest /
+high-bandwidth candidate**, or **Typical / median-age candidate**. Keep the
+automatic set, replace it with your own files, or mix automatic and manual
+choices up to the eight-file limit. **Restore automatic selection** returns to
+the suggested starting set after manual changes.
+
 Age is only a **cache-likelihood heuristic**. It does not prove whether an article is cached by NzbDAV or a provider. The report keeps recent/likely-warm and older/likely-cold startup results separate, while NzbDAV's live metrics and stream traces explain what happened during the reads.
 
 You can replace the automatic selection with any listed media files. Select between one and eight files. The scan is intentionally bounded by file count and time so discovering content does not recursively enumerate an unlimited remote library. No `/mnt/debrid/...` mount path or category name is hard-coded into the optimizer.
@@ -97,6 +130,12 @@ The optimizer does not try every possible rclone flag permutation. That would co
 Only optimizer-managed streaming flags are changed in a candidate or recommendation. Other user flags, the remote, mount paths, credentials, filtering, and required DUMB flags are preserved.
 
 ## Safety limits
+
+The values initially shown in the optimizer are **generic starting placeholders,
+not recommendations**. DUMB does not derive them from the deployment's CPU, RAM,
+cache disk, ISP bandwidth, NzbDAV activity, or provider policy. Review and change
+every value for the current hardware and provider before starting a job. The UI
+provides a native tooltip on each control explaining its purpose.
 
 Configure the limits before starting a job:
 

@@ -762,6 +762,14 @@ Content discovery returns `discovery_mode=active_arr_categories`, `content_base`
 and an `active_categories` list containing service, instance, category,
 availability, and discovered-file count. Each file includes the mount-relative
 `path` used by the job and a friendly `display_path` under NzbDAV `content`.
+`automatic_selection` is ordered first in `files` and includes `selection_key`,
+`selection_label`, and `selection_reason` so clients can explain each suggestion
+while allowing the operator to replace it.
+
+Each candidate result includes `trace_capture`, which reports whether NzbDAV
+stream tracing was available, enabled or retained, the retained session count,
+and overflow state. An unavailable capture is distinct from an available capture
+whose retained sessions did not match the selected paths.
 
 The response never returns the full saved, recommended, or rollback rclone command
 because commands may contain RC credentials or other private values. Public job
