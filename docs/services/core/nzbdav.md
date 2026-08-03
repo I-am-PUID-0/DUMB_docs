@@ -154,6 +154,36 @@ NzbDAV also exposes a **Usenet download client** path in Arr by emulating a Sabn
     If `webdav_password` is blank, DUMB generates one at startup and stores it in the config.
     Change the password before exposing NzbDAV outside your trusted network.
 
+### Tracking a moving NzbDAV release tag
+
+NzbDAV tags do not need a matching GitHub Release. To track a tag such as
+`dev`, enable the release selector and use the tag name:
+
+```json
+"nzbdav": {
+    "release_version_enabled": true,
+    "release_version": "dev",
+    "commit_sha": "",
+    "branch_enabled": false,
+    "auto_update": true
+}
+```
+
+DUMB treats any digit-free NzbDAV tag, such as `dev`, `lts`, or `edge`, as a
+moving release channel. With `auto_update: true`, DUMB checks it at the normal
+configured interval and installs it when the underlying commit changes. Manual
+**Check for updates** and **Install update** remain available.
+
+The installed marker is recorded as `dev-<short-sha>`. The source archive is
+downloaded by the resolved full SHA, so the installed source and recorded
+marker remain consistent even if the tag moves during the update.
+
+Existing installations whose marker is only `dev` perform one update to adopt
+the commit-aware marker. Tags containing any digit, such as `v0.9.5`,
+`2026.08.03`, or `dev2`, remain pinned configured releases and do not enable
+scheduled automatic updates. Use **Install configured release** to apply those
+tags intentionally.
+
 ### Pinning an exact NzbDAV commit
 
 Set `commit_sha` to the complete SHA from the configured `repo_owner` and

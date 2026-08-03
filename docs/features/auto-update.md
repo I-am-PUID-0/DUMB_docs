@@ -116,10 +116,12 @@ Auto-update settings are configured per-service in `dumb_config.json`:
 !!! warning "Auto-update and strategy interaction"
 
     Automatic scheduling is disabled when `pinned_version`, `commit_sha`,
-    `release_version_enabled`, or `branch_enabled` are set. The only exception is
-    a `nightly` or `prerelease` release selector with no commit, pinned-version,
-    or branch selector taking precedence. A non-empty `commit_sha` always
-    disables moving update checks, including the initial post-setup check.
+    `release_version_enabled`, or `branch_enabled` are set. Exceptions are a
+    `nightly` or `prerelease` release selector and a digit-free NzbDAV release
+    tag such as `dev`, `lts`, or `edge`, provided no commit, pinned-version, or
+    branch selector takes precedence. NzbDAV tags containing a digit remain
+    fixed configured releases. A non-empty `commit_sha` always disables moving
+    update checks, including the initial post-setup check.
 
 After changing a fixed release, branch, or commit selection, use **Check for
 updates**. When the configured target differs from the installed version, the
