@@ -1,6 +1,13 @@
 # Changelog
 
 
+## [1.23.7](https://github.com/I-am-PUID-0/DUMB_docs/compare/1.23.6...1.23.7) (2026-08-03)
+
+
+### 📖 Documentation
+
+* **rclone:** document category-aware discovery and idle testing ([cd00bf9](https://github.com/I-am-PUID-0/DUMB_docs/commit/cd00bf9b358c4fc3b85526e61ce7f6ba9f3f964e))
+
 ## [1.23.6](https://github.com/I-am-PUID-0/DUMB_docs/compare/1.23.5...1.23.6) (2026-08-03)
 
 
