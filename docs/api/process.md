@@ -771,9 +771,27 @@ stream tracing was available, enabled or retained, the retained session count,
 and overflow state. An unavailable capture is distinct from an available capture
 whose retained sessions did not match the selected paths.
 
+Jobs include a `setting_model` that declares the four comparison roles:
+`actually_varied`, `fixed_constraints`, `bundled_assumptions`, and `preserved`.
+Every candidate result includes `setting_comparison`, an ordered list of the
+complete optimizer-relevant effective settings. Each entry contains `flag`,
+`current_value`, `tested_value`, `changed_from_current`, `role`, and
+`varied_across_candidates`. It also returns `independently_evaluated=false`
+because even the actually-varied values move inside profiles rather than in
+one-variable-at-a-time experiments. The recommendation repeats the winner's comparison
+and includes `confidence_note` to make clear that the selected profile is a
+bundle result rather than independent proof for every flag.
+
+Each accepted candidate result records
+`shadow_mount_cleanup_verified=true`. Terminal jobs expose `cleanup` with
+`shadow_mounts_verified`, `runtime_removed`, and `cache_removed`. A job is not
+marked completed unless all three are true; an unverifiable cleanup changes the
+job to failed and remains eligible for a later startup cleanup retry.
+
 The response never returns the full saved, recommended, or rollback rclone command
 because commands may contain RC credentials or other private values. Public job
-records expose only the managed recommendation flags. Job IDs are 32-character
+records expose the complete optimizer-relevant setting comparison but not the
+values of unrelated preserved flags. Job IDs are 32-character
 hex values; job files are stored privately under `/config/rclone-optimizer/jobs`.
 Jobs active during a DUMB restart are marked interrupted and are not resumed.
 

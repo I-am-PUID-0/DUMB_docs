@@ -127,7 +127,39 @@ The optimizer does not try every possible rclone flag permutation. That would co
 | Standard | 4 | Bounded current tuning, balanced, lower-memory, and fast-start profiles |
 | Thorough | 6 | Standard profiles plus high-throughput and large-chunk variants |
 
-Only optimizer-managed streaming flags are changed in a candidate or recommendation. Other user flags, the remote, mount paths, credentials, filtering, and required DUMB flags are preserved.
+The report deliberately separates the settings into four roles:
+
+| Role | Values | Meaning |
+|---|---|---|
+| Actually varied | `--buffer-size`, `--vfs-read-chunk-size`, `--vfs-read-chunk-size-limit`, `--vfs-read-ahead` | Streaming-oriented dimensions that differ across predefined alternative profiles and drive the bundle comparison |
+| Fixed test constraints | `--vfs-cache-max-size`, bandwidth, memory, free disk, duration, and concurrency | Deployment-specific safety/resource boundaries held constant across every candidate; these are not tuned |
+| Bundled assumptions | `--vfs-cache-mode`, `--vfs-cache-max-age`, `--dir-cache-time` | Profile assumptions changed together rather than independently; a winning profile does not prove any one of these values is optimal |
+| Preserved | Every other existing user flag | Passed into each shadow command unchanged and not evaluated, except for the temporary isolation/safety plumbing described below |
+
+The UI shows the complete optimizer-relevant effective settings for **every**
+candidate, including current-to-tested changes and the role of each value. The
+winning recommendation is therefore a **bundle recommendation**, not a claim
+that every displayed setting was individually optimized.
+
+Preserved flags are outside the optimizer's intended streaming dimensions and
+normally should not determine this comparison. However, an unusual custom
+rclone flag can still change runtime behavior and must be reviewed manually.
+Their values are intentionally omitted from public job reports because rclone
+commands can contain credentials or other private values. The remote source,
+provider credentials, filtering, and user behavior flags remain preserved, and
+the production mount command is not modified during testing.
+The shadow process necessarily substitutes its temporary mount path and cache
+directory, binds a loopback RC endpoint without production RC credentials,
+forces read-only behavior and a test log level, and optionally adds the fixed
+bandwidth ceiling. Those isolation controls are not candidate tuning dimensions.
+
+In particular, `--dir-cache-time` governs directory metadata refresh and should
+not determine media-byte throughput once a file is open.
+`--vfs-cache-max-age` primarily governs retention of inactive cached data between
+reads. `--vfs-cache-mode` establishes VFS behavior and can matter, but is tested
+only as a bundled prerequisite. The UI explains the expected streaming relevance
+of each displayed flag; these statements describe expected scope, not a guarantee
+that arbitrary custom combinations can never influence playback.
 
 ## Safety limits
 
@@ -166,11 +198,19 @@ The job continues in the DUMB backend when you close the panel or navigate away.
 
 If DUMB restarts during a test, the job is marked **interrupted**, the temporary mount/cache is cleaned up, and the matrix is not resumed. Start a fresh test so candidate conditions remain comparable.
 
+Each candidate verifies that its isolated shadow mount is no longer mounted
+before the result is accepted. Before a job can report **completed**, DUMB also
+verifies that all job shadow mounts, the runtime directory, and the candidate
+cache directory are gone. The rclone page reports those three cleanup checks. If
+cleanup cannot be verified, the job fails instead of presenting a completed
+recommendation, leaves the runtime path available for a later safe retry, and
+retries cleanup during finalization and the next DUMB startup.
+
 ## Apply and rollback
 
 Finishing a test creates a report and recommendation. It does **not** change rclone.
 
-1. Review all candidate results, warm/cold samples, exclusions, resources, and NzbDAV evidence.
+1. Review every candidate's complete settings/roles, warm/cold samples, exclusions, resources, cleanup status, and NzbDAV evidence.
 2. Select **Apply recommendation**.
 3. DUMB merges only the recommended optimizer flags into the saved rclone command.
 4. DUMB restarts that rclone process and verifies its production mount.
