@@ -121,6 +121,13 @@ TLS certificate verification is enabled by default. Disable it only for a delibe
 - Repair, backup, or restore job succeeded
 - Repair, backup, or restore job failed
 
+### Rclone optimizer
+
+- NzbDAV rclone optimization completed (Success): the report and recommendation are ready; settings were not applied automatically
+- NzbDAV rclone optimization failed (Warning): the background test stopped safely and the production rclone command remains unchanged
+
+See [Rclone Streaming Optimizer](rclone-optimizer.md).
+
 ### Persistent conditions
 
 - CPU pressure
@@ -165,7 +172,7 @@ The routing order is:
 4. Exact service-name filter
 5. Recovery preference and cooldown
 
-`Automatic restart succeeded`, `Update succeeded`, and `Symlink job succeeded` are normal `Success` events and are filtered by a `Warning` minimum. A `recovery` event is different: it represents a resource or Database Health threshold returning to normal, bypasses the minimum-severity check, and requires **Recovery messages** to be enabled.
+`Automatic restart succeeded`, `Update succeeded`, `Symlink job succeeded`, and `Rclone optimization completed` are normal `Success` events and are filtered by a `Warning` minimum. A `recovery` event is different: it represents a resource or Database Health threshold returning to normal, bypasses the minimum-severity check, and requires **Recovery messages** to be enabled.
 
 Manual destination tests bypass normal routing plus the global and destination enable switches. This allows configuration testing before outbound notifications are enabled. A normal manual message bypasses the global switch and routing filters but still skips disabled destinations. If a destination is disabled after an automatic event has already been queued, DUMB keeps that record queued without consuming a retry attempt and resumes delivery only after the destination is enabled again.
 

@@ -720,6 +720,53 @@ configured persistent cache directory. Clients should gate this endpoint on the
 
 ---
 
+## Rclone streaming optimizer
+
+These authenticated process routes are available when capability
+`rclone_optimizer_nzbdav` is true. Only enabled DUMB-managed rclone instances
+whose `key_type` is `NzbDAV` are eligible.
+
+| Method | Route | Purpose |
+|---|---|---|
+| `GET` | `/process/rclone-optimizer/instances` | List eligible NzbDAV rclone instances and mount state |
+| `GET` | `/process/rclone-optimizer/content?process_name=...` | Perform bounded media discovery and return automatic recent/older/large/typical suggestions |
+| `POST` | `/process/rclone-optimizer/jobs` | Start a persistent background benchmark job |
+| `GET` | `/process/rclone-optimizer/jobs?limit=20` | List recent jobs for frontend notifications/history |
+| `GET` | `/process/rclone-optimizer/jobs/{job_id}` | Return live progress, results, and report |
+| `GET` | `/process/rclone-optimizer/latest?process_name=...&active_only=true` | Find the latest matching job |
+| `POST` | `/process/rclone-optimizer/cancel` | Cancel an active test and clean up its shadow mount/cache |
+| `POST` | `/process/rclone-optimizer/apply` | Merge the recommendation, restart rclone, and verify the production mount |
+| `POST` | `/process/rclone-optimizer/rollback` | Restore the privately retained pre-apply command and verify the mount |
+
+Start request:
+
+```json
+{
+  "process_name": "rclone w/ NzbDAV",
+  "selected_paths": ["movies/Example Movie (2026)/Example Movie (2026).mkv"],
+  "depth": "standard",
+  "limits": {
+    "max_vfs_cache_gib": 5,
+    "min_free_disk_gib": 10,
+    "max_memory_mib": 2048,
+    "max_test_download_gib": 4,
+    "max_duration_minutes": 20,
+    "concurrent_streams": 1,
+    "startup_buffer_mib": 32,
+    "bandwidth_limit_mbps": 0
+  }
+}
+```
+
+The response never returns the full saved, recommended, or rollback rclone command
+because commands may contain RC credentials or other private values. Public job
+records expose only the managed recommendation flags. Job IDs are 32-character
+hex values; job files are stored privately under `/config/rclone-optimizer/jobs`.
+Jobs active during a DUMB restart are marked interrupted and are not resumed.
+
+See [Rclone Streaming Optimizer](../features/rclone-optimizer.md) for test and
+provider-safety behavior.
+
 ### `GET /process/capabilities`
 
 Returns backend capabilities and feature flags. Used by the frontend to determine available features.
@@ -761,7 +808,9 @@ Returns backend capabilities and feature flags. Used by the frontend to determin
   "metrics_network_interface_selection": true,
   "mediastorm_initial_admin_password": true,
   "notifications": true,
-  "startup_lifecycle": true
+  "startup_lifecycle": true,
+  "rclone_optimizer": true,
+  "rclone_optimizer_nzbdav": true
 }
 ```
 
@@ -781,6 +830,8 @@ Returns backend capabilities and feature flags. Used by the frontend to determin
 | `seerr_sync` | Whether Seerr sync feature routes are available |
 | `auto_update_start_time` | Whether anchored auto-update start time is supported |
 | `startup_lifecycle` | Whether `GET /process/startup-status` exposes readiness-aware startup phases |
+| `rclone_optimizer` | Whether background rclone optimizer job routes are available |
+| `rclone_optimizer_nzbdav` | Whether the optimizer supports NzbDAV-backed rclone instances |
 | `symlink_repair` | Whether `/process/symlink-repair` is available |
 | `symlink_repair_async` | Whether `/process/symlink-repair-async` is available |
 | `symlink_manifest_backup` | Whether `/process/symlink-manifest/backup` is available |

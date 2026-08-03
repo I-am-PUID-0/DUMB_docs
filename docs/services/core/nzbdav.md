@@ -289,6 +289,20 @@ Default rclone mount path (if not overridden) is:
 /mnt/debrid/nzbdav
 ```
 
+#### Streaming optimization
+
+When the backend advertises `rclone_optimizer_nzbdav`, open the dedicated
+NzbDAV-backed **rclone service page** and select **Rclone Optimizer**. The primary
+job indicator, content picker, live measurements, report, apply, and rollback
+controls belong to rclone because those are rclone settings. The NzbDAV page only
+shows a contextual link while an associated rclone test is active.
+
+The test does pull content through NzbDAV's authenticated WebDAV server and the
+configured Usenet providers. It also consumes NzbDAV Overview and stream-trace API
+data while rclone RC and DUMB host metrics describe the mount and system side.
+Review [Rclone Streaming Optimizer](../../features/rclone-optimizer.md) before
+testing, especially the provider traffic and concurrency limits.
+
 ### 2. Arr Integration (Sonarr/Radarr)
 
 Set `core_service` to `nzbdav` (or include `nzbdav` in a list) for the Sonarr and

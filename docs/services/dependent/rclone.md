@@ -195,6 +195,14 @@ For more info, see [rclone docs](https://rclone.org/docs/#environment-variables)
 
 ## Optimizing rclone for Media Server Usage
 
+For an NzbDAV-backed rclone instance, DUMB can benchmark bounded profiles against
+the live WebDAV/provider path and produce a deployment-specific report. Open the
+**Rclone Optimizer** tab on that rclone service page. The job uses an isolated
+read-only shadow mount/cache, measures first byte and startup-buffer time, and
+never applies its recommendation automatically. See the
+[Rclone Streaming Optimizer](../../features/rclone-optimizer.md) guide for content
+selection, provider-risk limits, reports, apply, and rollback behavior.
+
 To improve streaming performance and reduce excessive bandwidth usage when using rclone with media servers (e.g., Plex, Jellyfin, Emby), consider tuning the mount behavior using additional flags.
 
 !!! warning "VFS cache will use hard drive space, so ensure you set an appropriate max size for your system"

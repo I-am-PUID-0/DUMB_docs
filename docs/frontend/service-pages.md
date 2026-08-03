@@ -26,6 +26,7 @@ Each service page includes:
 - Seerr Sync controls when viewing a Seerr instance
 - Symlink Job Center (for symlink-capable services) with active jobs, recent history, retry, and failure clearing
 - Guided SQLite-to-PostgreSQL rehearsal/cutover panel on every backend-advertised supported service, with explicit rehearsal/cutover success notices, automatic cutover selection, close-while-active confirmation, and persistent background running/completion indicators
+- An **Rclone Optimizer** tab and persistent active-job banner on NzbDAV-backed rclone instances when the backend advertises `rclone_optimizer_nzbdav`; the NzbDAV page shows only a link to an associated active rclone job
 - Sidebar operator QoL controls (quick filters, saved views, compact mode, and command palette)
 
 ---
@@ -47,6 +48,15 @@ Action buttons:
 !!! note "API service controls"
 
     The DUMB API service does not show Start/Stop/Restart controls in the UI.
+
+### Rclone Optimizer tab
+
+NzbDAV-backed rclone pages expose content selection, safety limits, live job
+progress, candidate results, warm/cold startup comparison, and explicit
+apply/rollback controls. Jobs continue when the tab or page closes. A global
+frontend poll posts a toast when an observed job completes or fails, while the
+rclone page's banner remains the primary active-job indicator. See
+[Rclone Streaming Optimizer](../features/rclone-optimizer.md).
 
 ---
 

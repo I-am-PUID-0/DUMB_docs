@@ -25,6 +25,7 @@ nav:
       - Seerr Sync: features/seerr-sync.md
       - FFprobe Monitor: features/ffprobe-monitor.md
       - Metrics: features/metrics.md
+      - Rclone Streaming Optimizer: features/rclone-optimizer.md
       - Notifications: features/notifications.md
       - AI Assistant: features/ai-assistant.md
       - Embedded UIs: features/embedded-ui.md
