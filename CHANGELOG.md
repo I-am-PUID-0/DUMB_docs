@@ -1,6 +1,13 @@
 # Changelog
 
 
+## [1.23.11](https://github.com/I-am-PUID-0/DUMB_docs/compare/1.23.10...1.23.11) (2026-08-04)
+
+
+### 📖 Documentation
+
+* **media-protection:** document dependency outage safeguards ([aeb7d04](https://github.com/I-am-PUID-0/DUMB_docs/commit/aeb7d04f6a0b76910691decc0738f8b504b4e6d1))
+
 ## [1.23.10](https://github.com/I-am-PUID-0/DUMB_docs/compare/1.23.9...1.23.10) (2026-08-04)
 
 
