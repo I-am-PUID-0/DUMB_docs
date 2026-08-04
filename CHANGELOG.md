@@ -1,6 +1,13 @@
 # Changelog
 
 
+## [1.23.12](https://github.com/I-am-PUID-0/DUMB_docs/compare/1.23.11...1.23.12) (2026-08-04)
+
+
+### 📖 Documentation
+
+* **profilarr:** document v1 and v2 support ([f61f53f](https://github.com/I-am-PUID-0/DUMB_docs/commit/f61f53f72dcdde5ad3068eefabdc1c9f535c4641))
+
 ## [1.23.11](https://github.com/I-am-PUID-0/DUMB_docs/compare/1.23.10...1.23.11) (2026-08-04)
 
 
