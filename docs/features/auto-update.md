@@ -388,6 +388,23 @@ Different services have specialized update handling:
 
 ## Monitoring updates
 
+### Dashboard update center
+
+The dashboard **Updates** button provides an on-demand alternative to enabling
+automatic updates. It checks all enabled update-capable services sequentially,
+shows the services with available versions, and lets you install some or all of
+those ordinary updates. Each service card also gains an Update shortcut while an
+ordinary update is recorded as available.
+
+Bulk installation is deliberately conservative: saved release, branch, commit,
+and pinned-version selections appear as **Review source** and cannot be selected.
+Use the individual service page when you need **Install configured target** or
+**Override + latest**. Selected services install one at a time and restart as
+needed; the frontend and API are placed last to reduce control-plane interruption.
+
+See [Dashboard](../frontend/dashboard.md#check-and-update-multiple-services) for
+the complete workflow.
+
 ### Check current versions
 
 View installed versions in the frontend:

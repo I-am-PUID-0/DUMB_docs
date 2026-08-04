@@ -44,7 +44,10 @@ flowchart TD
 
 ### `GET /process/processes`
 
-Returns all configured processes, including enabled status, version, repo URL, and sponsorship URL.
+Returns all configured processes, including enabled status, version, repo URL,
+sponsorship URL, manual-update support, and the last recorded update status. The
+dashboard uses the latter two fields to build its update inventory without one
+status request per service.
 
 #### Example Response:
 
@@ -60,7 +63,13 @@ Returns all configured processes, including enabled status, version, repo URL, a
       "key": "rclone",
       "config_key": "rclone",
       "repo_url": "https://rclone.org",
-      "sponsorship_url": "https://rclone.org/sponsor/"
+      "sponsorship_url": "https://rclone.org/sponsor/",
+      "supports_manual_update": true,
+      "update_status": {
+        "status": "update_available",
+        "current_version": "1.65.1",
+        "available_version": "1.66.0"
+      }
     }
   ]
 }
@@ -265,7 +274,10 @@ Recomputes the next automatic-update run after changing a service's interval or 
 
 Clients should gate manual update actions on the `manual_update_check`
 capability, configured-target installation on `configured_source_install`, and
-the start-time control on `auto_update_start_time`.
+the start-time control on `auto_update_start_time`. The dashboard multi-service
+workflow is gated on `dashboard_bulk_updates`; it orchestrates the existing
+per-service check/install endpoints sequentially and never sends bulk source
+overrides.
 
 ---
 
@@ -818,6 +830,7 @@ Returns backend capabilities and feature flags. Used by the frontend to determin
   "optional_only_onboarding": true,
   "optional_service_options": true,
   "manual_update_check": true,
+  "dashboard_bulk_updates": true,
   "configured_source_install": true,
   "commit_sha_pinning": true,
   "seerr_sync": true,

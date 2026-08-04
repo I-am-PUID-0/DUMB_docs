@@ -16,7 +16,7 @@ The dashboard displays service cards for each configured service, showing:
 - Service name and status
 - Health indicator
 - Auto-restart badge
-- Quick action buttons
+- Quick action and available-update buttons
 
 ![Service dashboard](../assets/images/frontend/service_dashboard.png){ .shadow }
 
@@ -78,10 +78,39 @@ Each service card provides action buttons:
 | :material-play: | Start | Start a stopped service |
 | :material-stop: | Stop | Stop a running service |
 | :material-restart: | Restart | Restart a running service |
+| :material-download: | Update | Install the version already reported as available |
+
+The per-service Update button appears only after DUMB has recorded an ordinary
+available update. It restarts that service as part of the install. Saved release,
+branch, commit, and pinned-version choices are never overridden by this shortcut.
 
 !!! tip "Tooltips"
 
     Hover over action buttons to see what each will do.
+
+## Check and update multiple services
+
+Use **Updates** in the dashboard header to review every enabled service that
+supports DUMB-managed updates.
+
+1. Select **Check all** to check the services sequentially.
+2. Review current and available versions plus any updater message.
+3. Select some updates, or use **Select available**.
+4. Select **Install selected** and confirm the restart warning.
+
+Checks and installs run one service at a time. The panel shows the active service
+and retains a result on each row. You can close the panel while work continues on
+the current dashboard, then reopen it to view progress.
+
+Only rows in the normal **Update available** state can be bulk-selected. A row
+marked **Review source** has a saved release, branch, commit, or version choice;
+open that service page to decide whether to install its configured target or use
+the explicit **Override + latest** action. The bulk workflow never overrides it.
+
+DUMB Frontend and DUMB API updates are ordered last so the loaded dashboard can
+report as much progress as possible. Updating either control-plane service can
+briefly interrupt the final response or inventory refresh. After a bulk update,
+verify service health and logs before continuing normal operation.
 
 ---
 
