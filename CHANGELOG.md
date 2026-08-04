@@ -1,6 +1,14 @@
 # Changelog
 
 
+## [1.23.10](https://github.com/I-am-PUID-0/DUMB_docs/compare/1.23.9...1.23.10) (2026-08-04)
+
+
+### 📖 Documentation
+
+* **rclone:** document NzbDAV timeout guidance and optimizer evidence ([04ac3db](https://github.com/I-am-PUID-0/DUMB_docs/commit/04ac3db7d98d4f29552f189c41b7acb18eb5e620))
+* **updates:** document dashboard bulk update workflow ([48d3de0](https://github.com/I-am-PUID-0/DUMB_docs/commit/48d3de0a073986abe2c5c767ce4526aa9845ec4b))
+
 ## [1.23.9](https://github.com/I-am-PUID-0/DUMB_docs/compare/1.23.8...1.23.9) (2026-08-03)
 
 
