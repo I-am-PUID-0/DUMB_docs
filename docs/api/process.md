@@ -735,8 +735,8 @@ whose `key_type` is `NzbDAV` are eligible.
 | `GET` | `/process/rclone-optimizer/jobs/{job_id}` | Return live progress, results, and report |
 | `GET` | `/process/rclone-optimizer/latest?process_name=...&active_only=true` | Find the latest matching job |
 | `POST` | `/process/rclone-optimizer/cancel` | Cancel an active test and clean up its shadow mount/cache |
-| `POST` | `/process/rclone-optimizer/apply` | Merge the recommendation, restart rclone, and verify the production mount |
-| `POST` | `/process/rclone-optimizer/rollback` | Restore the privately retained pre-apply command and verify the mount |
+| `POST` | `/process/rclone-optimizer/apply` | Merge the recommendation, stop rclone, verify the previous FUSE mount is detached, restart rclone, and verify the replacement mount is accessible and stable |
+| `POST` | `/process/rclone-optimizer/rollback` | Restore the privately retained pre-apply command through the same verified-unmount and mount-readiness sequence |
 
 Start request:
 
@@ -769,10 +769,19 @@ while allowing the operator to replace it.
 Each candidate result includes `trace_capture`, which reports whether NzbDAV
 stream tracing was available, enabled or retained, the retained session count,
 and overflow state. An unavailable capture is distinct from an available capture
-whose retained sessions did not match the selected paths.
+whose retained sessions did not match the selected paths. The frontend aggregates
+the candidate's `stream_traces` into unique providers plus summed retries, bytes
+served, provider-wait time, and connection-wait time; these fields remain visible
+as unavailable when `stream_traces` is empty.
 
-Jobs include a `setting_model` that declares the four comparison roles:
-`actually_varied`, `fixed_constraints`, `bundled_assumptions`, and `preserved`.
+Jobs include a `setting_model` that declares the five comparison roles:
+`actually_varied`, `fixed_constraints`, `nzbdav_recommended`,
+`bundled_assumptions`, and `preserved`. The NzbDAV-recommended values are
+`--dir-cache-time` and `--vfs-cache-max-age`; every candidate uses at least `1w`,
+while existing values already at or above one week are retained. They are
+operational guidance rather than score-selected benchmark dimensions. Jobs add
+a warning when the associated NzbDAV RC notification configuration is disabled,
+mismatched, or unreachable.
 Every candidate result includes `setting_comparison`, an ordered list of the
 complete optimizer-relevant effective settings. Each entry contains `flag`,
 `current_value`, `tested_value`, `changed_from_current`, `role`, and
