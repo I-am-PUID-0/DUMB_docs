@@ -1,6 +1,13 @@
 # Changelog
 
 
+## [1.23.13](https://github.com/I-am-PUID-0/DUMB_docs/compare/1.23.12...1.23.13) (2026-08-04)
+
+
+### 📖 Documentation
+
+* **updates:** document scheduled check-only workflow ([872dfe9](https://github.com/I-am-PUID-0/DUMB_docs/commit/872dfe99f0701e168290a3d882394327d9860286))
+
 ## [1.23.12](https://github.com/I-am-PUID-0/DUMB_docs/compare/1.23.11...1.23.12) (2026-08-04)
 
 
