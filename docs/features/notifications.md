@@ -128,6 +128,15 @@ TLS certificate verification is enabled by default. Disable it only for a delibe
 
 See [Rclone Streaming Optimizer](rclone-optimizer.md).
 
+### Media Library Protection
+
+- Protection activated for planned maintenance (Warning)
+- Unexpected storage outage protection activated (Critical)
+- Protected media servers and scan settings recovered (Success)
+- Recovery failed or exceeded its configured delay (Critical)
+
+See [Media Library Protection](media-library-protection.md).
+
 ### Persistent conditions
 
 - CPU pressure

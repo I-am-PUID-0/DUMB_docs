@@ -25,6 +25,7 @@ DUMB (Distributed Unlimited Media Bridge) is an all-in-one media management solu
 * **Traefik access layer** – DUMB-managed embedded UI routes, optional Traefik Proxy Admin user routes, and optional Cloudflared tunnel ingress all share the bundled Traefik entrypoint while keeping ownership boundaries clear.
 * **[Authentication](authentication.md)** – Optional JWT-based security with user management and session handling.
 * **[Auto-update](auto-update.md)** – Keep services current with automatic updates from GitHub releases, nightly builds, or specific branches.
+* **[Media Library Protection](media-library-protection.md)** – Guard Plex, Jellyfin, and Emby scans and coordinate active streams when a storage dependency stops, updates, or crashes.
 * **[Symlink Operations](symlinks.md)** – End-to-end guide for repair, migration, backup/restore, scheduled snapshots, and path-transition playbooks.
 * **[SQLite to PostgreSQL Migration](arr-postgres-migration.md)** – Rehearse, validate, cut over, and roll back supported Arr, subtitle, request, and storage services.
 * **Modular Design** – Each service (Riven, Zurg, Zilean, etc.) is independently configurable and upgradable.

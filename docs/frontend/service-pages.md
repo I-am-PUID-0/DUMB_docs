@@ -21,6 +21,7 @@ Each service page includes:
 - Embedded UI tab when supported and enabled
 - Dependency graph view for core/dependency startup relationships
 - Per-service auto-restart overrides
+- Media Library Protection policy and Plex library preferences on Plex, Jellyfin, and Emby pages
 - On-demand update checks and auto-update scheduling
 - A **Sponsor** action when the backend publishes a support link for the service
 - Seerr Sync controls when viewing a Seerr instance
@@ -44,6 +45,9 @@ Action buttons:
 - **Auto-restart** opens per-service overrides (if supported)
 - **Docs** opens DUMB's guide for the current service
 - **Sponsor** opens the service developer's support page when one is available
+- **Library Protection** opens the opt-out protection policy for Plex, Jellyfin, or Emby
+
+When a manual stop, restart, or update affects a protected downstream media server, the frontend displays current stream/scan activity before it performs the operation. Users can defer, use the safe stop-and-recover path, keep the media server running with scans guarded, or explicitly stop it immediately. Dashboard bulk updates use safe mode and report protected busy/unknown services as deferred; use the individual service page to choose an override.
 
 !!! note "API service controls"
 

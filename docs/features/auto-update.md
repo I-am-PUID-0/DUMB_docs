@@ -64,6 +64,8 @@ flowchart TD
 5. **Notify** - The frontend can show a review notice for available or recently applied DUMB backend/frontend updates
 6. **Schedule** - Future update checks are scheduled based on the configured interval
 
+When an update affects storage used by Plex, Jellyfin, or Emby, [Media Library Protection](media-library-protection.md) runs before the service is stopped. Scheduled updates are deferred while playback is active or activity cannot be verified. Manual installs show explicit protect, keep-running, stop-now, and defer choices in dmbdb.
+
 ### Frontend notices
 
 The DUMB Frontend polls `GET /api/process/update-notices` for project-level update notices. Available-update notices come from the backend's current update-status cache. Applied-update notices are persisted to `/config/update_notices.json` when an update install reports success, so the frontend can still show what changed after the backend or frontend restarts.

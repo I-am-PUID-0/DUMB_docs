@@ -58,6 +58,12 @@ Fresh Jellyfin installs add the official Jellyfin APT source directly. They do
 not require the `add-apt-repository` utility, which is intentionally absent from
 the minimized DUMB runtime image.
 
+## Media Library Protection
+
+Protection is enabled by default, but Jellyfin requires a dedicated API key before DUMB can inspect sessions and temporarily control scan tasks/library real-time monitoring. DUMB does not create this key during Jellyfin's first-run administrator setup. Create it in Jellyfin's dashboard, then save it under **Library Protection** on the Jellyfin service page. Until then, safe unattended storage maintenance is deferred because activity is unknown.
+
+See [Media Library Protection](../../features/media-library-protection.md).
+
 ---
 
 ## Resources

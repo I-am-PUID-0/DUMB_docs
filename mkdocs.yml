@@ -20,6 +20,7 @@ nav:
       - Auto-restart: features/auto-restart.md
       - Startup lifecycle: features/startup-lifecycle.md
       - Auto-update: features/auto-update.md
+      - Media Library Protection: features/media-library-protection.md
       - PostgreSQL Migration: features/arr-postgres-migration.md
       - Symlink Operations: features/symlinks.md
       - Seerr Sync: features/seerr-sync.md
@@ -105,6 +106,7 @@ nav:
       - Configuration: api/config.md
       - Logs: api/logs.md
       - Metrics: api/metrics.md
+      - Media Library Protection: api/media-library-protection.md
       - Notifications: api/notifications.md
       - AI Assistant: api/ai.md
       - Seerr Sync: api/seerr-sync.md

@@ -82,6 +82,12 @@ icon: lucide/tv
 
 ## Setup & Behavior
 
+### Media Library Protection
+
+The Plex service page includes **Library Protection**, enabled by default. DUMB uses its existing Plex token to check sessions, inhibit scans before rclone/NzbDAV/Decypharr/Zurg/AltMount/CLI Debrid maintenance, and restore Plex after the dependency stabilizes. The same panel exposes live Plex library preferences, including **Empty trash automatically after every scan**; keep that option off for remote or virtual libraries.
+
+See [Media Library Protection](../../features/media-library-protection.md) for the override choices, recommended Plex settings, recovery journal, and limitations.
+
 ### Optional Plex Cloud Status
 
 The Plex service page includes a capability-gated **Plex Status** panel on current DUMB/dmbdb versions. It can enable a cached metric sourced from [Plex's official status page](https://status.plex.tv/), choose a 60-3600 second polling interval, refresh the sample, and show affected components, incidents, or scheduled maintenance without leaving dmbdb.

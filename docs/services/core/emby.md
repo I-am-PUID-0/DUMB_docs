@@ -77,6 +77,12 @@ icon: lucide/disc
 * Navigate to: `http://<host>:8096`
 * Traefik proxy: `http://<host>:18080/service/ui/emby/`
 
+## Media Library Protection
+
+Protection is enabled by default, but Emby requires a dedicated API key before DUMB can inspect sessions and temporarily control scan tasks/library real-time monitoring. DUMB does not create this key during Emby's first-run administrator setup. Create it in Emby's dashboard, then save it under **Library Protection** on the Emby service page. Until then, safe unattended storage maintenance is deferred because activity is unknown.
+
+See [Media Library Protection](../../features/media-library-protection.md).
+
 ---
 
 ## Logs and data paths
