@@ -93,6 +93,12 @@ branch, commit, and pinned-version choices are never overridden by this shortcut
 Use **Updates** in the dashboard header to review every enabled service that
 supports DUMB-managed updates.
 
+The button shows a pending count when cached checks report available updates.
+This includes checks run manually and services configured with scheduled
+**Show on dashboard** (`auto_update_mode: check_only`). The dashboard refreshes
+the inventory periodically while open, so a completed background check can
+light the badge without reloading the page.
+
 1. Select **Check all** to check the services sequentially.
 2. Review current and available versions plus any updater message.
 3. Select some updates, or use **Select available**.
@@ -107,7 +113,8 @@ marked **Review source** has a saved release, branch, commit, or version choice;
 open that service page to decide whether to install its configured target or use
 the explicit **Override + latest** action. The bulk workflow never overrides it.
 
-DUMB Frontend and DUMB API updates are ordered last so the loaded dashboard can
+Checking never restarts a service. Installing does. DUMB Frontend and DUMB API
+updates are ordered last so the loaded dashboard can
 report as much progress as possible. Updating either control-plane service can
 briefly interrupt the final response or inventory refresh. After a bulk update,
 verify service health and logs before continuing normal operation.

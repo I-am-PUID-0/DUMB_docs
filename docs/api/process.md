@@ -264,7 +264,10 @@ matching configured-target installation action only when it is needed.
 
 ### `POST /process/auto-update/reschedule`
 
-Recomputes the next automatic-update run after changing a service's interval or start time.
+Recomputes the next automatic-update run after changing a service's enabled
+state, interval, start time, or `auto_update_mode`. The supported modes are
+`install` (the backward-compatible default) and `check_only` (record the result
+without installing or restarting the service).
 
 ```json
 {
@@ -274,7 +277,8 @@ Recomputes the next automatic-update run after changing a service's interval or 
 
 Clients should gate manual update actions on the `manual_update_check`
 capability, configured-target installation on `configured_source_install`, and
-the start-time control on `auto_update_start_time`. The dashboard multi-service
+the start-time control on `auto_update_start_time`, and the scheduled-action
+selector on `auto_update_mode`. The dashboard multi-service
 workflow is gated on `dashboard_bulk_updates`; it orchestrates the existing
 per-service check/install endpoints sequentially and never sends bulk source
 overrides.
@@ -835,6 +839,7 @@ Returns backend capabilities and feature flags. Used by the frontend to determin
   "commit_sha_pinning": true,
   "seerr_sync": true,
   "auto_update_start_time": true,
+  "auto_update_mode": true,
   "symlink_repair": true,
   "symlink_repair_async": true,
   "symlink_manifest_backup": true,
@@ -882,6 +887,7 @@ Returns backend capabilities and feature flags. Used by the frontend to determin
 | `commit_sha_pinning` | Whether exact GitHub commit SHA source pins are supported |
 | `seerr_sync` | Whether Seerr sync feature routes are available |
 | `auto_update_start_time` | Whether anchored auto-update start time is supported |
+| `auto_update_mode` | Whether schedules can report available updates without installing them |
 | `startup_lifecycle` | Whether `GET /process/startup-status` exposes readiness-aware startup phases |
 | `rclone_optimizer` | Whether background rclone optimizer job routes are available |
 | `rclone_optimizer_nzbdav` | Whether the optimizer supports NzbDAV-backed rclone instances |

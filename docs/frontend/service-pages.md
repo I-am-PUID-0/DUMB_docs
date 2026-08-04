@@ -254,7 +254,8 @@ Automatic update settings:
 
 | Setting | Description |
 |---------|-------------|
-| **Enabled** | Check for updates automatically |
+| **Scheduled update checks** | Enable the per-service schedule |
+| **When available** | **Show on dashboard** records the update without installing; **Install automatically** retains the existing update/restart behavior |
 | **Start time** | Daily schedule anchor in `HH:MM` (24-hour) |
 | **Interval** | Hours between update checks |
 
@@ -262,6 +263,8 @@ Notes:
 
 - Saving auto-update settings reschedules the updater immediately (no service restart required).
 - **Next check** is shown in the panel once auto-update is enabled and scheduled.
+- Check-only results feed the dashboard Updates count, per-service shortcut, and bulk Updates panel.
+- Older backends without the `auto_update_mode` capability retain automatic installation and do not show the action selector.
 
 ---
 

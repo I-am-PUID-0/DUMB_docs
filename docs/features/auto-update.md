@@ -1,6 +1,6 @@
 ---
 title: Auto-update
-description: Configure scheduled DUMB service updates, release and branch selection, immutable commit pins, update windows, and safe override actions.
+description: Configure scheduled DUMB service update checks, dashboard-only notifications, automatic installation, source pins, and update windows.
 icon: lucide/download
 ---
 
@@ -34,7 +34,9 @@ flowchart TD
     C[Check for updates]
     D([Start service])
     E{Update available?}
-    F[Download update]
+    F{Scheduled action?}
+    L[Show pending update on dashboard]
+    M[Download update]
     G[Stop service]
     H[Apply update]
     I([Start service])
@@ -47,7 +49,10 @@ flowchart TD
     C ==> E
     E -- No --> D
     E -- Yes --> F
-    F ==> G
+    F -- Check only --> L
+    L ==> J
+    F -- Install automatically --> M
+    M ==> G
     G ==> H
     H ==> I
     I ==> J
@@ -59,9 +64,9 @@ flowchart TD
 
 1. **Initial check** - When a service starts, DUMB checks for available updates
 2. **Version comparison** - Current version is compared with the latest available
-3. **Download** - If an update is available, the new version is downloaded
-4. **Apply** - The service is stopped, updated, and restarted
-5. **Notify** - The frontend can show a review notice for available or recently applied DUMB backend/frontend updates
+3. **Act** - In `check_only` mode, DUMB leaves the service untouched and records the pending update; in `install` mode, it downloads and applies the update
+4. **Dashboard** - Pending check-only results appear in the dashboard **Updates** badge, service card, and Updates panel
+5. **Notify** - Configured DUMB notifications can emit the `update.available` event, while project update notices cover DUMB backend/frontend updates
 6. **Schedule** - Future update checks are scheduled based on the configured interval
 
 When an update affects storage used by Plex, Jellyfin, or Emby, [Media Library Protection](media-library-protection.md) runs before the service is stopped. Scheduled updates are deferred while playback is active or activity cannot be verified. Manual installs show explicit protect, keep-running, stop-now, and defer choices in dmbdb.
@@ -85,6 +90,7 @@ Auto-update settings are configured per-service in `dumb_config.json`:
   "service_name": {
     "enabled": true,
     "auto_update": true,
+    "auto_update_mode": "check_only",
     "auto_update_start_time": "04:00",
     "auto_update_interval": 24,
     "release_version_enabled": false,
@@ -103,7 +109,8 @@ Auto-update settings are configured per-service in `dumb_config.json`:
 
 | Option | Type | Default | Description |
 |--------|------|---------|-------------|
-| `auto_update` | boolean | `false` | Enable automatic updates for this service |
+| `auto_update` | boolean | `false` | Enable scheduled update checks for this service |
+| `auto_update_mode` | string | `"install"` | `check_only` reports pending updates; `install` applies them automatically |
 | `auto_update_start_time` | string | `"04:00"` | 24-hour schedule anchor time (`HH:MM`) |
 | `auto_update_interval` | number | `24` | Hours between update checks |
 | `release_version_enabled` | boolean | `false` | Use release version strategy |
@@ -134,6 +141,20 @@ temporarily bypasses any saved release, branch, commit, or pinned-version
 selection and installs the latest stable release. DUMB restores the saved
 configuration after that one installation.
 
+### Check only and review on the dashboard
+
+Set `auto_update` to `true` and `auto_update_mode` to `check_only` when you want
+DUMB to check on schedule without stopping, restarting, or changing the
+service. When a newer ordinary release is found, the dashboard **Updates**
+button shows a count, the service card exposes its update shortcut, and the
+Updates panel includes the current and available versions. You can then install
+one update or select several for sequential installation.
+
+The dashboard refreshes the cached results while it remains open. A later
+scheduled or manual check clears the pending state when the service is current.
+Existing configurations that do not contain `auto_update_mode` retain the
+legacy `install` behavior.
+
 ---
 
 ## Update strategies
@@ -146,6 +167,7 @@ The default strategy fetches the latest stable release from GitHub:
 {
   "frontend": {
     "auto_update": true,
+    "auto_update_mode": "install",
     "auto_update_start_time": "04:00",
     "auto_update_interval": 24
   }
