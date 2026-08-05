@@ -88,7 +88,9 @@ NzbDAV also exposes a **Usenet download client** path in Arr by emulating a Sabn
     It does **not** default to the original
     [`nzbdav-dev/nzbdav`](https://github.com/nzbdav-dev/nzbdav) repository.
     The `repo_owner: "nzbdav"` and `repo_name: "nzbdav"` values below select
-    that fork for release, branch, and update operations.
+    that fork for release, branch, and update operations. Existing configs that
+    still contain DUMB's exact former default `nzbdav-dev/nzbdav` are migrated
+    automatically; intentional custom fork owners remain unchanged.
 
 !!! tip "Support the maintained fork"
 
@@ -177,6 +179,18 @@ configured interval and installs it when the underlying commit changes. Manual
 The installed marker is recorded as `dev-<short-sha>`. The source archive is
 downloaded by the resolved full SHA, so the installed source and recorded
 marker remain consistent even if the tag moves during the update.
+
+The same revision suffix remains visible for the rolling **prerelease** channel
+and for branch, exact-commit, or other moving-tag installs. Ordinary stable
+release versions are shown in the frontend as their clean release tag (for
+example, `v0.10.0`); DUMB retains the resolved commit internally for download,
+cache, and source-integrity checks rather than presenting it as part of the
+stable version.
+
+When the selected tag also has an architecture-specific NzbDAV release archive,
+DUMB tries that archive first. The rolling `rc` GitHub Release is therefore a
+valid moving channel: DUMB resolves its current commit and asset digest before
+installing it. Branch and exact-commit selections remain source builds.
 
 Existing installations whose marker is only `dev` perform one update to adopt
 the commit-aware marker. Tags containing any digit, such as `v0.9.5`,
@@ -449,8 +463,19 @@ Start with **Standard / passive** mode and collect through normal imports, healt
 * If rclone fails to authenticate, verify `WEBDAV_USER`/`WEBDAV_PASSWORD` and restart the container.
 * If Arr download clients are not created, confirm each Arr instance is enabled and has a readable `config.xml` for API key discovery.
 * If Arr root folders are missing, verify `core_service` includes `nzbdav` and the Arr API is reachable.
-* Runtime NzbDAV builds use an on-demand managed .NET SDK. DUMB merges the
-  NzbDAV-specific build variables with the container environment so system tools
+* Every release install automatically tries NzbDAV's matching verified Linux
+  x64/ARM64 prebuilt archive first. If the archive is absent, has no published
+  SHA-256 digest, fails validation, or is not available for the current
+  architecture, DUMB keeps the live runtime untouched and automatically falls
+  back to the source build. This behavior is inherent and has no user-facing
+  toggle. The moving `prerelease` selector resolves and tracks the newest GitHub
+  prerelease through the same GitHub prerelease-list flow used by CLI Debrid.
+  Its installed marker is `<tag>-<short-sha>`; update checks resolve the current
+  tag commit before comparing, so an unchanged prerelease is reported as current
+  while a tag moved to a different commit remains detectable.
+  Source fallback resolves the selected tag to its immutable commit before
+  downloading; branch/commit installs use an on-demand managed .NET SDK.
+  DUMB merges the NzbDAV-specific build variables with the container environment so system tools
   remain available, and invokes `/bin/bash` explicitly when installing the SDK.
   An error such as `No such file or directory: 'bash'` indicates an image that
   predates this fix and should be retested after pulling a fixed tag and

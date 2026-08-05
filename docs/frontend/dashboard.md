@@ -105,8 +105,27 @@ light the badge without reloading the page.
 4. Select **Install selected** and confirm the restart warning.
 
 Checks and installs run one service at a time. The panel shows the active service
-and retains a result on each row. You can close the panel while work continues on
-the current dashboard, then reopen it to view progress.
+and retains a result on each row. You can close the panel without cancelling the
+operation: the dashboard shows a background-progress banner, and reopening
+**Updates** reattaches to the same progress and row states.
+
+After an install finishes, newer DUMB backends show two measurements on the
+service row:
+
+- **Install** is the complete update operation, including download/cache
+  restore, build, activation, readiness checks, stabilization, and rollback when
+  required.
+- **Downtime** starts immediately before DUMB stops the old managed process and
+  ends when the replacement first passes its application-readiness probe. The
+  stabilization window after that first ready response remains part of Install,
+  not Downtime. If no running process was stopped, the row says downtime was not
+  observed. A failed update that never regains verified readiness reports a
+  minimum measured downtime and says readiness was not confirmed.
+
+These values use DUMB's monotonic server clock and bounded readiness polling, so
+they measure the managed service interruption rather than browser request time.
+The display is gated by the `update_timing_metrics` backend capability; older
+backends continue to show normal update results without the timing row.
 
 Only rows in the normal **Update available** state can be bulk-selected. A row
 marked **Review source** has a saved release, branch, commit, or version choice;

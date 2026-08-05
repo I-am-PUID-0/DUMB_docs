@@ -42,6 +42,49 @@ flowchart TD
 
 ## Endpoints
 
+### Install cache
+
+These endpoints are available when `/process/capabilities` advertises
+`install_cache_management=true`:
+
+- `GET /process/install-cache/status` returns the full managed, legacy, and
+  combined totals; namespace sizes; exact discovered legacy entries; configured
+  limits; file counts; recent install-operation stages; and cache-root recovery
+  fields (`configured_path`, active `path`, `using_fallback`, and
+  `fallback_reason`).
+- `POST /process/install-cache/verify` hashes cached download objects and
+  quarantines invalid entries.
+- `POST /process/install-cache/prune` accepts optional
+  `{"max_size_gib": 25}` and removes least-recently-used cache entries until
+  the limit is met.
+- `POST /process/install-cache/artifacts/clear` accepts an optional
+  `service_key`; omitting it clears all compiled build artifacts.
+
+When `install_cache_limit_settings=true`, the dashboard persists a changed
+limit through the normal global config update endpoint using
+`{"dumb":{"install_cache":{"max_size_gib":25}}}`. The global schema accepts
+1 through 1024 GiB. Pruning remains an explicit maintenance action.
+
+When `install_cache_cleanup=true`,
+`POST /process/install-cache/cleanup` accepts a non-empty `scopes` array. Valid
+values are `downloads`, `dependencies`, `artifacts`, `quarantine`, and
+`legacy`. Paths are not accepted. For example:
+
+```json
+{
+  "scopes": ["legacy", "quarantine"]
+}
+```
+
+Maintenance endpoints return HTTP 409 during nonterminal startup phases or
+while DUMB's service-update lock is active.
+
+Cache maintenance never deletes service configuration, databases, media, or
+the currently active runtime. See [Install cache and safe
+updates](../features/install-cache.md).
+
+---
+
 ### `GET /process/processes`
 
 Returns all configured processes, including enabled status, version, repo URL,
@@ -262,6 +305,28 @@ matching configured-target installation action only when it is needed.
 }
 ```
 
+A completed install response can include backend-measured timing fields when
+`update_timing_metrics` is advertised:
+
+```json
+{
+  "status": "updated",
+  "message": "Updated NzbDAV to v0.10.0-rc.2.",
+  "install_duration_seconds": 97.4,
+  "downtime_seconds": 21.8,
+  "downtime_status": "completed",
+  "timing_completed_at": "2026-08-05T12:34:56+00:00"
+}
+```
+
+`install_duration_seconds` covers the complete backend update operation.
+`downtime_seconds` is the sum of observed intervals from stopping the managed
+process until an application readiness probe succeeds. `downtime_status` is
+`completed`, `ongoing`, or `not_observed`. An `ongoing` value is a lower bound
+captured when the operation ended without verified readiness; `not_observed`
+means no running managed process was stopped. Scheduled installs publish the
+same fields through cached `update_status` data.
+
 ### `POST /process/auto-update/reschedule`
 
 Recomputes the next automatic-update run after changing a service's enabled
@@ -281,7 +346,8 @@ the start-time control on `auto_update_start_time`, and the scheduled-action
 selector on `auto_update_mode`. The dashboard multi-service
 workflow is gated on `dashboard_bulk_updates`; it orchestrates the existing
 per-service check/install endpoints sequentially and never sends bulk source
-overrides.
+overrides. Clients should show update timing only when
+`update_timing_metrics=true`.
 
 ---
 
@@ -835,6 +901,10 @@ Returns backend capabilities and feature flags. Used by the frontend to determin
   "optional_service_options": true,
   "manual_update_check": true,
   "dashboard_bulk_updates": true,
+  "update_timing_metrics": true,
+  "install_cache_management": true,
+  "install_cache_cleanup": true,
+  "install_cache_limit_settings": true,
   "configured_source_install": true,
   "commit_sha_pinning": true,
   "seerr_sync": true,
@@ -883,6 +953,7 @@ Returns backend capabilities and feature flags. Used by the frontend to determin
 | `optional_only_onboarding` | Whether onboarding can skip core service selection |
 | `optional_service_options` | Whether optional service options are exposed for onboarding |
 | `manual_update_check` | Whether manual update check/install routes are available |
+| `update_timing_metrics` | Whether update results include total install duration and readiness-based service downtime |
 | `configured_source_install` | Whether `target: "configured"` can install a saved pinned source target without overriding it |
 | `commit_sha_pinning` | Whether exact GitHub commit SHA source pins are supported |
 | `seerr_sync` | Whether Seerr sync feature routes are available |

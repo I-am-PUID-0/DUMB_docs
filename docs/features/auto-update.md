@@ -36,10 +36,14 @@ flowchart TD
     E{Update available?}
     F{Scheduled action?}
     L[Show pending update on dashboard]
-    M[Download update]
+    M[Download and verify update]
+    N[Build and verify candidate]
     G[Stop service]
-    H[Apply update]
-    I([Start service])
+    H[Atomically activate or apply update]
+    I([Start and stabilize service])
+    R{Healthy?}
+    S[Commit replacement]
+    T[Restore previous runtime]
     J[Schedule next check]
     K[Wait for interval]
 
@@ -52,10 +56,15 @@ flowchart TD
     F -- Check only --> L
     L ==> J
     F -- Install automatically --> M
-    M ==> G
+    M ==> N
+    N ==> G
     G ==> H
     H ==> I
-    I ==> J
+    I ==> R
+    R -- Yes --> S
+    R -- No --> T
+    S ==> J
+    T ==> J
     J ==> K
     K ==> C
 ```
@@ -68,6 +77,23 @@ flowchart TD
 4. **Dashboard** - Pending check-only results appear in the dashboard **Updates** badge, service card, and Updates panel
 5. **Notify** - Configured DUMB notifications can emit the `update.available` event, while project update notices cover DUMB backend/frontend updates
 6. **Schedule** - Future update checks are scheduled based on the configured interval
+
+Downloads, package-manager inputs, and supported compiled runtimes are reused
+through the [verified install cache](install-cache.md). A failed build retains
+or restores the previous runtime instead of accepting partial output. Services
+with candidate-native layouts are not stopped until their replacement has
+finished building.
+
+Manual dashboard installs and scheduled update installs record total install
+duration plus observed service downtime. Total duration covers the complete
+installer and health-stabilization operation. Downtime covers only intervals
+from stopping the managed process until its application readiness probe first
+succeeds, including an additional interruption if a candidate regresses and
+rollback is required. A result distinguishes completed, ongoing/unverified, and
+not-observed downtime instead of assuming that every update caused an outage.
+Current dmbdb versions show these values in both the dashboard Updates panel and
+each service's Updates panel when the backend advertises
+`update_timing_metrics`.
 
 When an update affects storage used by Plex, Jellyfin, or Emby, [Media Library Protection](media-library-protection.md) runs before the service is stopped. Scheduled updates are deferred while playback is active or activity cannot be verified. Manual installs show explicit protect, keep-running, stop-now, and defer choices in dmbdb.
 
@@ -425,6 +451,11 @@ and pinned-version selections appear as **Review source** and cannot be selected
 Use the individual service page when you need **Install configured target** or
 **Override + latest**. Selected services install one at a time and restart as
 needed; the frontend and API are placed last to reduce control-plane interruption.
+
+The individual service Updates panel also retains active check/install state if
+you close it or navigate to another service page. A background-progress banner
+reopens the operation, and returning to the service shows the same live progress
+or completed result.
 
 See [Dashboard](../frontend/dashboard.md#check-and-update-multiple-services) for
 the complete workflow.

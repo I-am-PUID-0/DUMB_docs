@@ -8,6 +8,17 @@ icon: lucide/sliders
 This page covers the service-level controls exposed in the DUMB Frontend, including
 auto-restart policies, auto-update scheduling, and configuration editors.
 
+The dashboard **Updates** panel includes install-cache usage and maintenance
+only when the backend advertises `install_cache_management`. On older DUMB
+versions the controls remain hidden and the frontend makes no install-cache API
+requests. Managed, legacy, and combined usage are shown when supplied by the
+backend. Named-scope cleanup is independently gated by
+`install_cache_cleanup`, so a frontend on `dev` does not call the cleanup route
+on older APIs. Editing and saving `dumb.install_cache.max_size_gib` is separately
+gated by `install_cache_limit_settings`; saving the value does not prune until
+the operator selects **Prune to limit**. See
+[Install cache and safe updates](../features/install-cache.md).
+
 ---
 
 ## Overview
@@ -250,6 +261,13 @@ Manual update actions:
 Hover either configured-target action or **Override + latest** for a concise
 summary before choosing an installation path.
 
+Checks and installs use app-scoped progress state. Closing the Updates panel
+while either operation is active asks for confirmation but does not cancel the
+request. The service page shows a **Service update running in the background**
+banner, and reopening the panel—or navigating to another service page and then
+returning—reattaches to the same progress and final result. This matches the
+dashboard Updates panel behavior for normal in-app navigation.
+
 Automatic update settings:
 
 | Setting | Description |
@@ -264,6 +282,11 @@ Notes:
 - Saving auto-update settings reschedules the updater immediately (no service restart required).
 - **Next check** is shown in the panel once auto-update is enabled and scheduled.
 - Check-only results feed the dashboard Updates count, per-service shortcut, and bulk Updates panel.
+- When the backend advertises `update_timing_metrics`, a completed manual or
+  scheduled install shows **Install** duration and readiness-based **Downtime**
+  in this per-service Updates panel as well as the dashboard bulk Updates panel.
+  The manual-install result remains visible after its automatic post-install
+  version recheck.
 - Older backends without the `auto_update_mode` capability retain automatic installation and do not show the action selector.
 
 ---
