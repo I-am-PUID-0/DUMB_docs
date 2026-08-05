@@ -1,6 +1,13 @@
 # Changelog
 
 
+## [1.23.14](https://github.com/I-am-PUID-0/DUMB_docs/compare/1.23.13...1.23.14) (2026-08-05)
+
+
+### 📖 Documentation
+
+* **updates:** document transactional installs and cache management ([4abda3c](https://github.com/I-am-PUID-0/DUMB_docs/commit/4abda3c6ceb354d5890eb685c3349d23f9385e1f))
+
 ## [1.23.13](https://github.com/I-am-PUID-0/DUMB_docs/compare/1.23.12...1.23.13) (2026-08-04)
 
 
