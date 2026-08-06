@@ -57,12 +57,19 @@ Action buttons:
 - **Docs** opens DUMB's guide for the current service
 - **Sponsor** opens the service developer's support page when one is available
 - **Library Protection** opens the opt-out protection policy for Plex, Jellyfin, or Emby
+- **Reset / Remove** opens a capability-gated dry-run preview for resetting DUMB configuration or removing only the selected service/instance's scoped managed files
 
 When a manual stop, restart, or update affects a protected downstream media server, the frontend displays current stream/scan activity before it performs the operation. Users can defer, use the safe stop-and-recover path, keep the media server running with scans guarded, or explicitly stop it immediately. Dashboard bulk updates use safe mode and report protected busy/unknown services as deferred; use the individual service page to choose an override.
 
 !!! note "API service controls"
 
     The DUMB API service does not show Start/Stop/Restart controls in the UI.
+
+### Reset / Remove
+
+When the backend advertises `service_reset`, eligible service pages show **Reset / Remove**. **Reset DUMB configuration** disables the selected target and restores its DUMB defaults without deleting application files. **Remove service files** also clears only the paths listed in the preview; custom instances are removed from `dumb_config`, while required default instances and single-instance services remain as disabled templates.
+
+The confirmation dialog identifies shared or custom paths that DUMB will retain, lists references from other configured services, and requires the exact process name. Media mounts, symlink libraries, caches, PostgreSQL databases, external stores, and other service configuration are never removed by this action. See [Service Reset and Removal](../features/service-reset.md) before using the file-removal option.
 
 ### Rclone Optimizer tab
 

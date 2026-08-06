@@ -16,6 +16,7 @@ nav:
       - Overview: features/index.md
       - Configuration: features/configuration.md
       - Usage: features/usage.md
+      - Service Reset & Removal: features/service-reset.md
       - Authentication: features/authentication.md
       - Auto-restart: features/auto-restart.md
       - Startup lifecycle: features/startup-lifecycle.md

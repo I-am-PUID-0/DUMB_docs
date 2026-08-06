@@ -194,6 +194,30 @@ Restarts a running process.
 
 ---
 
+### `GET /process/service-reset/preview`
+
+Returns the guarded reset/removal plan when capability `service_reset=true`.
+
+Required query parameter: `process_name`. Optional `action` is `reset` (default) or `remove`. The response identifies whether DUMB will reset a required template or remove a custom instance, reports `default_instance_after_removal` when removing the final custom instance will restore the disabled default template, lists exact eligible file targets, and reports retained/shared paths and dependency-reference warnings. Preview is read-only.
+
+### `POST /process/service-reset`
+
+Stops one eligible service, cancels its DUMB schedules, writes a private full-config backup, then applies a freshly validated preview.
+
+```json
+{
+  "process_name": "Sonarr Movies",
+  "action": "remove",
+  "confirmation": "Sonarr Movies"
+}
+```
+
+`confirmation` must exactly match `process_name`. `reset` preserves application files. `remove` clears only the returned DUMB-owned paths. Neither action removes mounts, symlink libraries, shared caches, PostgreSQL databases, external data stores, or other service configuration. DUMB API and DUMB Frontend are excluded.
+
+See [Service Reset and Removal](../features/service-reset.md) for template behavior, safety boundaries, and recovery.
+
+---
+
 ### `GET /process/service-status`
 
 Gets the current status of a process.

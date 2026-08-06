@@ -22,6 +22,7 @@ DUMB (Distributed Unlimited Media Bridge) is an all-in-one media management solu
 * **mediastorm streaming** – Optional self-hosted clients and server for Debrid, torrent, and Usenet playback.
 * **[Seerr Sync](seerr-sync.md)** – One-way request replication from a primary Seerr to subordinate instances for multi-household or multi-stack setups.
 * **Integrated Web UI** – Control and manage services through a simple **web-based interface** with embedded service UIs.
+* **[Service reset and removal](service-reset.md)** – Preview, stop, reset, or remove one configured service/instance without deleting shared mounts, caches, databases, or other service configuration.
 * **Traefik access layer** – DUMB-managed embedded UI routes, optional Traefik Proxy Admin user routes, and optional Cloudflared tunnel ingress all share the bundled Traefik entrypoint while keeping ownership boundaries clear.
 * **[Authentication](authentication.md)** – Optional JWT-based security with user management and session handling.
 * **[Auto-update](auto-update.md)** – Keep services current with automatic updates from GitHub releases, nightly builds, or specific branches.
