@@ -1,6 +1,13 @@
 # Changelog
 
 
+## [1.23.15](https://github.com/I-am-PUID-0/DUMB_docs/compare/1.23.14...1.23.15) (2026-08-06)
+
+
+### 📖 Documentation
+
+* document service reset and removal ([1bad3eb](https://github.com/I-am-PUID-0/DUMB_docs/commit/1bad3ebc5c716cb2ae7b3d7b6c8ca880193cd88d))
+
 ## [1.23.14](https://github.com/I-am-PUID-0/DUMB_docs/compare/1.23.13...1.23.14) (2026-08-05)
 
 
