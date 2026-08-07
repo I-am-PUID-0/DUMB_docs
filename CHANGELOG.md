@@ -1,6 +1,13 @@
 # Changelog
 
 
+## [1.24.1](https://github.com/I-am-PUID-0/DUMB_docs/compare/1.24.0...1.24.1) (2026-08-07)
+
+
+### 📖 Documentation
+
+* **frontend:** document compact service-page controls ([a76455f](https://github.com/I-am-PUID-0/DUMB_docs/commit/a76455fb65af2d1efe6addcb720df6d222921103))
+
 ## [1.24.0](https://github.com/I-am-PUID-0/DUMB_docs/compare/1.23.15...1.24.0) (2026-08-07)
 
 
