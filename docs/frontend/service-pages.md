@@ -50,14 +50,20 @@ enabled for a service, you also see restart counters and the last restart reason
 With [Geek Mode](settings.md#geek-mode) enabled, the header also displays the internal
 config key and process name in monospace.
 
-Action buttons:
+The compact command bar keeps frequent actions visible:
 
 - **Start**, **Stop**, **Restart** for the current service
-- **Auto-restart** opens per-service overrides (if supported)
-- **Docs** opens DUMB's guide for the current service
-- **Sponsor** opens the service developer's support page when one is available
-- **Library Protection** opens the opt-out protection policy for Plex, Jellyfin, or Emby
-- **Reset / Remove** opens a capability-gated dry-run preview for resetting DUMB configuration or removing only the selected service/instance's scoped managed files
+- **Save to File** persists the current configuration; on DUMB Config, its split-button menu also provides **Apply in Memory** for a temporary change
+- **Tools**, pinned beside the horizontally scrollable tab strip, opens capability-gated Automation, Data, Observability, Maintenance, Project, and page-preference groups from every tab
+
+On extra-narrow displays, Tools uses its wrench icon without the text label so more
+of the tab strip remains visible; its menu and accessibility label are unchanged.
+
+Less-frequent controls such as **Auto-restart**, **Library Protection**, **Seerr Sync**,
+**Database Migration**, **Database Health**, **Dependencies**, **Metrics**, **Updates**,
+**Reset / Remove**, and **Sponsor** appear in the relevant Tools group. Active updates
+and database migrations remain promoted through the existing page banners and an
+attention indicator on Tools. **Docs** remains available directly in the service header.
 
 When a manual stop, restart, or update affects a protected downstream media server, the frontend displays current stream/scan activity before it performs the operation. Users can defer, use the safe stop-and-recover path, keep the media server running with scans guarded, or explicitly stop it immediately. Dashboard bulk updates use safe mode and report protected busy/unknown services as deferred; use the individual service page to choose an override.
 
@@ -420,7 +426,10 @@ and callback run on their registered public HTTPS origins.
 ## Default tab selection
 
 You can choose a default tab for each service page (for example, always open logs).
-The selection is stored in the UI preferences.
+Open **Tools → Preferences** to choose a default tab or make the currently open tab
+the default. The selection is stored in the UI preferences.
+On narrow screens, swipe the tab bar horizontally to reach additional tabs; edge
+chevrons indicate when more tabs are available, and the selected tab scrolls into view.
 
 ---
 
