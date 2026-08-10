@@ -348,6 +348,20 @@ Notes:
 - A live config diff preview shows added/changed/removed paths before apply/save.
 - Risk-tagged config changes (for example command/env/path/network/restart/update/credential fields) require an explicit acknowledgement checkbox before apply/save.
 
+On the DUMB API service page, backends advertising `runtime_api_log_level` also
+show a **DUMB API Logging** panel above the editor. **Enable DEBUG Logging**
+changes the running DUMB and Uvicorn loggers immediately without restarting the
+container. **Disable DEBUG Logging** restores the configured levels. The panel
+shows the effective and configured levels, and marks the override as temporary:
+it is cleared when the container restarts. Managed-service log-level settings
+are not changed.
+
+If DEBUG is already enabled in persistent configuration, the quick action shows
+**DEBUG configured** instead of creating a temporary override. Change the saved
+configuration when persistent DEBUG logging should be disabled. DEBUG can
+increase log volume substantially and expose additional operational details;
+existing DUMB secret redaction remains active.
+
 ### Edit Service Config
 
 ![Edit Service Config](../assets/images/frontend/edit_service_config.png){ .shadow }

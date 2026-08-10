@@ -286,6 +286,47 @@ terminal failure summaries.
 
 ---
 
+## Runtime API logging
+
+These endpoints are available when `/process/capabilities` advertises
+`runtime_api_log_level`.
+
+### `GET /process/runtime-log-level`
+
+Returns the configured and effective DUMB API logging levels and whether a
+temporary DEBUG override is active.
+
+```json
+{
+  "configured_level": "INFO",
+  "configured_uvicorn_level": "INFO",
+  "effective_level": "DEBUG",
+  "debug_enabled": true,
+  "override_active": true,
+  "temporary": true,
+  "resets_on_restart": true
+}
+```
+
+### `POST /process/runtime-log-level`
+
+Enables or disables a temporary DEBUG override without restarting the DUMB
+container or API. Enabling changes the running shared DUMB logger and Uvicorn
+loggers immediately. Disabling restores their configured levels.
+
+```json
+{
+  "debug_enabled": true
+}
+```
+
+The override is intentionally not written to `dumb_config.json` and is cleared
+by a container restart. It does not modify managed-service logging settings.
+DEBUG output can be substantially larger and may contain additional operational
+details; DUMB's normal log redaction remains active.
+
+---
+
 ## Updates and scheduling
 
 ### `GET /process/update-status`
@@ -965,6 +1006,7 @@ Returns backend capabilities and feature flags. Used by the frontend to determin
   "mediastorm_initial_admin_password": true,
   "notifications": true,
   "startup_lifecycle": true,
+  "runtime_api_log_level": true,
   "rclone_optimizer": true,
   "rclone_optimizer_nzbdav": true
 }
@@ -990,6 +1032,7 @@ Returns backend capabilities and feature flags. Used by the frontend to determin
 | `project_update_status_persistence` | Whether DUMB API/frontend terminal update states survive backend restarts |
 | `project_update_release_distance` | Whether project notices may report `releases_behind` |
 | `api_update_check_always_on` | Whether DUMB API release checks run automatically in report-only mode |
+| `runtime_api_log_level` | Whether the running DUMB API DEBUG override can be inspected and toggled without a restart |
 | `startup_lifecycle` | Whether `GET /process/startup-status` exposes readiness-aware startup phases |
 | `rclone_optimizer` | Whether background rclone optimizer job routes are available |
 | `rclone_optimizer_nzbdav` | Whether the optimizer supports NzbDAV-backed rclone instances |

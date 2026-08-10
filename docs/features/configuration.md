@@ -128,6 +128,9 @@ Located in `dumb`:
 ```
 
 - **log_level** – Set the logging verbosity (`DEBUG`, `INFO`, `WARNING`, `ERROR`).
+- The DUMB API service page also provides a capability-gated temporary DEBUG
+  override. It applies immediately without a restart and does not persist or
+  alter managed-service log levels.
 - **log_dir** – Directory where logs are stored.
 - **log_count** – Number of rotated logs to retain.
 - **log_size** – Maximum log file size before rotation.

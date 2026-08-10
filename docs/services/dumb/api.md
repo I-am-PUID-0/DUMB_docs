@@ -74,6 +74,12 @@ The interactive documentation endpoints live on the native backend listener. See
 
 API settings are stored with the main runtime configuration at `/config/dumb_config.json`. Authentication users and the generated JWT secret are stored separately at `/config/users.json`. DUMB logs are written below the configured `/log` directory.
 
+When the backend exposes `runtime_api_log_level`, the DUMB API service page can
+temporarily enable DEBUG logging for the running DUMB and Uvicorn loggers. This
+requires no restart, does not modify `dumb_config.json`, and automatically
+returns to configured logging after the override is disabled or the container
+restarts. It does not change managed-service verbosity.
+
 ## Related pages
 
 - [API overview](../../api/index.md)
