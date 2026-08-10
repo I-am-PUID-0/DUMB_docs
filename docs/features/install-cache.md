@@ -14,6 +14,13 @@ trusted merely because it already exists.
 Service configuration, databases, media, symlinks, credentials, and active
 runtime directories are not cache entries.
 
+Destructive update clears are built from guarded exclusions rather than trusting
+only the saved `exclude_dirs` list. DUMB automatically preserves an in-tree
+service config file, explicit config/data/database paths, conventional persistent
+data/database directories, root-level SQLite files and their active sidecars,
+and symlinked data directories. The guarded paths are also excluded from archive
+merges, while replaceable source and runtime output can still be refreshed.
+
 ## Safety model
 
 An external project can always fail to download or build. DUMB's goal is to

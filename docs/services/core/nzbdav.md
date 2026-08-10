@@ -81,29 +81,28 @@ NzbDAV also exposes a **Usenet download client** path in Arr by emulating a Sabn
 
 ## Configuration in `dumb_config.json`
 
-!!! important "DUMB defaults to the NzbDAV fork"
+!!! important "DUMB defaults to InfiniDysk"
 
-    DUMB installs and updates NzbDAV from the maintained
-    [`nzbdav/nzbdav`](https://github.com/nzbdav/nzbdav) **fork by default**.
-    It does **not** default to the original
-    [`nzbdav-dev/nzbdav`](https://github.com/nzbdav-dev/nzbdav) repository.
-    The `repo_owner: "nzbdav"` and `repo_name: "nzbdav"` values below select
-    that fork for release, branch, and update operations. Existing configs that
-    still contain DUMB's exact former default `nzbdav-dev/nzbdav` are migrated
-    automatically; intentional custom fork owners remain unchanged.
+    DUMB installs and updates the renamed project from
+    [`infinidysk/infinidysk`](https://github.com/infinidysk/infinidysk) by
+    default. The legacy `nzbdav` DUMB service key and `NZBDAV_*` environment
+    variables remain compatibility aliases. Existing configs containing either
+    former DUMB default, `nzbdav-dev/nzbdav` or `nzbdav/nzbdav`, migrate to
+    InfiniDysk automatically; intentional custom forks remain unchanged.
 
-!!! tip "Support the maintained fork"
+!!! tip "Support the maintainer"
 
-    If NzbDAV is useful to your stack, you can support the fork maintainer through
-    [Buy Me a Coffee](https://buymeacoffee.com/hoivikaj). DUMB also exposes this
-    link through the frontend's NzbDAV service page and **Settings → About**.
+    If InfiniDysk/NzbDAV is useful to your stack, you can support the maintainer
+    through [Buy Me a Coffee](https://buymeacoffee.com/hoivikaj). DUMB also
+    exposes this link through the frontend's NzbDAV service page and
+    **Settings → About**.
 
 ```json
 "nzbdav": {
     "enabled": false,
     "process_name": "NzbDAV",
-    "repo_owner": "nzbdav",
-    "repo_name": "nzbdav",
+    "repo_owner": "infinidysk",
+    "repo_name": "infinidysk",
     "release_version_enabled": false,
     "release_version": "latest",
     "commit_sha": "",
@@ -192,6 +191,14 @@ DUMB tries that archive first. The rolling `rc` GitHub Release is therefore a
 valid moving channel: DUMB resolves its current commit and asset digest before
 installing it. Branch and exact-commit selections remain source builds.
 
+DUMB accepts the current `infinidysk-<version>-linux-<arch>.tar.gz` release
+artifact and the former `nzbdav-<version>-linux-<arch>.tar.gz` name. The selected
+asset must include a published SHA-256 digest, and its archive root must match
+the asset name. When both names are published for one release, DUMB prefers the
+name matching the configured repository. A renamed official artifact therefore
+uses the verified prebuilt path instead of silently falling back to a source
+build.
+
 Existing installations whose marker is only `dev` perform one update to adopt
 the commit-aware marker. Tags containing any digit, such as `v0.9.5`,
 `2026.08.03`, or `dev2`, remain pinned configured releases and do not enable
@@ -205,8 +212,8 @@ Set `commit_sha` to the complete SHA from the configured `repo_owner` and
 
 ```json
 "nzbdav": {
-    "repo_owner": "nzbdav",
-    "repo_name": "nzbdav",
+    "repo_owner": "infinidysk",
+    "repo_name": "infinidysk",
     "commit_sha": "0123456789abcdef0123456789abcdef01234567"
 }
 ```
@@ -220,6 +227,32 @@ After saving a new SHA, open **Updates** and select **Install configured
 commit**. This installs and restarts NzbDAV on the saved commit. Do not use
 **Override + latest** for this operation; that action intentionally installs the
 latest moving release while leaving the saved pin in place for a later restart.
+
+### Source-build update safety
+
+Branch and exact-commit updates publish the .NET backend into a clean candidate
+directory, validate the complete runtime, and then replace the installed backend
+as one unit. This prevents assemblies removed or upgraded upstream from remaining
+in `/nzbdav/app` and being loaded alongside the new build.
+
+After upgrading from an older DUMB version, an existing branch or commit install
+may rebuild once even when its Git revision has not changed. That one-time rebuild
+records the current source-build format and replaces any legacy overlaid output.
+Do not manually delete `/nzbdav/app` or enable `clear_on_update` for this recovery;
+use **Install configured release/branch/commit** and let DUMB preserve the previous
+backend until the replacement candidate passes validation.
+
+`clear_on_update` applies only to replaceable source and runtime files. Before
+any clear or archive merge, DUMB automatically carries forward configured
+exclusions, an in-tree `config_file`, explicit config/data/database path fields,
+conventional `data`/`db` directories, root-level SQLite databases and active
+WAL/SHM/journal sidecars, and symlinked persistent data directories. This guard
+also applies when an older saved configuration omitted those paths from
+`exclude_dirs`.
+
+Keep normal backups of application databases and configuration. The update guard
+prevents DUMB's installer from intentionally clearing those files; it is not a
+replacement for backups or application-native database recovery.
 
 ### Environment Variables
 
@@ -486,7 +519,7 @@ Start with **Standard / passive** mode and collect through normal imports, healt
 
 ## Resources
 
-* [NzbDAV fork used by DUMB (default)](https://github.com/nzbdav/nzbdav)
-* [Support the NzbDAV fork maintainer](https://buymeacoffee.com/hoivikaj)
-* [Original NzbDAV repository (not the DUMB default)](https://github.com/nzbdav-dev/nzbdav)
-* [Upstream migration progress integration issue](https://github.com/nzbdav/nzbdav/issues/268)
+* [InfiniDysk repository used by DUMB (default)](https://github.com/infinidysk/infinidysk)
+* [Support the InfiniDysk/NzbDAV maintainer](https://buymeacoffee.com/hoivikaj)
+* [Former maintained NzbDAV repository](https://github.com/nzbdav/nzbdav)
+* [Original NzbDAV repository](https://github.com/nzbdav-dev/nzbdav)
