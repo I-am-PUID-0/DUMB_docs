@@ -1,6 +1,15 @@
 # Changelog
 
 
+## [1.24.3](https://github.com/I-am-PUID-0/DUMB_docs/compare/1.24.2...1.24.3) (2026-08-10)
+
+
+### 📖 Documentation
+
+* **logging:** document runtime DUMB API debug controls ([400ef76](https://github.com/I-am-PUID-0/DUMB_docs/commit/400ef76834bb17383b786340d35372ec0974b28b))
+* **updates:** document graceful frontend self-update lifecycle ([d14ad5a](https://github.com/I-am-PUID-0/DUMB_docs/commit/d14ad5a797424afb6bfbceaedd187b74683592ad))
+* **updates:** document retained control-plane update notices ([b65d5c7](https://github.com/I-am-PUID-0/DUMB_docs/commit/b65d5c7f421a563ecf5a1ba4e2f7a99698b28315))
+
 ## [1.24.2](https://github.com/I-am-PUID-0/DUMB_docs/compare/1.24.1...1.24.2) (2026-08-10)
 
 
