@@ -49,9 +49,13 @@ Choose **System Default** to follow the browser/operating-system light or dark p
 
 Displays current versions:
 
-- DUMB Backend version
+- DUMB API version
 - DUMB Frontend version
 - Individual service versions
+
+The DUMB API and DUMB Frontend rows also summarize retained project update state. Published releases show an **Update available** badge and, when the installed tag is present in the bounded GitHub release history, how many releases the component is behind. Select the badge to open the shared **DUMB Updates** dialog. Development versions show a **Dev build** badge; DUMB does not invent a releases-behind count for a moving development build.
+
+These About-page indicators remain visible after a browser-local banner dismissal because the update result is retained by the backend. The review dialog marks a dismissed entry as **Hidden in this browser** and lets the operator show its banner again.
 
 ![About settings](../assets/images/frontend/about_settings.png){ .shadow }
 

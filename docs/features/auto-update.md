@@ -109,11 +109,15 @@ When an update affects storage used by Plex, Jellyfin, or Emby, [Media Library P
 
 ### Frontend notices
 
-The DUMB Frontend polls `GET /api/process/update-notices` for project-level update notices. Available-update notices come from the backend's current update-status cache. Applied-update notices are persisted to `/config/update_notices.json` when an update install reports success, so the frontend can still show what changed after the backend or frontend restarts.
+The DUMB Frontend polls `GET /api/process/update-notices` for project-level update notices. DUMB retains the last terminal DUMB API and DUMB Frontend update state, plus applied and informational notices, in `/config/update_notices.json`. Available-update notices therefore survive an API restart and do not depend on the browser that happened to perform the check. If a later GitHub check temporarily fails, DUMB keeps showing the last known available update and marks the recheck failure instead of silently removing the notice.
+
+The global **DUMB Updates** banner and review dialog show the current and available API/frontend versions. The Settings **About** rows reuse the same backend-retained state and open the same dialog. For ordinary published releases, they also show how many releases the installed version is behind when the current tag can be found in GitHub's bounded release history. Branch builds, rolling dev builds, and very old or missing tags may omit the count rather than guess.
+
+DUMB API release checks are always enabled: the backend checks once during startup and then daily in check-only mode. This does not opt the deployment into automatic container replacement or API self-installation. Applying an API update remains an operator-owned image/stack update. DUMB Frontend checking and installation continue to follow its normal manual and configured auto-update controls.
 
 DUMB dev images use rolling versions such as `v2.4.2-dev.5`. These are treated as dev builds, not production release tags, so their notice action points to the rolling dev-build reference instead of a per-version release page. Production semver releases still link to their release notes, and branch builds with commit markers link to the relevant commit or comparison.
 
-Dismissals are stored in browser local storage and only hide the notice for that browser. They do not remove the backend's applied-update history.
+Dismissals are stored in browser local storage and only hide the global banner for that browser. They do not remove the backend's retained available state or applied-update history. The About page continues to show the retained status, and its review dialog can restore a dismissed banner; a different browser can also still review the notice.
 
 ---
 

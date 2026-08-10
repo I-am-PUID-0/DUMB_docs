@@ -296,6 +296,10 @@ Returns the last recorded update state for the required `process_name` query par
 
 Returns available, informational, and recently applied update notices. `scope=project` (default) limits notices to DUMB/dmbdb; `scope=all` includes managed services.
 
+Project terminal statuses are retained by the backend in `/config/update_notices.json`. Available DUMB API/frontend entries can include `releases_behind` when the installed release is present in the bounded GitHub release history, plus `last_check_error`/`last_check_failed_at` when a transient recheck failure leaves a known available result in place. Browser dismissals are presentation-only and do not mutate this endpoint's retained state.
+
+The DUMB API is checked at startup and daily regardless of service auto-update opt-in. Its check is always report-only; applying a new API image remains external to this endpoint.
+
 ### `POST /process/update-check`
 
 Runs a manual update check without installing it.
@@ -983,6 +987,9 @@ Returns backend capabilities and feature flags. Used by the frontend to determin
 | `seerr_sync` | Whether Seerr sync feature routes are available |
 | `auto_update_start_time` | Whether anchored auto-update start time is supported |
 | `auto_update_mode` | Whether schedules can report available updates without installing them |
+| `project_update_status_persistence` | Whether DUMB API/frontend terminal update states survive backend restarts |
+| `project_update_release_distance` | Whether project notices may report `releases_behind` |
+| `api_update_check_always_on` | Whether DUMB API release checks run automatically in report-only mode |
 | `startup_lifecycle` | Whether `GET /process/startup-status` exposes readiness-aware startup phases |
 | `rclone_optimizer` | Whether background rclone optimizer job routes are available |
 | `rclone_optimizer_nzbdav` | Whether the optimizer supports NzbDAV-backed rclone instances |
