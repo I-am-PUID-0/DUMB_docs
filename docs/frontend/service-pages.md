@@ -281,6 +281,15 @@ banner, and reopening the panel—or navigating to another service page and then
 returning—reattaches to the same progress and final result. This matches the
 dashboard Updates panel behavior for normal in-app navigation.
 
+When the service being updated is **DUMB Frontend**, the current frontend stays
+online while DUMB builds and verifies the replacement. During the final atomic
+swap, the active request may briefly disconnect because it passes through that
+same frontend. The page automatically polls the DUMB API's retained update
+status after the proxy returns and reloads when the replacement is confirmed.
+If confirmation cannot be reached within the reconnect window, the panel asks
+you to refresh and review the stored status instead of claiming that the install
+failed.
+
 Automatic update settings:
 
 | Setting | Description |

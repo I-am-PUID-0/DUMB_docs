@@ -84,6 +84,16 @@ or restores the previous runtime instead of accepting partial output. Services
 with candidate-native layouts are not stopped until their replacement has
 finished building.
 
+The DUMB Frontend uses this candidate-first lifecycle for release, branch,
+commit, and configured-target installs. Its current Nuxt server remains online
+during download and build, then DUMB stops it only long enough to atomically
+activate and health-check the replacement. If activation fails, DUMB restores
+and verifies the prior frontend. When an operator starts the update from the
+dashboard itself, the loaded page reconnects through the restarted frontend,
+reads the terminal result retained by the DUMB API, and reloads to use the new
+assets. A temporary request disconnect is therefore shown as reconnection and
+verification, not immediately as a failed install.
+
 Manual dashboard installs and scheduled update installs record total install
 duration plus observed service downtime. Total duration covers the complete
 installer and health-stabilization operation. Downtime covers only intervals
@@ -451,6 +461,10 @@ and pinned-version selections appear as **Review source** and cannot be selected
 Use the individual service page when you need **Install configured target** or
 **Override + latest**. Selected services install one at a time and restart as
 needed; the frontend and API are placed last to reduce control-plane interruption.
+If the selection includes DUMB Frontend, its replacement is prepared while the
+old UI stays online. The bulk runner resumes after the brief activation restart
+and reloads the dashboard only after the remaining selected updates have been
+processed.
 
 The individual service Updates panel also retains active check/install state if
 you close it or navigate to another service page. A background-progress banner

@@ -111,6 +111,24 @@ following applies:
 In those cases, DUMB keeps the existing install/update path and starts the
 frontend after its runtime is ready.
 
+## Self-update behavior
+
+Manual and scheduled frontend updates are prepared transactionally. DUMB
+downloads, builds, and validates the candidate in an adjacent directory while
+the installed frontend continues serving the dashboard. Only the final atomic
+directory swap, process restart, and readiness check create frontend downtime.
+
+If the candidate cannot be built or validated, DUMB removes it and leaves the
+current frontend running. If the replacement cannot configure, start, or become
+ready after activation, DUMB restores and verifies the previous runtime.
+
+An update started from the frontend can briefly interrupt its own HTTP request
+during the final restart. Current dmbdb clients recognize that transport break,
+wait for the proxy to return, read the final update status retained by the DUMB
+API, and reload to pick up the new assets. If automatic confirmation times out,
+refresh the page and reopen **Updates**; do not assume the installation failed
+solely from the interrupted browser request.
+
 ## Frontend usage guides
 
 For UI walkthroughs, use the frontend section:

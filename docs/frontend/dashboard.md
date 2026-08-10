@@ -133,10 +133,19 @@ open that service page to decide whether to install its configured target or use
 the explicit **Override + latest** action. The bulk workflow never overrides it.
 
 Checking never restarts a service. Installing does. DUMB Frontend and DUMB API
-updates are ordered last so the loaded dashboard can
-report as much progress as possible. Updating either control-plane service can
-briefly interrupt the final response or inventory refresh. After a bulk update,
-verify service health and logs before continuing normal operation.
+updates are ordered last so the loaded dashboard can report as much progress as
+possible.
+
+For a DUMB Frontend update, the backend downloads, builds, and validates an
+adjacent replacement while the current dashboard continues serving requests.
+It stops the old frontend only for the final atomic swap, restart, and readiness
+check. The loaded dashboard treats that brief proxy disconnect as expected,
+reconnects to the backend's retained update status, and reloads itself after the
+replacement is ready. A failed candidate build leaves the current frontend
+running; a failed activation restores the previous runtime. DUMB API updates can
+still interrupt the final inventory refresh because the API is the update control
+plane itself. After a bulk update, verify service health and logs before
+continuing normal operation.
 
 ---
 
