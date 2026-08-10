@@ -1,6 +1,15 @@
 # Changelog
 
 
+## [1.24.2](https://github.com/I-am-PUID-0/DUMB_docs/compare/1.24.1...1.24.2) (2026-08-10)
+
+
+### 📖 Documentation
+
+* **mediastorm:** document digest-based OCI updates ([7baf831](https://github.com/I-am-PUID-0/DUMB_docs/commit/7baf8319e2e6e912674cd179ce902d1ba41040cd))
+* **mediastorm:** document post-update readiness checks ([7572f9a](https://github.com/I-am-PUID-0/DUMB_docs/commit/7572f9a4f15f13482e1a61112f7980bc119894c1))
+* **nzbdav:** document hardened InfiniDysk update behavior ([29828cd](https://github.com/I-am-PUID-0/DUMB_docs/commit/29828cd4688c7350042de53d7c7024b5474b733d))
+
 ## [1.24.1](https://github.com/I-am-PUID-0/DUMB_docs/compare/1.24.0...1.24.1) (2026-08-07)
 
 
