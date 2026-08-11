@@ -80,7 +80,7 @@ Leave `release_version_enabled` set to `false` to follow `godver3/mediastorm:lat
 | Selection | Example | Behavior |
 |-----------|---------|----------|
 | OCI release tag | `1.5.0` | Installs the published mediastorm release tag and accepts its dated internal version. |
-| GitHub release | `v1.5.0-20260711` | Resolves the matching dated or semantic OCI release tag and requires the exact internal version. |
+| GitHub release | `v1.5.0-20260711` | Resolves the GitHub tag to its immutable full-commit OCI tag when upstream did not publish a matching dated OCI tag, then requires the exact internal version. |
 | Full commit tag | `2e4fdf5f08146795d455604ec16233050b43465a` | Installs the OCI tag published for that full upstream commit. Use a digest when registry-level immutability is required. |
 | OCI digest | `sha256:<64 lowercase hex characters>` | Installs the exact immutable image manifest. |
 
@@ -159,7 +159,7 @@ For troubleshooting, direct access is `http://<host>:7777` when you publish that
 - **`admin` / `admin` is rejected:** On current builds, entering only the public default is intentionally incomplete. Fill the **New admin password** and **Confirm new password** fields on the same login form. API clients receive HTTP `428` with code `password_change_required` and must resubmit the login with `newPassword`.
 - **Onboarding asks for another password change:** Update mediastorm. Current onboarding recognizes that the password was already secured during first sign-in and leaves the second password change optional.
 - **Install fails during an OCI layer download:** Confirm the DUMB container can reach Docker Hub and has enough free space for the compressed image plus the staged runtime. Retrying the start repeats the verified install.
-- **OCI version mismatch for a pin:** The selected dated release expects an exact internal version, but the resolved OCI tag contains another build. DUMB preserves the existing runtime. Confirm that the pinned release/tag pair exists upstream, or return to the unpinned `latest` channel.
+- **OCI version mismatch for a pin:** The selected dated release expects an exact internal version. DUMB first tries a matching dated OCI tag, then the immutable full-commit OCI tag resolved from the official GitHub release, and uses the semantic OCI tag only as a compatibility fallback. If every available image contains another build, DUMB preserves the existing runtime. Confirm that the release and its commit-specific image still exist upstream, or return to the unpinned `latest` channel.
 - **Pinned version cannot be resolved:** Confirm the value is a published mediastorm release tag, full 40-character commit tag, or complete `sha256:` digest. Short commit hashes and branch names are intentionally rejected.
 - **Discovery is empty or metadata is missing:** Verify both TMDB and TVDB keys in `/admin`.
 - **An embedded link opens the DUMB page instead:** Refresh the mediastorm service page to renew iframe context, then retry. Report the exact mediastorm path that escaped the iframe.
