@@ -179,6 +179,50 @@ The installed marker is recorded as `dev-<short-sha>`. The source archive is
 downloaded by the resolved full SHA, so the installed source and recorded
 marker remain consistent even if the tag moves during the update.
 
+### Prebuilt archives and automatic source fallback
+
+For InfiniDysk release selectors, DUMB first looks for the official
+architecture-specific `linux-x64` or `linux-arm64` release archive. It requires
+GitHub's published SHA-256 digest, resolves the selected tag to its full commit,
+requires the release asset's target commit to still match that tag, validates
+the complete backend and frontend runtime, and activates them as one
+rollback-safe unit. DUMB selects the exact channel asset deterministically and
+accepts only InfiniDysk/NzbDAV archive roots for the selected CPU architecture.
+This handles renamed rolling assets such as `rc`, whose downloaded archive can
+keep the concrete RC version in its internal root directory.
+
+If a selected tag has no GitHub Release object, has no compatible archive, or
+has release assets that lag behind a moved channel tag, DUMB automatically
+downloads the current resolved commit and uses its source-build path. The same
+fallback applies when archive verification fails. This keeps the service
+installable while making the fallback reproducible. Open the service page's
+**Updates** panel to see **Installed using**, the resolved release, the selected
+archive when applicable, and the prebuilt fallback reason.
+
+The practical channel behavior is:
+
+| Selector | DUMB behavior |
+| --- | --- |
+| `latest` | Resolve the current stable GitHub Release, then use its verified archive or source fallback |
+| `prerelease` | For the official InfiniDysk repository, follow the `rc` channel so a newer `dev` snapshot cannot be mistaken for an RC; then use its verified archive or source fallback |
+| `dev`, `rc`, `lts`, `edge` | Track the exact digit-free tag when it exists; use a matching verified release archive when published, otherwise build that tag's resolved commit |
+| Versioned/dated tag | Treat it as a fixed configured release; use its verified archive when published, otherwise build its resolved commit |
+| Full `commit_sha` or branch | Source build by design |
+
+!!! note "Why DUMB does not unpack the Docker image"
+
+    The official InfiniDysk container is Alpine/musl-based, while DUMB's
+    runtime and managed packages are Ubuntu/glibc-based. Extracting application
+    files from that image would also pull a runtime layout and native libraries
+    built for a different libc boundary. The official Ubuntu-built release
+    archives are the compatible prebuilt format for DUMB; source fallback is
+    the compatibility path when no usable archive exists.
+
+After a prebuilt install, DUMB starts the archive's framework-dependent native
+apphost against DUMB's compatible .NET runtime, even if a local .NET SDK remains
+from an older source build. Source installs continue to launch through the
+managed local SDK and application DLL.
+
 The same revision suffix remains visible for the rolling **prerelease** channel
 and for branch, exact-commit, or other moving-tag installs. Ordinary stable
 release versions are shown in the frontend as their clean release tag (for

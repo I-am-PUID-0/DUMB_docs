@@ -34,6 +34,7 @@ Each service page includes:
 - Per-service auto-restart overrides
 - Media Library Protection policy and Plex library preferences on Plex, Jellyfin, and Emby pages
 - On-demand update checks and auto-update scheduling
+- InfiniDysk/NzbDAV install provenance in Updates (verified prebuilt archive or source build, resolved release, and automatic fallback reason)
 - A **Sponsor** action when the backend publishes a support link for the service
 - Seerr Sync controls when viewing a Seerr instance
 - Symlink Job Center (for symlink-capable services) with active jobs, recent history, retry, and failure clearing

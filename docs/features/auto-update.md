@@ -172,6 +172,14 @@ Auto-update settings are configured per-service in `dumb_config.json`:
     fixed configured releases. A non-empty `commit_sha` always disables moving
     update checks, including the initial post-setup check.
 
+    InfiniDysk/NzbDAV release updates are prebuilt-first. DUMB verifies the
+    exact architecture archive and its published digest, then automatically
+    builds the same resolved commit from source when the GitHub Release or a
+    usable archive is unavailable. A missing prebuilt therefore does not strand
+    the service on a broken install. The service Updates panel reports the
+    installed method and any fallback reason when the backend supports
+    `nzbdav_install_info`.
+
 After changing a fixed release, branch, or commit selection, use **Check for
 updates**. When the configured target differs from the installed version, the
 Updates panel shows **Install configured release**, **Install configured
