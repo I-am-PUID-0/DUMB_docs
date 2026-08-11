@@ -267,9 +267,12 @@ Manual update actions:
 - **Check for updates** runs a one-time update check even if auto-update is disabled.
 - **Install update** applies the latest available update when allowed.
 - **Install configured release**, **Install configured branch**, or **Install
-  configured commit** appears when that saved source selection differs from the
-  installed version and the backend advertises `configured_source_install`.
-  It installs the displayed configured target and keeps the selection active.
+  configured commit** is derived from the saved service configuration when the
+  backend advertises `configured_source_install`; it does not depend on a prior
+  successful update check. Fixed releases and commits hide the action when the
+  installed version already matches. Branch selections remain directly
+  installable because the selected branch can move. The action installs the
+  displayed configured target and keeps the selection active.
 - **Override + latest** appears when a service is pinned and temporarily ignores
   any saved release, branch, commit, or pinned-version selection to install the
   latest stable release. The saved configuration is restored afterward.

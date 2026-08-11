@@ -180,14 +180,15 @@ Auto-update settings are configured per-service in `dumb_config.json`:
     installed method and any fallback reason when the backend supports
     `nzbdav_install_info`.
 
-After changing a fixed release, branch, or commit selection, use **Check for
-updates**. When the configured target differs from the installed version, the
-Updates panel shows **Install configured release**, **Install configured
-branch**, or **Install configured commit**. This applies the saved selection
-without clearing it. **Override + latest** is a separate escape hatch that
-temporarily bypasses any saved release, branch, commit, or pinned-version
-selection and installs the latest stable release. DUMB restores the saved
-configuration after that one installation.
+After saving a fixed release, branch, or commit selection, the Updates panel
+shows **Install configured release**, **Install configured branch**, or
+**Install configured commit** without requiring a successful update check.
+**Check for updates** remains useful for resolving the exact current branch
+head and refreshing displayed version details. Applying the configured target
+keeps the saved selection active. **Override + latest** is a separate escape
+hatch that temporarily bypasses any saved release, branch, commit, or
+pinned-version selection and installs the latest stable release. DUMB restores
+the saved configuration after that one installation.
 
 ### Check only and review on the dashboard
 
