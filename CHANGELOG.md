@@ -1,6 +1,15 @@
 # Changelog
 
 
+## [1.24.4](https://github.com/I-am-PUID-0/DUMB_docs/compare/1.24.3...1.24.4) (2026-08-11)
+
+
+### 📖 Documentation
+
+* **infinidysk:** document prebuilt-first installation and fallback ([69c2943](https://github.com/I-am-PUID-0/DUMB_docs/commit/69c294305546650049c6296839f57c5f6b3cc111))
+* **mediastorm:** document immutable OCI fallback for release pins ([63aad17](https://github.com/I-am-PUID-0/DUMB_docs/commit/63aad1759f071fd85ae3096130c5088b6013e8e7))
+* **updates:** clarify immediate configured-target install actions ([945b404](https://github.com/I-am-PUID-0/DUMB_docs/commit/945b4045c964c745a0027f19f016a766337f3030))
+
 ## [1.24.3](https://github.com/I-am-PUID-0/DUMB_docs/compare/1.24.2...1.24.3) (2026-08-10)
 
 
