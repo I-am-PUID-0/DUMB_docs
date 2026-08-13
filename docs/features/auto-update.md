@@ -166,9 +166,9 @@ Auto-update settings are configured per-service in `dumb_config.json`:
 
     Automatic scheduling is disabled when `pinned_version`, `commit_sha`,
     `release_version_enabled`, or `branch_enabled` are set. Exceptions are a
-    `nightly` or `prerelease` release selector and a digit-free NzbDAV release
+    `nightly` or `prerelease` release selector and a digit-free InfiniDysk release
     tag such as `dev`, `lts`, or `edge`, provided no commit, pinned-version, or
-    branch selector takes precedence. NzbDAV tags containing a digit remain
+    branch selector takes precedence. InfiniDysk tags containing a digit remain
     fixed configured releases. A non-empty `commit_sha` always disables moving
     update checks, including the initial post-setup check.
 
@@ -178,7 +178,7 @@ Auto-update settings are configured per-service in `dumb_config.json`:
     usable archive is unavailable. A missing prebuilt therefore does not strand
     the service on a broken install. The service Updates panel reports the
     installed method and any fallback reason when the backend supports
-    `nzbdav_install_info`.
+    `infinidysk_install_info` (or the legacy `nzbdav_install_info` alias).
 
 After saving a fixed release, branch, or commit selection, the Updates panel
 shows **Install configured release**, **Install configured branch**, or
@@ -283,7 +283,7 @@ Source-build services can be pinned to an immutable GitHub revision:
 
 ```json
 {
-  "nzbdav": {
+  "infinidysk": {
     "commit_sha": "0123456789abcdef0123456789abcdef01234567"
   }
 }
@@ -309,7 +309,7 @@ Supported source-build services are:
 - Traefik Proxy Admin
 - CLI Debrid
 - Decypharr
-- NzbDAV
+- InfiniDysk
 - Phalanx DB
 - Tautulli
 - Pulsarr

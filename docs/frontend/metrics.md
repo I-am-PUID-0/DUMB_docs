@@ -166,7 +166,7 @@ The table shows:
 
 Use **Standard / passive** for the lowest overhead. Use **Enhanced / read-only probes** when you need SQLite page/WAL metadata or PostgreSQL statistics. Plex is always collected passively while running, even if Enhanced is selected. Decypharr append-log stores, Phalanx DB Hyperbee data, and the Zurg state directory are also passive-only; Enhanced does not open or query those formats.
 
-The supported set includes the Arrs, NzbDAV, Bazarr, Plex, CLI Debrid/Battery, Emby, Jellyfin, Profilarr, Tautulli, AltMount, Pulsarr, Seerr, PostgreSQL, pgAdmin, Riven Backend, Zilean, Traefik Proxy Admin, Decypharr, Phalanx DB, and Zurg. DUMB detects SQLite versus PostgreSQL for provider-neutral services and keeps multi-instance entries separate.
+The supported set includes the Arrs, InfiniDysk, Bazarr, Plex, CLI Debrid/Battery, Emby, Jellyfin, Profilarr, Tautulli, AltMount, Pulsarr, Seerr, PostgreSQL, pgAdmin, Riven Backend, Zilean, Traefik Proxy Admin, Decypharr, Phalanx DB, and Zurg. DUMB detects SQLite versus PostgreSQL for provider-neutral services and keeps multi-instance entries separate.
 
 Enable **Ignore network storage score** for an individual service when its NFS/SMB placement is intentional. The filesystem remains visible in the service details, but it no longer raises the pressure score or replaces recommendations derived from the remaining metrics.
 
@@ -289,7 +289,7 @@ curl "http://localhost:3005/api/metrics/history?since=1784300000&limit=5000"
 curl "http://localhost:3005/api/metrics/history/storage?probe_postgresql=true"
 
 # Database health, optionally forcing a fresh collection
-curl "http://localhost:3005/api/metrics/database-health?process_name=NzbDAV&refresh=true"
+curl "http://localhost:3005/api/metrics/database-health?process_name=InfiniDysk&refresh=true"
 ```
 
 See the [WebSocket API](../api/websocket.md) documentation for real-time streaming.

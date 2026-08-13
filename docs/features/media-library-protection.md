@@ -1,6 +1,6 @@
 ---
 title: Media Library Protection
-description: Protect Plex, Jellyfin, and Emby libraries from destructive scans when rclone, NzbDAV, Decypharr, Zurg, AltMount, or CLI Debrid is stopped, updated, or unavailable.
+description: Protect Plex, Jellyfin, and Emby libraries from destructive scans when rclone, InfiniDysk, Decypharr, Zurg, AltMount, or CLI Debrid is stopped, updated, or unavailable.
 icon: lucide/shield-check
 ---
 
@@ -8,7 +8,7 @@ icon: lucide/shield-check
 
 Media Library Protection reduces the chance that Plex, Jellyfin, or Emby interprets a temporary storage outage as deleted media. It is **enabled by default** and can be disabled globally or per media server.
 
-The feature covers DUMB-managed storage dependencies such as rclone, NzbDAV, Decypharr, Zurg, AltMount, and CLI Debrid. DUMB maps each operation to affected media servers through configured mount paths; when it cannot safely narrow the relationship, it protects every enabled media server.
+The feature covers DUMB-managed storage dependencies such as rclone, InfiniDysk, Decypharr, Zurg, AltMount, and CLI Debrid. DUMB maps each operation to affected media servers through configured mount paths; when it cannot safely narrow the relationship, it protects every enabled media server.
 
 !!! important "Protection is not a backup"
 

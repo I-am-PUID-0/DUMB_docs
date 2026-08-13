@@ -62,7 +62,7 @@ API when you need valid JSON.
     "cli_debrid": { ... },
     "cli_battery": { ... },
     "decypharr": { ... },
-    "nzbdav": { ... },
+    "infinidysk": { ... },
     "emby": { ... },
     "jellyfin": { ... },
     "lidarr": { ... },
@@ -186,7 +186,7 @@ See the individual service pages for in-depth configuration details:
 - [Cloudflared](../services/optional/cloudflared.md)
 - [Decypharr](../services/core/decypharr.md)
 - [CLI Debrid](../services/core/cli-debrid.md)
-- [NzbDAV](../services/core/nzbdav.md)
+- [InfiniDysk](../services/core/infinidysk.md)
 - [AltMount](../services/core/altmount.md)
 - [Plex Media Server](../services/core/plex-media-server.md)
 - [Jellyfin](../services/core/jellyfin.md)
@@ -225,7 +225,7 @@ Allowed values:
 
 * `""` (blank): no core integration
 * `decypharr`: route Arr automation through Decypharr
-* `nzbdav`: route Arr automation through NzbDAV
+* `infinidysk`: route Arr automation through InfiniDysk
 * `altmount`: route Arr automation through AltMount
 
 To combine workflows, use a list or a comma-separated `core_service`.
@@ -246,7 +246,7 @@ Examples:
 "radarr": {
   "instances": {
     "Default": {
-      "core_service": "nzbdav"
+      "core_service": "infinidysk"
     }
   }
 }
@@ -256,7 +256,7 @@ Examples:
 "whisparr": {
   "instances": {
     "Combined": {
-      "core_service": ["decypharr", "nzbdav", "altmount"]
+      "core_service": ["decypharr", "infinidysk", "altmount"]
     }
   }
 }

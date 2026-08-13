@@ -27,18 +27,18 @@ Core services are the services that:
 | ----------------------------------- | ---------------------------------------------------- | --------------------------------- | ---------------------------- |
 | [CLI Debrid](cli-debrid.md)         | Debrid media scraper, automation engine, and upgrade engine              | CLI Battery for stable/older releases; Phalanx DB, rclone, Zurg | Zilean |
 | [Decypharr](decypharr.md)           | Debrid and native Usenet workflow service for Arrs, symlinks, and WebDAV access | rclone when external mount mode is used | Zilean, Sonarr, Radarr, Lidarr, Whisparr |
-| [NzbDAV](nzbdav.md)                 | WebDAV service for NZB access and Arr download client integration         | rclone                            | Sonarr, Radarr, Lidarr, Whisparr |
+| [InfiniDysk](infinidysk.md)                 | WebDAV service for NZB access and Arr download client integration         | rclone                            | Sonarr, Radarr, Lidarr, Whisparr |
 | [AltMount](altmount.md)             | Usenet streaming, WebDAV, and SABnzbd-compatible Arr workflow             | NNTP provider account             | Sonarr, Radarr, Lidarr, Whisparr |
 | [Plex](plex-media-server.md)        | Hosts media collected by core services               |                                   |                              |
 | [Jellyfin](jellyfin.md)             | Media server for hosting and playing content         |                                   |                              |
 | [Emby](emby.md)                     | Media server for hosting and playing content         |                                   |                              |
 | [Seerr](seerr.md)                   | Media request and discovery platform                 |                                   | Plex, Radarr, Sonarr          |
 | [Riven Backend](riven-backend.md)   | Debrid media scraper and automation engine           | PostgreSQL; stable mode also uses rclone and Zurg | Zilean, Riven Frontend |
-| [Sonarr](sonarr.md)                 | TV automation and organization                        |                                   | Prowlarr, Decypharr, NzbDAV, AltMount  |
-| [Radarr](radarr.md)                 | Movie automation and organization                     |                                   | Prowlarr, Decypharr, NzbDAV, AltMount  |
-| [Lidarr](lidarr.md)                 | Music automation and organization                     |                                   | Prowlarr, Decypharr, NzbDAV, AltMount  |
+| [Sonarr](sonarr.md)                 | TV automation and organization                        |                                   | Prowlarr, Decypharr, InfiniDysk, AltMount  |
+| [Radarr](radarr.md)                 | Movie automation and organization                     |                                   | Prowlarr, Decypharr, InfiniDysk, AltMount  |
+| [Lidarr](lidarr.md)                 | Music automation and organization                     |                                   | Prowlarr, Decypharr, InfiniDysk, AltMount  |
 | [Prowlarr](prowlarr.md)             | Indexer manager for Arrs                              |                                   | Sonarr, Radarr, Lidarr, Whisparr |
-| [Whisparr](whisparr.md)             | Adult content automation and organization             |                                   | Prowlarr, Decypharr, NzbDAV, AltMount  |
+| [Whisparr](whisparr.md)             | Adult content automation and organization             |                                   | Prowlarr, Decypharr, InfiniDysk, AltMount  |
 | [NeutArr](neutarr.md)               | Continuous backlog searches for Arr instances         |                                   | Sonarr, Radarr, Lidarr, Whisparr |
 | [Profilarr](profilarr.md)           | Profiles and formats manager for Sonarr/Radarr         |                                   | Sonarr, Radarr |
 
@@ -82,11 +82,11 @@ If you enable a core service, be sure to also:
 * **Requires:** Content to already exist in `/mnt/debrid`
 * **Does Not Scrape** or collect — serves media fetched by others
 
-### [NzbDAV](nzbdav.md)
+### [InfiniDysk](infinidysk.md)
 
 * **Requires:** [rclone](../dependent/rclone.md)
 * **Optionally Uses:** Sonarr, Radarr, Lidarr, and Whisparr for NZB client integration
-* **Outputs:** WebDAV mount at `/mnt/debrid/nzbdav` plus symlink roots for Arrs
+* **Outputs:** WebDAV mount at `/mnt/debrid/infinidysk` plus symlink roots for Arrs
 
 ### [AltMount](altmount.md)
 
@@ -121,7 +121,7 @@ If you enable a core service, be sure to also:
 
 ### Arrs (Sonarr/Radarr/Lidarr/Whisparr)
 
-* **Requires:** A download client such as [Decypharr](decypharr.md), [NzbDAV](nzbdav.md), or [AltMount](altmount.md)
+* **Requires:** A download client such as [Decypharr](decypharr.md), [InfiniDysk](infinidysk.md), or [AltMount](altmount.md)
 * **Optionally Uses:** [Prowlarr](prowlarr.md) to manage and sync indexers
 * **Outputs:** Organized media libraries and renamed files for your media servers
 

@@ -76,7 +76,7 @@ DUMB reports four application health states:
 Application probes are bounded, read-only, loopback requests cached briefly by
 the backend. Current probes include:
 
-- NzbDAV backend `/health`
+- InfiniDysk backend `/health`
 - Servarr `/ping` for Sonarr, Radarr, Lidarr, Prowlarr, and Whisparr
 - Jellyfin `/health`, Emby application ping, and Plex `/identity`
 - Seerr status and Traefik Proxy Admin health
@@ -89,7 +89,7 @@ indexer/provider warnings, or other external-integration checks as restart
 signals. Those conditions may require operator action, but restarting a healthy
 application usually does not fix them and can create a restart loop.
 
-For NzbDAV specifically, the maintained fork can keep its backend port open
+For InfiniDysk specifically, the maintained fork can keep its backend port open
 during a blocking database migration while `/health` returns
 `503 {"status":"migrating"}`. DUMB reports this as **Starting**, so stack
 readiness waits for the real backend without repeatedly restarting a legitimate

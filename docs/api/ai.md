@@ -263,7 +263,7 @@ Evidence-enabled service bundles may also include:
 | `runtime_metrics` | Process CPU, RSS, disk activity, PID observations, sample coverage, and calculated changes. |
 | `database_health` | Existing read-only Database Health evidence when available. |
 | `change_history` | Redacted configuration changes recorded when settings are saved through DUMB. |
-| `native_diagnostics` | Allowlisted service-specific evidence. NzbDAV currently includes metrics SQLite and queue-log comparisons. |
+| `native_diagnostics` | Allowlisted service-specific evidence. InfiniDysk currently includes metrics SQLite and queue-log comparisons. |
 | `diagnostic_coverage` | Source availability and a deterministic confidence hint. |
 | `recommendations` | Review-only deterministic next-action context. No action is applied automatically. |
 
@@ -327,7 +327,7 @@ Gemini native responses expose `usageMetadata`. DUMB maps `promptTokenCount`, `c
 For selected stack questions, DUMB may post-process the provider response before returning `analysis`:
 
 - Product identity questions such as `What does DUMB stand for?` return the canonical product fact, `Distributed Unlimited Media Bridge`, even if the provider invents another acronym expansion.
-- DUMB Usenet planning questions are grounded around Decypharr, NzbDAV, AltMount, Arr apps, Prowlarr, and rclone. If a provider recommends SABnzbd, NZBGet, or NZBHydra as the primary DUMB path, DUMB replaces that with the DUMB-native workflow answer.
+- DUMB Usenet planning questions are grounded around Decypharr, InfiniDysk, AltMount, Arr apps, Prowlarr, and rclone. If a provider recommends SABnzbd, NZBGet, or NZBHydra as the primary DUMB path, DUMB replaces that with the DUMB-native workflow answer.
 
 The original diagnostic bundle remains available in the response for review. Token `usage` still reflects the provider request when a provider call was made.
 
@@ -358,4 +358,4 @@ A follow-up does not rescan logs. Run a new diagnosis when you need a newer time
 
 The AI provider receives a redacted bundle, not runtime tools. The API does not expose unrestricted shell execution, arbitrary SQL, arbitrary filesystem paths, or configuration mutation to the model.
 
-Retained logs are scanned on demand within the byte budget. The small `/config/ai-diagnostics/events.sqlite` ledger stores redacted change metadata only; it does not duplicate full logs. NzbDAV native database access opens fixed service databases in SQLite read-only/query-only mode.
+Retained logs are scanned on demand within the byte budget. The small `/config/ai-diagnostics/events.sqlite` ledger stores redacted change metadata only; it does not duplicate full logs. InfiniDysk native database access opens fixed service databases in SQLite read-only/query-only mode.

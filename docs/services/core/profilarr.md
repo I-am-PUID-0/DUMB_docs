@@ -132,7 +132,7 @@ On v1, DUMB retains its original repository seeding and one-time initial-sync be
 
 - **Blank (`""`)**: Manual mode. DUMB does **not** auto‑link any Arr instances.
 - **Single core service** (e.g., `decypharr`): Links only Arrs in that stack.
-- **Combined** (e.g., `decypharr, nzbdav, altmount`): Links Arrs across matching Debrid and Usenet stacks.
+- **Combined** (e.g., `decypharr, infinidysk, altmount`): Links Arrs across matching Debrid and Usenet stacks.
 
 ---
 

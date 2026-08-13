@@ -30,7 +30,7 @@ flowchart TD
     ARR[Arr instances]
     CS{core_service}
     DEC[Decypharr Debrid/Usenet workflow]
-    NZB[NzbDAV workflow]
+    NZB[InfiniDysk workflow]
     ALT[AltMount workflow]
     PROWLARR[Prowlarr apps + tags]
     IDX[Tagged indexers]
@@ -39,7 +39,7 @@ flowchart TD
 
     ARR ==> CS
     CS -- decypharr --> DEC
-    CS -- nzbdav --> NZB
+    CS -- infinidysk --> NZB
     CS -- altmount --> ALT
     DEC ==> PROWLARR
     NZB ==> PROWLARR
@@ -59,7 +59,7 @@ Use one or more of the core workflow keys:
 | Value | Workflow | Typical use |
 |-------|----------|-------------|
 | `decypharr` | Debrid and/or Usenet workflow | Decypharr torrent and Sabnzbd-compatible Arr clients |
-| `nzbdav` | Usenet workflow | NzbDAV + Usenet indexers |
+| `infinidysk` | Usenet workflow | InfiniDysk + Usenet indexers |
 | `altmount` | Usenet workflow | AltMount SABnzbd-compatible client + Usenet indexers |
 
 Leave `core_service` empty if you do not want DUMB to auto-wire a service into a
@@ -72,16 +72,16 @@ comma-separated string.
 
 When `core_service` is set on an Arr instance, DUMB:
 
-- Configures matching download clients (Decypharr, NzbDAV, and/or AltMount).
+- Configures matching download clients (Decypharr, InfiniDysk, and/or AltMount).
 - Adds or updates Arr root folders and permissions where that workflow's setup
   hook owns them. AltMount configures the download-client connection but leaves
   its import strategy and Arr root folders operator-managed.
 - Creates Prowlarr apps tagged with the same core service(s) so indexers sync
   only to the intended Arrs.
 
-When `core_service` combines Decypharr with NzbDAV or AltMount, DUMB uses the
+When `core_service` combines Decypharr with InfiniDysk or AltMount, DUMB uses the
 shared `/mnt/debrid/combined_symlinks/<slug>` base for the Decypharr-owned Arr
-root. NzbDAV without Decypharr keeps its NzbDAV symlink root, and AltMount does
+root. InfiniDysk without Decypharr keeps its InfiniDysk symlink root, and AltMount does
 not independently rewrite the Arr root folder.
 
 When `core_service` is set on a NeutArr instance, DUMB:
@@ -109,7 +109,7 @@ When `core_service` is set on a Profilarr instance, DUMB:
     },
     "Usenet": {
       "enabled": true,
-      "core_service": "nzbdav",
+      "core_service": "infinidysk",
       "use_neutarr": false,
       "use_profilarr": false,
       "port": 7879
@@ -121,7 +121,7 @@ When `core_service` is set on a Profilarr instance, DUMB:
 In this layout:
 
 - The Debrid Radarr instance syncs with Decypharr and Debrid indexers.
-- The Usenet Radarr instance can sync with Decypharr, NzbDAV, AltMount, or any selected Usenet workflow service.
+- The Usenet Radarr instance can sync with Decypharr, InfiniDysk, AltMount, or any selected Usenet workflow service.
 - NeutArr only receives the Debrid instance because `use_neutarr` is set there.
 - Profilarr only links the Debrid instance because `use_profilarr` is set there.
 
@@ -131,7 +131,7 @@ In this layout:
 "sonarr": {
   "instances": {
     "Combined": {
-      "core_service": ["decypharr", "nzbdav", "altmount"],
+      "core_service": ["decypharr", "infinidysk", "altmount"],
       "use_neutarr": true,
       "use_profilarr": true
     }
@@ -139,8 +139,8 @@ In this layout:
 }
 ```
 
-In this layout, DUMB wires Decypharr, NzbDAV, and AltMount download clients for
-the same Sonarr instance. Decypharr and NzbDAV coordinate the DUMB-managed
+In this layout, DUMB wires Decypharr, InfiniDysk, and AltMount download clients for
+the same Sonarr instance. Decypharr and InfiniDysk coordinate the DUMB-managed
 combined root; AltMount's import strategy and compatible Arr paths still need
 to be reviewed in AltMount.
 

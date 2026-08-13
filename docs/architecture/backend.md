@@ -73,7 +73,7 @@ sequenceDiagram
 ## Configuration pipeline
 
 1. The API validates configuration updates.
-2. Service setup hooks patch service-specific configs (for example Decypharr, NzbDAV, AltMount, Profilarr, Traefik Proxy Admin, or Pulsarr).
+2. Service setup hooks patch service-specific configs (for example Decypharr, InfiniDysk, AltMount, Profilarr, Traefik Proxy Admin, or Pulsarr).
 3. The process handler applies changes and updates status.
 4. WebSocket channels broadcast logs and state.
 

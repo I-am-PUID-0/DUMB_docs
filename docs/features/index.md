@@ -15,7 +15,7 @@ DUMB (Distributed Unlimited Media Bridge) is an all-in-one media management solu
 * **Unified Deployment** – Combines multiple tools into a single, easy-to-deploy system with onboarding-driven setup.
 * **Built-In Media Server Integration** – Includes **Plex Media Server, Jellyfin, and Emby**, fully embedded in the container to eliminate mount propagation issues.
 * **Automated Content Management** – Uses **Debrid** and **Usenet** services alongside **Plex Discover Watchlists**, **Trakt lists**, and **Seerr** to automate media retrieval.
-* **Arr + WebDAV Workflows** – Supports **Sonarr, Radarr, Lidarr, Whisparr**, plus WebDAV-driven clients like **Decypharr** (Debrid and Usenet), **NzbDAV**, and **AltMount**.
+* **Arr + WebDAV Workflows** – Supports **Sonarr, Radarr, Lidarr, Whisparr**, plus WebDAV-driven clients like **Decypharr** (Debrid and Usenet), **InfiniDysk**, and **AltMount**.
 * **NeutArr automation** – Core backlog-search automation to fill missing content and upgrade quality.
 * **Pulsarr watchlist automation** – Optional Plex watchlist request flow that can route requests into Sonarr and Radarr.
 * **Maintainerr library cleanup** – Optional rule-based review collections and delayed cleanup actions for Plex, Jellyfin, or Emby libraries.
@@ -33,7 +33,7 @@ DUMB (Distributed Unlimited Media Bridge) is an all-in-one media management solu
 * **Advanced Logging & Monitoring** – View and filter service logs directly from the [DUMB Frontend](../services/dumb/dumb-frontend.md).
 * **[FFprobe monitor](ffprobe-monitor.md)** – Background worker that detects and unsticks ffprobe scans in Sonarr/Radarr.
 * **Real-Time Metrics** – Monitor CPU, memory, disk, and network usage with WebSocket-powered live updates.
-* **[Rclone Streaming Optimizer](rclone-optimizer.md)** – Benchmark bounded NzbDAV-backed rclone profiles against live provider traffic, compare startup/warm/cold behavior, and explicitly apply or roll back a deployment-specific recommendation.
+* **[Rclone Streaming Optimizer](rclone-optimizer.md)** – Benchmark bounded InfiniDysk-backed rclone profiles against live provider traffic, compare startup/warm/cold behavior, and explicitly apply or roll back a deployment-specific recommendation.
 * **[Notifications](notifications.md)** – Route persistent backend health and operational events through Apprise or generic JSON webhooks with retries, cooldowns, recovery messages, and delivery history.
 * **[AI Assistant](ai-assistant.md)** – Optional local or cloud model diagnostics using redacted logs, service config, and dependency context.
 
@@ -50,7 +50,7 @@ DUMB integrates the following projects and service families to create a complete
 
 - **Riven Backend** and **CLI Debrid** provide Debrid-oriented orchestration for searching, collecting, and organizing media.
 - **Decypharr** supports Debrid, native Usenet, and hybrid Arr workflows with torrent/Sabnzbd-compatible endpoints and symlink libraries.
-- **NzbDAV** provides an NZB WebDAV gateway and Arr download-client integration for Usenet workflows.
+- **InfiniDysk** provides an NZB WebDAV gateway and Arr download-client integration for Usenet workflows.
 - **AltMount** provides a Usenet streaming workflow with WebDAV access, SABnzbd-compatible Arr integration, built-in FUSE/rclone modes, and operator-selected direct, symlink, or STRM imports.
 
 ### **Arr automation**
@@ -60,7 +60,7 @@ DUMB integrates the following projects and service families to create a complete
 - **NeutArr** handles missing-content and quality-upgrade searches across selected Arr instances.
 - **Profilarr** syncs profiles, custom formats, regex patterns, and media-management settings for Sonarr/Radarr.
 
-During onboarding, selecting Decypharr, NzbDAV, AltMount, or combinations of them can wire Arr instances automatically. DUMB uses `core_service` to keep those integrations scoped to the intended workflow.
+During onboarding, selecting Decypharr, InfiniDysk, AltMount, or combinations of them can wire Arr instances automatically. DUMB uses `core_service` to keep those integrations scoped to the intended workflow.
 
 ### **Requests and watchlists**
 
@@ -95,7 +95,7 @@ DUMB simplifies the media management workflow by:
 1. **Run Onboarding** to select core services and auto-enable required dependencies.
 2. **Scan Lists & Requests** from Plex, Trakt, and Seerr.
 3. **Fetch From Debrid or Usenet** providers (Real-Debrid, AllDebrid, etc.).
-4. **Route Through Orchestrators** (Riven/CLI Debrid) or **Arr clients** (Decypharr/NzbDAV/AltMount).
+4. **Route Through Orchestrators** (Riven/CLI Debrid) or **Arr clients** (Decypharr/InfiniDysk/AltMount).
 5. **Mount & Organize Content** via Zurg + rclone and Arr-managed libraries.
 6. **Stream via Plex/Jellyfin/Emby** using internal paths and embedded media servers.
 7. **Access Safely** through DUMB embedded UI routes, TPA-managed hostnames, or Cloudflare Tunnel routes that all terminate at DUMB Traefik.

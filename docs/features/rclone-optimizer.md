@@ -1,27 +1,27 @@
 ---
 title: Rclone Streaming Optimizer
-description: Benchmark bounded rclone VFS profiles through NzbDAV and its live Usenet providers, compare startup and streaming performance, and explicitly apply or roll back a recommendation.
+description: Benchmark bounded rclone VFS profiles through InfiniDysk and live Usenet providers, compare streaming performance, and apply or roll back a recommendation.
 icon: lucide/gauge
 ---
 
 # Rclone Streaming Optimizer
 
-The rclone streaming optimizer measures how an **NzbDAV-backed DUMB-managed rclone instance** behaves on the current deployment. It accounts for the combined effects of the provider, network, CPU, memory, cache storage, NzbDAV, and rclone instead of assuming one flag set is right for every server.
+The rclone streaming optimizer measures how an **InfiniDysk-backed DUMB-managed rclone instance** behaves on the current deployment. It accounts for the combined effects of the provider, network, CPU, memory, cache storage, InfiniDysk, and rclone instead of assuming one flag set is right for every server.
 
-The optimizer is currently limited to NzbDAV. It appears on the specific **rclone service page**, not as an NzbDAV configuration tool. When an associated test is active, the NzbDAV service page shows a link to that rclone job.
+The optimizer is currently limited to InfiniDysk. It appears on the specific **rclone service page**, not as an InfiniDysk configuration tool. When an associated test is active, the InfiniDysk service page shows a link to that rclone job.
 
 ## What the test actually reads
 
 Each candidate uses this path:
 
 ```text
-DUMB-managed Arr instance -> active NzbDAV category
+DUMB-managed Arr instance -> active InfiniDysk category
   -> production rclone mount/content/<category> (metadata discovery only)
   -> safe mount-relative read path
   -> optimizer reader
   -> isolated read-only rclone shadow mount
-  -> NzbDAV WebDAV
-  -> NzbDAV's configured Usenet provider(s)
+  -> InfiniDysk WebDAV
+  -> InfiniDysk's configured Usenet provider(s)
 ```
 
 The shadow mount uses the same rclone remote/configuration as the production mount, but has its own mount path, VFS cache directory, and loopback RC port. It does not stop the production mount, purge its cache, or reuse its cache for candidate reads.
@@ -30,7 +30,7 @@ DUMB uses the production mount only for bounded directory metadata discovery.
 It does not measure file reads there because that would reuse the production VFS
 cache and make candidate comparisons unreliable. Each category entry is resolved
 to a safe mount-relative read path and opened on every isolated shadow mount. For
-a regular entry this can be `content/radarr-nzbdav/example.mkv`; a symlink-backed
+a regular entry this can be `content/radarr-infinidysk/example.mkv`; a symlink-backed
 entry can resolve to its mount-internal backing path while the UI retains the
 friendly category path.
 
@@ -39,8 +39,8 @@ These are **real provider reads**. They can consume provider traffic and are sub
 !!! warning "Stop media activity before testing"
 
     Stop Plex, Jellyfin, Emby, and any other media server before starting the
-    optimizer. Wait until NzbDAV is idle with no active imports, library
-    ingestion, or unrelated reads. In particular, do not benchmark while NzbDAV
+    optimizer. Wait until InfiniDysk is idle with no active imports, library
+    ingestion, or unrelated reads. In particular, do not benchmark while InfiniDysk
     is importing an entire existing library.
 
     Playback, media-library scans, imports, and other reads compete for the same
@@ -58,32 +58,32 @@ For every candidate and selected file, DUMB records:
 - early/sequential throughput;
 - seek latency near the end of the file;
 - rclone process memory, CPU, cache use, and RC statistics; and
-- NzbDAV active reads, bytes, errors, provider latency, retries, circuit state, failover data, and stream-trace count when the maintained NzbDAV API supplies them.
+- InfiniDysk active reads, bytes, errors, provider latency, retries, circuit state, failover data, and stream-trace count when the maintained InfiniDysk API supplies them.
 
 Failed or unavailable files remain visible in the report but are excluded from performance scoring. The recommendation score favors startup time and first-byte latency while also considering seek latency, throughput, resource use, and excluded/error samples.
 
 The report distinguishes **trace capture unavailable** from **no matching retained
-trace**. If NzbDAV tracing cannot be enabled, rclone performance measurements can
+trace**. If InfiniDysk tracing cannot be enabled, rclone performance measurements can
 still complete, but provider-level event correlation is explicitly marked
 unavailable instead of being presented as a path-matching result.
 
-### Reading NzbDAV provider evidence
+### Reading InfiniDysk provider evidence
 
 The first four values in each expanded provider-evidence panel come from the
-NzbDAV overview window captured after that candidate. They are not isolated to
-the candidate and can include unrelated NzbDAV traffic. The next five fields are
+InfiniDysk overview window captured after that candidate. They are not isolated to
+the candidate and can include unrelated InfiniDysk traffic. The next five fields are
 an aggregate of all retained stream traces matched to that candidate's selected
 paths and test window. Those candidate-matched fields remain visible when no
 trace is available and show **not available** instead of disappearing. Individual
 matched trace rows appear below the aggregate. This distinction is one reason
-the media server and NzbDAV should be idle during testing.
+the media server and InfiniDysk should be idle during testing.
 
 | Field | Meaning |
 |---|---|
-| Provider p50 | Median provider-fetch latency in NzbDAV's overview window; half of observed provider fetches completed at or below this duration |
+| Provider p50 | Median provider-fetch latency in InfiniDysk's overview window; half of observed provider fetches completed at or below this duration |
 | Provider p95 | 95th-percentile provider-fetch latency; 95% completed at or below this duration and the slowest 5% took longer |
-| Errors/min | NzbDAV's recent error rate per minute across the overview window, including any unrelated activity |
-| Throttle events | NzbDAV in-flight article throttle events reported by the overview snapshot |
+| Errors/min | InfiniDysk's recent error rate per minute across the overview window, including any unrelated activity |
+| Throttle events | InfiniDysk in-flight article throttle events reported by the overview snapshot |
 | Providers | Unique provider nicknames recorded across all candidate-matched retained stream traces |
 | Retries | Sum of retry counts across all candidate-matched retained stream traces |
 | Bytes | Sum of bytes served recorded across all candidate-matched retained stream traces |
@@ -92,11 +92,11 @@ the media server and NzbDAV should be idle during testing.
 
 ## Content selection
 
-Open the NzbDAV-backed rclone service and select **Rclone Optimizer**. DUMB first
-reuses the same Arr-to-NzbDAV category derivation used during integration setup.
+Open the InfiniDysk-backed rclone service and select **Rclone Optimizer**. DUMB first
+reuses the same Arr-to-InfiniDysk category derivation used during integration setup.
 Only enabled Radarr, Sonarr, Lidarr, and Whisparr instances whose `core_service`
-includes `nzbdav` contribute categories. For example, a Radarr instance named
-`NzbDAV` produces `radarr-nzbdav`.
+includes `infinidysk` contribute categories. For example, a Radarr instance named
+`InfiniDysk` produces `radarr-infinidysk`.
 
 The configured rclone instance supplies the user-defined mount base through
 `mount_dir` plus `mount_name`. DUMB scans only
@@ -116,7 +116,7 @@ automatic set, replace it with your own files, or mix automatic and manual
 choices up to the eight-file limit. **Restore automatic selection** returns to
 the suggested starting set after manual changes.
 
-Age is only a **cache-likelihood heuristic**. It does not prove whether an article is cached by NzbDAV or a provider. The report keeps recent/likely-warm and older/likely-cold startup results separate, while NzbDAV's live metrics and stream traces explain what happened during the reads.
+Age is only a **cache-likelihood heuristic**. It does not prove whether an article is cached by InfiniDysk or a provider. The report keeps recent/likely-warm and older/likely-cold startup results separate, while InfiniDysk's live metrics and stream traces explain what happened during the reads.
 
 You can replace the automatic selection with any listed media files. Select between one and eight files. The scan is intentionally bounded by file count and time so discovering content does not recursively enumerate an unlimited remote library. No `/mnt/debrid/...` mount path or category name is hard-coded into the optimizer.
 
@@ -136,7 +136,7 @@ The report deliberately separates the settings into five roles:
 |---|---|---|
 | Actually varied | `--buffer-size`, `--vfs-read-chunk-size`, `--vfs-read-chunk-size-limit`, `--vfs-read-ahead` | Streaming-oriented dimensions that differ across predefined alternative profiles and drive the bundle comparison |
 | Fixed test constraints | `--vfs-cache-max-size`, bandwidth, memory, free disk, duration, and concurrency | Deployment-specific safety/resource boundaries held constant across every candidate; these are not tuned |
-| NzbDAV recommendations | `--dir-cache-time`, `--vfs-cache-max-age` | Operational guidance shared by every candidate: DUMB recommends at least `1w` and preserves longer existing values; these are not selected by the benchmark score |
+| InfiniDysk recommendations | `--dir-cache-time`, `--vfs-cache-max-age` | Operational guidance shared by every candidate: DUMB recommends at least `1w` and preserves longer existing values; these are not selected by the benchmark score |
 | Bundled assumptions | `--vfs-cache-mode` | Profile assumptions changed together rather than independently; a winning profile does not prove this value is optimal |
 | Preserved | Every other existing user flag | Passed into each shadow command unchanged and not evaluated, except for the temporary isolation/safety plumbing described below |
 
@@ -157,7 +157,7 @@ directory, binds a loopback RC endpoint without production RC credentials,
 forces read-only behavior and a test log level, and optionally adds the fixed
 bandwidth ceiling. Those isolation controls are not candidate tuning dimensions.
 
-In particular, DUMB recommends `--dir-cache-time=1w` because NzbDAV uses rclone
+In particular, DUMB recommends `--dir-cache-time=1w` because InfiniDysk uses rclone
 RC `vfs/forget` notifications to invalidate affected directory metadata when
 content changes. This avoids a constant stream of WebDAV metadata refreshes. It
 also recommends `--vfs-cache-max-age=1w` so recently streamed file data can stay
@@ -166,7 +166,7 @@ the primary disk-usage constraint. Existing values longer than one week are
 preserved. These two timeouts are architecture guidance shared by every candidate,
 not values inferred from the short benchmark.
 
-Before testing, DUMB checks that NzbDAV RC notifications are enabled, point to
+Before testing, DUMB checks that InfiniDysk RC notifications are enabled, point to
 the associated loopback rclone RC endpoint, use matching credentials, and can
 reach that endpoint. A failed check does not hide the one-week recommendation,
 but the report warns that directory changes may remain stale until the operator
@@ -181,9 +181,9 @@ that arbitrary custom combinations can never influence playback.
 
 The safety-limit values initially shown in the optimizer are **generic starting
 placeholders, not recommendations**. DUMB does not derive them from the
-deployment's CPU, RAM, cache disk, ISP bandwidth, NzbDAV activity, or provider
+deployment's CPU, RAM, cache disk, ISP bandwidth, InfiniDysk activity, or provider
 policy. Review and change every safety limit for the current hardware and
-provider before starting a job. The separate one-week NzbDAV cache-timeout
+provider before starting a job. The separate one-week InfiniDysk cache-timeout
 guidance described above is an architecture recommendation, not a safety-limit
 placeholder or benchmark result. The UI provides a native tooltip on each
 control explaining its purpose.
@@ -195,7 +195,7 @@ Configure the limits before starting a job:
 | Maximum VFS cache | 5 GiB | Passed to each isolated candidate as `--vfs-cache-max-size` |
 | Minimum free disk | 10 GiB | Checked before and during testing; reaching it stops the matrix |
 | Maximum optimizer memory | 2048 MiB | Candidates over the limit are rejected and further testing stops |
-| Maximum test/provider budget | 4 GiB | Shared requested-read budget, reconciled with NzbDAV's observed provider-byte delta after each profile |
+| Maximum test/provider budget | 4 GiB | Shared requested-read budget, reconciled with InfiniDysk's observed provider-byte delta after each profile |
 | Maximum duration | 20 minutes | Shared wall-clock deadline for the job |
 | Concurrent streams | 1 | May be raised to 3 only when deliberate concurrency testing is needed |
 | Startup buffer target | 32 MiB | Amount read before startup time is considered satisfied |
@@ -207,9 +207,9 @@ Configure the limits before starting a job:
 
 !!! note "Provider budget can have a small final overshoot"
 
-    The reader stops reserving bytes at the configured shared limit, and DUMB also subtracts NzbDAV's observed provider-byte delta after each profile. Rclone chunking/read-ahead and in-flight provider requests can fetch beyond the exact bytes consumed by the reader, so this is a conservative safety control rather than a provider-side quota.
+    The reader stops reserving bytes at the configured shared limit, and DUMB also subtracts InfiniDysk's observed provider-byte delta after each profile. Rclone chunking/read-ahead and in-flight provider requests can fetch beyond the exact bytes consumed by the reader, so this is a conservative safety control rather than a provider-side quota.
 
-Testing stops early when NzbDAV indicates a provider circuit is open or reports strong throttling/authentication/rate-limit signals. Errors, retries, and failover remain in the report. This reduces provider risk but cannot guarantee that a provider will permit benchmarking; review your provider's rules and keep concurrency/data limits conservative.
+Testing stops early when InfiniDysk indicates a provider circuit is open or reports strong throttling/authentication/rate-limit signals. Errors, retries, and failover remain in the report. This reduces provider risk but cannot guarantee that a provider will permit benchmarking; review your provider's rules and keep concurrency/data limits conservative.
 
 ## Background jobs and notifications
 
@@ -229,7 +229,7 @@ retries cleanup during finalization and the next DUMB startup.
 
 Finishing a test creates a report and recommendation. It does **not** change rclone.
 
-1. Review every candidate's complete settings/roles, warm/cold samples, exclusions, resources, cleanup status, and NzbDAV evidence.
+1. Review every candidate's complete settings/roles, warm/cold samples, exclusions, resources, cleanup status, and InfiniDysk evidence.
 2. Select **Apply recommendation**.
 3. DUMB merges only the recommended optimizer flags into the saved rclone command.
 4. DUMB stops rclone, detaches and verifies removal of the previous production
@@ -254,6 +254,6 @@ mountpoint and reports the failure for operator attention.
 ## Related guides
 
 - [rclone service](../services/dependent/rclone.md)
-- [NzbDAV](../services/core/nzbdav.md)
+- [InfiniDysk](../services/core/infinidysk.md)
 - [Service pages](../frontend/service-pages.md)
 - [Process Management API](../api/process.md#rclone-streaming-optimizer)

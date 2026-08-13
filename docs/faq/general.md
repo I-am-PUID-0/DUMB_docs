@@ -126,7 +126,7 @@ DUMB supports **two methods of exposing content to your media server**, each wit
     - Can lead to **Plex/Emby/Jellyfin misidentification**
     - Media scanners may perform poorly due to large, unorganized libraries
 
-=== "Symlinked Mount (Riven/CLI Debrid/Decypharr/NzbDAV)"
+=== "Symlinked Mount (Riven/CLI Debrid/Decypharr/InfiniDysk)"
 
     Services like Riven, CLI Debrid, or Decypharr create cleanly named **symlinks** pointing to content in the underlying Zurg/rclone mount (usually in a shared directory like `/mnt/debrid/riven`). 
 

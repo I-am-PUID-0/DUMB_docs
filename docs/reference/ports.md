@@ -20,7 +20,7 @@ This reference documents all ports used by DUMB services. Use this guide to conf
 | Port | Service | Type |
 |------|---------|------|
 | 3000 | Riven Frontend | Web UI |
-| 3000 | NzbDAV Frontend | Web UI |
+| 3000 | InfiniDysk Frontend | Web UI |
 | 3003 | Pulsarr | Web UI |
 | 3004 | Traefik Proxy Admin | Web UI/API |
 | 3005 | DUMB Frontend and API gateway | Web UI/API |
@@ -37,7 +37,7 @@ This reference documents all ports used by DUMB services. Use this guide to conf
 | 7879 | Radarr (typical second instance) | Web UI |
 | 8000 | DUMB API (container loopback by default) | API |
 | 8080 | Riven Backend | API |
-| 8080 | NzbDAV Backend | API |
+| 8080 | InfiniDysk Backend | API |
 | 8088 | AltMount | Web UI/API |
 | 8096 | Jellyfin | Web UI |
 | 8096 | Emby | Web UI |
@@ -61,7 +61,7 @@ This reference documents all ports used by DUMB services. Use this guide to conf
 
     On startup, DUMB checks enabled-service ports for conflicts and availability.
     If a port is already in use, DUMB automatically shifts that service to the next free port and saves the updated value to `dumb_config.json`.
-    This applies to single-port services and NzbDAV's `frontend_port`/`backend_port`.
+    This applies to single-port services and InfiniDysk's `frontend_port`/`backend_port`.
 
 ---
 
@@ -203,7 +203,7 @@ http://localhost:5000
 http://localhost:8282
 ```
 
-### NzbDAV
+### InfiniDysk
 
 | Component | Port | Type |
 |-----------|------|------|
@@ -214,9 +214,9 @@ http://localhost:8282
 http://localhost:3000  # Frontend
 ```
 
-!!! note "NzbDAV and Riven desired defaults overlap"
+!!! note "InfiniDysk and Riven desired defaults overlap"
 
-    The default NzbDAV ports (`3000` and `8080`) overlap with Riven defaults.
+    The default InfiniDysk ports (`3000` and `8080`) overlap with Riven defaults.
     DUMB's startup port allocator normally moves a conflicting enabled service to the next free port and persists the result. Use the runtime configuration/UI—not this default table—as the authority for a running stack.
 
 ### AltMount
@@ -236,7 +236,7 @@ Arr integration pass.
 
 ## Arr suite
 
-The Arr applications support multiple instances for different workflows (for example Decypharr, NzbDAV, or AltMount). The first instance starts from the application's base default; additional/conflicting instances are assigned the next free port and saved to `/config/dumb_config.json`.
+The Arr applications support multiple instances for different workflows (for example Decypharr, InfiniDysk, or AltMount). The first instance starts from the application's base default; additional/conflicting instances are assigned the next free port and saved to `/config/dumb_config.json`.
 
 ### Sonarr (TV shows)
 

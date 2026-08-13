@@ -16,7 +16,7 @@ icon: lucide/radio
 | -------------- | ---------------------------------- |
 | Core Service   | TV series automation               |
 | Depends On     | None                               |
-| Optional       | Decypharr, NzbDAV, AltMount, Prowlarr |
+| Optional       | Decypharr, InfiniDysk, AltMount, Prowlarr |
 | Exposes UI     | Yes (Web UI)                       |
 
 ---
@@ -60,7 +60,7 @@ icon: lucide/radio
 
 ### Key Configuration Fields
 
-* `core_service`: Set to `decypharr`, `nzbdav`, `altmount`, or a list of workflow keys to enable DUMB integration.
+* `core_service`: Set to `decypharr`, `infinidysk`, `altmount`, or a list of workflow keys to enable DUMB integration.
 * `use_neutarr`: Opt this instance into NeutArr automation.
 * `use_profilarr`: Opt this instance into Profilarr auto‑linking.
 * `postgres_enabled`: Opt this instance into DUMB-managed PostgreSQL config. SQLite is the default; set this to `true` only when you want Sonarr to use PostgreSQL.
@@ -117,9 +117,9 @@ GitHub sources take priority when enabled and are **not** a fallback. `pinned_ve
 ## Integration with DUMB
 
 * For Decypharr integration, set `core_service` to `decypharr` and follow the [Decypharr guide](decypharr.md).
-* For NzbDAV integration, set `core_service` to `nzbdav` and follow the [NzbDAV guide](nzbdav.md).
+* For InfiniDysk integration, set `core_service` to `infinidysk` and follow the [InfiniDysk guide](infinidysk.md).
 * For AltMount integration, set `core_service` to `altmount` and follow the [AltMount guide](altmount.md).
-* For combined workflows, set `core_service` to a list such as `["decypharr", "nzbdav", "altmount"]`.
+* For combined workflows, set `core_service` to a list such as `["decypharr", "infinidysk", "altmount"]`.
 * Use [Prowlarr](prowlarr.md) to centrally manage indexers and sync them to Sonarr.
 * DUMB enables Arr folder permission updates and applies permissions to configured root folders during integration.
 * See [Core Service Routing](../../reference/core-service.md) for how `core_service` affects automation.

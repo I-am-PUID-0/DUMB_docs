@@ -88,7 +88,7 @@ Metrics are configured in `dumb_config.json`:
       "interval_sec": 60,
       "log_tail_bytes": 262144,
       "services": {
-        "nzbdav": {
+        "infinidysk": {
           "enabled": true,
           "mode": "standard",
           "ignore_network_storage": false
@@ -156,7 +156,7 @@ Database Health Monitoring is disabled by default and enabled independently for 
 
 | Provider class | Services and observed stores |
 |----------------|------------------------------|
-| **SQLite** | NzbDAV, CLI Debrid, CLI Battery, Emby, Jellyfin, Maintainerr, Profilarr, Tautulli, and Plex; Sonarr, Radarr, Lidarr, Prowlarr, and Whisparr when PostgreSQL is disabled |
+| **SQLite** | InfiniDysk, CLI Debrid, CLI Battery, Emby, Jellyfin, Maintainerr, Profilarr, Tautulli, and Plex; Sonarr, Radarr, Lidarr, Prowlarr, and Whisparr when PostgreSQL is disabled |
 | **SQLite or PostgreSQL** | AltMount, Bazarr, Pulsarr, and Seerr; DUMB detects the provider from their application config/environment |
 | **PostgreSQL** | DUMB PostgreSQL, pgAdmin, mediastorm, Riven Backend, Zilean, and Traefik Proxy Admin; Arr instances when `postgres_enabled=true` |
 | **Custom persistent stores** | Decypharr append-only logs, Phalanx DB Hyperbee/Corestore data, and the Zurg state directory |
@@ -368,7 +368,7 @@ Returns the current metrics snapshot.
 
 ```bash
 GET /api/metrics/database-health
-GET /api/metrics/database-health?process_name=NzbDAV&refresh=true
+GET /api/metrics/database-health?process_name=InfiniDysk&refresh=true
 ```
 
 The optional `process_name` filter returns one service. `refresh=true` invalidates cached database probes before collecting; normal `/api/metrics` and WebSocket snapshots reuse the configured slower database interval.

@@ -21,7 +21,7 @@ It covers:
 
 ## Why symlinks matter in DUMB
 
-In DUMB workflows, services like Decypharr, NzbDAV, CLI Debrid, and Riven create curated symlink libraries that point to mounted content (for example rclone/DFS paths under `/mnt/debrid`).
+In DUMB workflows, services like Decypharr, InfiniDysk, CLI Debrid, and Riven create curated symlink libraries that point to mounted content (for example rclone/DFS paths under `/mnt/debrid`).
 
 This gives you:
 
@@ -42,14 +42,22 @@ Typical roots inside the container:
   - Raw/mount content roots:
     - `/mnt/debrid/decypharr`
     - `/mnt/debrid/clid`
-    - `/mnt/debrid/nzbdav`
+    - `/mnt/debrid/infinidysk`
     - `/mnt/debrid/riven`
   - Curated symlink library roots:
     - `/mnt/debrid/decypharr_symlinks`
-    - `/mnt/debrid/nzbdav-symlinks`
+    - `/mnt/debrid/infinidysk-symlinks`
     - `/mnt/debrid/clid_symlinks`
     - `/mnt/debrid/combined_symlinks`
     - `/mnt/debrid/riven_symlinks`
+
+!!! note "Existing NzbDAV paths are retained"
+
+    The paths above show the defaults for new InfiniDysk installations. The
+    opt-in compatibility cutover does not move an existing `/mnt/debrid/nzbdav`
+    mount or `/mnt/debrid/nzbdav-symlinks` library. Those paths remain active
+    until the guarded full namespace migration is implemented and explicitly
+    selected.
 
 Important:
 
@@ -66,10 +74,10 @@ Important:
 - Arr rename/import behavior produces curated symlink results for library paths.
 - Common migration: provider-layout path rewrite (for example `realdebrid/__all__` -> `__all__`).
 
-### NzbDAV
+### InfiniDysk
 
-- Arr workflow uses NzbDAV download-client flow.
-- Final libraries are curated symlink paths under NzbDAV roots or combined roots.
+- Arr workflow uses InfiniDysk download-client flow.
+- Final libraries are curated symlink paths under InfiniDysk roots or combined roots.
 
 ### CLI Debrid
 
@@ -169,7 +177,7 @@ Behavior:
 On each service page, default repair scope is narrowed to that service root unless overridden:
 
 - Decypharr page -> `/mnt/debrid/decypharr_symlinks`
-- NzbDAV page -> `/mnt/debrid/nzbdav-symlinks`
+- InfiniDysk page -> `/mnt/debrid/infinidysk-symlinks`
 - CLI Debrid page -> `/mnt/debrid/clid_symlinks`
 - Riven page -> `symlink_library_path` (or `/mnt/debrid/riven_symlinks` fallback)
 
@@ -572,5 +580,5 @@ Related service pages:
 
 - [Decypharr](../services/core/decypharr.md)
 - [CLI Debrid](../services/core/cli-debrid.md)
-- [NzbDAV](../services/core/nzbdav.md)
+- [InfiniDysk](../services/core/infinidysk.md)
 - [Riven Backend](../services/core/riven-backend.md)

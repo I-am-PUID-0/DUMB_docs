@@ -15,7 +15,7 @@ Welcome to **DUMB – Distributed Unlimited Media Bridge**: a unified media mana
 DUMB combines multiple backend services into a single containerized system to provide:
 
 - **Search and discovery** using Trakt, Plex watchlists, Seerr, Pulsarr, and other list/request sources.
-- **Debrid and Usenet workflows** through services such as Riven, CLI Debrid, Decypharr, NzbDAV, and AltMount.
+- **Debrid and Usenet workflows** through services such as Riven, CLI Debrid, Decypharr, InfiniDysk, and AltMount.
 - **Arr automation** with Sonarr, Radarr, Lidarr, Whisparr, Prowlarr, NeutArr, and Profilarr.
 - **Remote mounting and symlink libraries** using rclone, Zurg, and DUMB-managed path conventions.
 - **Embedded media servers** with Plex, Jellyfin, and Emby inside the same container.

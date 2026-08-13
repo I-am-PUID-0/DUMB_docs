@@ -18,7 +18,7 @@ NeutArr integrates with your Arr stack to automate the hunt for:
 - **Quality upgrades** - Better releases that meet your quality profiles
 - **Cutoff unmet** - Content below your configured quality cutoff
 
-DUMB supports multiple NeutArr instances, allowing you to run separate hunters for different Arr configurations (e.g., one for Decypharr-linked services and one for NzbDAV-linked services).
+DUMB supports multiple NeutArr instances, allowing you to run separate hunters for different Arr configurations (e.g., one for Decypharr-linked services and one for InfiniDysk-linked services).
 
 ---
 
@@ -72,7 +72,7 @@ Example NeutArr instance filter:
 "neutarr": {
   "instances": {
     "Decypharr": {
-      "core_service": ["decypharr", "nzbdav", "altmount"]
+      "core_service": ["decypharr", "infinidysk", "altmount"]
     }
   }
 }

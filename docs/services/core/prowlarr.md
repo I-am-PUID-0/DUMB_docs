@@ -129,14 +129,14 @@ set (single value or list):
 | Arr core service | Tag applied in Prowlarr |
 |------------------|-------------------------|
 | `decypharr` | `decypharr` |
-| `nzbdav` | `nzbdav` |
+| `infinidysk` | `infinidysk` |
 
 These tags are created automatically if they do not exist.
 
 ### Indexer routing via tags
 
 Prowlarr uses tags to decide which indexers sync into which Arr apps. DUMB links each Arr app
-to the tag matching its core service(s), so Decypharr, NzbDAV, and AltMount indexers stay separated.
+to the tag matching its core service(s), so Decypharr, InfiniDysk, and AltMount indexers stay separated.
 
 When you add custom indexers in Prowlarr, make sure the correct tag is applied so they sync to
 the intended Arr apps.
@@ -152,7 +152,7 @@ When Decypharr is enabled, DUMB also syncs custom indexer definitions and create
 
 If Decypharr is enabled, DUMB automatically enables the public StremThru indexer.
 
-For Whisparr applications, DUMB widens Prowlarr sync categories to include the Movie/TV roots used by the Zilean/StremThru custom definitions plus the common XXX categories. This lets the custom indexers sync to Whisparr while keeping the normal Decypharr/NzbDAV/AltMount tag separation.
+For Whisparr applications, DUMB widens Prowlarr sync categories to include the Movie/TV roots used by the Zilean/StremThru custom definitions plus the common XXX categories. This lets the custom indexers sync to Whisparr while keeping the normal Decypharr/InfiniDysk/AltMount tag separation.
 
 Custom definitions are pulled from the `Prowlarr-Indexers` repository and stored in
 `<prowlarr_config_dir>/Definitions/Custom` (or `<prowlarr_config_dir>/indexer/Definitions/Custom` when present).

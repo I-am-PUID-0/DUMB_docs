@@ -201,7 +201,7 @@ Apply changes:
 }
 ```
 
-When Arr `core_service` changes from Decypharr-only to combined Decypharr+NzbDAV, root folders move
+When Arr `core_service` changes from Decypharr-only to combined Decypharr+InfiniDysk, root folders move
 from `/mnt/debrid/decypharr_symlinks/<slug>` to `/mnt/debrid/combined_symlinks/<slug>`.
 Use root migration mode:
 
@@ -246,7 +246,7 @@ For Sonarr/Radarr/Lidarr/Whisparr instances you want wired to Decypharr, set
 ```
 
 ```json
-"core_service": ["decypharr", "nzbdav", "altmount"]
+"core_service": ["decypharr", "infinidysk", "altmount"]
 ```
 
 This tells DUMB to auto-configure Arr integration around Decypharr’s WebDAV and symlink workflows.
@@ -333,7 +333,7 @@ If you are passing the rclone mount to an **external** Arr or media server conta
 
 When `core_service` is set to `decypharr` (or includes it), DUMB
 automatically creates the root folders and updates the Arr settings for you.
-If `core_service` includes Decypharr plus another workflow service such as `nzbdav` or `altmount`, the Arr root folder base switches to `/mnt/debrid/combined_symlinks/<slug>`. Decypharr-only hybrid Debrid+Usenet setups keep the Decypharr root.
+If `core_service` includes Decypharr plus another workflow service such as `infinidysk` or `altmount`, the Arr root folder base switches to `/mnt/debrid/combined_symlinks/<slug>`. Decypharr-only hybrid Debrid+Usenet setups keep the Decypharr root.
 Manual configuration is only required when `core_service` is left blank or you
 want to override the combined workflow wiring.
 
@@ -350,7 +350,7 @@ Inside the Sonarr and Radarr web UI:
 
 !!! info "Combined root folder"
 
-    If `core_service` includes Decypharr plus another workflow service such as `nzbdav` or `altmount`, DUMB switches the base path to `/mnt/debrid/combined_symlinks/{slugged folder name}` for the Arr root folders. Decypharr-only hybrid Debrid+Usenet setups keep the Decypharr root.
+    If `core_service` includes Decypharr plus another workflow service such as `infinidysk` or `altmount`, DUMB switches the base path to `/mnt/debrid/combined_symlinks/{slugged folder name}` for the Arr root folders. Decypharr-only hybrid Debrid+Usenet setups keep the Decypharr root.
 
 !!! info "Per-instance folders"
 
@@ -368,7 +368,7 @@ Inside the Sonarr and Radarr web UI:
 
 When `core_service` is set to `decypharr` (or includes it), DUMB
 automatically wires the download client and Arr permissions. If `core_service` includes Decypharr plus another workflow service such as
-`nzbdav` or `altmount`, Arrs will point at
+`infinidysk` or `altmount`, Arrs will point at
 `/mnt/debrid/combined_symlinks/<slug>` instead of the Decypharr-only root.
 Manual configuration is only required when `core_service` is left blank or you
 want to override the combined workflow wiring.

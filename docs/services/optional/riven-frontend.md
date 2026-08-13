@@ -49,7 +49,7 @@ DUMB handles automatic installation and updates of the frontend, including versi
 
 !!! warning "Port conflicts and auto-shift"
 
-    Riven defaults (`3000`/`8080`) overlap with NzbDAV defaults. DUMB can auto-shift
+    Riven defaults (`3000`/`8080`) overlap with InfiniDysk defaults. DUMB can auto-shift
     conflicting ports at container startup or during the onboarding core-service
     start flow, updating `dumb_config.json` accordingly.
     Per-service stop/start/restart does not re-run port conflict resolution, so fix

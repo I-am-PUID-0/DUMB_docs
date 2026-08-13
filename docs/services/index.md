@@ -28,7 +28,7 @@ DUMB is built as a collection of microservices that communicate over internal AP
 
     *  **Riven Backend** and **CLI Debrid** serve as Debrid orchestrators; **Decypharr** can serve Debrid, Usenet, or hybrid Arr workflows
     * These core services integrate with providers like Trakt, Seerr, and Debrid APIs to manage what content gets fetched
-    *  **NzbDAV** and **AltMount** provide WebDAV/download-client style integrations for NZB workflows
+    *  **InfiniDysk** and **AltMount** provide WebDAV/download-client style integrations for NZB workflows
     *  **Sonarr/Radarr/Lidarr/Whisparr** manage media queues and organize content from download clients
     *  **Prowlarr** manages indexers and syncs them to the Arrs
     *  **NeutArr** automates backlog and quality-upgrade searches across the Arr stack
@@ -72,7 +72,7 @@ DUMB is built as a collection of microservices that communicate over internal AP
 | [Riven Backend](../services/core/riven-backend.md)       | Core      | Debrid orchestrator (searching, scraping, automation)     |
 | [CLI Debrid](../services/core/cli-debrid.md)             | Core      | Debrid orchestrator (list scanning, upgrades, Plex watch) |
 | [Decypharr](../services/core/decypharr.md)               | Core      | Debrid and native Usenet workflow service for Arrs        |
-| [NzbDAV](../services/core/nzbdav.md)                     | Core      | WebDAV gateway for NZB + Arr download client workflows    |
+| [InfiniDysk](../services/core/infinidysk.md)                     | Core      | WebDAV gateway for NZB + Arr download client workflows    |
 | [AltMount](../services/core/altmount.md)                 | Core      | Usenet streaming, WebDAV, mount, and Arr import workflow  |
 | [Plex](../services/core/plex-media-server.md)            | Core      | Media server for hosting and playing content              |
 | [Jellyfin](../services/core/jellyfin.md)                 | Core      | Media server for hosting and playing content              |

@@ -200,7 +200,7 @@ For an enabled Sonarr, Radarr, Lidarr, or Whisparr instance, set:
 For a shared Arr instance that uses several workflow services, use a list or the equivalent comma-separated UI selection:
 
 ```json
-"core_service": ["decypharr", "nzbdav", "altmount"]
+"core_service": ["decypharr", "infinidysk", "altmount"]
 ```
 
 During guided onboarding, DUMB then:
@@ -305,5 +305,5 @@ If the embedded UI loses routing context, reload the DUMB service page. The dire
 - [AltMount streaming configuration](https://altmount.kipsilabs.top/docs/Configuration/streaming/)
 - [AltMount repository](https://github.com/javi11/altmount)
 - [Core-service routing](../../reference/core-service.md)
-- [NzbDAV](nzbdav.md)
+- [InfiniDysk](infinidysk.md)
 - [Decypharr](decypharr.md)

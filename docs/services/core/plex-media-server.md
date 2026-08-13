@@ -84,7 +84,7 @@ icon: lucide/tv
 
 ### Media Library Protection
 
-The Plex service page includes **Library Protection**, enabled by default. DUMB uses its existing Plex token to check sessions, inhibit scans before rclone/NzbDAV/Decypharr/Zurg/AltMount/CLI Debrid maintenance, and restore Plex after the dependency stabilizes. The same panel exposes live Plex library preferences, including **Empty trash automatically after every scan**; keep that option off for remote or virtual libraries.
+The Plex service page includes **Library Protection**, enabled by default. DUMB uses its existing Plex token to check sessions, inhibit scans before rclone/InfiniDysk/Decypharr/Zurg/AltMount/CLI Debrid maintenance, and restore Plex after the dependency stabilizes. The same panel exposes live Plex library preferences, including **Empty trash automatically after every scan**; keep that option off for remote or virtual libraries.
 
 See [Media Library Protection](../../features/media-library-protection.md) for the override choices, recommended Plex settings, recovery journal, and limitations.
 

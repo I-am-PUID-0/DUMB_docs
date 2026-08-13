@@ -44,7 +44,7 @@ Each `rclone` instance is defined under the `rclone.instances` section in `dumb_
 - **`process_name`**: The label used in logs and process tracking.
 - **`suppress_logging`**: If `true`, disables log output for this service.
 - **`log_level`**: Logging verbosity level (e.g., `DEBUG`, `INFO`).
-- **`key_type`**: The debrid or WebDAV service to use (`RealDebrid`, `AllDebrid`, `NzbDAV`, etc.).
+- **`key_type`**: The debrid or WebDAV service to use (`RealDebrid`, `AllDebrid`, `InfiniDysk`, etc.).
 - **`zurg_enabled`**: Whether Zurg is linked to this rclone mount.
 - **`decypharr_enabled`**: Whether Decypharr is linked to this rclone mount.
 - **`mount_dir`**: The container path where the remote drive is to be mounted.
@@ -65,7 +65,7 @@ Each `rclone` instance is defined under the `rclone.instances` section in `dumb_
 
     - **Zurg enabled**: API key should be defined in the **Zurg instance**, not the rclone one.
     - **Decypharr enabled**: API key should be defined in the **Decypharr** config.
-    - **NzbDAV**: Credentials read from `WEBDAV_USER`/`WEBDAV_PASSWORD` or NzbDAV database. The rclone `api_key` field is ignored.
+    - **InfiniDysk**: Credentials read from `WEBDAV_USER`/`WEBDAV_PASSWORD` or InfiniDysk database. The rclone `api_key` field is ignored.
     - **Direct AllDebrid connection**: `api_key` must be set in the rclone instance when both `decypharr_enabled` and `zurg_enabled` are unset or blank.
     - **Direct TorBox / TorBox-FTP connection**: Set `username` to your TorBox email and `password` to your TorBox account password.
     - **Direct Premiumize connection**: Set `customer_id` and `api_key`.
@@ -75,7 +75,7 @@ Users can define additional rclone instances by duplicating the structure in the
 
 - Each `instance name` is **unique**
 - Each `process_name` is **unique**
-- The `key_type` must match the type of Debrid or WebDAV service used (e.g., `RealDebrid`, `AllDebrid`, `TorBox`, `Premiumize`, `NzbDAV`)
+- The `key_type` must match the type of Debrid or WebDAV service used (e.g., `RealDebrid`, `AllDebrid`, `TorBox`, `Premiumize`, `InfiniDysk`)
 - Direct WebDAV/FTP credential fields such as `username`, `password`, and `customer_id` are valid rclone instance keys and should persist across restarts.
 
 !!! example "Multiple Instances"
@@ -195,43 +195,43 @@ For more info, see [rclone docs](https://rclone.org/docs/#environment-variables)
 
 ## Optimizing rclone for Media Server Usage
 
-For an NzbDAV-backed rclone instance, DUMB can benchmark bounded profiles against
+For an InfiniDysk-backed rclone instance, DUMB can benchmark bounded profiles against
 the live WebDAV/provider path and produce a deployment-specific report. Open the
 **Rclone Optimizer** tab on that rclone service page. The job uses an isolated
 read-only shadow mount/cache, measures first byte and startup-buffer time, and
 never applies its recommendation automatically. The report shows the complete
 optimizer-relevant effective settings for every candidate, distinguishing
-actually varied streaming values from fixed constraints, NzbDAV recommendations,
+actually varied streaming values from fixed constraints, InfiniDysk recommendations,
 bundled assumptions, and preserved flags; it also verifies that shadow mounts and test artifacts are
 removed before a job completes. Content discovery scans the
-NzbDAV `content/<category>` paths DUMB derives from enabled Arr instances, but
+InfiniDysk `content/<category>` paths DUMB derives from enabled Arr instances, but
 measured reads use safely resolved mount-relative paths on isolated shadow mounts
-instead of the production mount. Stop the media server and wait until NzbDAV has
+instead of the production mount. Stop the media server and wait until InfiniDysk has
 no imports, library ingestion, or unrelated active reads before starting a test;
 concurrent activity skews results and increases provider load. See the
 [Rclone Streaming Optimizer](../../features/rclone-optimizer.md) guide for content
 selection, provider-risk limits, reports, apply, and rollback behavior. The
 provider-evidence report always exposes its aggregate Providers, Retries, Bytes,
 Provider wait, and Connection wait fields, including an explicit unavailable
-state when NzbDAV did not retain a candidate-matched trace. Applying or rolling
+state when InfiniDysk did not retain a candidate-matched trace. Applying or rolling
 back settings verifies removal of the previous production FUSE mount before
 rclone is restarted and requires the replacement mount to remain accessible.
-For NzbDAV, fresh DUMB-generated commands default both `--dir-cache-time` and
+For InfiniDysk, fresh DUMB-generated commands default both `--dir-cache-time` and
 `--vfs-cache-max-age` to `1w`. The optimizer recommends at least that value and
-preserves longer existing values. The long directory cache relies on NzbDAV's
+preserves longer existing values. The long directory cache relies on InfiniDysk's
 RC notifications to invalidate changed paths; the report warns when that RC
 connection is disabled, mismatched, or unreachable. The long VFS cache age keeps
 recently streamed data warm, while `--vfs-cache-max-size` continues to bound disk
-use. These are NzbDAV operational recommendations, not benchmark-scored values.
+use. These are InfiniDysk operational recommendations, not benchmark-scored values.
 
 To improve streaming performance and reduce excessive bandwidth usage when using rclone with media servers (e.g., Plex, Jellyfin, Emby), consider tuning the mount behavior using additional flags.
 
 !!! note "The examples below are generic"
 
     The `10s` directory-cache and `6h` VFS-cache-age values below are generic
-    examples for older or non-NzbDAV mounts. Do not copy those shorter values
-    over DUMB's NzbDAV defaults. For an NzbDAV-backed mount, use the optimizer's
-    `1w` minimum guidance (or retain a longer existing value) and keep NzbDAV's
+    examples for older or non-InfiniDysk mounts. Do not copy those shorter values
+    over DUMB's InfiniDysk defaults. For an InfiniDysk-backed mount, use the optimizer's
+    `1w` minimum guidance (or retain a longer existing value) and keep InfiniDysk's
     rclone RC notification connection healthy.
 
 !!! warning "VFS cache will use hard drive space, so ensure you set an appropriate max size for your system"

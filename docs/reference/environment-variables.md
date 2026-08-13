@@ -38,6 +38,7 @@ DUMB joins a configuration path with underscores and uppercases it:
 | `dumb.github_token` | `DUMB_GITHUB_TOKEN` |
 | `dumb.api_service.host` | `DUMB_API_SERVICE_HOST` |
 | `altmount.port` | `ALTMOUNT_PORT` |
+| `infinidysk.frontend_port` | `INFINIDYSK_FRONTEND_PORT` |
 | `sonarr.instances.Default.port` | `SONARR_INSTANCES_DEFAULT_PORT` |
 
 Lists and objects must be valid JSON, such as `DUMB_METRICS_FILESYSTEM_PATHS=["/","/mnt/debrid"]`.
@@ -53,6 +54,13 @@ For a config override named `DUMB_API_SERVICE_HOST`, DUMB checks:
 
 Blank environment values do not replace configured values. Docker secrets are read as trimmed text and have the highest priority.
 
+!!! note "InfiniDysk upgrade compatibility"
+
+    Fresh configurations use the `INFINIDYSK_*` prefix. Existing deployments
+    may continue supplying legacy `NZBDAV_*` overrides or Docker secrets;
+    DUMB checks those names as fallbacks until the deployment opts into the
+    canonical persisted identity.
+
 ---
 
 ## Service environment variables
@@ -62,7 +70,7 @@ Each service can define variables passed to that subprocess under its `env` bloc
 Example:
 
 ```json
-"nzbdav": {
+"infinidysk": {
   "env": {
     "WEBDAV_USER": "admin",
     "WEBDAV_PASSWORD": "change-me"

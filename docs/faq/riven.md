@@ -27,7 +27,7 @@ Back up both `/data` and any irreplaceable symlink-library state before a migrat
 
 ## Why can the frontend not reach the backend?
 
-Confirm both services are running, PostgreSQL is healthy, and the frontend's configured backend/origin URL matches the backend's assigned port. Riven and NzbDAV share desired defaults (`3000` and `8080`), so use the ports saved in the runtime DUMB configuration after conflict resolution.
+Confirm both services are running, PostgreSQL is healthy, and the frontend's configured backend/origin URL matches the backend's assigned port. Riven and InfiniDysk share desired defaults (`3000` and `8080`), so use the ports saved in the runtime DUMB configuration after conflict resolution.
 
 ## How should I move an existing Riven symlink tree?
 

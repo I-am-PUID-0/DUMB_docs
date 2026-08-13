@@ -123,8 +123,8 @@ TLS certificate verification is enabled by default. Disable it only for a delibe
 
 ### Rclone optimizer
 
-- NzbDAV rclone optimization completed (Success): the report and recommendation are ready; settings were not applied automatically
-- NzbDAV rclone optimization failed (Warning): the background test stopped safely and the production rclone command remains unchanged
+- InfiniDysk rclone optimization completed (Success): the report and recommendation are ready; settings were not applied automatically
+- InfiniDysk rclone optimization failed (Warning): the background test stopped safely and the production rclone command remains unchanged
 
 See [Rclone Streaming Optimizer](rclone-optimizer.md).
 

@@ -66,7 +66,7 @@ Choose one or more core services:
 
 | Category | Services |
 |----------|----------|
-| **Orchestrators** | Riven Backend, CLI Debrid, Decypharr, NzbDAV, AltMount |
+| **Orchestrators** | Riven Backend, CLI Debrid, Decypharr, InfiniDysk, AltMount |
 | **Request/automation** | Seerr, NeutArr |
 | **Media servers** | Plex, Jellyfin, Emby |
 | **Arr services** | Sonarr, Radarr, Lidarr, Prowlarr, Whisparr |
@@ -78,7 +78,7 @@ Choose one or more core services:
 !!! note "Guided setup"
 
     1. Choose **Debrid**, **Usenet**, or **Both**.
-    2. Choose the Usenet workflow service (**Decypharr**, **NzbDAV**, **AltMount**, NzbDAV + AltMount, or **All**) when using Usenet.
+    2. Choose the Usenet workflow service (**Decypharr**, **InfiniDysk**, **AltMount**, InfiniDysk + AltMount, or **All**) when using Usenet.
     3. Decide whether to use **Arrs** (required for Usenet).
     4. If using both workflows, pick **Combined** or **Separate** Arr instances.
     5. (Optional) Enable **multi-quality** Sonarr/Radarr instances.
@@ -283,9 +283,9 @@ For services that support multiple instances (like Zurg or rclone), the wizard:
 For Arr services and NeutArr, instance names can be used to split workflows (e.g., Debrid vs Usenet, or multiple
 quality tiers). 
 
-Combined Arr workflows that include Decypharr plus NzbDAV or AltMount use
+Combined Arr workflows that include Decypharr plus InfiniDysk or AltMount use
 `/mnt/debrid/combined_symlinks/<slug>` for the Decypharr-managed root. An
-AltMount-only route—or NzbDAV + AltMount without Decypharr—does not get a
+AltMount-only route—or InfiniDysk + AltMount without Decypharr—does not get a
 combined root automatically.
 
 ---

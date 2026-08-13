@@ -73,9 +73,9 @@ The evidence summary reports the exact time window, sources that were available,
 
 Deep log scanning is independent of the truncated frontend log table. The backend reads retained files directly within `max_log_scan_mb`, then includes aggregates and selected redacted excerpts. It does not give the model arbitrary filesystem access.
 
-### NzbDAV Native Evidence
+### InfiniDysk Native Evidence
 
-NzbDAV has an additional read-only native collector for the maintained `nzbdav/nzbdav` fork. When available, it reads the existing NzbDAV SQLite stores and queue logs to compare:
+InfiniDysk has an additional read-only native collector for the maintained `infinidysk/infinidysk` fork. When available, it reads the existing InfiniDysk SQLite stores and queue logs to compare:
 
 - Concurrent queue worker count and connection budget context
 - Segment success, missing article, error, retry, and provider latency rates
@@ -199,7 +199,7 @@ Use **Preview bundle** to prove DUMB is collecting the right context before you 
 Good context checks:
 
 - Ask `What does DUMB stand for?` and confirm the bundle includes `dumb_product.expansion` as `Distributed Unlimited Media Bridge`.
-- Ask `What services should I use for Usenet in DUMB?` and confirm the bundle includes `dumb_service_catalog`, `dumb_workflow_rules`, and docs snippets for Decypharr, NzbDAV, AltMount, Prowlarr, or core-service routing.
+- Ask `What services should I use for Usenet in DUMB?` and confirm the bundle includes `dumb_service_catalog`, `dumb_workflow_rules`, and docs snippets for Decypharr, InfiniDysk, AltMount, Prowlarr, or core-service routing.
 - Toggle **Docs context** off and on, then compare the preview bundle. With docs enabled, the bundle should include a `docs_context` block with source paths and excerpts.
 - Keep **Include configs** off for broad stack planning until you specifically need redacted configuration details.
 
@@ -253,13 +253,13 @@ Good stack-level questions include:
 - "Why are multiple services unhealthy?"
 - "Does this look like a proxy, database, mount, or service config problem?"
 - "What services should I use for Usenet?"
-- "Should this stack use Decypharr, NzbDAV, AltMount, or a combined workflow?"
+- "Should this stack use Decypharr, InfiniDysk, AltMount, or a combined workflow?"
 
 Stack preview mode is especially important when enabling optional configs. The compact process list, dependency graph, and docs context are normally useful, while **Include configs** should be enabled only when you need deeper cross-service config reasoning and have reviewed the preview.
 
 For provider calls, Stack AI Assist compacts the preview bundle before sending it to the model. This keeps local models and Open WebUI/Ollama setups from failing on context length while preserving the full preview for operator review. Workflow-planning questions omit log tails from the provider prompt so the model focuses on DUMB service selection instead of generic troubleshooting. The effective context limit still depends on the selected model and its Ollama/Open WebUI runtime settings, so one model can reject a prompt that another model accepts with the same DUMB settings. If you need deep config or long-log analysis for one service, use that service's **AI Assist** tab.
 
-Stack workflow prompts also include a DUMB-specific service catalog. For example, Usenet planning is grounded around DUMB services such as Decypharr, NzbDAV, AltMount, Arr apps, Prowlarr, and rclone instead of generic external download-client advice. If a provider returns a generic Usenet answer that recommends SABnzbd, NZBGet, or NZBHydra as the primary path, DUMB replaces it with the DUMB-native planning answer.
+Stack workflow prompts also include a DUMB-specific service catalog. For example, Usenet planning is grounded around DUMB services such as Decypharr, InfiniDysk, AltMount, Arr apps, Prowlarr, and rclone instead of generic external download-client advice. If a provider returns a generic Usenet answer that recommends SABnzbd, NZBGet, or NZBHydra as the primary path, DUMB replaces it with the DUMB-native planning answer.
 
 Product identity prompts are also guarded. If a provider invents a different acronym expansion, DUMB returns the canonical product fact instead: **Distributed Unlimited Media Bridge**.
 

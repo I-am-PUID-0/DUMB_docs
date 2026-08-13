@@ -232,13 +232,13 @@ unhealthy state matters.
 
 ```json
 {
-  "process_name": "NzbDAV",
+  "process_name": "InfiniDysk",
   "status": "running",
   "healthy": true,
   "health_status": "starting",
-  "health_reason": "NzbDAV reports migrating",
+  "health_reason": "InfiniDysk reports migrating",
   "health_details": {
-    "probe": "NzbDAV backend health",
+    "probe": "InfiniDysk backend health",
     "endpoint": "/health",
     "supported": true,
     "http_status": 503,
@@ -264,16 +264,16 @@ terminal failure summaries.
 {
   "phase": "stabilizing",
   "terminal": false,
-  "expected_services": ["DUMB API", "DUMB Frontend", "NzbDAV"],
+  "expected_services": ["DUMB API", "DUMB Frontend", "InfiniDysk"],
   "services": {
     "DUMB API": {"state": "ready", "reason": null},
     "DUMB Frontend": {"state": "ready", "reason": null},
-    "NzbDAV": {
+    "InfiniDysk": {
       "state": "starting",
-      "reason": "NzbDAV reports migrating",
+      "reason": "InfiniDysk reports migrating",
       "health_status": "starting",
       "health_details": {
-        "probe": "NzbDAV backend health",
+        "probe": "InfiniDysk backend health",
         "endpoint": "/health",
         "http_status": 503,
         "reported_status": "migrating"
@@ -368,7 +368,7 @@ matching configured-target installation action only when it is needed.
 
 ```json
 {
-  "process_name": "NzbDAV",
+  "process_name": "InfiniDysk",
   "allow_override": false,
   "target": "configured"
 }
@@ -380,7 +380,7 @@ A completed install response can include backend-measured timing fields when
 ```json
 {
   "status": "updated",
-  "message": "Updated NzbDAV to v0.10.0-rc.2.",
+  "message": "Updated InfiniDysk to v0.10.0-rc.2.",
   "install_duration_seconds": 97.4,
   "downtime_seconds": 21.8,
   "downtime_status": "completed",
@@ -512,7 +512,7 @@ Returns backend-resolved dependency relationships for a specific process, includ
 * inferred links from `core_service`/`core_services`
 * inferred links from `wait_for_url`/`wait_for_dir` entries (including localhost port matching)
 * inferred links from `wait_for_mounts` by matching required mount paths to provider service mount points
-* rclone provider links (`zurg_enabled`, `decypharr_enabled`, `key_type=nzbdav`) to reflect WebDAV provider dependencies directly
+* rclone provider links (`zurg_enabled`, `decypharr_enabled`, `key_type=infinidysk`) to reflect WebDAV provider dependencies directly
 * non-core hard dependency map for service-specific startup requirements (for example `riven_frontend -> riven_backend`, `zilean -> postgres`, `pgadmin -> postgres`)
 * conditional startup dependencies from the backend startup ordering logic -- config-aware dependencies like `tautulli -> plex` (when plex is enabled), `bazarr -> sonarr/radarr` (when those Arrs are enabled), `prowlarr -> sonarr/radarr` (when those Arrs are enabled), `neutarr -> sonarr` (when Sonarr has `use_neutarr` enabled), etc. For instance-scoped services (`rclone`, `zurg`), conditional deps are filtered per-instance so that only the specific associated instances are shown (for example, a rclone instance with `zurg_enabled` only shows its own zurg instance, not zurg instances belonging to other rclone configurations)
 * documented integration links (soft linkage, `scope=all` only) -- for example `seerr -> sonarr/radarr` request routing
@@ -563,7 +563,7 @@ Returns optional services. You can pass `core_service` and `optional_services` q
 
 ### `POST /process/symlink-repair`
 
-Runs symlink target rewrites for service symlink trees (Decypharr, NzbDAV, CLI Debrid, Riven).
+Runs symlink target rewrites for service symlink trees (Decypharr, InfiniDysk, CLI Debrid, Riven).
 
 Use this endpoint when mount paths change and existing symlink targets need to be rewritten.
 
@@ -604,7 +604,7 @@ Use this endpoint when mount paths change and existing symlink targets need to b
 * `overwrite_existing` controls behavior when a destination symlink already exists during root migration.
 * `copy_instead_of_move` (root migration mode) creates destination symlinks and keeps source symlinks in place.
 * If `roots` is omitted, backend defaults are used:
-  `/mnt/debrid/decypharr_symlinks`, `/mnt/debrid/nzbdav-symlinks`,
+  `/mnt/debrid/decypharr_symlinks`, `/mnt/debrid/infinidysk-symlinks`,
   `/mnt/debrid/combined_symlinks`, `/mnt/debrid/clid_symlinks`, and
   `riven_backend.symlink_library_path` when configured.
 * `backup_path` is written only for non-dry-run operations with changes.
@@ -788,10 +788,10 @@ Queues a persisted rehearsal or cutover job.
 
 ```json
 {
-  "process_name": "Sonarr NzbDAV",
+  "process_name": "Sonarr InfiniDysk",
   "mode": "rehearsal",
   "include_logs": false,
-  "confirmation": "MIGRATE Sonarr NzbDAV",
+  "confirmation": "MIGRATE Sonarr InfiniDysk",
   "acknowledge_unsupported": true,
   "acknowledge_backup": true,
   "acknowledge_target_reset": true
@@ -817,7 +817,7 @@ Returns the most recently updated migration job for that service so dmbdb can re
 ```json
 {
   "job_id": "example-job-id",
-  "confirmation": "ROLLBACK Sonarr NzbDAV"
+  "confirmation": "ROLLBACK Sonarr InfiniDysk"
 }
 ```
 
@@ -874,13 +874,13 @@ configured persistent cache directory. Clients should gate this endpoint on the
 ## Rclone streaming optimizer
 
 These authenticated process routes are available when capability
-`rclone_optimizer_nzbdav` is true. Only enabled DUMB-managed rclone instances
-whose `key_type` is `NzbDAV` are eligible.
+`rclone_optimizer_infinidysk` is true. Only enabled DUMB-managed rclone instances
+whose `key_type` is `InfiniDysk` are eligible.
 
 | Method | Route | Purpose |
 |---|---|---|
-| `GET` | `/process/rclone-optimizer/instances` | List eligible NzbDAV rclone instances and mount state |
-| `GET` | `/process/rclone-optimizer/content?process_name=...` | Derive active NzbDAV Arr categories, perform bounded `content/<category>` discovery, and return automatic recent/older/large/typical suggestions |
+| `GET` | `/process/rclone-optimizer/instances` | List eligible InfiniDysk rclone instances and mount state |
+| `GET` | `/process/rclone-optimizer/content?process_name=...` | Derive active InfiniDysk Arr categories, perform bounded `content/<category>` discovery, and return automatic recent/older/large/typical suggestions |
 | `POST` | `/process/rclone-optimizer/jobs` | Start a persistent background benchmark job |
 | `GET` | `/process/rclone-optimizer/jobs?limit=20` | List recent jobs for frontend notifications/history |
 | `GET` | `/process/rclone-optimizer/jobs/{job_id}` | Return live progress, results, and report |
@@ -893,8 +893,8 @@ Start request:
 
 ```json
 {
-  "process_name": "rclone w/ NzbDAV",
-  "selected_paths": ["content/radarr-nzbdav/Example Movie (2026).mkv"],
+  "process_name": "rclone w/ InfiniDysk",
+  "selected_paths": ["content/radarr-infinidysk/Example Movie (2026).mkv"],
   "depth": "standard",
   "limits": {
     "max_vfs_cache_gib": 5,
@@ -912,12 +912,12 @@ Start request:
 Content discovery returns `discovery_mode=active_arr_categories`, `content_base`,
 and an `active_categories` list containing service, instance, category,
 availability, and discovered-file count. Each file includes the mount-relative
-`path` used by the job and a friendly `display_path` under NzbDAV `content`.
+`path` used by the job and a friendly `display_path` under InfiniDysk `content`.
 `automatic_selection` is ordered first in `files` and includes `selection_key`,
 `selection_label`, and `selection_reason` so clients can explain each suggestion
 while allowing the operator to replace it.
 
-Each candidate result includes `trace_capture`, which reports whether NzbDAV
+Each candidate result includes `trace_capture`, which reports whether InfiniDysk
 stream tracing was available, enabled or retained, the retained session count,
 and overflow state. An unavailable capture is distinct from an available capture
 whose retained sessions did not match the selected paths. The frontend aggregates
@@ -926,12 +926,12 @@ served, provider-wait time, and connection-wait time; these fields remain visibl
 as unavailable when `stream_traces` is empty.
 
 Jobs include a `setting_model` that declares the five comparison roles:
-`actually_varied`, `fixed_constraints`, `nzbdav_recommended`,
-`bundled_assumptions`, and `preserved`. The NzbDAV-recommended values are
+`actually_varied`, `fixed_constraints`, `infinidysk_recommended`,
+`bundled_assumptions`, and `preserved`. The InfiniDysk-recommended values are
 `--dir-cache-time` and `--vfs-cache-max-age`; every candidate uses at least `1w`,
 while existing values already at or above one week are retained. They are
 operational guidance rather than score-selected benchmark dimensions. Jobs add
-a warning when the associated NzbDAV RC notification configuration is disabled,
+a warning when the associated InfiniDysk RC notification configuration is disabled,
 mismatched, or unreachable.
 Every candidate result includes `setting_comparison`, an ordered list of the
 complete optimizer-relevant effective settings. Each entry contains `flag`,
@@ -957,6 +957,123 @@ Jobs active during a DUMB restart are marked interrupted and are not resumed.
 
 See [Rclone Streaming Optimizer](../features/rclone-optimizer.md) for test and
 provider-safety behavior.
+
+## InfiniDysk migration
+
+### `GET /process/infinidysk-migration/status`
+
+Returns whether a legacy NzbDAV deployment needs review, whether the notice is
+due or snoozed, the legacy paths and DUMB-generated attached-service names that
+were found, and the modes supported by this backend.
+
+### `POST /process/infinidysk-migration/remind-later`
+
+```json
+{ "days": 7 }
+```
+
+Persists the reminder on the DUMB instance. `days` must be between 1 and 90.
+
+### `POST /process/infinidysk-migration/preflight`
+
+Runs the non-mutating full-namespace preflight and returns a short-lived token,
+expiry, blockers/warnings, filesystem moves, active-read count, and counts of
+planned Arr (including tag-label), Prowlarr application/tag, and media-library
+updates. The response never includes application API keys or download-client
+secrets. The private backend state retains the complete rollback snapshots with
+mode `0600`.
+
+`ready` remains false when InfiniDysk has active reads, an Arr queue is not
+empty, a media server is busy or cannot be inventoried, an application API is
+unreachable, a destination conflicts, a move crosses filesystems, or a legacy
+path lies outside DUMB-managed roots. Generated attached-service paths such as
+`/radarr/nzbdav` and `/log/rclone_w_nzbdav.log` are discovered and planned
+automatically.
+
+### `GET /process/infinidysk-migration/job-status`
+
+Returns the latest persisted complete-namespace job, or a specific job when a
+32-character hexadecimal `job_id` query parameter is supplied. The public job
+record includes `status`, `stage`, `message`, `progress`, up to 100 recent
+stage events, and the terminal result or safe error text. Active statuses are
+`queued`, `running`, and `rolling_back`.
+
+The dashboard polls this route after the migration dialog is closed or the
+page is reloaded. A DUMB backend restart marks an active retained job
+`interrupted`; it is not resumed automatically because the operator must first
+inspect the backup bundle and current namespace paths.
+
+### `POST /process/infinidysk-migration/apply`
+
+```json
+{
+  "mode": "retain_legacy_namespace",
+  "rename_attached_services": true,
+  "confirmation": "MIGRATE TO INFINIDYSK",
+  "acknowledge_external_backup": true
+}
+```
+
+The available compatibility cutover adopts the canonical service/process
+identity and can rename DUMB-generated attached instance/process labels. It
+first saves a private complete-config backup under
+`/config/migrations/infinidysk-backups`, and retains runtime, mount, symlink,
+Arr category/root/tag, and media-server library paths. Both migration modes
+require the external-backup acknowledgement.
+
+The complete namespace request uses the token from the latest passing
+preflight and requires all four acknowledgements. The external-backup
+acknowledgement confirms that the operator has a current, verified backup
+outside the paths DUMB will migrate; DUMB's private rollback bundle is not a
+substitute for that backup.
+
+```json
+{
+  "mode": "full_namespace",
+  "rename_attached_services": true,
+  "confirmation": "MIGRATE TO INFINIDYSK",
+  "preflight_token": "<short-lived preflight token>",
+  "acknowledge_downtime": true,
+  "acknowledge_library_scan": true,
+  "acknowledge_rollback_limits": true,
+  "acknowledge_external_backup": true
+}
+```
+
+The full-namespace request returns immediately with the persisted background
+job:
+
+```json
+{
+  "job": {
+    "job_id": "0123456789abcdef0123456789abcdef",
+    "status": "queued",
+    "stage": "queued",
+    "progress": 0
+  }
+}
+```
+
+The worker repeats live safety checks immediately before applying. It then
+backs up configuration and application snapshots, stops the dependency chain,
+atomically moves managed runtime/mount/symlink/log and discovered attached
+service paths, rewrites symlink targets and saved InfiniDysk configuration,
+restarts the chain, updates Arr
+root/item/download-client references and tag labels while preserving tag IDs,
+updates media-server library paths, and
+verifies the persisted API values. Failures trigger automatic path,
+configuration, application-reference, process-name, and scan-guard rollback.
+The terminal job `result` identifies the private backup bundle and reports
+changed symlinks, InfiniDysk database records, Arr references, and media
+libraries.
+
+Historical symlink snapshots are retained under their original names. Future
+scheduled snapshots use the canonical name. A successful response instructs
+the operator to run normal Arr and media-server library scans; the migration
+does not initiate scans automatically.
+
+Saved dashboard ordering, keyboard shortcuts, and notification service filters
+are updated when their exact process names are renamed.
 
 ### `GET /process/capabilities`
 
@@ -1006,9 +1123,15 @@ Returns backend capabilities and feature flags. Used by the frontend to determin
   "mediastorm_initial_admin_password": true,
   "notifications": true,
   "startup_lifecycle": true,
+  "infinidysk_migration": true,
+  "infinidysk_full_namespace_migration": true,
+  "infinidysk_migration_jobs": true,
   "runtime_api_log_level": true,
   "rclone_optimizer": true,
-  "rclone_optimizer_nzbdav": true
+  "rclone_optimizer_infinidysk": true,
+  "rclone_optimizer_nzbdav": true,
+  "infinidysk_install_info": true,
+  "nzbdav_install_info": true
 }
 ```
 
@@ -1034,8 +1157,14 @@ Returns backend capabilities and feature flags. Used by the frontend to determin
 | `api_update_check_always_on` | Whether DUMB API release checks run automatically in report-only mode |
 | `runtime_api_log_level` | Whether the running DUMB API DEBUG override can be inspected and toggled without a restart |
 | `startup_lifecycle` | Whether `GET /process/startup-status` exposes readiness-aware startup phases |
+| `infinidysk_migration` | Whether the opt-in status, server-persisted reminder, and compatibility-cutover routes are available |
+| `infinidysk_full_namespace_migration` | Whether the guarded path/category/library migration and rollback workflow is available |
+| `infinidysk_migration_jobs` | Whether complete-namespace cutovers run as persisted, pollable background jobs with close/reopen progress |
 | `rclone_optimizer` | Whether background rclone optimizer job routes are available |
-| `rclone_optimizer_nzbdav` | Whether the optimizer supports NzbDAV-backed rclone instances |
+| `rclone_optimizer_infinidysk` | Whether the optimizer supports InfiniDysk-backed rclone instances |
+| `rclone_optimizer_nzbdav` | Legacy capability alias retained for older dashboard clients |
+| `infinidysk_install_info` | Whether InfiniDysk install provenance is included in process/update data |
+| `nzbdav_install_info` | Legacy capability alias retained for older dashboard clients |
 | `symlink_repair` | Whether `/process/symlink-repair` is available |
 | `symlink_repair_async` | Whether `/process/symlink-repair-async` is available |
 | `symlink_manifest_backup` | Whether `/process/symlink-manifest/backup` is available |

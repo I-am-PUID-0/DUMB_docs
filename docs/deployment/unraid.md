@@ -78,7 +78,7 @@ Then select the curated library produced by your workflow, for example:
 - `/mnt/debrid/riven_symlinks`
 - `/mnt/debrid/clid_symlinks`
 - `/mnt/debrid/decypharr_symlinks`
-- `/mnt/debrid/nzbdav-symlinks`
+- `/mnt/debrid/infinidysk-symlinks`
 - `/mnt/debrid/combined_symlinks`
 - the AltMount import directory configured for that instance
 

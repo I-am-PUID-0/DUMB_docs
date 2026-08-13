@@ -37,7 +37,7 @@ In current snapshots, `system.network_interfaces` contains each selected visible
 
 ```http
 GET /metrics/database-health
-GET /metrics/database-health?process_name=NzbDAV&refresh=true
+GET /metrics/database-health?process_name=InfiniDysk&refresh=true
 ```
 
 `process_name` limits the response to one managed service. `refresh=true` invalidates the cached bounded probe before collection.
