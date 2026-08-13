@@ -1,6 +1,13 @@
 # Changelog
 
 
+## [1.24.5](https://github.com/I-am-PUID-0/DUMB_docs/compare/1.24.4...1.24.5) (2026-08-13)
+
+
+### 📖 Documentation
+
+* **infinidysk:** document rebrand and namespace cutover ([3a71900](https://github.com/I-am-PUID-0/DUMB_docs/commit/3a719008483d2ce3f38d0bd2ab53c30a493fe7f0))
+
 ## [1.24.4](https://github.com/I-am-PUID-0/DUMB_docs/compare/1.24.3...1.24.4) (2026-08-11)
 
 
