@@ -977,16 +977,18 @@ Persists the reminder on the DUMB instance. `days` must be between 1 and 90.
 ### `POST /process/infinidysk-migration/preflight`
 
 Runs the non-mutating full-namespace preflight and returns a short-lived token,
-expiry, blockers/warnings, filesystem moves, active-read count, and counts of
+expiry, blockers/warnings, `pending_conditions`, filesystem moves, active-read count, and counts of
 planned Arr (including tag-label), Prowlarr application/tag, and media-library
 updates. The response never includes application API keys or download-client
 secrets. The private backend state retains the complete rollback snapshots with
 mode `0600`.
 
-`ready` remains false when InfiniDysk has active reads, an Arr queue is not
-empty, a media server is busy or cannot be inventoried, an application API is
+`ready` remains false when activity cannot be inspected, an application API is
 unreachable, a destination conflicts, a move crosses filesystems, or a legacy
-path lies outside DUMB-managed roots. Generated attached-service paths such as
+path lies outside DUMB-managed roots. Current Arr queues, verified media
+activity, and InfiniDysk reads are returned in `pending_conditions`; they are
+handled by the apply job's automatic quiescence stage. Migration Arr requests
+use a 120-second timeout for large catalogs. Generated attached-service paths such as
 `/radarr/nzbdav` and `/log/rclone_w_nzbdav.log` are discovered and planned
 automatically.
 
@@ -998,10 +1000,38 @@ record includes `status`, `stage`, `message`, `progress`, up to 100 recent
 stage events, and the terminal result or safe error text. Active statuses are
 `queued`, `running`, and `rolling_back`.
 
+While a current `quiescing` job is waiting on verified media activity and the
+backend advertises capability `infinidysk_migration_playback_override`, the
+record also exposes `playback_override_available`, `playback_stop_requested`,
+and the process-name-only `active_media_servers` list. These transient fields
+belong to the active backend worker; a backend restart interrupts the entire
+migration rather than resuming the override.
+
 The dashboard polls this route after the migration dialog is closed or the
 page is reloaded. A DUMB backend restart marks an active retained job
 `interrupted`; it is not resumed automatically because the operator must first
 inspect the backup bundle and current namespace paths.
+
+### `POST /process/infinidysk-migration/stop-playback`
+
+```json
+{
+  "job_id": "0123456789abcdef0123456789abcdef",
+  "confirmation": "STOP ACTIVE PLAYBACK"
+}
+```
+
+Requests the narrowly scoped playback override for the active quiescing job.
+It is accepted only while verified active media playback is delaying the
+cutover. The worker applies its media-server scan guard, stops the listed media
+server through the normal DUMB process manager, and waits for InfiniDysk active
+reads to reach zero. Stopping the server terminates its active streams.
+
+This endpoint cannot override Arr queues, unavailable or unknown APIs/activity,
+active InfiniDysk reads, filesystem conflicts, or other blockers. It returns
+the updated job record. A stale job, a non-quiescing stage, no currently active
+playback, or incorrect confirmation returns `400`/`409` without weakening the
+migration checks.
 
 ### `POST /process/infinidysk-migration/apply`
 
@@ -1053,6 +1083,16 @@ job:
   }
 }
 ```
+
+The job stops linked NeutArr, Seerr, Profilarr, and Prowlarr producers first,
+then polls Arr queue counts and media activity. It latches each Arr/media server
+stopped as soon as it is safe and holds those processes through the cutover.
+Failed or held queue entries are never deleted automatically; operators can
+resolve them through the still-running Arr UI. Quiescence times out after one
+hour and aborts before path mutation, restoring scan guards and restarting
+processes DUMB stopped. The optional confirmed playback-stop request may
+interrupt active streams, but the worker still verifies that provider reads
+have drained before path mutation.
 
 The worker repeats live safety checks immediately before applying. It then
 backs up configuration and application snapshots, stops the dependency chain,

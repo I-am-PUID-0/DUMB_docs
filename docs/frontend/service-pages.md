@@ -78,15 +78,25 @@ When a manual stop, restart, or update affects a protected downstream media serv
 Legacy NzbDAV installations receive a backend-persisted migration notice. The
 compatibility choice changes identity and optional attached-service labels but
 keeps every path. The complete namespace choice remains locked until **Run
-preflight** confirms empty Arr queues, no active reads/playback/scans, reachable
-Arr/Prowlarr/media APIs, conflict-free destinations, and rollback-safe
-filesystem moves.
+preflight** confirms reachable Arr/Prowlarr/media APIs, inspectable activity,
+conflict-free destinations, and rollback-safe filesystem moves. Current Arr
+queues, playback, and active reads appear as pending conditions that DUMB can
+quiesce automatically after the job starts.
 
 After a passing preflight, the dialog shows filesystem, Arr path/category/tag,
 Prowlarr application/tag, and media-library change counts and requires
 acknowledgement of service downtime, the normal
 post-cutover library scan, and rollback limits. Applying remains unavailable if
-the token expires or any live condition changes. A user who previously chose
+the token expires or a structural/API blocker remains. DUMB stops linked
+NeutArr/Seerr/Profilarr/Prowlarr producers first, lets each Arr queue drain while
+its UI remains available, holds each Arr or media server stopped as soon as it
+is safe, and waits up to one hour. Failed or held Arr items remain operator-owned
+and can be resolved in the Arr UI; DUMB aborts before moving paths if they do not
+drain. When verified playback is the remaining condition, the progress dialog
+offers **Stop active playback and continue**. It names the affected media
+server and requires typing `STOP ACTIVE PLAYBACK`; accepting immediately stops
+that server and terminates its streams. DUMB still waits for InfiniDysk reads
+to close and does not bypass queues or other blockers. A user who previously chose
 compatibility-only can reopen the full migration from the InfiniDysk service
 page; **Remind me later** remains available before the identity cutover.
 

@@ -612,15 +612,17 @@ The optional **Migrate the complete InfiniDysk namespace** path performs the
 remaining cutover as one guarded operation. It is not enabled until its
 preflight passes. The preflight makes no changes and checks:
 
-- InfiniDysk has no active reads;
-- linked Arr queues are empty and their APIs are reachable;
+- InfiniDysk active reads can be measured;
+- linked Arr queues and APIs can be inventoried. Large Arr catalogs use a
+  migration-specific 120-second API timeout; current queue entries are reported
+  as pending quiescence rather than forcing the operator to empty every queue at
+  the same instant;
 - every enabled InfiniDysk-linked rclone, Radarr, Sonarr, Lidarr, Whisparr,
   NeutArr, Profilarr, and Seerr instance is inventoried, including singular,
   list, and combined `core_service`/`core_services` values;
 - enabled Prowlarr instances are reachable so their Arr application
   connections and the shared legacy `nzbdav` tag can be inventoried;
-- affected Plex, Jellyfin, and Emby servers are idle and their library APIs
-  are reachable;
+- affected Plex, Jellyfin, and Emby activity and library APIs can be inspected;
 - destination paths do not contain conflicting data;
 - active mounts can be detached and every filesystem move is an atomic,
   rollback-safe rename; and
@@ -642,7 +644,34 @@ cannot protect against pre-existing corruption, failure of the storage holding
 both the live data and rollback bundle, or unrelated application writes made
 during the migration.
 
-When applied, DUMB stops affected services in downstream-first order, detaches
+When applied, DUMB first enters an automatic quiescence stage. It stops linked
+NeutArr, Seerr, Profilarr, and Prowlarr processes so they cannot add new Arr
+work. Each Arr remains available while its current queue drains; DUMB reports
+the remaining count in job progress and stops that Arr immediately after its
+queue reaches zero. If a failed, held, or otherwise stuck download prevents the
+queue from draining, use the still-running Arr UI to remove, retry, or resolve
+that entry while its producers remain stopped. DUMB never deletes or ignores
+queue items automatically. Affected media servers are handled independently:
+DUMB waits for playback to become idle, guards automatic scans, and stops each
+server as soon as it is safe. It then waits for the resulting InfiniDysk reads
+to drain and holds every stopped service through mutation and validation.
+
+While the persisted job is waiting on verified active playback, **Open
+progress** offers **Stop active playback and continue**. The action requires
+typing `STOP ACTIVE PLAYBACK`, immediately stops the listed media server, and
+therefore terminates its active streams. DUMB then waits for InfiniDysk active
+reads to reach zero before continuing. This override applies only to verified
+media playback: it cannot bypass Arr queues, unknown media/API state, active
+InfiniDysk reads, path conflicts, or any other safety check. Operators may
+instead leave the job waiting for playback to finish normally.
+
+Automatic quiescence waits up to one hour. If activity remains, API inspection
+fails, or another quiescence step fails, the job aborts before moving namespace
+paths, restores scan guards, and restarts only the processes DUMB stopped. This
+removes the requirement for the operator to pause every queue, automation
+producer, and playback session at exactly the same moment.
+
+After quiescence, DUMB detaches
 the old rclone mount, moves the runtime/mount/symlink/log paths plus discovered
 DUMB-managed attached-service paths, rewrites symlink targets and InfiniDysk
 configuration records, saves the canonical DUMB paths, and restarts the stack
@@ -694,9 +723,12 @@ then scan the affected libraries so their availability state is refreshed.
 
 !!! warning "Preflight must be current"
 
-    A passing preflight expires after 30 minutes. DUMB repeats the live queue,
-    playback, API, and path checks immediately before the first backup or stop.
-    Any changed condition blocks the migration without moving data.
+    A passing preflight expires after 30 minutes. DUMB repeats structural/API
+    checks before starting and then owns the live quiescence window. Queue,
+    playback, and active-read activity shown as pending conditions does not
+    invalidate the preflight; it must drain during the one-hour automatic
+    quiescence stage before DUMB moves any path. The explicit playback-stop
+    action interrupts viewers but does not waive the active-read drain.
 
 ---
 
