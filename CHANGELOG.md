@@ -1,6 +1,13 @@
 # Changelog
 
 
+## [1.24.10](https://github.com/I-am-PUID-0/DUMB_docs/compare/1.24.9...1.24.10) (2026-08-14)
+
+
+### 📖 Documentation
+
+* **infinidysk:** add a clear post-migration operator checklist ([a0ee7d9](https://github.com/I-am-PUID-0/DUMB_docs/commit/a0ee7d94d2679d6763238c99d5ebe066bf5e5bd3))
+
 ## [1.24.9](https://github.com/I-am-PUID-0/DUMB_docs/compare/1.24.8...1.24.9) (2026-08-14)
 
 
