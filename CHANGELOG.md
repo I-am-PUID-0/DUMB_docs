@@ -1,6 +1,13 @@
 # Changelog
 
 
+## [1.24.8](https://github.com/I-am-PUID-0/DUMB_docs/compare/1.24.7...1.24.8) (2026-08-14)
+
+
+### 📖 Documentation
+
+* **infinidysk:** explain Plex timeout handling during migration ([6bd3ac0](https://github.com/I-am-PUID-0/DUMB_docs/commit/6bd3ac00569dbd0a2e1b835bae4787b8ada53573))
+
 ## [1.24.7](https://github.com/I-am-PUID-0/DUMB_docs/compare/1.24.6...1.24.7) (2026-08-14)
 
 
