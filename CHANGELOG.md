@@ -1,6 +1,13 @@
 # Changelog
 
 
+## [1.24.9](https://github.com/I-am-PUID-0/DUMB_docs/compare/1.24.8...1.24.9) (2026-08-14)
+
+
+### 📖 Documentation
+
+* **infinidysk:** document transient Arr quiescence retries ([2894a1f](https://github.com/I-am-PUID-0/DUMB_docs/commit/2894a1fc27e412f49ed5d23d59b1737072f63491))
+
 ## [1.24.8](https://github.com/I-am-PUID-0/DUMB_docs/compare/1.24.7...1.24.8) (2026-08-14)
 
 
