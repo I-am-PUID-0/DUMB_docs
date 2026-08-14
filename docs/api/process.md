@@ -980,8 +980,18 @@ Runs the non-mutating full-namespace preflight and returns a short-lived token,
 expiry, blockers/warnings, `pending_conditions`, filesystem moves, active-read count, and counts of
 planned Arr (including tag-label), Prowlarr application/tag, and media-library
 updates. The response never includes application API keys or download-client
-secrets. The private backend state retains the complete rollback snapshots with
-mode `0600`.
+secrets. The full private inventory is stored separately from the small public
+job record with mode `0600`, preventing job polling/progress writes from parsing
+or rewriting the complete catalog.
+
+`arr_discovery` lists every enabled Arr instance with `included` and human-readable
+`reasons`. Inclusion uses either configured InfiniDysk `core_service` metadata or
+live legacy root/item/download-client/category/tag references, so a Prowlarr-managed
+Arr is not omitted merely because its DUMB linkage metadata is blank.
+`media_servers` marks `external_api_only=true` when no DUMB media server is enabled
+and DUMB successfully infers Plex from `dumb.plex_address` plus `dumb.plex_token`.
+The public entry includes the Plex display name/version and affected-library count,
+but not the token or machine identifier.
 
 `ready` remains false when activity cannot be inspected, an application API is
 unreachable, a destination conflicts, a move crosses filesystems, or a legacy
@@ -997,8 +1007,16 @@ automatically.
 Returns the latest persisted complete-namespace job, or a specific job when a
 32-character hexadecimal `job_id` query parameter is supplied. The public job
 record includes `status`, `stage`, `message`, `progress`, up to 100 recent
-stage events, and the terminal result or safe error text. Active statuses are
+stage events, and the terminal result or safe error text. Arr stages also expose
+a `detail` object with the current process, phase, completed/total reference
+counts, and all-Arr completed/total counts. Active statuses are
 `queued`, `running`, and `rolling_back`.
+
+A rolled-back terminal result includes a sanitized `result.recovery` object with
+the cutover cause, component-scoped `rollback_errors`, retained backup/config
+paths, and `manual_restore_required`. This is recovery guidance, not an instruction
+to restore the entire bundle blindly; verify the legacy paths and application
+state and repair only the failed rollback surface.
 
 While a current `quiescing` job is waiting on verified media activity and the
 backend advertises capability `infinidysk_migration_playback_override`, the
@@ -1008,7 +1026,8 @@ belong to the active backend worker; a backend restart interrupts the entire
 migration rather than resuming the override.
 
 The dashboard polls this route after the migration dialog is closed or the
-page is reloaded. A DUMB backend restart marks an active retained job
+page is reloaded. Another authenticated browser or device retrieves the same
+backend-owned job without browser-local handoff state. A DUMB backend restart marks an active retained job
 `interrupted`; it is not resumed automatically because the operator must first
 inspect the backup bundle and current namespace paths.
 
@@ -1026,6 +1045,11 @@ It is accepted only while verified active media playback is delaying the
 cutover. The worker applies its media-server scan guard, stops the listed media
 server through the normal DUMB process manager, and waits for InfiniDysk active
 reads to reach zero. Stopping the server terminates its active streams.
+
+Inferred external Plex is deliberately excluded from this override because DUMB
+does not own its process. The operator must stop external playback and pause
+Autoscan or other scan/request producers outside DUMB; the job continues polling
+Plex activity and InfiniDysk reads.
 
 This endpoint cannot override Arr queues, unavailable or unknown APIs/activity,
 active InfiniDysk reads, filesystem conflicts, or other blockers. It returns
@@ -1085,8 +1109,10 @@ job:
 ```
 
 The job stops linked NeutArr, Seerr, Profilarr, and Prowlarr producers first,
-then polls Arr queue counts and media activity. It latches each Arr/media server
-stopped as soon as it is safe and holds those processes through the cutover.
+then polls Arr queue counts and media activity. It latches each managed Arr/media
+server stopped as soon as it is safe and holds those processes through the
+cutover. Inferred external Plex remains running under an API scan guard and must
+remain idle; DUMB cannot stop it or pause Autoscan.
 Failed or held queue entries are never deleted automatically; operators can
 resolve them through the still-running Arr UI. Quiescence times out after one
 hour and aborts before path mutation, restoring scan guards and restarting

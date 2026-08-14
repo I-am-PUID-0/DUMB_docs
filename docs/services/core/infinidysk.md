@@ -613,7 +613,12 @@ remaining cutover as one guarded operation. It is not enabled until its
 preflight passes. The preflight makes no changes and checks:
 
 - InfiniDysk active reads can be measured;
-- linked Arr queues and APIs can be inventoried. Large Arr catalogs use a
+- every enabled Arr API can be inventoried. DUMB includes an Arr when its
+  `core_service` metadata links it to InfiniDysk **or** live API inventory finds
+  a legacy root/item path, download-client/category reference, or `nzbdav` tag.
+  This catches Prowlarr-managed Arrs whose metadata intentionally omits the
+  InfiniDysk linkage. The preflight lists included and excluded Arr instances
+  with the reason for each decision. Large Arr catalogs use a
   migration-specific 120-second API timeout; current queue entries are reported
   as pending quiescence rather than forcing the operator to empty every queue at
   the same instant;
@@ -622,7 +627,10 @@ preflight passes. The preflight makes no changes and checks:
   list, and combined `core_service`/`core_services` values;
 - enabled Prowlarr instances are reachable so their Arr application
   connections and the shared legacy `nzbdav` tag can be inventoried;
-- affected Plex, Jellyfin, and Emby activity and library APIs can be inspected;
+- affected Plex, Jellyfin, and Emby activity and library APIs can be inspected.
+  If no DUMB-managed media server is enabled and both `dumb.plex_address` and
+  `dumb.plex_token` are configured, DUMB infers that Plex is external, verifies
+  its server identity, and inventories its libraries through the Plex API;
 - destination paths do not contain conflicting data;
 - active mounts can be detached and every filesystem move is an atomic,
   rollback-safe rename; and
@@ -651,12 +659,17 @@ the remaining count in job progress and stops that Arr immediately after its
 queue reaches zero. If a failed, held, or otherwise stuck download prevents the
 queue from draining, use the still-running Arr UI to remove, retry, or resolve
 that entry while its producers remain stopped. DUMB never deletes or ignores
-queue items automatically. Affected media servers are handled independently:
-DUMB waits for playback to become idle, guards automatic scans, and stops each
-server as soon as it is safe. It then waits for the resulting InfiniDysk reads
-to drain and holds every stopped service through mutation and validation.
+queue items automatically. Affected media servers are handled independently.
+DUMB waits for playback to become idle and guards automatic scans. DUMB-managed
+servers are stopped as soon as they are safe. An inferred external Plex remains
+running because DUMB does not own its process; DUMB cancels/guards Plex scans
+through the API and requires it to remain idle. Pause Autoscan and any other
+external scan or request producer before cutover because the Plex token cannot
+stop those separate processes. DUMB then waits for InfiniDysk reads to drain
+and holds every managed stopped service through mutation and validation.
 
-While the persisted job is waiting on verified active playback, **Open
+While the persisted job is waiting on verified active playback from a
+DUMB-managed media server, **Open
 progress** offers **Stop active playback and continue**. The action requires
 typing `STOP ACTIVE PLAYBACK`, immediately stops the listed media server, and
 therefore terminates its active streams. DUMB then waits for InfiniDysk active
@@ -664,6 +677,12 @@ reads to reach zero before continuing. This override applies only to verified
 media playback: it cannot bypass Arr queues, unknown media/API state, active
 InfiniDysk reads, path conflicts, or any other safety check. Operators may
 instead leave the job waiting for playback to finish normally.
+
+The playback-stop action is never offered for inferred external Plex. Stop its
+playback from Plex or the owning container/platform, pause Autoscan, and let the
+persisted job continue polling. The progress message distinguishes Arr queues,
+managed playback, external Plex activity, and remaining InfiniDysk reads so an
+active read alone is not mislabeled as a failed Arr queue.
 
 Automatic quiescence waits up to one hour. If activity remains, API inspection
 fails, or another quiescence step fails, the job aborts before moving namespace
@@ -681,17 +700,27 @@ and Seerr so their generated integration state sees the canonical linkage.
 Services that were stopped remain stopped. Any running service whose DUMB
 process or instance label is renamed is also included even when its linkage is
 otherwise unrelated, preventing an old process from being orphaned under its
-former name. It then updates and verifies linked Arr root folders,
+former name. It then updates and verifies configured or live-reference-discovered Arr root folders,
 existing movie/series/artist paths, managed download-client names/categories,
 Arr tag labels (without changing tag IDs), Prowlarr Arr application names and
 core-service tag labels (also without changing IDs), and Plex/Jellyfin/Emby
-library paths. If a stage fails, DUMB stops the partially migrated stack,
-restores paths and saved files, reapplies the previous application references,
-restarts the original process names, and reports whether rollback completed or
-needs attention. Rollback publishes its own path, configuration, service, Arr,
-Prowlarr, media-library, and scan-guard progress stages. A terminal rolled-back
-job finishes at 100% and retains a redacted root-cause message; 100% means the
-recovery workflow finished, not that the requested cutover succeeded.
+library paths. Compatible Arr builds receive bounded bulk-editor batches for
+root-prefix-only item changes; unsupported editor APIs fall back to exact
+per-record updates. DUMB validates every resulting item path before continuing,
+so a partial or incompatible bulk result still fails into the normal rollback
+path. The job reports completed/total counts for the current Arr and across all
+affected Arrs instead of holding one percentage for an entire large catalog.
+If a stage fails, DUMB stops the partially migrated stack, restores paths and
+saved files, reapplies and validates the previous Arr/Prowlarr/media-library
+references, restarts the original process names, and reports whether rollback
+completed or needs attention. Rollback publishes its own path, configuration,
+service, Arr, Prowlarr, media-library, and scan-guard progress stages. A
+terminal rolled-back job finishes at 100% and retains a redacted root-cause
+message; 100% means the recovery workflow finished, not that the requested
+cutover succeeded. When rollback needs attention, the dashboard lists the
+sanitized component errors and retained backup/config paths. Inspect those
+details and verify the legacy stack before performing a targeted restore; do
+not blindly restore the complete bundle or rerun the migration.
 
 Combined relationships remain combined: for example,
 `decypharr, nzbdav` becomes `decypharr,infinidysk`; DUMB does not discard the
@@ -703,10 +732,16 @@ The complete cutover runs as a backend-persisted background job. The migration
 dialog shows the current stage, percentage, and recent stage history. Closing
 the dialog or navigating to another page does not cancel the job; a persistent
 **InfiniDysk migration running** banner shows the latest progress and reopens
-the dialog. Reloading the dashboard reattaches to the same job. If it finishes
+the dialog. Reloading the dashboard or signing in from another browser/device
+reattaches to the same backend-owned job. If it finishes
 while the dialog is closed, the banner retains the result until it is opened or
 dismissed. The latest persisted result remains reopenable from the InfiniDysk
 service page after a later dashboard reload.
+
+The live job record and full preflight inventory are stored as separate private
+mode-`0600` sidecars under `/config/migrations`. This keeps job-status polling
+small and responsive even when the rollback inventory contains tens of
+thousands of Arr records; polling never rewrites the complete inventory.
 
 Do not restart the DUMB container while the migration is active. A backend
 restart cannot safely resume an in-process filesystem/API cutover, so DUMB

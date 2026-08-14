@@ -83,6 +83,16 @@ conflict-free destinations, and rollback-safe filesystem moves. Current Arr
 queues, playback, and active reads appear as pending conditions that DUMB can
 quiesce automatically after the job starts.
 
+The preflight expands **Arr migration discovery** to show every enabled Arr as
+included or excluded with its reason. DUMB uses both configured `core_service`
+metadata and live legacy path/category/tag references, so Prowlarr-managed Arrs
+without an InfiniDysk metadata tag are still included when their API state uses
+the legacy namespace. If no DUMB media server is enabled, a configured Plex
+address and token are inferred as **External Plex**. The dialog confirms the
+server name/version and affected library count; DUMB can guard scans and
+update/validate/restore its library paths but cannot stop the external process
+or pause Autoscan.
+
 After a passing preflight, the dialog shows filesystem, Arr path/category/tag,
 Prowlarr application/tag, and media-library change counts and requires
 acknowledgement of service downtime, the normal
@@ -96,20 +106,32 @@ drain. When verified playback is the remaining condition, the progress dialog
 offers **Stop active playback and continue**. It names the affected media
 server and requires typing `STOP ACTIVE PLAYBACK`; accepting immediately stops
 that server and terminates its streams. DUMB still waits for InfiniDysk reads
-to close and does not bypass queues or other blockers. A user who previously chose
+to close and does not bypass queues or other blockers. This action is offered
+only for DUMB-managed media servers. External Plex must be made idle outside
+DUMB, and progress distinguishes external activity/active reads from an Arr
+queue problem. A user who previously chose
 compatibility-only can reopen the full migration from the InfiniDysk service
 page; **Remind me later** remains available before the identity cutover.
 
 The complete namespace cutover starts a backend-persisted job. Its dialog shows
-stage, percentage, and recent progress events. Closing the dialog prompts that
+stage, percentage, recent progress events, and live completed/total reference
+counts while large Arr catalogs are updated. Closing the dialog prompts that
 the operation will continue, then promotes an **InfiniDysk migration running**
 banner with **Open progress**. Navigation and browser reloads reattach to the
-same job. A terminal result reached while the dialog is closed remains in a
+same job. Any authenticated browser or device connected to that DUMB instance
+discovers the backend-owned job; the browser that started it does not own the
+operation. A terminal result reached while the dialog is closed remains in a
 dismissible **Open result** banner, and the latest persisted result remains
 reopenable from the InfiniDysk service page after reload. Restarting DUMB
 itself interrupts rather than resumes the job, and
 the retained result directs the operator to inspect the migration backup before
 retrying.
+
+When automatic rollback reports an error, **Open result** shows the sanitized
+cutover cause, each failed rollback component, and the retained rollback/config
+paths. The UI explicitly tells the operator to verify the legacy stack and make
+a targeted repair rather than blindly restoring the complete bundle or rerunning
+the migration.
 
 See [InfiniDysk migration](../services/core/infinidysk.md#migration-from-nzbdav)
 for the exact paths, backup contents, validation, and rollback behavior.
