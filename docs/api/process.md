@@ -1000,7 +1000,9 @@ activity, and InfiniDysk reads are returned in `pending_conditions`; they are
 handled by the apply job's automatic quiescence stage. Migration Arr requests
 use a 120-second timeout for large catalogs. Generated attached-service paths such as
 `/radarr/nzbdav` and `/log/rclone_w_nzbdav.log` are discovered and planned
-automatically.
+automatically. Prowlarr legacy/canonical tag-label or application-name
+collisions are structural blockers; the response identifies them so an
+operator can reconcile the duplicate and rerun preflight before any path moves.
 
 ### `GET /process/infinidysk-migration/job-status`
 
@@ -1016,7 +1018,12 @@ A rolled-back terminal result includes a sanitized `result.recovery` object with
 the cutover cause, component-scoped `rollback_errors`, retained backup/config
 paths, and `manual_restore_required`. This is recovery guidance, not an instruction
 to restore the entire bundle blindly; verify the legacy paths and application
-state and repair only the failed rollback surface.
+state and repair only the failed rollback surface. Current rollback manifests
+also restore captured file ownership and permissions; this includes SQLite WAL
+and shared-memory sidecars that must remain writable by the managed service UID.
+Rollback also reapplies and verifies every captured symlink target after the
+legacy roots return, removes Arr root paths that exist only in the failed
+migration direction, and treats any remaining stale root as a rollback error.
 
 While a current `quiescing` job is waiting on verified media activity and the
 backend advertises capability `infinidysk_migration_playback_override`, the

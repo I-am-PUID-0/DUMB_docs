@@ -626,7 +626,14 @@ preflight passes. The preflight makes no changes and checks:
   NeutArr, Profilarr, and Seerr instance is inventoried, including singular,
   list, and combined `core_service`/`core_services` values;
 - enabled Prowlarr instances are reachable so their Arr application
-  connections and the shared legacy `nzbdav` tag can be inventoried;
+  connections and the shared legacy `nzbdav` tag can be inventoried. While an
+  installation still uses the legacy namespace, normal DUMB setup reuses the
+  existing `nzbdav` tag ID for InfiniDysk-linked applications instead of
+  creating a competing `infinidysk` tag. Preflight blocks when both labels (or
+  both legacy and canonical application names) already exist and would collide
+  during rename. This can happen after an older failed migration attempt;
+  reconcile the duplicate in Prowlarr, preserving the tag assignments you need,
+  and run preflight again;
 - affected Plex, Jellyfin, and Emby activity and library APIs can be inspected.
   If no DUMB-managed media server is enabled and both `dumb.plex_address` and
   `dumb.plex_token` are configured, DUMB infers that Plex is external, verifies
@@ -706,21 +713,36 @@ Arr tag labels (without changing tag IDs), Prowlarr Arr application names and
 core-service tag labels (also without changing IDs), and Plex/Jellyfin/Emby
 library paths. Compatible Arr builds receive bounded bulk-editor batches for
 root-prefix-only item changes; unsupported editor APIs fall back to exact
-per-record updates. DUMB validates every resulting item path before continuing,
+per-record updates. When a supported bulk editor reports a conflict, DUMB
+bisects that batch to isolate the conflicting records instead of converting an
+otherwise large catalog into hundreds or thousands of serial API writes. DUMB
+validates every resulting item path before continuing,
 so a partial or incompatible bulk result still fails into the normal rollback
 path. The job reports completed/total counts for the current Arr and across all
 affected Arrs instead of holding one percentage for an entire large catalog.
 If a stage fails, DUMB stops the partially migrated stack, restores paths and
-saved files, reapplies and validates the previous Arr/Prowlarr/media-library
-references, restarts the original process names, and reports whether rollback
-completed or needs attention. Rollback publishes its own path, configuration,
-service, Arr, Prowlarr, media-library, and scan-guard progress stages. A
+saved files with their captured ownership and permissions, reapplies and
+validates the previous Arr/Prowlarr/media-library references, removes every Arr
+root path created only by the failed direction, and restores the exact captured
+symlink targets after the original symlink roots are back in place. Missing
+symlink roots, restore errors, target mismatches, or obsolete Arr roots make
+rollback report that attention is required rather than claiming recovery.
+Rollback restarts the original process names and publishes its own path,
+symlink-catalog, configuration, service, Arr, Prowlarr, media-library, and
+scan-guard progress stages. A
 terminal rolled-back job finishes at 100% and retains a redacted root-cause
 message; 100% means the recovery workflow finished, not that the requested
 cutover succeeded. When rollback needs attention, the dashboard lists the
 sanitized component errors and retained backup/config paths. Inspect those
 details and verify the legacy stack before performing a targeted restore; do
 not blindly restore the complete bundle or rerun the migration.
+
+Older DUMB builds did not retain file ownership metadata in this rollback
+manifest. If an older rollback reports that InfiniDysk/NzbDAV cannot read its
+configuration path, inspect the owner and mode of the named database and its
+SQLite `-wal`/`-shm` sidecars. Restore only the affected files to the configured
+PUID/PGID and their prior restrictive mode before restarting DUMB; do not
+recursively change ownership across the blob, mount, or symlink trees.
 
 Combined relationships remain combined: for example,
 `decypharr, nzbdav` becomes `decypharr,infinidysk`; DUMB does not discard the

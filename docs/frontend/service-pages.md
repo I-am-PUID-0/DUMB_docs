@@ -97,7 +97,10 @@ After a passing preflight, the dialog shows filesystem, Arr path/category/tag,
 Prowlarr application/tag, and media-library change counts and requires
 acknowledgement of service downtime, the normal
 post-cutover library scan, and rollback limits. Applying remains unavailable if
-the token expires or a structural/API blocker remains. DUMB stops linked
+the token expires or a structural/API blocker remains. A Prowlarr installation
+that contains both legacy and canonical tag labels or application names is
+blocked rather than merged implicitly; reconcile the duplicate in Prowlarr and
+run preflight again. DUMB stops linked
 NeutArr/Seerr/Profilarr/Prowlarr producers first, lets each Arr queue drain while
 its UI remains available, holds each Arr or media server stopped as soon as it
 is safe, and waits up to one hour. Failed or held Arr items remain operator-owned
@@ -131,7 +134,10 @@ When automatic rollback reports an error, **Open result** shows the sanitized
 cutover cause, each failed rollback component, and the retained rollback/config
 paths. The UI explicitly tells the operator to verify the legacy stack and make
 a targeted repair rather than blindly restoring the complete bundle or rerunning
-the migration.
+the migration. Current backups retain file ownership and permissions so
+database sidecars are restored for the configured managed-service UID. The
+rollback result also reports exact symlink-catalog verification failures and
+any Arr root path that remained from the failed migration direction.
 
 See [InfiniDysk migration](../services/core/infinidysk.md#migration-from-nzbdav)
 for the exact paths, backup contents, validation, and rollback behavior.
