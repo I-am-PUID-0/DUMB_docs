@@ -1121,9 +1121,11 @@ server stopped as soon as it is safe and holds those processes through the
 cutover. Inferred external Plex remains running under an API scan guard and must
 remain idle; DUMB cannot stop it or pause Autoscan.
 Failed or held queue entries are never deleted automatically; operators can
-resolve them through the still-running Arr UI. Quiescence times out after one
-hour and aborts before path mutation, restoring scan guards and restarting
-processes DUMB stopped. The optional confirmed playback-stop request may
+resolve them through the still-running Arr UI. Transient Arr queue or inventory
+API failures remain pending and are retried during quiescence. Quiescence times
+out after one hour and aborts before path mutation if activity or an Arr API
+remains unavailable, restoring scan guards and restarting processes DUMB
+stopped. The optional confirmed playback-stop request may
 interrupt active streams, but the worker still verifies that provider reads
 have drained before path mutation.
 

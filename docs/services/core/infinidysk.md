@@ -691,11 +691,14 @@ persisted job continue polling. The progress message distinguishes Arr queues,
 managed playback, external Plex activity, and remaining InfiniDysk reads so an
 active read alone is not mislabeled as a failed Arr queue.
 
-Automatic quiescence waits up to one hour. If activity remains, API inspection
-fails, or another quiescence step fails, the job aborts before moving namespace
-paths, restores scan guards, and restarts only the processes DUMB stopped. This
-removes the requirement for the operator to pause every queue, automation
-producer, and playback session at exactly the same moment.
+Automatic quiescence waits up to one hour. A transient Arr API or database
+failure remains a visible pending condition and is retried during that window;
+it does not immediately trigger rollback. If activity remains, an Arr API stays
+unavailable through the deadline, or another non-retryable quiescence step
+fails, the job aborts before moving namespace paths, restores scan guards, and
+restarts only the processes DUMB stopped. This removes the requirement for the
+operator to pause every queue, automation producer, and playback session at
+exactly the same moment.
 
 After quiescence, DUMB detaches
 the old rclone mount, moves the runtime/mount/symlink/log paths plus discovered

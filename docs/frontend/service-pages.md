@@ -105,7 +105,9 @@ NeutArr/Seerr/Profilarr/Prowlarr producers first, lets each Arr queue drain whil
 its UI remains available, holds each Arr or media server stopped as soon as it
 is safe, and waits up to one hour. Failed or held Arr items remain operator-owned
 and can be resolved in the Arr UI; DUMB aborts before moving paths if they do not
-drain. When verified playback is the remaining condition, the progress dialog
+drain. Transient Arr API or database failures are shown as pending and retried
+within that same window instead of immediately rolling the migration back. When
+verified playback is the remaining condition, the progress dialog
 offers **Stop active playback and continue**. It names the affected media
 server and requires typing `STOP ACTIVE PLAYBACK`; accepting immediately stops
 that server and terminates its streams. DUMB still waits for InfiniDysk reads
