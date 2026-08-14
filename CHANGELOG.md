@@ -1,6 +1,13 @@
 # Changelog
 
 
+## [1.24.7](https://github.com/I-am-PUID-0/DUMB_docs/compare/1.24.6...1.24.7) (2026-08-14)
+
+
+### 📖 Documentation
+
+* **migration:** document verified InfiniDysk rollback recovery ([4aae80b](https://github.com/I-am-PUID-0/DUMB_docs/commit/4aae80b724222367f4c3a955d30c69ea2bbbca56))
+
 ## [1.24.6](https://github.com/I-am-PUID-0/DUMB_docs/compare/1.24.5...1.24.6) (2026-08-14)
 
 
