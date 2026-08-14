@@ -1,6 +1,14 @@
 # Changelog
 
 
+## [1.24.6](https://github.com/I-am-PUID-0/DUMB_docs/compare/1.24.5...1.24.6) (2026-08-14)
+
+
+### 📖 Documentation
+
+* **infinidysk:** document inferred Plex and Arr migration behavior ([24f7e51](https://github.com/I-am-PUID-0/DUMB_docs/commit/24f7e510f83a8c836519e379bd92700886ad8aba))
+* **migration:** document automatic InfiniDysk quiescence ([5dedf91](https://github.com/I-am-PUID-0/DUMB_docs/commit/5dedf91d12ed22db380703d3194821dacda73545))
+
 ## [1.24.5](https://github.com/I-am-PUID-0/DUMB_docs/compare/1.24.4...1.24.5) (2026-08-13)
 
 
