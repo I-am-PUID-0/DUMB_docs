@@ -81,20 +81,25 @@ keeps every path. The complete namespace choice remains locked until **Run
 preflight** confirms reachable Arr/Prowlarr/media APIs, inspectable activity,
 conflict-free destinations, and rollback-safe filesystem moves. Current Arr
 queues, playback, and active reads appear as pending conditions that DUMB can
-quiesce automatically after the job starts.
+quiesce automatically after the job starts. Preflight also verifies that
+InfiniDysk's internal `repair.enable` health-check scheduler can be inspected
+and temporarily paused; an enabled environment-managed value is a blocker
+because the running API cannot safely override it.
 
 The preflight expands **Arr migration discovery** to show every enabled Arr as
 included or excluded with its reason. DUMB uses both configured `core_service`
-metadata and live legacy path/category/tag references, so Prowlarr-managed Arrs
-without an InfiniDysk metadata tag are still included when their API state uses
-the legacy namespace. If no DUMB media server is enabled, a configured Plex
+metadata and live legacy item/root, import-list, Radarr collection,
+download-client/category, and tag references, so Prowlarr-managed Arrs without
+an InfiniDysk metadata tag are still included when their API state uses the
+legacy namespace. If no DUMB media server is enabled, a configured Plex
 address and token are inferred as **External Plex**. The dialog confirms the
 server name/version and affected library count; DUMB can guard scans and
 update/validate/restore its library paths but cannot stop the external process
 or pause Autoscan.
 
-After a passing preflight, the dialog shows filesystem, Arr path/category/tag,
-Prowlarr application/tag, and media-library change counts and requires
+After a passing preflight, the dialog shows filesystem, Arr
+item/root/import-list/collection/download-client/tag, Prowlarr application/tag,
+and media-library change counts and requires
 acknowledgement of service downtime, the normal
 post-cutover library scan, and rollback limits. Applying remains unavailable if
 the token expires or a structural/API blocker remains. A Prowlarr installation
@@ -103,7 +108,10 @@ blocked rather than merged implicitly; reconcile the duplicate in Prowlarr and
 run preflight again. DUMB stops linked
 NeutArr/Seerr/Profilarr/Prowlarr producers first, lets each Arr queue drain while
 its UI remains available, holds each Arr or media server stopped as soon as it
-is safe, and waits up to one hour. Failed or held Arr items remain operator-owned
+is safe, temporarily pauses new InfiniDysk scheduled health checks, and waits up
+to one hour. Already-running health probes are allowed to finish. DUMB records
+the exact prior scheduler value in the private rollback bundle and restores and
+verifies it after either a successful cutover or rollback. Failed or held Arr items remain operator-owned
 and can be resolved in the Arr UI; DUMB aborts before moving paths if they do not
 drain. Transient Arr API or database failures are shown as pending and retried
 within that same window instead of immediately rolling the migration back. When
@@ -131,6 +139,23 @@ reopenable from the InfiniDysk service page after reload. Restarting DUMB
 itself interrupts rather than resumes the job, and
 the retained result directs the operator to inspect the migration backup before
 retrying.
+
+The worker does not treat updated API values alone as success. It verifies
+planned nested namespace roots after their parent namespace moves, rejects remaining
+legacy raw symlink targets, and requires canonical filesystem paths for
+file-bearing Arr items, changed list/collection roots, and changed media
+libraries before restoring scan
+guards. Do not manually move Arr items or scan a media library while the job is
+active. After success, inspect the populated canonical roots, keep automatic
+trash/deletion disabled, run the requested scans, and verify sample playback.
+Arr **Update All** is only a follow-up refresh; it does not replace the root,
+import-list, or collection changes performed by the migration.
+The checklist identifies the control as the top-toolbar **Update All** action on
+the Arr's main library page—for example, **Movies** in Radarr or **Series** in
+Sonarr—so it is not confused with a System task or root-folder edit.
+The completed result keeps these actions visible as a numbered
+**Required post-migration checks** list and links directly to the full
+[InfiniDysk post-migration checklist](../services/core/infinidysk.md#after-the-full-migration-succeeds).
 
 When automatic rollback reports an error, **Open result** shows the sanitized
 cutover cause, each failed rollback component, and the retained rollback/config

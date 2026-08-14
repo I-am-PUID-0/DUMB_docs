@@ -986,8 +986,11 @@ or rewriting the complete catalog.
 
 `arr_discovery` lists every enabled Arr instance with `included` and human-readable
 `reasons`. Inclusion uses either configured InfiniDysk `core_service` metadata or
-live legacy root/item/download-client/category/tag references, so a Prowlarr-managed
-Arr is not omitted merely because its DUMB linkage metadata is blank.
+live legacy root/item/import-list/collection/download-client/category/tag
+references, so a Prowlarr-managed Arr is not omitted merely because its DUMB
+linkage metadata is blank. Per-Arr public counts include `root_changes`,
+`item_changes`, `client_changes`, `import_list_changes`, `collection_changes`,
+and `tag_changes`.
 `media_servers` marks `external_api_only=true` when no DUMB media server is enabled
 and DUMB successfully infers Plex from `dumb.plex_address` plus `dumb.plex_token`.
 The public entry includes the Plex display name/version and affected-library count,
@@ -997,7 +1000,10 @@ but not the token or machine identifier.
 unreachable, a destination conflicts, a move crosses filesystems, or a legacy
 path lies outside DUMB-managed roots. Current Arr queues, verified media
 activity, and InfiniDysk reads are returned in `pending_conditions`; they are
-handled by the apply job's automatic quiescence stage. Migration Arr requests
+handled by the apply job's automatic quiescence stage. Preflight also reads
+InfiniDysk's effective `repair.enable` value. An enabled setting managed by an
+environment variable is a blocker because DUMB cannot temporarily override it
+through InfiniDysk's authenticated configuration API. Migration Arr requests
 use a 120-second timeout for large catalogs. Generated attached-service paths such as
 `/radarr/nzbdav` and `/log/rclone_w_nzbdav.log` are discovered and planned
 automatically. Prowlarr legacy/canonical tag-label or application-name
@@ -1116,7 +1122,8 @@ job:
 ```
 
 The job stops linked NeutArr, Seerr, Profilarr, and Prowlarr producers first,
-then polls Arr queue counts and media activity. It latches each managed Arr/media
+temporarily sets InfiniDysk `repair.enable=false` through its authenticated API,
+verifies the change, then polls Arr queue counts and media activity. It latches each managed Arr/media
 server stopped as soon as it is safe and holds those processes through the
 cutover. Inferred external Plex remains running under an API scan guard and must
 remain idle; DUMB cannot stop it or pause Autoscan.
@@ -1129,14 +1136,32 @@ stopped. The optional confirmed playback-stop request may
 interrupt active streams, but the worker still verifies that provider reads
 have drained before path mutation.
 
+The original effective `repair.enable` value and its management source are
+saved in the private rollback bundle before the pause. Existing health probes
+are allowed to drain, but no new scheduled probes are started. DUMB restores
+and reads back the exact prior value before reporting success. Failure handling
+restores it through the running API when possible and verifies the restored
+database during rollback before the job becomes terminal.
+
 The worker repeats live safety checks immediately before applying. It then
 backs up configuration and application snapshots, stops the dependency chain,
 atomically moves managed runtime/mount/symlink/log and discovered attached
-service paths, rewrites symlink targets and saved InfiniDysk configuration,
+service paths. Nested generated paths remain explicit ordered actions after a
+parent move, so child names such as `radarr-nzbdav` cannot be silently retained
+inside a canonical parent. The provider's `/content` and `completed-symlinks`
+category directories are SQLite-backed virtual paths rather than ordinary
+directories to rename through FUSE. While InfiniDysk is stopped, DUMB rewrites
+the fixed history, queue, and DAV category/path records that materialize those
+views; the captured database is restored if rollback is required. The worker
+rewrites symlink targets and saved InfiniDysk configuration,
 restarts the chain, updates Arr
-root/item/download-client references and tag labels while preserving tag IDs,
+root/item/import-list/Radarr-collection/download-client references and tag
+labels while preserving tag IDs,
 updates media-server library paths, and
-verifies the persisted API values. Failures trigger automatic path,
+verifies the persisted API values. Before scan guards are restored it also
+requires every planned canonical path, rejects every planned legacy source and
+legacy raw symlink target, and checks canonical filesystem availability for
+file-bearing Arr items and changed media-library paths. Failures trigger automatic path,
 configuration, application-reference, process-name, and scan-guard rollback.
 The terminal job `result` identifies the private backup bundle and reports
 changed symlinks, InfiniDysk database records, Arr references, and media

@@ -174,6 +174,13 @@ moving release channel. With `auto_update: true`, DUMB checks it at the normal
 configured interval and installs it when the underlying commit changes. Manual
 **Check for updates** and **Install update** remain available.
 
+With `auto_update: false`, startup validates and keeps an already installed
+runtime even when the moving tag now points at another commit. DUMB does not
+turn a container restart into an implicit channel update. Use the Updates panel
+to install the newly resolved commit deliberately. If the installed backend or
+frontend runtime is incomplete, startup still attempts the configured channel
+so a broken or missing installation can recover.
+
 The installed marker is recorded as `dev-<short-sha>`. The source archive is
 downloaded by the resolved full SHA, so the installed source and recorded
 marker remain consistent even if the tag moves during the update.
@@ -599,6 +606,7 @@ process labels. It does not change:
 - `/nzbdav` or another existing runtime path
 - `/mnt/debrid/nzbdav` or `/mnt/debrid/nzbdav-symlinks`
 - Arr categories, root folders, item paths, tags, or tag IDs
+- Arr import-list or Radarr collection root paths
 - media-server library paths
 - existing symlink targets
 
@@ -613,9 +621,15 @@ remaining cutover as one guarded operation. It is not enabled until its
 preflight passes. The preflight makes no changes and checks:
 
 - InfiniDysk active reads can be measured;
+- InfiniDysk's effective `repair.enable` scheduler state can be inspected and
+  changed through its authenticated API when necessary. An enabled value owned
+  by an `NZBDAV_CONFIG__...` environment variable is a
+  blocker: set that value to `false`, restart InfiniDysk, and rerun preflight so
+  DUMB is not fighting an authoritative environment override;
 - every enabled Arr API can be inventoried. DUMB includes an Arr when its
   `core_service` metadata links it to InfiniDysk **or** live API inventory finds
-  a legacy root/item path, download-client/category reference, or `nzbdav` tag.
+  a legacy root/item path, import-list root, Radarr collection root,
+  download-client/category reference, or `nzbdav` tag.
   This catches Prowlarr-managed Arrs whose metadata intentionally omits the
   InfiniDysk linkage. The preflight lists included and excluded Arr instances
   with the reason for each decision. Large Arr catalogs use a
@@ -661,7 +675,11 @@ during the migration.
 
 When applied, DUMB first enters an automatic quiescence stage. It stops linked
 NeutArr, Seerr, Profilarr, and Prowlarr processes so they cannot add new Arr
-work. Each Arr remains available while its current queue drains; DUMB reports
+work. It also captures InfiniDysk's exact effective `repair.enable` value in the
+private rollback bundle, temporarily disables the internal scheduled health
+checks through InfiniDysk's API, and reads the value back before waiting on
+active reads. Health probes already in progress are allowed to finish, but the
+scheduler cannot continuously replace them. Each Arr remains available while its current queue drains; DUMB reports
 the remaining count in job progress and stops that Arr immediately after its
 queue reaches zero. If a failed, held, or otherwise stuck download prevents the
 queue from draining, use the still-running Arr UI to remove, retry, or resolve
@@ -700,26 +718,45 @@ restarts only the processes DUMB stopped. This removes the requirement for the
 operator to pause every queue, automation producer, and playback session at
 exactly the same moment.
 
+After a successful cutover DUMB restores and verifies the captured
+`repair.enable` value before restarting request/search producers. If any later
+stage fails, rollback restores the captured InfiniDysk database and verifies the
+same scheduler value before the job becomes terminal. The scheduler guard is
+recorded as `infinidysk-health-check-guard.json` in the private migration bundle.
+
 After quiescence, DUMB detaches
 the old rclone mount, moves the runtime/mount/symlink/log paths plus discovered
 DUMB-managed attached-service paths, rewrites symlink targets and InfiniDysk
 configuration records, saves the canonical DUMB paths, and restarts the stack
-in provider-first order. Every linked service that was running before the
+in provider-first order. Parent namespace moves and nested generated roots are
+planned separately: for example, after moving `nzbdav-symlinks`, DUMB still
+renames children such as `radarr-nzbdav` and `sonarr-nzbdav` inside the new
+parent. It then verifies that every planned legacy source is absent, every
+canonical destination has the expected type, and no raw symlink target retains
+the legacy namespace. Every linked service that was running before the
 cutover is restarted, and DUMB reruns setup for rclone, Arr, NeutArr, Profilarr,
 and Seerr so their generated integration state sees the canonical linkage.
 Services that were stopped remain stopped. Any running service whose DUMB
 process or instance label is renamed is also included even when its linkage is
 otherwise unrelated, preventing an old process from being orphaned under its
-former name. It then updates and verifies configured or live-reference-discovered Arr root folders,
-existing movie/series/artist paths, managed download-client names/categories,
-Arr tag labels (without changing tag IDs), Prowlarr Arr application names and
+former name. Generated provider category directories beneath
+`completed-symlinks` are SQLite-backed virtual paths, so DUMB rewrites the
+history, queue, and DAV category/path records that materialize them while the
+provider is stopped. Do not try to rename those paths through the live FUSE
+mount. The database is part of the private rollback bundle. DUMB then updates and verifies
+configured or live-reference-discovered Arr root folders, existing
+movie/series/artist paths, import-list roots, Radarr collection roots, managed
+download-client names/categories, Arr tag labels (without changing tag IDs),
+Prowlarr Arr application names and
 core-service tag labels (also without changing IDs), and Plex/Jellyfin/Emby
 library paths. Compatible Arr builds receive bounded bulk-editor batches for
 root-prefix-only item changes; unsupported editor APIs fall back to exact
 per-record updates. When a supported bulk editor reports a conflict, DUMB
 bisects that batch to isolate the conflicting records instead of converting an
 otherwise large catalog into hundreds or thousands of serial API writes. DUMB
-validates every resulting item path before continuing,
+validates every resulting API item path and requires the canonical filesystem
+path for every file-bearing Arr item and every changed list/collection root
+before continuing,
 so a partial or incompatible bulk result still fails into the normal rollback
 path. The job reports completed/total counts for the current Arr and across all
 affected Arrs instead of holding one percentage for an entire large catalog.
@@ -729,6 +766,55 @@ cutover. If a Plex library update times out after submission, DUMB does not
 blindly submit it again: it reconnects and accepts the change only when the
 library exposes the exact requested path set. An unverifiable result still
 fails into rollback.
+
+Do not manually change Arr roots or scan a media library while the job is still
+running. DUMB keeps media-server scan guards in place until canonical Arr item
+directories and media-library paths have passed these checks. After the job
+reports success, confirm the new roots contain the expected symlinks, then run
+the normal Arr and media-server scans. Keep automatic trash/deletion disabled
+until the refreshed libraries and sample playback are verified.
+
+Arr's **Update All** action refreshes existing records; it does not change root
+folders, import-list roots, or Radarr collection roots. If manual recovery is
+required after an older migration, use the Arr root-folder change workflow and
+choose **No, I'll move the files myself** because DUMB already moved the
+symlink library. Update import lists and Radarr collections separately before
+scanning, then run **Update All** only as the follow-up refresh.
+
+### After the full migration succeeds
+
+Do not start this checklist unless the result is **Namespace migration
+completed**. A rolled-back, interrupted, or attention-required result needs its
+recovery details reviewed first.
+
+1. Confirm InfiniDysk, its rclone mount, every affected Arr, Prowlarr, and the
+   affected media server report healthy.
+2. Open each affected Arr and confirm its canonical root is populated, sample
+   existing items use the `infinidysk-symlinks` path, and **System → Health**
+   has no missing-root or download-client path warning.
+3. Open the Arr's main library page and click **Update All** in its top toolbar:
+   **Movies → Update All** in Radarr, **Series → Update All** in Sonarr,
+   **Artists → Update All** in Lidarr, or the equivalent main-library
+   **Update All** action in Whisparr. This is the circular-arrows refresh action
+   beside the main library controls—not a System task or root-folder edit. Do
+   not use **Change Root Folder** or ask Arr to move files after a successful
+   migration—DUMB already updated the roots, existing item paths, import-list
+   roots, and Radarr collection roots and moved the managed symlink namespace.
+4. In Prowlarr, confirm the affected Arr applications connect and the canonical
+   `infinidysk` tag is present where the legacy `nzbdav` tag was used.
+5. Keep automatic trash/deletion disabled, then scan the affected
+   Plex/Jellyfin/Emby libraries. DUMB updates and verifies their paths but does
+   not start the scans.
+6. Compare expected library counts, inspect several items, and test playback
+   plus seeking for at least one movie and one episode.
+7. Only after those checks pass, restore the operator's preferred automatic
+   trash/deletion behavior. Retain the independent backup and DUMB rollback
+   bundle for a suitable observation period.
+
+The compatibility-only migration keeps all paths unchanged. After that path,
+verify InfiniDysk starts, attached services reconnect, and existing playback
+works; an Arr or media-library scan is not normally required.
+
 If a stage fails, DUMB stops the partially migrated stack, restores paths and
 saved files with their captured ownership and permissions, reapplies and
 validates the previous Arr/Prowlarr/media-library references, removes every Arr
