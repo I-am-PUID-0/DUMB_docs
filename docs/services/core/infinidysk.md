@@ -850,10 +850,11 @@ dialog shows the current stage, percentage, and recent stage history. Closing
 the dialog or navigating to another page does not cancel the job; a persistent
 **InfiniDysk migration running** banner shows the latest progress and reopens
 the dialog. Reloading the dashboard or signing in from another browser/device
-reattaches to the same backend-owned job. If it finishes
-while the dialog is closed, the banner retains the result until it is opened or
-dismissed. The latest persisted result remains reopenable from the InfiniDysk
-service page after a later dashboard reload.
+reattaches to the same backend-owned job. If a browser observes it finish while
+the dialog is closed, that browser shows a dismissible result banner once. A
+terminal job first discovered after a later reload, sign-in, or focus event is
+not announced again as a new completion; its persisted result remains manually
+reopenable from the InfiniDysk service page.
 
 The live job record and full preflight inventory are stored as separate private
 mode-`0600` sidecars under `/config/migrations`. This keeps job-status polling

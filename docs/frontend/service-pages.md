@@ -133,9 +133,11 @@ the operation will continue, then promotes an **InfiniDysk migration running**
 banner with **Open progress**. Navigation and browser reloads reattach to the
 same job. Any authenticated browser or device connected to that DUMB instance
 discovers the backend-owned job; the browser that started it does not own the
-operation. A terminal result reached while the dialog is closed remains in a
-dismissible **Open result** banner, and the latest persisted result remains
-reopenable from the InfiniDysk service page after reload. Restarting DUMB
+operation. A browser that observes the active job become terminal shows a
+dismissible **Open result** banner once. A completed/failed job first discovered
+after a reload, sign-in, or browser focus is not announced again as though it
+just finished; the latest persisted result remains manually reopenable from the
+InfiniDysk service page. Restarting DUMB
 itself interrupts rather than resumes the job, and
 the retained result directs the operator to inspect the migration backup before
 retrying.
