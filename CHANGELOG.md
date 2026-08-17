@@ -1,6 +1,13 @@
 # Changelog
 
 
+## [1.24.11](https://github.com/I-am-PUID-0/DUMB_docs/compare/1.24.10...1.24.11) (2026-08-17)
+
+
+### 📖 Documentation
+
+* **infinidysk:** clarify persisted migration result behavior ([43f64ca](https://github.com/I-am-PUID-0/DUMB_docs/commit/43f64ca40dbb23d9ed62f3f114c0ccb8b6c1d278))
+
 ## [1.24.10](https://github.com/I-am-PUID-0/DUMB_docs/compare/1.24.9...1.24.10) (2026-08-14)
 
 
