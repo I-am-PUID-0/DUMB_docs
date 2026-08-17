@@ -122,6 +122,8 @@ For each debrid-capable core service, provide your debrid credentials:
     - **AllDebrid**: Account settings :material-arrow-right: API Keys
     - **Premiumize**: Account :material-arrow-right: API Key
 
+For Decypharr, DUMB writes the selected provider, API key, download folder, and mount mode before the service starts for the first time. Decypharr's separate standalone setup wizard should therefore already be complete when you open its UI.
+
 ---
 
 ### Step 4: Select optional services

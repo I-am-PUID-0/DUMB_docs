@@ -155,7 +155,7 @@ Decypharr acts as both a torrent manager and a renaming/organizing engine:
 *  Mock Qbittorrent API for Sonarr, Radarr, Lidarr, etc.
 *  Full-featured UI for managing torrents
 *  Proxy filtering for un-cached Debrid torrents
-*  Multiple Debrid service support (Real Debrid, Torbox, Debrid Link, All Debrid)
+*  Multiple Debrid service support (Real Debrid, Torbox, Debrid Link, All Debrid, Premiumize)
 *  WebDAV server per Debrid provider for mounting remote files
 *  DFS mount mode for Decypharr-managed streaming paths (stable in Decypharr 2.0+)
 *  Native Usenet support through Decypharr's Sabnzbd-compatible endpoint (stable in Decypharr 2.0+)
@@ -167,6 +167,7 @@ Decypharr acts as both a torrent manager and a renaming/organizing engine:
 
 When Decypharr starts, DUMB performs several automation steps:
 
+- Writes the selected Debrid provider, API key, download folder, and mount settings to the current Decypharr config schema before the first process launch
 - Syncs Arr instance details into `config.json`
 - Ensures `/mnt/debrid/decypharr_symlinks/<instance>` roots exist
 - Updates Arr permissions and root folders
@@ -174,6 +175,8 @@ When Decypharr starts, DUMB performs several automation steps:
 - Populates Debrid providers from `api_keys` for Decypharr mount modes
 - Uses per-instance category labels when creating Arr download client entries
 - Adds a Sabnzbd-style download client named `decypharr-usenet` when Decypharr Usenet providers are configured
+
+When Decypharr is installed through DUMB onboarding, this pre-start configuration satisfies Decypharr's own first-run checks. You should land in the normal Decypharr UI instead of being asked to repeat its standalone setup wizard. The Decypharr wizard remains useful for installations managed outside DUMB.
 
 ### Symlink repair and migration
 
@@ -412,6 +415,7 @@ In your media server (Plex/Jellyfin/Emby), add the Decypharr symlink folders as 
 * [Torbox](https://www.torbox.net)
 * [Debrid Link](https://debrid-link.fr)
 * [All Debrid](https://alldebrid.com)
+* [Premiumize](https://www.premiumize.me)
 
 ---
 
