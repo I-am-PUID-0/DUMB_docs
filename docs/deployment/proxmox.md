@@ -61,12 +61,10 @@ The default installation creates an unprivileged Debian 13 LXC with:
 - DUMB plus its required runtimes installed directly on the guest OS.
 
 Use **Advanced Settings** when a large stack, source builds, the install cache,
-or a media server needs more resources. The amd64 path has completed the native
-acceptance tests. The arm64 path is implemented but remains marked unverified
-by Community Scripts until it passes the same clean Proxmox VE install, reboot,
-FUSE, backup, restore, and update tests. An interactive arm64 run can opt into
-testing; unattended arm64 installation remains blocked until that validation is
-complete.
+or a media server needs more resources. Both amd64 and arm64 have completed the
+native acceptance tests with DUMB 2.21.0: clean Proxmox VE installation,
+controller update and rollback, reboot, FUSE namespace isolation, and stopped
+backup/restore.
 
 When installation finishes, open:
 
