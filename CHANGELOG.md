@@ -1,6 +1,15 @@
 # Changelog
 
 
+## [1.24.12](https://github.com/I-am-PUID-0/DUMB_docs/compare/1.24.11...1.24.12) (2026-08-19)
+
+
+### 📖 Documentation
+
+* **decypharr:** document Premiumize and first-start configuration ([6623f58](https://github.com/I-am-PUID-0/DUMB_docs/commit/6623f5882db1cdb89159741dba9333107d766da8))
+* **infinidysk:** clarify fresh-install migration visibility ([bb9ed3a](https://github.com/I-am-PUID-0/DUMB_docs/commit/bb9ed3a376420067409aa601c879b53c4ad25760))
+* **proxmox:** document native DUMB LXC deployment ([9e03509](https://github.com/I-am-PUID-0/DUMB_docs/commit/9e0350903d0ec05158a4f1badca9411b3787c8b7))
+
 ## [1.24.11](https://github.com/I-am-PUID-0/DUMB_docs/compare/1.24.10...1.24.11) (2026-08-17)
 
 
