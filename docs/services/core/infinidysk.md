@@ -574,6 +574,10 @@ Fresh DUMB installations use the canonical `infinidysk` service key,
 `/infinidysk` runtime root, `/mnt/debrid/infinidysk` mount, and
 `/mnt/debrid/infinidysk-symlinks` library root.
 
+Because that namespace is already canonical, a fresh installation is not
+migration-eligible and the dashboard does not show **Review migration**. The
+migration job API returns `null` until an actual guarded namespace job exists.
+
 Existing installations are not silently moved. DUMB accepts the legacy
 `nzbdav` key, dependency tokens, paths, and `NZBDAV_*` variables, normalizes
 them in memory, and continues writing the legacy identity back to disk until

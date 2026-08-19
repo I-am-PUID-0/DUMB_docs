@@ -86,6 +86,11 @@ InfiniDysk's internal `repair.enable` health-check scheduler can be inspected
 and temporarily paused; an enabled environment-managed value is a blocker
 because the running API cannot safely override it.
 
+Canonical fresh InfiniDysk installations do not receive this notice or a
+manual migration action. The frontend requires both backend migration
+eligibility and a valid persisted job record before it exposes the related
+controls; a missing job is reported as `null`.
+
 The preflight expands **Arr migration discovery** to show every enabled Arr as
 included or excluded with its reason. DUMB uses both configured `core_service`
 metadata and live legacy item/root, import-list, Radarr collection,

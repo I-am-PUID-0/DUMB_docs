@@ -1020,6 +1020,9 @@ a `detail` object with the current process, phase, completed/total reference
 counts, and all-Arr completed/total counts. Active statuses are
 `queued`, `running`, and `rolling_back`.
 
+When no migration job exists, the response is `{"job": null}`. An empty object
+is not a job and must not be used to infer that migration controls are needed.
+
 A rolled-back terminal result includes a sanitized `result.recovery` object with
 the cutover cause, component-scoped `rollback_errors`, retained backup/config
 paths, and `manual_restore_required`. This is recovery guidance, not an instruction
