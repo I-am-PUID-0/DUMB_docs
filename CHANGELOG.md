@@ -1,6 +1,13 @@
 # Changelog
 
 
+## [1.24.13](https://github.com/I-am-PUID-0/DUMB_docs/compare/1.24.12...1.24.13) (2026-08-19)
+
+
+### 📖 Documentation
+
+* **proxmox:** mark arm64 native LXC as validated ([f23fec2](https://github.com/I-am-PUID-0/DUMB_docs/commit/f23fec20e387e05458ff1c32ce3fd9752696a158))
+
 ## [1.24.12](https://github.com/I-am-PUID-0/DUMB_docs/compare/1.24.11...1.24.12) (2026-08-19)
 
 
