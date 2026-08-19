@@ -1,261 +1,285 @@
 ---
 title: Deploying on Proxmox
-description: Deploy DUMB in a Proxmox VE Ubuntu LXC with Docker, nesting, FUSE access, mount propagation, persistent storage, and networking.
+description: Install DUMB and its managed services natively in a Proxmox VE LXC with the Community Scripts helper, with no Docker layer.
 icon: simple/proxmox
 ---
 
-## Deploying DUMB on Proxmox (LXC Container)
+# Deploying DUMB on Proxmox
 
-This guide will walk you through deploying **DUMB** inside a lightweight **Ubuntu-based LXC container** on **Proxmox VE**.
+The recommended Proxmox layout runs DUMB and its managed services directly in
+one LXC. It does **not** install Docker inside the LXC.
 
-!!! tip "Want a graphical Docker experience?"
+This keeps the normal DUMB topology simple:
 
-    Use [Portainer](portainer.md) if you want to manage containers, stacks,
-    logs, and updates through a web interface. Complete the LXC and Docker
-    preparation in this guide, and use the paths under
-    **Use the current DUMB mounts** when editing the Portainer stack. Then follow
-    the [Portainer deployment guide](portainer.md) before deploying DUMB. Do
-    not deploy DUMB with the CLI Compose guide first.
+```text
+Proxmox host
+└── DUMB LXC
+    ├── DUMB API and frontend
+    ├── rclone / Decypharr / InfiniDysk
+    ├── Arr applications
+    └── Plex / Jellyfin / Emby
+```
 
----
+Because every consumer is in the same LXC, DUMB-created FUSE mounts only need
+to exist inside that LXC. No mount propagation back to the Proxmox host is
+required.
 
-## Prerequisites
-- Proxmox VE installed
-- Internet access on the host
-- Basic knowledge of Proxmox shell and web UI
+## Install the validation build
 
----
-
-## Create an Ubuntu LXC Container
-You can automate Ubuntu LXC creation with the following community script:
+Until the script has completed LXC validation and been accepted upstream, run
+the maintainer-fork build from the **Proxmox VE host shell**:
 
 ```bash
-bash -c "$(curl -fsSL https://raw.githubusercontent.com/community-scripts/ProxmoxVE/main/ct/ubuntu.sh)"
+COMMUNITY_SCRIPTS_URL="https://raw.githubusercontent.com/I-am-PUID-0/ProxmoxVED/feat/dumb" \
+  bash -c "$(curl -fsSL https://raw.githubusercontent.com/I-am-PUID-0/ProxmoxVED/feat/dumb/ct/dumb.sh)"
 ```
 
-!!! note "This will download and install an Ubuntu container in Proxmox."
+`COMMUNITY_SCRIPTS_URL` makes the shared Community Scripts engine fetch the
+matching `install/dumb-install.sh` from the same fork and branch. Do not omit it
+while using the validation build.
 
----
+!!! warning "Validation build"
 
-## LXC Configuration for Docker + Fuse Support
+    This branch is for controlled testing before the upstream pull request. Use
+    a new LXC, keep independent backups, and report the DUMB version plus the
+    relevant `journalctl -u dumb` output when a test fails.
 
-To run nested Docker and FUSE workflows inside an LXC, update both the
-**container config** and the **Proxmox host**, then make propagation persistent.
-These settings materially reduce LXC isolation. Use a dedicated, trusted LXC;
-do not treat it as a strong security boundary for untrusted workloads.
+After the script is validated, submitted to `community-scripts/ProxmoxVED`, and
+promoted into `community-scripts/ProxmoxVE`, the production command will become:
 
----
-
-### Update the LXC Config File 
-!!! note "`<CTID>` is the container ID."
-
-1. **Stop the container:**
-
-    ```bash
-    pct stop <CTID>
-    ```
-
-2. **Edit the container config file:**
-
-    ```bash
-    nano /etc/pve/lxc/<CTID>.conf
-    ```
-
-3. **Ensure the following lines are present:**
-
-    ```ini
-    features: nesting=1
-    lxc.cgroup2.devices.allow: a
-    lxc.cgroup2.devices.allow: c 10:229 rwm
-    lxc.mount.entry: /dev/fuse dev/fuse none bind,create=file
-    lxc.mount.entry: /mnt/docker-mounts mnt/docker-mounts none bind,create=dir
-    lxc.apparmor.profile: unconfined
-    ```
-
-!!! note
-    Don't restart the LXC until the below sections have been completed. 
----
-
-### Configure Host Bind Mount
-
-1. On the **Proxmox host**, create the mount target and bind it:
-
-    ```bash
-    mkdir -p /mnt/docker-mounts
-    mount --bind /mnt/docker-mounts /mnt/docker-mounts
-    mount --make-rshared /mnt/docker-mounts
-    ```
-
----
-
-### Make the Mount Persistent (Recommended)
-
-!!! tip "This ensures the bind mount is restored after reboots."
-
-#### Option A: Use `/etc/fstab` and manually set the mount propagation after reboot
-
-1. Open the file:
-
-    ```bash
-    nano /etc/fstab
-    ```
-
-2. Add this line at the bottom:
-
-    ```bash
-    /mnt/docker-mounts /mnt/docker-mounts none bind 0 0
-    ```
-
-3. After a reboot, paste the following 
-
-    ```bash
-    mount --make-rshared /mnt/docker-mounts
-    ```
-
----
-
-#### Option B: Automate `rshared` with `systemd` (Optional, but recommended)
-
-!!! tip "This ensures the bind mount propagation is set after reboots."
-
-To persist the `rshared` behavior across boots:
-
-1. Create a new service file:
-
-    ```bash
-    nano /etc/systemd/system/mnt-docker-mounts-rshared.service
-    ```
-
-2. Paste the following:
-
-    ```ini
-    [Unit]
-    Description=Make /mnt/docker-mounts rshared
-    After=local-fs.target
-    RequiresMountsFor=/mnt/docker-mounts
-
-    [Service]
-    Type=oneshot
-    ExecStart=/bin/mount --make-rshared /mnt/docker-mounts
-    RemainAfterExit=true
-
-    [Install]
-    WantedBy=multi-user.target
-    ```
-
-3. Reload systemd and enable the service:
-
-    ```bash
-    systemctl daemon-reexec
-    systemctl enable --now mnt-docker-mounts-rshared.service
-    ```
-
----
-
-## Add and configure a Docker operator inside the LXC
-
-Use a non-root host/LXC account to manage Compose and set its UID/GID as DUMB's
-`PUID`/`PGID`. The container entrypoint itself still starts with the privileges
-declared by the maintained Compose file so it can prepare users, devices, and
-mounts; `PUID`/`PGID` control the managed service identity.
-
-1. **Start/Restart the container:**
-
-    ```bash
-    pct start <CTID>
-    ```
-
-    !!! note "`systemctl restart pve-container@<CTID>` may need to be used for changes to apply"
-
-2. If not already created in the LXC, add a user such as `ubuntu`:
-
-    ```bash
-    adduser ubuntu
-    usermod -aG sudo ubuntu
-    ```
-
-    Avoid adding a broad passwordless-sudo rule solely for DUMB.
-
-3. Find the UID/GID needed for Compose `PUID` and `PGID`:
-
-    ```bash
-    id ubuntu
-    ```
-
-    Example output:
-
-    ```text
-    uid=1000(ubuntu) gid=1000(ubuntu)
-    ```
-
----
-
-## Define the Directory Structure inside the LXC
-
-!!! note
-    If you already have a directory structure you'd like to use, then you can skip this step.
-
-1. Switch to the `ubuntu` user:
-
-    ```bash
-    su - ubuntu
-    ```
-
-2. Create a directory for docker in your user directory and change directories to docker.
-    ```bash
-    cd ~ && mkdir docker && cd docker
-    ```
-
-3. Create the DUMB directories.
-    ```bash
-    mkdir -p DUMB/config DUMB/log DUMB/data DUMB/mnt/debrid
-    ```
-
-
---- 
-
-## Install Docker inside the LXC
-
-1. Run the official Docker install script:
-
-    ```bash
-    curl -fsSL https://get.docker.com -o get-docker.sh
-    sh get-docker.sh
-    ```
-
-2. After installing Docker, verify it:
-    ```bash
-    docker --version
-    docker compose version
-    ```
-
-3. Add your user to the docker group:
-    ```bash
-    sudo usermod -aG docker $USER
-    ```
-
-    Log out and back in before running Docker without `sudo`.
-
----
-
-## Use the current DUMB mounts
-
-Inside the Docker-capable LXC, use the maintained four-mount layout:
-
-```yaml
-volumes:
-  - /home/ubuntu/docker/DUMB/config:/config
-  - /home/ubuntu/docker/DUMB/log:/log
-  - /home/ubuntu/docker/DUMB/data:/data
-  - /mnt/docker-mounts:/mnt/debrid:rshared
+```bash
+bash -c "$(curl -fsSL https://raw.githubusercontent.com/community-scripts/ProxmoxVE/main/ct/dumb.sh)"
 ```
 
-The `/data` mount persists service application state. `/mnt/debrid` is the separate mount/link tree; give that mount `rshared` propagation only when DUMB-created FUSE/rclone submounts must appear outside the DUMB container. Consumer containers should normally receive the same host path at `/mnt/debrid` with `rslave` propagation.
+The default installation creates an unprivileged Debian 13 LXC with:
 
----
+- 4 vCPU;
+- 8 GiB RAM;
+- 40 GiB disk;
+- FUSE enabled for rclone and other DUMB-managed mounts;
+- optional Intel/AMD GPU device passthrough; and
+- DUMB plus its required runtimes installed directly on the guest OS.
 
-## Next Steps
-Now that the LXC and Docker are ready, choose one deployment path:
+Use **Advanced Settings** when a large stack, source builds, the install cache,
+or a media server needs more resources. The amd64 path has completed the native
+acceptance tests. The arm64 path is implemented but remains marked unverified
+by Community Scripts until it passes the same clean Proxmox VE install, reboot,
+FUSE, backup, restore, and update tests. An interactive arm64 run can opt into
+testing; unattended arm64 installation remains blocked until that validation is
+complete.
 
-- **Command line:** [Deploy DUMB via Docker Compose](docker.md)
-- **Graphical management:** [Install Portainer and deploy a stack](portainer.md)
+When installation finishes, open:
+
+```text
+http://<DUMB-LXC-IP>:3005
+```
+
+The frontend can take several minutes to appear on first boot while DUMB
+installs its initial managed services. Follow progress inside the LXC with:
+
+```bash
+journalctl -u dumb -f
+```
+
+Then continue with [Getting Started](../getting-started/index.md).
+
+## Native LXC paths
+
+| LXC path | Purpose |
+|---|---|
+| `/opt/dumb` | DUMB controller source and Python environment |
+| `/config` | DUMB configuration, authentication state, snapshots, and feature state |
+| `/data` | Persistent managed-service data |
+| `/log` | DUMB and managed-service logs |
+| `/mnt/debrid` | FUSE mounts, generated links, and symlink libraries |
+| `/postgres_data` | DUMB-managed PostgreSQL cluster when enabled |
+| `/etc/systemd/system/dumb.service` | Native DUMB systemd service |
+
+These are normal LXC filesystem paths, not Docker bind mounts. DUMB preserves
+its established internal paths so the same service configuration works in the
+native and container-image deployments.
+
+The helper also configures `systemd-logind` to retain IPC owned by DUMB's
+managed-service UID. This is required for PostgreSQL POSIX shared memory after
+temporary setup sessions end. Package-provided PostgreSQL, Plex, and Jellyfin
+systemd units are masked because DUMB, not the distribution unit, supervises
+those processes inside this dedicated LXC.
+
+## Manage and update DUMB
+
+Useful commands inside the LXC:
+
+```bash
+systemctl status dumb
+journalctl -u dumb -f
+systemctl restart dumb
+```
+
+Run the Community Scripts updater inside the LXC to install a newer stable DUMB
+release:
+
+```bash
+update
+```
+
+The updater reconciles the required native dependencies, downloads the new
+controller into a candidate directory, builds its locked Python environment,
+and validates it while the current controller is still running. It then backs
+up `/opt/dumb`, stops DUMB only for activation, starts the candidate, and waits
+for the API health check. A failed build, start, or health check automatically
+restores and verifies the previous controller. An interrupted update is
+recovered the next time `update` runs.
+
+Configuration and managed application data under `/config`, `/data`,
+`/postgres_data`, and `/mnt/debrid` remain outside the replaced controller
+directory. The update backup is removed after the replacement passes health
+verification.
+
+Use DUMB's own Updates controls for the individual services it manages.
+
+## Backups and FUSE
+
+Back up at least `/config` and `/data`, plus any application-native backups
+required by the services you enabled. `/mnt/debrid` normally contains live or
+re-creatable mount views and should not be treated as the only copy of data.
+
+!!! warning "Proxmox snapshot backups and FUSE"
+
+    Proxmox [strongly advises against FUSE mounts inside an LXC](https://pve.proxmox.com/pve-docs/pct.1.html)
+    because freezing the container for suspend/snapshot-mode backups can fail.
+    Prefer a stopped-mode backup window after stopping DUMB, or otherwise test
+    the exact backup mode and mount stack before relying on it.
+
+## Existing Plex or Arr applications in other LXCs
+
+An external Plex or Arr LXC cannot see `/mnt/debrid` merely because it uses the
+same path name. It needs a separately designed storage boundary that exposes
+both the symlink library and every target path those symlinks reference.
+
+The helper deliberately does not add that boundary automatically. Reverse
+propagation of a mount created inside an LXC depends on the host mount namespace,
+LXC propagation flags, FUSE permissions, UID/GID mappings, backup behavior, and
+the consumer's own mount namespace. A configuration that gets one of those
+boundaries wrong can look healthy until a remount leaves Plex or an Arr app on
+a stale path.
+
+Choose one of these approaches:
+
+1. Move the consumer into the DUMB LXC. This is the supported and simplest
+   layout.
+2. Mount the remote storage on the Proxmox host, then bind-mount the same
+   host-managed tree into DUMB and every consumer LXC. In that layout, disable
+   the duplicate DUMB-managed rclone mount and keep the same absolute paths in
+   all applications.
+3. Export the complete DUMB mount/link tree through a deliberately managed
+   network filesystem and mount it in each consumer. Validate symlink target
+   paths, permissions, disconnect/reconnect behavior, and startup ordering.
+4. Build a custom `rshared`/`rslave` LXC topology only after proving mount and
+   unmount propagation in both directions on the exact Proxmox/LXC version.
+
+!!! danger "Do not add a host mount over an active `/mnt/debrid`"
+
+    A new bind mount hides the directory that was previously at that path. If
+    DUMB is already configured, stop it, take independent backups, and migrate
+    the mount and symlink trees deliberately. Never attach an empty host path
+    over an active deployment and assume the old files moved into it.
+
+For a custom propagation topology, verify all of the following before allowing
+an Arr import or media-server scan:
+
+```bash
+# DUMB LXC
+findmnt -R /mnt/debrid
+findmnt -no TARGET,PROPAGATION /mnt/debrid
+
+# Proxmox host and every consumer LXC
+findmnt -R <shared-path>
+readlink <representative-symlink>
+```
+
+Test a provider remount while each consumer is running. A consumer should see
+the replacement mount without retaining `Transport endpoint is not connected`.
+Also confirm that consumer unmounts cannot propagate back and tear down DUMB's
+producer mount.
+
+## Troubleshooting
+
+### The DUMB page is unavailable
+
+Inside the LXC:
+
+```bash
+systemctl status dumb --no-pager
+journalctl -u dumb -n 200 --no-pager
+ss -lntp | grep -E ':(8000|3005)\b'
+```
+
+The API normally listens on port `8000`; the user-facing frontend is port
+`3005`. The LXC firewall and network must allow the frontend port from your
+operator workstation.
+
+### `/dev/fuse` is missing
+
+On the Proxmox host, inspect the generated container configuration:
+
+```bash
+pct config <CTID> | grep -E 'features|dev/fuse'
+```
+
+The Community Scripts default enables FUSE. Stop and start the LXC after fixing
+its configuration; restarting only the DUMB service cannot add a missing device
+to the LXC.
+
+### A managed service cannot find a runtime
+
+Confirm the native toolchain and controller environment:
+
+```bash
+python3.11 --version
+python3.12 --version
+node --version
+pnpm --version
+go version
+dotnet --info
+rclone version
+/opt/dumb/venv/bin/python -m pip check
+```
+
+Run `update` to repair the DUMB controller source/environment. Service-specific
+install failures remain visible in `journalctl -u dumb` and can then be retried
+from the DUMB UI.
+
+### PostgreSQL reports a missing shared-memory segment
+
+If several PostgreSQL-backed services fail together and the journal contains
+`could not open shared memory segment "/PostgreSQL..."`, verify the native LXC
+safeguard:
+
+```bash
+systemd-analyze cat-config systemd/logind.conf | grep -A2 dumb.conf
+```
+
+The effective configuration must include `RemoveIPC=no`. Run `update`, then
+restart DUMB, if the drop-in is absent. A healthy restart recreates the
+PostgreSQL shared-memory objects and keeps them after the managed UID's setup
+session closes.
+
+### Plex reports port 32400 already in use during first setup
+
+The Plex Debian package can start its own `plexmediaserver.service` while DUMB
+is preparing the managed instance. The LXC helper masks that package unit so
+only DUMB owns Plex and port `32400`:
+
+```bash
+systemctl is-enabled plexmediaserver.service
+```
+
+The expected result is `masked`. If an LXC created with an earlier test build
+reports `enabled`, run `update` and restart DUMB before retrying Plex onboarding.
+
+## Related pages
+
+- [Getting Started](../getting-started/index.md)
+- [Configuration](../features/configuration.md)
+- [Docker deployment](docker.md)
+- [Docker networking and ports](networking.md)

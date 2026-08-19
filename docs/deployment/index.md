@@ -1,12 +1,15 @@
 ---
 title: Deployment
-description: Compare supported ways to deploy DUMB with Docker, Portainer, Unraid, TrueNAS, Proxmox, Synology, QNAP, Dockge, or WSL2.
+description: Compare supported ways to deploy DUMB with Docker, a native Proxmox LXC, Portainer, Unraid, TrueNAS, Synology, QNAP, Dockge, or WSL2.
 icon: lucide/server
 ---
 
 # Deployment Overview
 
-DUMB can be deployed across a variety of platforms and environments. Whether you're using **Docker**, **Portainer**, **Unraid**, **WSL2**, or other systems like **TrueNAS**, **Synology**, or **QNAP**, this section will guide you through the available options to get DUMB up and running.
+DUMB can be deployed across a variety of platforms and environments. Most
+platforms use the maintained Docker image. Proxmox can instead use the
+[native LXC helper](proxmox.md), which installs DUMB and its managed services
+directly in a Debian guest without Docker.
 
 All deployment methods provide access to the same integrated services and configurations, with slight differences in how the container is started and managed.
 
@@ -17,7 +20,7 @@ All deployment methods provide access to the same integrated services and config
 
 ## System Requirements
 
-- **Docker or Docker-compatible environment**
+- **Docker or a supported native Proxmox LXC**
 - Linux system (WSL on Windows when using `rshared`)
 - A practical minimum of 2 vCPU and 2 GB RAM for a small stack; larger stacks and source builds need more
 - SSD-backed persistent storage is strongly recommended
@@ -26,7 +29,7 @@ All deployment methods provide access to the same integrated services and config
 !!! warning "Docker Desktop" 
     Docker Desktop cannot support DUMB workflows that require `rshared` mount propagation.
 
-    Docker Desktop does not support the [mount propagation](https://docs.docker.com/storage/bind-mounts/#configure-bind-propagation) required for rclone mounts.
+    Docker Desktop does not support the [mount propagation](https://docs.docker.com/storage/bind-mounts/#configure-bind-propagation) required to expose DUMB-created rclone/FUSE submounts to external host containers.
 
     ![image](../assets/images/docker_desktop.png)
 
@@ -49,7 +52,8 @@ All deployment methods provide access to the same integrated services and config
 
 ## Required Directories
 
-The maintained Compose file uses these persistent mounts:
+The maintained Compose file uses these persistent mounts. Native Proxmox LXC
+deployments use the same absolute paths directly inside the guest.
 
 | Container Mount Path       | Description                                       |
 |----------------------------|---------------------------------------------------|
@@ -61,10 +65,14 @@ The maintained Compose file uses these persistent mounts:
 !!! note "Internal service paths"
     Paths such as `/plex`, `/postgres_data`, `/zurg/RD`, and `/altmount` are still the paths services use inside the container, but DUMB maps them into subdirectories of the mounted `/data` tree. Do not add a separate bind mount for each one unless you are deliberately retaining a legacy/advanced layout.
 
-!!! important "/mnt/debrid:rshared"    
-    The `:rshared` must be included in order to support [mount propagation](https://docs.docker.com/storage/bind-mounts/#configure-bind-propagation) for rclone to the host when exposing the raw debrid files/links to an external container; e.g., the arrs or a media server.
+!!! important "Choose mount propagation deliberately"
 
-    `:rshared` is unnecessary when consumers remain internal or the selected workflow does not create a propagated FUSE/rclone submount.
+    Keep the `/mnt/debrid` bind private when the Arr applications and media
+    server run inside DUMB. Add `:rshared` only when a prepared Linux host mount
+    must receive DUMB-created FUSE/rclone submounts for external consumers. The
+    host path must already support shared propagation; adding the Compose suffix
+    alone is not sufficient. See the platform guide, especially
+    [Proxmox](proxmox.md), before enabling it.
 ---
 
 !!! note "Configuration Requirements"
@@ -80,8 +88,11 @@ The maintained Compose file uses these persistent mounts:
         - ./config:/config
         - ./log:/log
         - ./data:/data
-        - ./mnt/debrid:/mnt/debrid:rshared
+        - ./mnt/debrid:/mnt/debrid
     ```
+
+    For a deliberately configured external-consumer topology, the final line
+    becomes `./mnt/debrid:/mnt/debrid:rshared`.
 
 For more about configuring services, see the [Configuration](../features/configuration.md) page.
 

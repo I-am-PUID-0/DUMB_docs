@@ -1,6 +1,6 @@
 ---
 title: Installation
-description: Prepare Docker, storage, credentials, networking, and system requirements before installing the DUMB media automation platform.
+description: Prepare storage, credentials, networking, and system requirements before installing DUMB with Docker or the native Proxmox LXC helper.
 icon: lucide/download
 ---
 
@@ -12,7 +12,7 @@ Before you deploy DUMB, make sure your environment and accounts are ready.
 
 ## System Requirements
 
-- **Docker or Docker-compatible environment**
+- **Docker or a supported native Proxmox LXC**
 - Linux system (WSL on Windows when using `rshared`)
 - A practical minimum of 2 vCPU and 2 GB RAM for a small stack; source builds, PostgreSQL, media servers, and larger service selections need more
 - SSD-backed persistent storage is strongly recommended
@@ -21,7 +21,7 @@ Before you deploy DUMB, make sure your environment and accounts are ready.
 !!! warning "Docker Desktop" 
     Docker Desktop cannot support DUMB workflows that require `rshared` mount propagation.
 
-    Docker Desktop does not support the [mount propagation](https://docs.docker.com/storage/bind-mounts/#configure-bind-propagation) required for rclone mounts.
+    Docker Desktop does not support the [mount propagation](https://docs.docker.com/storage/bind-mounts/#configure-bind-propagation) required to expose DUMB-created rclone/FUSE submounts to external host containers.
 
     ![image](../assets/images/docker_desktop.png)
 
@@ -44,7 +44,8 @@ Before you deploy DUMB, make sure your environment and accounts are ready.
 
 ## Required Directories
 
-The maintained Compose layout uses four host mounts:
+The maintained Compose layout uses four host mounts. In a native Proxmox LXC,
+these are direct guest paths rather than Docker bind mounts.
 
 | Container Mount Path       | Description                                       |
 |----------------------------|---------------------------------------------------|
@@ -56,10 +57,13 @@ The maintained Compose layout uses four host mounts:
 !!! note "Do not mount every internal service path"
     Current deployments normally persist those paths through `/data`. Separate direct mounts such as `/postgres_data` or `/plex` are legacy/advanced layouts and can prevent DUMB from creating its managed data symlinks. Keep them only when intentionally migrating an existing deployment and verify the service-specific guide.
 
-!!! important "/mnt/debrid:rshared"    
-    The `:rshared` must be included in order to support [mount propagation](https://docs.docker.com/storage/bind-mounts/#configure-bind-propagation) for rclone to the host when exposing the raw debrid files/links to an external container; e.g., the arrs or a media server.
+!!! important "Mount propagation is optional"
 
-    `:rshared` is not required when all consumers remain inside the DUMB container, when no FUSE/rclone submount is used, or when the selected workflow does not need mount propagation. The requirement is based on mount behavior—not on Decypharr alone.
+    Use a normal `/mnt/debrid` bind when all consumers remain inside DUMB. Add
+    `:rshared` only when a prepared Linux host mount must receive DUMB-created
+    FUSE/rclone submounts for an external Arr or media-server container. The
+    requirement is based on topology—not on Decypharr or rclone alone. Follow
+    the selected platform guide before enabling propagation.
 ---
 
 ## Preparation Checklist
@@ -77,7 +81,7 @@ The maintained Compose layout uses four host mounts:
         - [Synology](../deployment/synology.md)
         - [TrueNAS](../deployment/truenas.md)
 
-    - Run the container and access the web UI at the configured port
+    - Start the deployment and access the web UI at the configured port
     - View real-time or service logs to verify service health
 
 ---
