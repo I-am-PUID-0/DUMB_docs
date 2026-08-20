@@ -85,6 +85,7 @@ nav:
         - Pulsarr: services/optional/pulsarr.md
         - Maintainerr: services/optional/maintainerr.md
         - mediastorm: services/optional/mediastorm.md
+        - AIOStreams: services/optional/aiostreams.md
         - Traefik Proxy Admin: services/optional/traefik-proxy-admin.md
         - Authelia: services/optional/authelia.md
         - Cloudflared: services/optional/cloudflared.md

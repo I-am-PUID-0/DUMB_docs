@@ -135,7 +135,7 @@ Choose additional services to enable:
 | **Database/discovery** | PostgreSQL, pgAdmin, Zilean |
 | **Riven UI** | Riven Frontend |
 | **Media automation** | Tautulli, Bazarr, Pulsarr, Maintainerr |
-| **Streaming** | mediastorm |
+| **Streaming** | mediastorm, AIOStreams |
 | **Identity/reverse proxy/exposure** | Authelia, Traefik Proxy Admin, Cloudflared |
 
 Optional services are filtered based on core dependencies and earlier selections. For example, PostgreSQL may be enabled/hidden automatically when a selected service requires it.
@@ -158,6 +158,10 @@ work.
 
 mediastorm's service-options step also allows its OCI runtime to follow `latest` or be pinned to a release tag, full commit SHA, or OCI digest. Leave release pinning disabled for normal automatic updates. See the [mediastorm version-selection guide](../services/optional/mediastorm.md#version-selection) before selecting a fixed build.
 
+!!! info "AIOStreams needs a public URL and dashboard login"
+
+    AIOStreams can start with its generated local `base_url`, but remote Stremio clients require a stable trusted HTTPS origin. Set the final hostname, such as `https://aiostreams.example.com`, then create the matching reverse-proxy route before saving/installing the addon. Onboarding also requires an administrator username and a 12–256-character password for the AIOStreams Dashboard. The Configure page remains public unless you later enable AIOStreams' **Auth Required** setting. DUMB generates and preserves AIOStreams' separate encryption secret automatically. The initial integration uses SQLite by default; PostgreSQL is an advanced `aiostreams.database_uri` override rather than an onboarding toggle or guided migration. See [AIOStreams](../services/optional/aiostreams.md).
+
 For GitHub source-build services, the service-options step also exposes
 `commit_sha`. Paste the full 40-character SHA to select an immutable source
 revision. Once the SHA is complete, onboarding clears competing release and
@@ -176,6 +180,7 @@ Configure additional settings for selected services:
 - **Phalanx DB**: Enable/disable for CLI Debrid
 - **Decypharr**: FUSE, embedded rclone, external rclone, or no-mount mode
 - **AltMount**: FUSE, embedded rclone, external rclone, or no-mount mode
+- **AIOStreams**: Public base URL and Dashboard administrator credentials
 
 Default values are pre-filled but can be customized.
 

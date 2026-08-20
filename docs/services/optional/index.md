@@ -30,6 +30,7 @@ Optional services are:
 | [Pulsarr](../optional/pulsarr.md) | Plex watchlist request automation                         | Plex, Sonarr, Radarr           |
 | [Maintainerr](../optional/maintainerr.md) | Rule-based library cleanup and leaving-soon collections | Plex/Jellyfin/Emby, Sonarr, Radarr, Seerr, Tautulli |
 | [mediastorm](../optional/mediastorm.md) | Self-hosted streaming for Debrid, torrent, and Usenet sources | PostgreSQL, playback providers |
+| [AIOStreams](../optional/aiostreams.md) | Configurable Stremio addon aggregator for Debrid and Usenet playback | Prowlarr, Zilean, InfiniDysk, AltMount |
 | [Traefik Proxy Admin](../optional/traefik-proxy-admin.md) | User-managed Traefik reverse proxy routes | Traefik, PostgreSQL |
 | [Authelia](../optional/authelia.md) | Identity provider, DUMB/TPA OIDC, and Traefik ForwardAuth | Traefik, PostgreSQL |
 | [Cloudflared](../optional/cloudflared.md) | Cloudflare Tunnel connector for DUMB Traefik | Traefik |
@@ -48,6 +49,7 @@ Optional services attach to the DUMB ecosystem dynamically:
 * **[Pulsarr](../optional/pulsarr.md)** monitors Plex watchlists and routes approved requests into Sonarr and Radarr.
 * **[Maintainerr](../optional/maintainerr.md)** builds review collections from media-server and automation data, then applies delayed cleanup actions you explicitly configure.
 * **[mediastorm](../optional/mediastorm.md)** provides its own accounts and clients for streaming from configured Debrid, torrent, and Usenet sources.
+* **[AIOStreams](../optional/aiostreams.md)** combines Stremio addons and connects to local search and playback services, including Prowlarr, Zilean, InfiniDysk, and AltMount.
 * **[Traefik Proxy Admin](../optional/traefik-proxy-admin.md)** lets operators create Traefik reverse proxy routes for services inside or outside the DUMB container. It owns user-managed host routes while DUMB continues to own embedded UI routes.
 * **[Authelia](../optional/authelia.md)** provides a DUMB-managed identity portal, native OIDC sign-in for DUMB and TPA, and an optional ForwardAuth middleware for selected Traefik routes.
 * **[Cloudflared](../optional/cloudflared.md)** runs a Cloudflare Tunnel connector inside DUMB so public traffic can reach the built-in Traefik entrypoint without direct port forwarding. Cloudflared carries traffic to Traefik; Traefik and TPA still decide which service receives it.
@@ -62,6 +64,7 @@ These services can be disabled at any time without affecting the startup of core
 * If not using Zilean, make sure other scrapers are configured in Riven and CLI Debrid.
 * pgAdmin is useful during debugging, migrations, or manual SQL work — but not required for normal operation.
 * Use Traefik Proxy Admin and Cloudflared together when you want public hostnames without opening router ports. Configure protection before publishing sensitive services.
+* AIOStreams needs a stable trusted HTTPS `BASE_URL` for remote Stremio clients; its embedded DUMB UI route is for local administration, not addon installation.
 * You can start optional services manually from the DUMB Frontend or include them in onboarding.
 
 ---

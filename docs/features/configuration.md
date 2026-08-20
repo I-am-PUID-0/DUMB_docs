@@ -73,6 +73,7 @@ API when you need valid JSON.
     "pulsarr": { ... },
     "maintainerr": { ... },
     "mediastorm": { ... },
+    "aiostreams": { ... },
     "altmount": { ... },
     "neutarr": { ... },
     "profilarr": { ... },
@@ -203,6 +204,7 @@ See the individual service pages for in-depth configuration details:
 - [Pulsarr](../services/optional/pulsarr.md)
 - [Maintainerr](../services/optional/maintainerr.md)
 - [mediastorm](../services/optional/mediastorm.md)
+- [AIOStreams](../services/optional/aiostreams.md)
 - [pgAdmin 4](../services/optional/pgadmin.md)
 - [PostgreSQL](../services/dependent/postgres.md)
 - [rclone](../services/dependent/rclone.md)

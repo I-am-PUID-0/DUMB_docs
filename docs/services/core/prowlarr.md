@@ -111,6 +111,17 @@ GitHub sources take priority when enabled and are **not** a fallback. `pinned_ve
 * Connect Prowlarr to Sonarr/Radarr/Lidarr/Whisparr via their API keys and base URLs.
 * Prowlarr can share indexers across all Arr instances to keep setups consistent.
 
+### AIOStreams search integration
+
+[AIOStreams](../optional/aiostreams.md) can query a DUMB-managed Prowlarr instance for torrent and Usenet results:
+
+1. Copy Prowlarr's API key from **Settings → General**.
+2. In AIOStreams' built-in Prowlarr settings, enter `http://127.0.0.1:9696`, replacing `9696` with this instance's saved DUMB port.
+3. Enter the API key and choose the indexers AIOStreams may query.
+4. Add the built-in Prowlarr addon to the configuration on `/stremio/configure`.
+
+This is an AIOStreams runtime integration, not a Prowlarr application entry that DUMB creates automatically. Prowlarr redirects NZB grabs rather than proxying them, so review indexer rules if searches and grabs can leave through different public IP addresses.
+
 ### Automated Arr sync
 
 DUMB can auto-configure Prowlarr applications for enabled Arr instances. It reads each Arr API key from the Arr `config_file`, waits for the services to come up, and creates the matching Prowlarr app entries (full sync). Apps are created using the Arr `process_name`.

@@ -111,5 +111,18 @@ disabled while the pin is present.
 
 ---
 
+## AIOStreams integration
+
+[AIOStreams](aiostreams.md) can use the local Zilean API as a built-in Debrid search source:
+
+1. Start Zilean and confirm it is healthy.
+2. In AIOStreams' built-in Zilean settings, enter `http://127.0.0.1:8182`, replacing `8182` with Zilean's saved DUMB port.
+3. Add the built-in Zilean addon on `/stremio/configure`.
+4. Select a compatible Debrid playback service for its results.
+
+Zilean supplies cached Debrid Media Manager hash-list results. It is not a Usenet playback service and does not route results through InfiniDysk or AltMount.
+
+---
+
 ## Resources
 - [Zilean GitHub Repository](https://github.com/iPromKnight/zilean)

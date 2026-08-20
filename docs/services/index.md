@@ -38,6 +38,7 @@ DUMB is built as a collection of microservices that communicate over internal AP
     *  **Plex** is the core service that hosts and serves collected content to users
         * It relies on symlinked or mounted content made available through rclone/Zurg from the other core services
     *  **Jellyfin** and **Emby** can be used as alternatives to Plex for library playback
+    *  **AIOStreams** creates a configurable Stremio addon from Debrid, Usenet, Prowlarr, Zilean, InfiniDysk, AltMount, and other supported sources
 
 4. **Storage & Retrieval**
 
@@ -97,6 +98,7 @@ DUMB is built as a collection of microservices that communicate over internal AP
 | [Pulsarr](../services/optional/pulsarr.md)               | Optional  | Plex watchlist request automation                         |
 | [Maintainerr](../services/optional/maintainerr.md)       | Optional  | Rule-based library cleanup and review collections         |
 | [mediastorm](../services/optional/mediastorm.md)         | Optional  | Self-hosted Debrid, torrent, and Usenet streaming         |
+| [AIOStreams](../services/optional/aiostreams.md)         | Optional  | Stremio addon aggregation and streaming integration       |
 | [Authelia](../services/optional/authelia.md)             | Optional  | OIDC identity provider and Traefik ForwardAuth            |
 | [Traefik Proxy Admin](../services/optional/traefik-proxy-admin.md) | Optional  | User-managed Traefik reverse proxy routes                 |
 | [Cloudflared](../services/optional/cloudflared.md)       | Optional  | Cloudflare Tunnel connector for DUMB Traefik              |

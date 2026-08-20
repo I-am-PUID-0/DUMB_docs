@@ -229,6 +229,19 @@ The integration is scoped by `core_service`; DUMB does not add every enabled Arr
 7. Verify the linked Arr instances and their `altmount` download clients.
 8. Send a small test NZB and confirm queue, import, library scan, and playback behavior end to end.
 
+## AIOStreams playback
+
+[AIOStreams](../optional/aiostreams.md) can send matching NZBs to AltMount's SABnzbd-compatible API and serve the resulting WebDAV stream:
+
+1. Enable AltMount's SAB API and copy its API key.
+2. Create dedicated WebDAV credentials.
+3. In AIOStreams, add **AltMount** under **Services**.
+4. Use `http://127.0.0.1:8088` for **URL**, replacing `8088` with AltMount's saved DUMB port.
+5. Enter the API key and WebDAV credentials.
+6. Prefer leaving **Public URL** blank and supplying an AIOStreams auth credential (`username:password`) whose user has **Proxy** permission. Use a direct Public URL only when AltMount has its own trusted HTTPS origin reachable by the player.
+
+This does not change AltMount's DUMB-selected mount mode or Arr import strategy. AIOStreams communicates with the application API and WebDAV surface directly; never use its embedded `/ui/altmount` route as the service URL.
+
 ## PostgreSQL migration
 
 AltMount supports SQLite and PostgreSQL. New/default installs use `/altmount/altmount.db`.

@@ -24,6 +24,7 @@ This reference documents all ports used by DUMB services. Use this guide to conf
 | 3003 | Pulsarr | Web UI |
 | 3004 | Traefik Proxy Admin | Web UI/API |
 | 3005 | DUMB Frontend and API gateway | Web UI/API |
+| 3006 | AIOStreams | Web UI/API and Stremio addon |
 | 5000 | CLI Debrid | Web UI |
 | 5001 | CLI Battery | API |
 | 5050 | pgAdmin | Web UI |
@@ -330,6 +331,21 @@ http://localhost:5055
 ```
 http://localhost:3003
 ```
+
+### AIOStreams
+
+| Property | Value |
+|----------|-------|
+| **Port** | 3006 |
+| **Type** | Web UI / API / Stremio addon |
+
+The local configure page is:
+
+```text
+http://localhost:3006/stremio/configure
+```
+
+Remote Stremio clients require the AIOStreams `base_url` to use a stable trusted HTTPS origin. Do not use DUMB's embedded `/ui/aiostreams` route as that public base URL. See the [AIOStreams deployment guide](../services/optional/aiostreams.md#publish-aiostreams-for-stremio).
 
 ### Maintainerr
 

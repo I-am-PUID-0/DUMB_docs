@@ -19,6 +19,7 @@ DUMB combines multiple backend services into a single containerized system to pr
 - **Arr automation** with Sonarr, Radarr, Lidarr, Whisparr, Prowlarr, NeutArr, and Profilarr.
 - **Remote mounting and symlink libraries** using rclone, Zurg, and DUMB-managed path conventions.
 - **Embedded media servers** with Plex, Jellyfin, and Emby inside the same container.
+- **Optional Stremio aggregation** through AIOStreams with supported Debrid, Usenet, Prowlarr, Zilean, InfiniDysk, and AltMount integrations.
 - **Web-based dashboards** for onboarding, service control, logs, metrics, configuration, updates, and embedded service UIs.
 - **Optional access routing** through DUMB Traefik, Traefik Proxy Admin, and Cloudflared.
 

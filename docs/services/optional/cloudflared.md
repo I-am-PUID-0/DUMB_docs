@@ -169,6 +169,10 @@ In **Traefik Proxy Admin**:
 6. Keep **Enable service** on.
 7. Save.
 
+!!! warning "AIOStreams and other headless clients"
+
+    [AIOStreams](aiostreams.md) needs its own stable public HTTPS hostname, but Stremio cannot complete a Cloudflare Access, SSO, or ForwardAuth browser challenge when fetching addon resources. Do not apply an interactive whole-host policy to that route unless every required Stremio-facing path is deliberately exempted. AIOStreams' embedded DUMB route is not a public `BASE_URL`.
+
 For a quick smoke test, use a deliberately harmless test target or a temporary service that does not expose admin controls or personal data. Avoid using DUMB, TPA, or other admin surfaces as your first public test unless they are already protected by the auth model you intend to keep.
 
 ---

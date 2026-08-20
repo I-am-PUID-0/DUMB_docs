@@ -20,6 +20,7 @@ DUMB (Distributed Unlimited Media Bridge) is an all-in-one media management solu
 * **Pulsarr watchlist automation** – Optional Plex watchlist request flow that can route requests into Sonarr and Radarr.
 * **Maintainerr library cleanup** – Optional rule-based review collections and delayed cleanup actions for Plex, Jellyfin, or Emby libraries.
 * **mediastorm streaming** – Optional self-hosted clients and server for Debrid, torrent, and Usenet playback.
+* **AIOStreams for Stremio** – Optional addon aggregation with local Prowlarr, Zilean, InfiniDysk, AltMount, or native Debrid and Usenet services.
 * **[Seerr Sync](seerr-sync.md)** – One-way request replication from a primary Seerr to subordinate instances for multi-household or multi-stack setups.
 * **Integrated Web UI** – Control and manage services through a simple **web-based interface** with embedded service UIs.
 * **[Service reset and removal](service-reset.md)** – Preview, stop, reset, or remove one configured service/instance without deleting shared mounts, caches, databases, or other service configuration.
@@ -68,6 +69,7 @@ During onboarding, selecting Decypharr, InfiniDysk, AltMount, or combinations of
 - **Pulsarr** monitors Plex watchlists and routes requests to Sonarr and Radarr when Plex is the request front door.
 - **Maintainerr** evaluates library and automation metadata to create review collections and apply operator-defined cleanup actions.
 - **mediastorm** provides PostgreSQL-backed accounts, watch state, and streaming clients for configured Debrid, torrent, and Usenet sources.
+- **AIOStreams** combines supported Stremio addons, indexers, and playback services into one configurable addon.
 - Plex Discover watchlists, Trakt, MDBList, and similar list sources can feed supported workflow engines.
 
 ### **Media servers**

@@ -37,7 +37,7 @@ The API exposes the current schema at native `GET /config/schema` (frontend prox
 | `seerr_sync` | Cross-instance Seerr synchronization |
 | `postgres` / `pgadmin` | Database settings |
 | `rclone` | rclone instances and mounts |
-| Service keys | Core/dependent/optional services (for example `decypharr`, `infinidysk`, `cli_debrid`) |
+| Service keys | Core/dependent/optional services (for example `decypharr`, `infinidysk`, `aiostreams`, `cli_debrid`) |
 
 !!! note "Service blocks are explicit"
 

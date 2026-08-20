@@ -230,6 +230,10 @@ Fill in the route:
 
 Select **Test** beside the target fields before saving.
 
+!!! warning "Stremio addon routes cannot use an interactive whole-host login"
+
+    When publishing [AIOStreams](aiostreams.md), point the route to its saved DUMB port and set `aiostreams.base_url` to that exact public HTTPS origin. Do not attach a whole-host SSO, ForwardAuth, or browser challenge: Stremio cannot complete an interactive redirect while fetching manifests, catalogs, or streams. Use AIOStreams' own configuration controls and treat installed manifest URLs as bearer secrets.
+
 ---
 
 ## Target reachability allowlist

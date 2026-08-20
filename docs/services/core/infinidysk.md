@@ -337,6 +337,17 @@ The Arr instance list is stored in InfiniDysk’s SQLite config under `arr.insta
 
     If the InfiniDysk backend is not reachable yet, DUMB retries the download-client setup shortly after startup.
 
+### AIOStreams playback
+
+[AIOStreams](../optional/aiostreams.md) currently calls the canonical InfiniDysk integration **NzbDAV**. In AIOStreams, add **NzbDAV**, then provide:
+
+- **URL:** InfiniDysk's direct local frontend/API listener, normally `http://127.0.0.1:3000`; use the saved port if DUMB reassigned it.
+- **API key:** The key shown in InfiniDysk's SABnzbd settings.
+- **WebDAV username/password:** Dedicated credentials from InfiniDysk's WebDAV settings.
+- **Public URL:** Prefer leaving this blank and supplying an AIOStreams auth credential (`username:password`) whose user has **Proxy** permission. Alternatively, enter a separately published trusted HTTPS InfiniDysk origin that the player can reach.
+
+Do not use `/ui/infinidysk` for either URL. It is dmbdb's embedded operator route, not InfiniDysk's direct service address or a player-facing origin.
+
 ### Database migration startup
 
 DUMB starts the InfiniDysk frontend before running the blocking database migration.

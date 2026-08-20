@@ -96,6 +96,10 @@ It is pre-installed and automatically initialized during container startup.
 
     For Sonarr, Radarr, Lidarr, Prowlarr, Whisparr, Bazarr, Pulsarr, Seerr, and AltMount, use DUMB's separate [guided SQLite-to-PostgreSQL migration tool](../../features/arr-postgres-migration.md). Servarr migration caveats still apply.
 
+!!! info "AIOStreams is an advanced manual database consumer"
+
+    The initial [AIOStreams](../optional/aiostreams.md) integration defaults to SQLite and has no `postgres_enabled` toggle or DUMB-guided migration. To use PostgreSQL, provision the database first and set the complete top-level `aiostreams.database_uri` before storing configurations. Adding a database to `postgres.databases` creates it on PostgreSQL setup, but it does not copy AIOStreams' existing SQLite records.
+
 !!! warning "No known PostgreSQL-to-SQLite migration"
     DUMB does not reverse-copy PostgreSQL changes into SQLite. Treat PostgreSQL cutover as a long-term database choice unless you are willing to restore the preserved pre-cutover SQLite snapshot and lose later writes.
 

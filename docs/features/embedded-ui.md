@@ -18,7 +18,7 @@ The embedded UI feature provides:
 - **Simplified networking** - No need to expose multiple ports
 - **Integrated experience** - Access services without leaving DUMB
 - **Traefik routing** - Dynamic path-based routing to services
-- **Root-app handling** - Services such as InfiniDysk, AltMount, Pulsarr, Traefik Proxy Admin, and Traefik Dashboard can load root-relative assets, APIs, and WebSockets while staying inside the embedded service context
+- **Root-app handling** - Services such as InfiniDysk, AltMount, Pulsarr, AIOStreams, Traefik Proxy Admin, and Traefik Dashboard can load root-relative assets, APIs, and WebSockets while staying inside the embedded service context
 
 ![Embedded UIs in DUMB](../assets/images/features/embedded_ui.png){ .shadow }
 
@@ -93,6 +93,12 @@ When you leave a service page, dmbdb clears the embedded-service context before
 the destination page loads so normal DUMB API and metrics requests immediately
 return to the DUMB backend without requiring a full-page refresh.
 
+AIOStreams similarly uses root `/login`, `/dashboard`, `/stremio`, `/api/v1`,
+and `/assets` paths. dmbdb retains those requests only with explicit iframe or
+referer context; a stale service cookie alone must not capture ordinary DUMB
+navigation. AIOStreams live views use server-sent events rather than a service
+WebSocket.
+
 ### Available services
 
 | Service | Path | Native Port |
@@ -105,6 +111,7 @@ return to the DUMB backend without requiring a full-page refresh.
 | Pulsarr | `/service/ui/pulsarr` | 3003 |
 | Maintainerr | `/service/ui/maintainerr` | 6246 |
 | mediastorm | `/service/ui/mediastorm` | 7777 |
+| AIOStreams | `/service/ui/aiostreams` | 3006 |
 | AltMount | `/service/ui/altmount` | 8088 |
 | Radarr | `/service/ui/radarr` | 7878 |
 | Sonarr | `/service/ui/sonarr` | 8989 |
@@ -199,6 +206,11 @@ targets, a matching service name before the action appears.
 
 Root-path applications are routed with their active service context so their
 assets, navigation, and APIs remain inside the iframe.
+
+AIOStreams' embedded route is only for local operator access. Its generated
+Stremio manifest and stream URLs use `aiostreams.base_url`, which must be a
+separate stable trusted HTTPS origin when remote Stremio clients use it. See
+[AIOStreams](../services/optional/aiostreams.md#publish-aiostreams-for-stremio).
 
 Authelia is an intentional exception. Its public responses use anti-framing
 controls such as `frame-ancestors 'none'` and `X-Frame-Options: DENY` to protect

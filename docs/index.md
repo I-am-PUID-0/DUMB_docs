@@ -126,6 +126,7 @@ DUMB integrates a comprehensive ecosystem of media management tools:
 - **Automation**: Sonarr, Radarr, Lidarr, Prowlarr, Whisparr, NeutArr, Profilarr
 - **Storage & Caching**: Zurg, rclone
 - **Requests & Watchlists**: Seerr, Pulsarr
+- **Streaming & Stremio Addons**: mediastorm, AIOStreams
 - **Monitoring & Tools**: Tautulli, Zilean, AI Assist
 - **Access & Proxying**: Traefik, Traefik Proxy Admin, Cloudflared
 - **Database**: PostgreSQL, pgAdmin 4, Phalanx DB
