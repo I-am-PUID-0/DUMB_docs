@@ -1,6 +1,13 @@
 # Changelog
 
 
+## [1.24.14](https://github.com/I-am-PUID-0/DUMB_docs/compare/1.24.13...1.24.14) (2026-08-20)
+
+
+### 📖 Documentation
+
+* **aiostreams:** add optional service setup and integration guide ([37d4f7b](https://github.com/I-am-PUID-0/DUMB_docs/commit/37d4f7b6393215a28e13ec484f0ec409990b6795))
+
 ## [1.24.13](https://github.com/I-am-PUID-0/DUMB_docs/compare/1.24.12...1.24.13) (2026-08-19)
 
 
