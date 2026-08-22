@@ -38,6 +38,24 @@ COMMUNITY_SCRIPTS_URL="https://raw.githubusercontent.com/I-am-PUID-0/ProxmoxVED/
 matching `install/dumb-install.sh` from the same fork and branch. Do not omit it
 while using the validation build.
 
+The default controller source is the latest stable DUMB release. For an
+advanced test installation, set **DUMB Controller Branch** in the script
+generator's app settings or pass `var_dumb_branch` from the host shell. For
+example, this installs the current `dev` branch:
+
+```bash
+var_dumb_branch=dev \
+COMMUNITY_SCRIPTS_URL="https://raw.githubusercontent.com/I-am-PUID-0/ProxmoxVED/feat/dumb" \
+  bash -c "$(curl -fsSL https://raw.githubusercontent.com/I-am-PUID-0/ProxmoxVED/feat/dumb/ct/dumb.sh)"
+```
+
+Any valid branch in `I-am-PUID-0/DUMB` can be selected. Branch heads are
+mutable development targets and may be less stable than a published release;
+the same candidate validation and controller rollback protections still apply.
+Take an independent backup first: controller rollback restores `/opt/dumb`, but
+it does not reverse configuration migrations or application-state changes under
+`/config` or `/data`.
+
 !!! warning "Validation build"
 
     This branch is for controlled testing before the upstream pull request. Use
@@ -91,6 +109,8 @@ Then continue with [Getting Started](../getting-started/index.md).
 | `/log` | DUMB and managed-service logs |
 | `/mnt/debrid` | FUSE mounts, generated links, and symlink libraries |
 | `/postgres_data` | DUMB-managed PostgreSQL cluster when enabled |
+| `/zurg/config.yml`, `/zurg/plex_update.sh` | Base Zurg files copied into newly configured Zurg instances |
+| `/etc/dumb/controller-source` | Root-managed stable or branch selection used by `update` |
 | `/etc/systemd/system/dumb.service` | Native DUMB systemd service |
 
 These are normal LXC filesystem paths, not Docker bind mounts. DUMB preserves
@@ -113,12 +133,32 @@ journalctl -u dumb -f
 systemctl restart dumb
 ```
 
-Run the Community Scripts updater inside the LXC to install a newer stable DUMB
-release:
+Run the Community Scripts updater inside the LXC to update the currently
+selected DUMB source. Stable installations follow the latest published release,
+while branch installations follow the current head of their saved branch:
 
 ```bash
 update
 ```
+
+To switch an existing LXC to `dev` or another DUMB branch, pass the branch for
+one update run:
+
+```bash
+DUMB_CONTROLLER_BRANCH=dev update
+```
+
+The branch choice is saved only after the candidate starts and passes the API
+health check, so later `update` runs continue following it. Return to the stable
+release channel with:
+
+```bash
+DUMB_CONTROLLER_BRANCH=latest update
+```
+
+Switching back to stable can be a controller downgrade. Verify that the branch
+did not introduce configuration or data changes that the stable release cannot
+read before making that switch.
 
 The updater reconciles the required native dependencies, downloads the new
 controller into a candidate directory, builds its locked Python environment,
