@@ -1,6 +1,13 @@
 # Changelog
 
 
+## [1.24.16](https://github.com/I-am-PUID-0/DUMB_docs/compare/1.24.15...1.24.16) (2026-08-22)
+
+
+### 📖 Documentation
+
+* **proxmox:** document controller channels and Zurg defaults ([407cc23](https://github.com/I-am-PUID-0/DUMB_docs/commit/407cc23cd627f0204f51391c1cc054e97c27d819))
+
 ## [1.24.15](https://github.com/I-am-PUID-0/DUMB_docs/compare/1.24.14...1.24.15) (2026-08-22)
 
 
