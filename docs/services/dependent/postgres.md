@@ -83,18 +83,47 @@ It is pre-installed and automatically initialized during container startup.
     - `whisparr-main` / `whisparr-log` when a Whisparr instance has `postgres_enabled: true`
     - `bazarr`, `pulsarr`, and `altmount` when those services complete PostgreSQL cutover
     - a per-instance `seerr` database when a Seerr instance completes PostgreSQL cutover
+    - `infinidysk` after a fresh InfiniDysk v1.2.0+ PostgreSQL install or a successful guarded schema-compatible cutover
 
 !!! note "Arr PostgreSQL databases"
     DUMB creates the main/log databases and writes the matching Arr `config.xml` entries when `postgres_enabled` is true on a supported Arr instance. SQLite remains the default for new Arr instances, and PostgreSQL is an explicit opt-in.
 
     In onboarding, enabling `postgres_enabled` on Radarr, Sonarr, Lidarr, Prowlarr, or Whisparr automatically enables and starts PostgreSQL as needed. You do not need to select PostgreSQL separately as an optional service.
 
+!!! info "InfiniDysk: upstream fresh-only, guarded DUMB migration available"
+
+    InfiniDysk v1.2.0 and newer can use DUMB-managed PostgreSQL for the main
+    operational database. On a fresh installation, enabling
+    `infinidysk.postgres_enabled` registers the configured database (default
+    `infinidysk`) and starts PostgreSQL as needed.
+
+    Upstream itself supports PostgreSQL selection only for new installations.
+    For an existing SQLite installation, do not toggle the provider directly;
+    use **Database Migration** when DUMB advertises `infinidysk`. DUMB's
+    separate workflow requires an official stable v1.2.0-or-newer runtime, an
+    exact match to DUMB's supported SQLite and staged PostgreSQL database
+    contracts, and a successful rehearsal before cutover. Any missing, extra,
+    or changed schema object or migration-history entry blocks migration until
+    DUMB is updated. The workflow migrates only `db.sqlite`.
+    `metrics.sqlite`, `warden.db`, and `usenet-migration.db` remain local. Any
+    pending InfiniDysk identity or namespace migration must complete before
+    PostgreSQL is selected. See
+    [InfiniDysk](../core/infinidysk.md#postgresql-in-infinidysk-v120).
+
 !!! danger "The PostgreSQL toggle is not a migration tool"
-    DUMB does not copy existing SQLite data merely because `postgres_enabled` is set. Directly enabling it creates/configures a PostgreSQL database and starts the service against that database.
+    DUMB does not copy existing SQLite data merely because `postgres_enabled`
+    is set. For services other than InfiniDysk, directly enabling it
+    creates/configures a PostgreSQL database and starts the service against
+    that database. InfiniDysk fails closed when an existing main SQLite store
+    is present and requires the guided workflow.
 
-    If you switch an existing SQLite-backed service directly, it may start against an empty PostgreSQL database and look like a fresh install.
+    If you switch another existing SQLite-backed service directly, it may start
+    against an empty PostgreSQL database and look like a fresh install.
 
-    For Sonarr, Radarr, Lidarr, Prowlarr, Whisparr, Bazarr, Pulsarr, Seerr, and AltMount, use DUMB's separate [guided SQLite-to-PostgreSQL migration tool](../../features/arr-postgres-migration.md). Servarr migration caveats still apply.
+    For Sonarr, Radarr, Lidarr, Prowlarr, Whisparr, Bazarr, Pulsarr, Seerr,
+    AltMount, and InfiniDysk, use DUMB's separate
+    [guided SQLite-to-PostgreSQL migration tool](../../features/arr-postgres-migration.md).
+    Servarr and InfiniDysk upstream-support caveats still apply.
 
 !!! info "AIOStreams is an advanced manual database consumer"
 
@@ -108,10 +137,15 @@ It is pre-installed and automatically initialized during container startup.
 For an existing supported service, use PostgreSQL mode only after deciding how to handle its SQLite data:
 
 1. Keep SQLite: leave `postgres_enabled: false`.
-2. Start fresh on PostgreSQL: back up the service data/config directory, enable `postgres_enabled`, and accept that the PostgreSQL database starts empty.
+2. Start fresh on PostgreSQL where the application supports it: back up the service data/config directory, enable `postgres_enabled`, and accept that the PostgreSQL database starts empty. This is not an existing-InfiniDysk migration path; DUMB blocks that direct switch.
 3. Guided migration: open the service page, select **Database Migration**, complete a rehearsal, and review its validation before cutover.
 
-DUMB's guided tool automates consistent SQLite backups, application-owned schema initialization, native data-only import, type conversion, dynamic sequence repair, table-count validation, progress reporting, and configuration rollback for all nine services listed above.
+DUMB's guided tool automates consistent SQLite backups, application-owned schema initialization, native data-only import, type conversion, dynamic sequence repair, table-count validation, progress reporting, and configuration rollback for all ten services listed above.
+
+For an existing InfiniDysk SQLite installation, leave `postgres_enabled` off
+until a successful guarded cutover enables it. Preserve an independent
+configuration-directory backup, then validate the application and configure
+a tested PostgreSQL logical backup before retiring the rollback snapshot.
 
 Upstream PostgreSQL setup and migration references:
 
@@ -123,6 +157,8 @@ Upstream PostgreSQL setup and migration references:
 - [Bazarr PostgreSQL database](https://wiki.bazarr.media/Additional-Configuration/PostgreSQL-Database/)
 - [Pulsarr PostgreSQL migration](https://jamcalli.github.io/Pulsarr/docs/installation/postgres-migration)
 - [Seerr database configuration](https://docs.seerr.dev/extending-seerr/database-config/)
+- [InfiniDysk PostgreSQL guide](https://github.com/infinidysk/infinidysk/blob/main/docs/operations/postgresql.md)
+- [InfiniDysk native migration tracking issue #1012](https://github.com/infinidysk/infinidysk/issues/1012)
 
 !!! note " Override any of the above using `POSTGRES_USER`, `POSTGRES_PASSWORD`, or `POSTGRES_DB` environment variables."
 

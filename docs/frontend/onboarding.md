@@ -180,9 +180,28 @@ Configure additional settings for selected services:
 - **Phalanx DB**: Enable/disable for CLI Debrid
 - **Decypharr**: FUSE, embedded rclone, external rclone, or no-mount mode
 - **AltMount**: FUSE, embedded rclone, external rclone, or no-mount mode
+- **InfiniDysk**: Fresh-install SQLite or PostgreSQL main database
 - **AIOStreams**: Public base URL and Dashboard administrator credentials
 
 Default values are pre-filled but can be customized.
+
+!!! info "InfiniDysk onboarding PostgreSQL is fresh-install only"
+
+    InfiniDysk v1.2.0+ exposes `postgres_enabled` and
+    `postgres_database` (default `infinidysk`) in its service options. Enable
+    PostgreSQL here only for a fresh InfiniDysk installation, matching
+    upstream support.
+
+    For an existing SQLite installation, leave the onboarding option disabled.
+    After onboarding, open **Database Migration** on the InfiniDysk service
+    page and complete DUMB's guarded rehearsal before cutover. The DUMB adapter
+    accepts an official stable v1.2.0-or-newer runtime only while its source
+    SQLite and staged PostgreSQL databases exactly match the supported contract;
+    schema drift blocks migration until DUMB is updated. Only the main
+    `db.sqlite` moves; `metrics.sqlite`, `warden.db`, and
+    `usenet-migration.db` remain local and require filesystem backups. If the
+    installation still needs an InfiniDysk identity or namespace migration,
+    complete that before making any PostgreSQL selection.
 
 !!! note "AltMount still needs application setup"
 

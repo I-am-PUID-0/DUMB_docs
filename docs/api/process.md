@@ -774,13 +774,33 @@ Rebuilds symlink-backup schedule state from current service config.
 
 ## SQLite-to-PostgreSQL Migration
 
-These endpoints power the guarded migration workflow for Sonarr, Radarr, Lidarr, Prowlarr, Whisparr, Bazarr, Pulsarr, Seerr, and AltMount. See [SQLite to PostgreSQL Migration](../features/arr-postgres-migration.md) for operator guidance and service-specific limitations.
+These endpoints power the guarded migration workflow for Sonarr, Radarr,
+Lidarr, Prowlarr, Whisparr, Bazarr, Pulsarr, Seerr, AltMount, and InfiniDysk.
+See [SQLite to PostgreSQL Migration](../features/arr-postgres-migration.md) for
+operator guidance and service-specific limitations.
 
 ### `GET /process/postgres-migration/preflight`
 
 Query parameter: `process_name`.
 
 Returns non-mutating SQLite integrity, detected application version when available, PostgreSQL connectivity/role, target database, and backup-space checks. `ready` is false when any blocking check fails. The response never includes the PostgreSQL password. `supports_log_migration` tells clients whether to offer the separate Arr log-database option.
+
+For InfiniDysk, this is a DUMB-managed migration adapter; upstream still
+supports PostgreSQL selection only for fresh installs. The adapter accepts an
+official stable v1.2.0-or-newer runtime only when the source SQLite database and
+migration-only staged PostgreSQL database exactly match DUMB's supported
+contract. Missing, extra, or changed schema objects or migration-history entries
+make `ready` false until DUMB is updated. It migrates only the main `db.sqlite`;
+`metrics.sqlite`, `warden.db`, and
+`usenet-migration.db` remain SQLite, and `supports_log_migration` is false.
+Any pending compatibility or full namespace migration must complete before
+PostgreSQL is selected or this workflow starts.
+
+Successful cutover authorization records the exact runtime commit. Subsequent
+official release, branch, or exact-commit selections are accepted only when the
+resolved commit equals or descends from that recorded cutover commit. Older,
+diverged, and unverifiable targets are rejected before configuration is saved
+or InfiniDysk starts.
 
 ### `POST /process/postgres-migration/start`
 
@@ -804,7 +824,7 @@ Queues a persisted rehearsal or cutover job.
 
 Query parameter: `job_id`.
 
-Returns stage, percentage, recent detailed events, result counts, errors, and rollback state for one job.
+Returns stage, percentage, recent detailed events, result counts, errors, and rollback state for one job. Active statuses are `queued`, `running`, `finalizing`, and `rolling_back`. InfiniDysk uses `finalizing` at 99% while DUMB persists the controller-owned cutover authorization; clients must continue polling and must not offer rollback until a terminal status is returned.
 
 ### `GET /process/postgres-migration/latest`
 
@@ -821,7 +841,19 @@ Returns the most recently updated migration job for that service so dmbdb can re
 }
 ```
 
-Restores the job's preserved application configuration when applicable, persists `postgres_enabled: false`, and restarts the service against SQLite when it was running. This does not reverse-copy changes made after PostgreSQL cutover.
+Restores the job's preserved application configuration when applicable,
+persists `postgres_enabled: false`, and restarts the service against SQLite
+when it was running. This does not reverse-copy changes made after PostgreSQL
+cutover. For InfiniDysk, rollback restores the preserved main SQLite state;
+the three auxiliary SQLite stores were never migrated.
+
+Do not manually toggle the provider or restore the whole job bundle after an
+interruption or rollback error. Use this guarded rollback route when the job
+advertises `rollback_available`. For `status: rollback_failed`,
+`rollback.retry_safe: true` means no saved-data mutation began and the guarded
+rollback may be retried; `false` is an attention-required state that freezes
+InfiniDysk lifecycle/provider changes until the precise failed recovery surface
+is reviewed.
 
 The former `/process/arr-postgres-migration/*` paths remain available as hidden compatibility aliases for older dmbdb clients and existing Sonarr/Radarr deployments.
 
@@ -966,6 +998,10 @@ Returns whether a legacy NzbDAV deployment needs review, whether the notice is
 due or snoozed, the legacy paths and DUMB-generated attached-service names that
 were found, and the modes supported by this backend.
 
+The response also exposes `cleanup_available`, `cleanup_finalized`,
+`cleanup_finalized_at`, and `rollback_artifacts_available`. Clients must hide
+both the notice and manual migration entry once `cleanup_finalized` is true.
+
 ### `POST /process/infinidysk-migration/remind-later`
 
 ```json
@@ -1034,6 +1070,15 @@ Rollback also reapplies and verifies every captured symlink target after the
 legacy roots return, removes Arr root paths that exist only in the failed
 migration direction, and treats any remaining stale root as a rollback error.
 
+`failed_rolled_back` means the automatic namespace rollback completed and the
+legacy topology should be verified before a new preflight. A
+`rollback_attention_required` result freezes ordinary config/service lifecycle
+changes and requires review of the named failed rollback surfaces; do not force
+a provider/path toggle or restore the complete bundle. An `interrupted` job
+known to have stopped before filesystem mutation may cold-start the legacy
+topology for a fresh preflight. Unknown or post-mutation interruptions remain
+frozen for recovery review.
+
 While a current `quiescing` job is waiting on verified media activity and the
 backend advertises capability `infinidysk_migration_playback_override`, the
 record also exposes `playback_override_available`, `playback_stop_requested`,
@@ -1046,6 +1091,84 @@ page is reloaded. Another authenticated browser or device retrieves the same
 backend-owned job without browser-local handoff state. A DUMB backend restart marks an active retained job
 `interrupted`; it is not resumed automatically because the operator must first
 inspect the backup bundle and current namespace paths.
+
+### `GET /process/infinidysk-migration/cleanup-preview`
+
+Returns a short-lived, state-bound preview for permanently purging recovery
+material after a successful migration:
+
+```json
+{
+  "available": true,
+  "preview_token": "<short-lived token>",
+  "expires_at": 1787270400,
+  "selected_mode": "full_namespace",
+  "migration_status": "completed",
+  "cleanup_finalized": false,
+  "cleanup_finalized_at": null,
+  "rollback_artifacts_available": true,
+  "deletion": {
+    "files": 14,
+    "directories": 3,
+    "bytes": 1048576,
+    "categories": [
+      "Migration state details",
+      "Preflight inventory",
+      "Job history",
+      "DUMB configuration backups and rollback bundles"
+    ]
+  },
+  "retained": [
+    "Current DUMB and InfiniDysk configuration",
+    "InfiniDysk runtime, application data, and databases",
+    "Mounts, symlink libraries, and normal symlink snapshots",
+    "PostgreSQL cutover authorization and database-migration job records",
+    "Operator-managed backups outside the namespace rollback root"
+  ]
+}
+```
+
+`expires_at` is Unix time in seconds. Counts and categories are returned without
+raw filesystem paths. `available` is false and the token is null unless the
+latest migration state is safely terminal and successful, no active/unsafe
+latest job exists, cleanup has not been finalized, and the calculated deletion
+plan is safe. `rollback_artifacts_available` separately reports whether the
+DUMB rollback bundle is still present. The token fingerprints the current
+migration state and deletion inventory; request a new preview after expiry or
+any state change.
+
+### `POST /process/infinidysk-migration/cleanup`
+
+```json
+{
+  "preview_token": "<short-lived token>",
+  "confirmation": "REMOVE INFINIDYSK MIGRATION DATA",
+  "acknowledge_validation": true,
+  "acknowledge_rollback_loss": true
+}
+```
+
+`confirmation` must match exactly; surrounding whitespace is rejected. Both
+acknowledgements must be literal `true`. Cleanup deletes the detailed namespace
+migration state, private preflight inventory, namespace job history, and
+DUMB-owned migration backup/rollback bundle. It does not delete the current
+DUMB/InfiniDysk
+configuration, runtime, application data, databases, mounts, symlink libraries,
+normal symlink snapshots, the minimal controller-owned PostgreSQL cutover
+authorization and database-migration job evidence under
+`/config/arr-postgres-migration`, or operator-managed backups outside the
+namespace rollback root. The retained authorization/evidence is required so a
+PostgreSQL-backed InfiniDysk remains restartable and its guarded database
+rollback contract remains verifiable after namespace cleanup.
+
+The backend replaces the detailed state with a private mode-`0600` tombstone
+containing only the selected mode, terminal status, and finalization metadata.
+The response reports `status` as `completed` or idempotent
+`already_completed`, sets `cleanup_finalized: true`,
+`rollback_artifacts_available: false`, and `notice_due: false`, and returns the
+actual `deleted` counts/categories plus the retained list. This action is
+irreversible; a finalized compatibility-only migration also accepts the
+retained legacy namespace as final.
 
 ### `POST /process/infinidysk-migration/stop-playback`
 
@@ -1217,7 +1340,7 @@ Returns backend capabilities and feature flags. Used by the frontend to determin
   "postgres_migration": true,
   "postgres_migration_rehearsal": true,
   "postgres_migration_rollback": true,
-  "postgres_migration_service_keys": ["altmount", "bazarr", "lidarr", "prowlarr", "pulsarr", "radarr", "seerr", "sonarr", "whisparr"],
+  "postgres_migration_service_keys": ["altmount", "bazarr", "infinidysk", "lidarr", "prowlarr", "pulsarr", "radarr", "seerr", "sonarr", "whisparr"],
   "database_health_metrics": true,
   "metrics_history_storage": true,
   "metrics_history_hot_activation": true,
@@ -1229,6 +1352,7 @@ Returns backend capabilities and feature flags. Used by the frontend to determin
   "infinidysk_migration": true,
   "infinidysk_full_namespace_migration": true,
   "infinidysk_migration_jobs": true,
+  "infinidysk_migration_cleanup": true,
   "runtime_api_log_level": true,
   "rclone_optimizer": true,
   "rclone_optimizer_infinidysk": true,
@@ -1263,6 +1387,7 @@ Returns backend capabilities and feature flags. Used by the frontend to determin
 | `infinidysk_migration` | Whether the opt-in status, server-persisted reminder, and compatibility-cutover routes are available |
 | `infinidysk_full_namespace_migration` | Whether the guarded path/category/library migration and rollback workflow is available |
 | `infinidysk_migration_jobs` | Whether complete-namespace cutovers run as persisted, pollable background jobs with close/reopen progress |
+| `infinidysk_migration_cleanup` | Whether successful migration recovery data can be previewed and permanently purged with guarded confirmation |
 | `rclone_optimizer` | Whether background rclone optimizer job routes are available |
 | `rclone_optimizer_infinidysk` | Whether the optimizer supports InfiniDysk-backed rclone instances |
 | `rclone_optimizer_nzbdav` | Legacy capability alias retained for older dashboard clients |
@@ -1283,7 +1408,7 @@ Returns backend capabilities and feature flags. Used by the frontend to determin
 | `postgres_migration` | Whether the generic guarded SQLite-to-PostgreSQL routes are available |
 | `postgres_migration_rehearsal` | Whether isolated rehearsal imports are supported |
 | `postgres_migration_rollback` | Whether jobs can restore preserved SQLite configuration |
-| `postgres_migration_service_keys` | Backend-authoritative service keys offered by the migration UI |
+| `postgres_migration_service_keys` | Backend-authoritative service keys offered by the migration UI; clients require explicit `infinidysk` advertisement and keep the old fallback limited to legacy services |
 | `arr_postgres_migration*` | Legacy Sonarr/Radarr capability aliases retained for older clients |
 | `mediastorm_initial_admin_password` | Whether the no-store mediastorm bootstrap credential endpoint is available |
 

@@ -111,6 +111,8 @@ InfiniDysk also exposes a **Usenet download client** path in Arr by emulating a 
     "log_level": "INFO",
     "frontend_port": 3000,
     "backend_port": 8080,
+    "postgres_enabled": false,
+    "postgres_database": "infinidysk",
     "auto_update": false,
     "auto_update_interval": 24,
     "auto_update_start_time": "04:00",
@@ -142,8 +144,20 @@ InfiniDysk also exposes a **Usenet download client** path in Arr by emulating a 
 * `enabled`: Toggle to run InfiniDysk via DUMB.
 * `frontend_port`: Port for the Web UI and WebDAV endpoint.
 * `backend_port`: Port for the backend API.
+* `postgres_enabled`: Use DUMB-managed PostgreSQL for InfiniDysk's main
+  operational database on a fresh InfiniDysk v1.2.0-or-newer installation or
+  after a successful guarded DUMB cutover. The migration adapter accepts an
+  official stable v1.2.0-or-newer runtime only while its SQLite and staged
+  PostgreSQL schemas exactly match DUMB's supported database contract. SQLite
+  remains the default. Leave this disabled on an existing SQLite installation
+  until the migration panel completes cutover.
+* `postgres_database`: Managed PostgreSQL database name. The default is
+  `infinidysk`.
 * `commit_sha`: Optional full 40-character GitHub SHA. When set, DUMB builds
   that exact InfiniDysk revision instead of selecting a release or branch.
+  After PostgreSQL cutover, the commit must equal or descend from the recorded
+  cutover commit; the same ancestry rule applies to resolved release tags and
+  branch heads.
 * `webdav_password`: Default WebDAV password (overridden by `WEBDAV_PASSWORD`).
 * `config_dir`: Path where InfiniDysk data is stored.
 * `log_file`: Path for the consolidated InfiniDysk log.
@@ -153,6 +167,115 @@ InfiniDysk also exposes a **Usenet download client** path in Arr by emulating a 
 
     If `webdav_password` is blank, DUMB generates one at startup and stores it in the config.
     Change the password before exposing InfiniDysk outside your trusted network.
+
+### PostgreSQL in InfiniDysk v1.2.0+
+
+InfiniDysk v1.2.0 added optional PostgreSQL support for its **main operational
+database**. SQLite remains the DUMB default. On a fresh installation, setting
+`postgres_enabled: true` makes DUMB enable/start its managed PostgreSQL service,
+create the configured `postgres_database`, and supply InfiniDysk's upstream
+`DATABASE_PROVIDER=postgres` and `DATABASE_CONNECTION_STRING` values from
+DUMB's PostgreSQL settings.
+
+!!! danger "Do not toggle an existing SQLite installation directly"
+
+    Upstream InfiniDysk currently supports choosing PostgreSQL for a fresh
+    installation; it does not provide an in-place `db.sqlite` migration. On an
+    existing SQLite installation, leave `postgres_enabled: false` and open
+    **Database Migration** from the InfiniDysk service page after the backend
+    advertises `postgres_migration` with `infinidysk` in
+    `postgres_migration_service_keys`. DUMB fails closed if an existing main
+    SQLite store is pointed directly at PostgreSQL; the guided tool is required.
+
+    DUMB's migration is a separate guarded workflow: preflight is non-mutating
+    and a successful rehearsal is required. Official v1.2.0 commit
+    [`8c960ffc39fc85fdf9166aafd6cb2846878ec3c2`](https://github.com/infinidysk/infinidysk/commit/8c960ffc39fc85fdf9166aafd6cb2846878ec3c2)
+    is the audited schema baseline rather than a runtime pin. Official stable
+    v1.2.0-or-newer runtimes are allowed only if both the source SQLite database
+    and migration-only staged PostgreSQL database exactly match DUMB's supported
+    contract. Missing, extra, or changed schema objects or migration-history
+    entries block the operation until DUMB is updated. Cutover takes a fresh
+    cold backup, resets the named target, imports and validates the main store,
+    and changes the provider only after validation succeeds. A failed cutover
+    restores the saved SQLite configuration automatically.
+
+    After a guarded cutover, DUMB blocks directly toggling PostgreSQL off. Use
+    the migration job's explicit rollback action promptly when validation
+    fails; it validates the preserved source before restart. PostgreSQL writes
+    are not merged back into SQLite.
+
+    Cutover also stores the exact full commit of the runtime that performed the
+    migration. PostgreSQL does not permanently pin InfiniDysk to stable release
+    mode: official release tags, branches, and full commit pins remain usable
+    when GitHub proves that the selected commit is the cutover commit or a
+    descendant. DUMB rejects older, diverged, or unverifiable targets before
+    saving the source selection or starting the service.
+
+    Treat that recorded commit as a permanent minimum version notice for the
+    PostgreSQL deployment. Installing anything older requires a guarded rollback
+    to SQLite first, and rollback does not merge later PostgreSQL writes into the
+    preserved SQLite database.
+
+    Complete any NzbDAV-to-InfiniDysk identity or full namespace migration
+    before making any PostgreSQL selection or starting Database Migration. The
+    full workflow rewrites and validates the SQLite main store, while an
+    identity rename would disconnect guarded rollback job lookup. DUMB
+    therefore blocks every namespace mode once PostgreSQL is selected.
+
+PostgreSQL replaces only `db.sqlite`. These stores remain local beneath the
+InfiniDysk configuration directory and still need filesystem backups:
+
+- `metrics.sqlite`
+- `warden.db`
+- `usenet-migration.db`
+- `blobs/`, `session.key`, and the rest of the application configuration
+
+InfiniDysk's application backup does not include the PostgreSQL main database.
+A complete backup therefore needs both:
+
+1. a tested logical `pg_dump`/`pg_restore` workflow for the configured
+   PostgreSQL database; and
+2. a filesystem backup of the InfiniDysk configuration/data directory,
+   including the local SQLite helper stores, blobs, and `session.key`.
+
+DUMB keeps job-specific SQLite and configuration backups under
+`/config/arr-postgres-migration`, but that recovery bundle is not a substitute
+for a verified independent backup stored outside the paths DUMB manages.
+
+#### Guarded migration checklist
+
+1. Verify an independent filesystem backup of the complete InfiniDysk
+   configuration directory before rehearsal or cutover.
+2. Open **Database Migration**, run preflight, and resolve every blocker.
+3. Run the required rehearsal. InfiniDysk remains on SQLite while DUMB runs only
+   the migration maintenance command and imports and validates the isolated
+   PostgreSQL staging database; the normal application is never booted against
+   staging.
+4. Review the safeguards and start guarded cutover. DUMB takes a fresh cold
+   snapshot, imports it, validates it, and only then enables PostgreSQL. Cutover
+   requires the SQLite service to be running and healthy and does not complete
+   until the PostgreSQL service reports healthy through both `/health` and
+   `/ready`.
+5. Verify the InfiniDysk UI, provider/queue/history state, WebDAV or rclone
+   access, Arr categories and download client, plus representative playback
+   and seeking. Confirm the three auxiliary SQLite stores are still healthy.
+
+!!! warning "Validate before accepting PostgreSQL writes"
+
+    Roll back from the migration panel promptly if validation fails. Rollback
+    restores the preserved main SQLite state; it cannot copy later PostgreSQL
+    writes back into SQLite. The auxiliary SQLite stores never move.
+
+See [SQLite to PostgreSQL Migration](../../features/arr-postgres-migration.md)
+for the complete rehearsal, cutover, validation, backup, and rollback flow.
+
+See [PostgreSQL](../dependent/postgres.md) for DUMB-managed database details and
+the [pgAdmin/pgAgent backup example](../../faq/pgadmin.md#example-scheduled-backups-with-pgagent)
+for scheduled logical backups. Upstream references include the
+[official PostgreSQL guide](https://github.com/infinidysk/infinidysk/blob/main/docs/operations/postgresql.md),
+[InfiniDysk v1.2.0](https://github.com/infinidysk/infinidysk/releases/tag/v1.2.0),
+[native migration issue #1012](https://github.com/infinidysk/infinidysk/issues/1012),
+and [InfiniDysk PR #1013](https://github.com/infinidysk/infinidysk/pull/1013).
 
 ### Tracking a moving InfiniDysk release tag
 
@@ -331,7 +454,9 @@ When InfiniDysk starts, DUMB performs several automation steps:
 - Updates Arr permissions and root folders
 - Adds or updates a download client named `InfiniDysk` in Arr
 
-The Arr instance list is stored in InfiniDysk’s SQLite config under `arr.instances`, so DUMB can merge user edits with auto-detected instances.
+The Arr instance list is stored under `arr.instances` in InfiniDysk's main
+operational database/config store (SQLite by default, or PostgreSQL on a fresh
+opted-in installation), so DUMB can merge user edits with auto-detected instances.
 
 !!! info "Startup timing"
 
@@ -545,9 +670,9 @@ See [AI Assistant](../../features/ai-assistant.md#infinidysk-native-evidence) fo
 
 ### Assess SQLite pressure
 
-InfiniDysk currently stores its operational and metrics data in SQLite. DUMB can optionally monitor both databases from **Metrics → Settings → Database Health Monitoring** or the InfiniDysk service page's **Database Health** panel.
+By default, InfiniDysk stores its main operational database and local metrics/helper stores in SQLite. A fresh v1.2.0+ installation or successful guarded DUMB cutover can move only the main database to PostgreSQL; the DUMB migration adapter accepts official stable v1.2.0-or-newer runtimes only while the source and staged target exactly match its supported database contract. `metrics.sqlite`, `warden.db`, and `usenet-migration.db` remain local SQLite files. DUMB can monitor the detected database surfaces from **Metrics → Settings → Database Health Monitoring** or the InfiniDysk service page's **Database Health** panel.
 
-Start with **Standard / passive** mode and collect through normal imports, health checks, and playback. Use **Enhanced / read-only probes** when you also want bounded SQLite metadata latency. Repeated lock/busy/timeout errors, sustained WAL growth, slow probes, or network-filesystem placement are stronger reasons to investigate PostgreSQL than database size alone. See [Metrics Collection](../../features/metrics.md#database-health-monitoring) for the safety boundary and interpretation guidance.
+Start with **Standard / passive** mode and collect through normal imports, health checks, and playback. Use **Enhanced / read-only probes** when you also want bounded metadata latency. Repeated lock/busy/timeout errors, sustained WAL growth, slow probes, or network-filesystem placement are stronger signals than database size alone. Moving the main database does not resolve pressure in a separate local helper store, so check which file/provider owns the signal before changing the main database provider. See [Metrics Collection](../../features/metrics.md#database-health-monitoring) for the safety boundary and interpretation guidance.
 
 !!! warning "Permission changes"
 
@@ -574,6 +699,12 @@ Start with **Standard / passive** mode and collect through normal imports, healt
   An error such as `No such file or directory: 'bash'` indicates an image that
   predates this fix and should be retested after pulling a fixed tag and
   recreating the container.
+* If a production v1.2.0 update fails with a permission error for
+  `session.key`, update/restart DUMB so its bounded writable-state preflight
+  repairs that file to the configured PUID/PGID. DUMB also protects
+  `session.key` from release archive clear/merge replacement. Do not delete
+  the key unless you intentionally want to invalidate existing InfiniDysk
+  sessions.
 * Check `/log` for InfiniDysk startup errors, and ensure `frontend_port`/`backend_port` are not already in use.
 
 ---
@@ -630,6 +761,14 @@ The exact former DUMB repository defaults are updated to
 and updates continue to resolve; intentional custom forks remain untouched.
 Restart DUMB after accepting the compatibility cutover when the service is
 enabled.
+
+!!! warning "Run namespace migration before selecting PostgreSQL"
+
+    Both compatibility-only identity migration and the complete path require
+    InfiniDysk's active main provider to be SQLite. DUMB blocks them once
+    PostgreSQL is selected because the complete workflow mutates the SQLite
+    main store and a compatibility rename would disconnect guarded database
+    rollback lookup. Do not toggle providers merely to bypass this check.
 
 The optional **Migrate the complete InfiniDysk namespace** path performs the
 remaining cutover as one guarded operation. It is not enabled until its
@@ -830,6 +969,57 @@ The compatibility-only migration keeps all paths unchanged. After that path,
 verify InfiniDysk starts, attached services reconnect, and existing playback
 works; an Arr or media-library scan is not normally required.
 
+### Finalize the migration and remove recovery data
+
+After the checklist passes and the migrated stack has remained healthy for a
+suitable observation period, the InfiniDysk service page can permanently purge
+DUMB-owned migration recovery material. This action is optional. It appears
+only when the backend advertises `infinidysk_migration_cleanup`, the latest
+recorded migration is a successful terminal result, and cleanup has not already
+been finalized. It is unavailable during active, failed, interrupted,
+rolled-back, or rollback-attention jobs.
+
+Choose **Review cleanup** to request a short-lived preview. The
+preview reports counts, total bytes, user-facing deletion categories, retained
+categories, and its expiry without exposing private filesystem paths. Review it
+after every refresh because the token is bound to the current migration state.
+To proceed, acknowledge that:
+
+- the post-migration validation and playback checks passed; and
+- DUMB's rollback bundle and detailed migration history will no longer be
+  available.
+
+Then type the exact phrase `REMOVE INFINIDYSK MIGRATION DATA` and select the
+permanent cleanup action.
+
+Cleanup deletes the detailed InfiniDysk namespace-migration state, preflight
+inventory, namespace job history, and DUMB-owned migration backups under
+`/config/migrations/infinidysk-backups`. It replaces the state with a small
+private mode-`0600` tombstone containing only the selected mode, terminal
+status, and finalization metadata. DUMB retains:
+
+- current DUMB and InfiniDysk configuration;
+- the InfiniDysk runtime, application data, and databases;
+- mounts, symlink libraries, and normal symlink snapshots;
+- the minimal controller-owned PostgreSQL cutover authorization and
+  database-migration job evidence under `/config/arr-postgres-migration`, which
+  keeps restart and guarded database-rollback contracts verifiable; and
+- operator-managed backups outside the namespace rollback root.
+
+!!! danger "Cleanup is irreversible"
+
+    DUMB cannot reconstruct the deleted recovery bundle, detailed preflight, or
+    job history. Keep independent operator backups somewhere outside the
+    DUMB-owned migration backup directory. Cleanup does not delete service data
+    or the separate PostgreSQL migration authorization/job store, but anything
+    intentionally placed inside
+    `/config/migrations/infinidysk-backups` is in the purge scope.
+
+After finalization, the migration notice and manual migration action remain
+permanently hidden. Finalizing a compatibility-only migration records that the
+retained legacy paths are the accepted final namespace, so DUMB no longer
+prompts for the complete namespace workflow.
+
 If a stage fails, DUMB stops the partially migrated stack, restores paths and
 saved files with their captured ownership and permissions, reapplies and
 validates the previous Arr/Prowlarr/media-library references, removes every Arr
@@ -844,8 +1034,25 @@ terminal rolled-back job finishes at 100% and retains a redacted root-cause
 message; 100% means the recovery workflow finished, not that the requested
 cutover succeeded. When rollback needs attention, the dashboard lists the
 sanitized component errors and retained backup/config paths. Inspect those
-details and verify the legacy stack before performing a targeted restore; do
-not blindly restore the complete bundle or rerun the migration.
+details and verify the legacy stack before performing a targeted repair; do
+not manually toggle service/provider settings, blindly restore the complete
+bundle, or rerun the migration.
+
+The terminal namespace statuses have different meanings:
+
+- `failed_rolled_back` means DUMB's automatic rollback completed. Verify the
+  legacy service, paths, integrations, and playback before generating a fresh
+  preflight; do not reuse old preflight approval.
+- `rollback_attention_required` means one or more rollback surfaces could not
+  be proven restored. DUMB freezes ordinary service/config lifecycle changes.
+  Open the persisted result, inspect its component errors and retained paths,
+  and repair only the named surface; this is not a signal to restore the whole
+  bundle.
+- `interrupted` before any namespace filesystem mutation may allow DUMB to
+  cold-start the known legacy topology so a new live preflight can be made.
+  An interruption at an unknown or post-mutation stage remains frozen for
+  recovery review. Never force a provider or path toggle to bypass either
+  state.
 
 Older DUMB builds did not retain file ownership metadata in this rollback
 manifest. If an older rollback reports that InfiniDysk/NzbDAV cannot read its

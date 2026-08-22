@@ -135,7 +135,14 @@ The frontend reads its configuration from environment variables:
 | Variable | Default | Description |
 |----------|---------|-------------|
 | `DUMB_API_URL` | `http://127.0.0.1:8000` | Backend API endpoint |
+| `DUMB_TRAEFIK_URL` | API host on port `18080` | Traefik web endpoint used for embedded service HTTP and WebSocket proxying |
 | `NUXT_TELEMETRY_DISABLED` | `1` | Disable Nuxt telemetry |
+
+DUMB automatically injects the current Traefik listener into a managed DUMB
+Frontend process, including when startup port reservation moves Traefik away
+from `18080`. A separately deployed frontend must set `DUMB_TRAEFIK_URL` to an
+address reachable from that frontend container whenever Traefik uses another
+host or port.
 
 ---
 

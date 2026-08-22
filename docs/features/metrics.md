@@ -156,10 +156,15 @@ Database Health Monitoring is disabled by default and enabled independently for 
 
 | Provider class | Services and observed stores |
 |----------------|------------------------------|
-| **SQLite** | InfiniDysk, CLI Debrid, CLI Battery, Emby, Jellyfin, Maintainerr, Profilarr, Tautulli, and Plex; Sonarr, Radarr, Lidarr, Prowlarr, and Whisparr when PostgreSQL is disabled |
-| **SQLite or PostgreSQL** | AIOStreams, AltMount, Bazarr, Pulsarr, and Seerr; DUMB detects the provider from their application config/environment |
+| **SQLite** | CLI Debrid, CLI Battery, Emby, Jellyfin, Maintainerr, Profilarr, Tautulli, and Plex; Sonarr, Radarr, Lidarr, Prowlarr, and Whisparr when PostgreSQL is disabled |
+| **SQLite or PostgreSQL** | AIOStreams, AltMount, Bazarr, InfiniDysk, Pulsarr, and Seerr; DUMB detects the provider from their application config/environment |
 | **PostgreSQL** | DUMB PostgreSQL, pgAdmin, mediastorm, Riven Backend, Zilean, and Traefik Proxy Admin; Arr instances when `postgres_enabled=true` |
 | **Custom persistent stores** | Decypharr append-only logs, Phalanx DB Hyperbee/Corestore data, and the Zurg state directory |
+
+For InfiniDysk, **SQLite or PostgreSQL** describes only its main operational
+database. `metrics.sqlite`, `warden.db`, and `usenet-migration.db` remain
+auxiliary SQLite stores after a PostgreSQL cutover, so their local filesystem
+health and backup requirements do not disappear when the main provider changes.
 
 Services without a confirmed database or durable application store are not listed merely because they use files or caches. Multi-instance services receive one Database Health entry per enabled instance.
 
