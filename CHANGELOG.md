@@ -1,6 +1,13 @@
 # Changelog
 
 
+## [1.24.15](https://github.com/I-am-PUID-0/DUMB_docs/compare/1.24.14...1.24.15) (2026-08-22)
+
+
+### 📖 Documentation
+
+* **infinidysk:** document guarded PostgreSQL migration safeguards ([ffeb027](https://github.com/I-am-PUID-0/DUMB_docs/commit/ffeb0276c5c9aeb5759e9ea234c798b88956e63b))
+
 ## [1.24.14](https://github.com/I-am-PUID-0/DUMB_docs/compare/1.24.13...1.24.14) (2026-08-20)
 
 
