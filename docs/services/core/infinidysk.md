@@ -193,7 +193,8 @@ DUMB's PostgreSQL settings.
     is the audited schema baseline rather than a runtime pin. Official stable
     v1.2.0-or-newer runtimes are allowed only if both the source SQLite database
     and migration-only staged PostgreSQL database exactly match DUMB's supported
-    contract. Missing, extra, or changed schema objects or migration-history
+    contract. The newest audited database contract is InfiniDysk v1.2.5.
+    Missing, extra, or changed schema objects or migration-history
     entries block the operation until DUMB is updated. Cutover takes a fresh
     cold backup, resets the named target, imports and validates the main store,
     and changes the provider only after validation succeeds. A failed cutover

@@ -39,7 +39,8 @@ Services that use PostgreSQL only, such as mediastorm, Riven Backend, Zilean, an
     is the audited contract baseline, not a runtime pin. DUMB accepts an
     official stable v1.2.0-or-newer runtime only when the live SQLite database
     and the migration-only staged PostgreSQL database exactly match that
-    supported contract. A missing, extra, or changed table, column, index,
+    supported contract. The newest audited database contract is InfiniDysk
+    v1.2.5. A missing, extra, or changed table, column, index,
     trigger, foreign key, identity, function, or migration-history entry fails
     preflight until DUMB is updated. The workflow requires a successful
     rehearsal, imports and validates only the main store, and switches

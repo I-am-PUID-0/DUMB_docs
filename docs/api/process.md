@@ -789,7 +789,8 @@ For InfiniDysk, this is a DUMB-managed migration adapter; upstream still
 supports PostgreSQL selection only for fresh installs. The adapter accepts an
 official stable v1.2.0-or-newer runtime only when the source SQLite database and
 migration-only staged PostgreSQL database exactly match DUMB's supported
-contract. Missing, extra, or changed schema objects or migration-history entries
+contract. The newest audited database contract is InfiniDysk v1.2.5. Missing,
+extra, or changed schema objects or migration-history entries
 make `ready` false until DUMB is updated. It migrates only the main `db.sqlite`;
 `metrics.sqlite`, `warden.db`, and
 `usenet-migration.db` remain SQLite, and `supports_log_migration` is false.
