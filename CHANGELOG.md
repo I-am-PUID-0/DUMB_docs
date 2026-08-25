@@ -1,6 +1,13 @@
 # Changelog
 
 
+## [1.24.17](https://github.com/I-am-PUID-0/DUMB_docs/compare/1.24.16...1.24.17) (2026-08-25)
+
+
+### 📖 Documentation
+
+* **infinidysk:** document the audited v1.2.5 PostgreSQL contract ([a852950](https://github.com/I-am-PUID-0/DUMB_docs/commit/a8529509e5cd960c6438dfd94c0bf13b6956044b))
+
 ## [1.24.16](https://github.com/I-am-PUID-0/DUMB_docs/compare/1.24.15...1.24.16) (2026-08-22)
 
 
