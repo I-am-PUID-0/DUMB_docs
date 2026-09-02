@@ -1,6 +1,14 @@
 # Changelog
 
 
+## [1.24.18](https://github.com/I-am-PUID-0/DUMB_docs/compare/1.24.17...1.24.18) (2026-09-02)
+
+
+### 📖 Documentation
+
+* **infinidysk:** document db-contract migration validation ([0dcf3f9](https://github.com/I-am-PUID-0/DUMB_docs/commit/0dcf3f9ad20aa4272b7d285a947e5bb99b4a7def))
+* **proxmox:** document Plex package and ownership recovery ([3f816b6](https://github.com/I-am-PUID-0/DUMB_docs/commit/3f816b62566fdeea74080ce16e6106ae691e4fab))
+
 ## [1.24.17](https://github.com/I-am-PUID-0/DUMB_docs/compare/1.24.16...1.24.17) (2026-08-25)
 
 
