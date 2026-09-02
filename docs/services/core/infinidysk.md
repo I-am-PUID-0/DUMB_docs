@@ -200,6 +200,17 @@ DUMB's PostgreSQL settings.
     and changes the provider only after validation succeeds. A failed cutover
     restores the saved SQLite configuration automatically.
 
+    InfiniDysk v1.2.6 and newer write a machine-readable
+    [`db-contract.json`](https://www.infinidysk.com/operations/postgresql/#database-contract-file-since-126)
+    after every successful migration pass. DUMB verifies that the source file
+    describes the live SQLite provider and exact applied migration history, then
+    requires the isolated staging run to write a matching PostgreSQL contract.
+    A present but malformed, stale, unsafe, or mismatched contract blocks the
+    operation. A missing file warns and falls back to DUMB's exact audited checks
+    so v1.2.0-v1.2.5 remain supported. The file does not make an unknown schema
+    automatically safe; DUMB must still carry an audited schema/catalog contract
+    for that history.
+
     After a guarded cutover, DUMB blocks directly toggling PostgreSQL off. Use
     the migration job's explicit rollback action promptly when validation
     fails; it validates the preserved source before restart. PostgreSQL writes

@@ -47,6 +47,20 @@ Services that use PostgreSQL only, such as mediastorm, Riven Backend, Zilean, an
     providers only after cutover validation. `metrics.sqlite`, `warden.db`, and
     `usenet-migration.db` remain local SQLite files.
 
+    Since InfiniDysk v1.2.6, the application writes
+    [`db-contract.json`](https://www.infinidysk.com/operations/postgresql/#database-contract-file-since-126)
+    after each successful database migration pass. DUMB validates the
+    `infinidysk-db-v1` shape, provider, exact transient-object declaration,
+    top-level/main-entry agreement, and the migration count, terminal ID, and
+    full-history hash recomputed from the live SQLite database. It repeats the
+    provider and history checks against the isolated PostgreSQL target after
+    schema staging. A present but malformed, stale, unsafe, or mismatched file
+    blocks migration. A missing file remains a non-blocking warning for
+    pre-v1.2.6 compatibility, but DUMB still requires all of its existing exact
+    audited schema, migration-history, catalog, key, and full-row checks.
+    `db-contract.json` proves provenance; it does not authorize a database
+    history that DUMB has not audited.
+
     A successful cutover records the full InfiniDysk commit as the PostgreSQL
     runtime floor. Later official release tags, branch heads, and exact commit
     pins are accepted only when GitHub proves that their resolved commit is the

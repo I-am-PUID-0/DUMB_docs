@@ -797,6 +797,17 @@ make `ready` false until DUMB is updated. It migrates only the main `db.sqlite`;
 Any pending compatibility or full namespace migration must complete before
 PostgreSQL is selected or this workflow starts.
 
+InfiniDysk v1.2.6+ also returns an `infinidysk_database_contract_file` preflight
+check. DUMB validates `infinidysk-db-v1`, the main provider, declared transient
+objects, mirrored main fields, and a migration-history count, terminal ID, and
+hash recomputed from the live SQLite database. A present invalid or stale file
+makes `ready` false. A missing file is a warning for older releases and does not
+replace the existing audited schema checks. Rehearsal/cutover binds the verified
+source contract fingerprint and requires the isolated PostgreSQL staging pass to
+emit a valid PostgreSQL contract before the rehearsal can authorize cutover.
+Unknown migration histories remain blocked even when their file is internally
+consistent.
+
 Successful cutover authorization records the exact runtime commit. Subsequent
 official release, branch, or exact-commit selections are accepted only when the
 resolved commit equals or descends from that recorded cutover commit. Older,
