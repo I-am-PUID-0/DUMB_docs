@@ -302,18 +302,39 @@ restart DUMB, if the drop-in is absent. A healthy restart recreates the
 PostgreSQL shared-memory objects and keeps them after the managed UID's setup
 session closes.
 
-### Plex reports port 32400 already in use during first setup
+### Plex fails to install or cannot create its Cache directory
 
-The Plex Debian package can start its own `plexmediaserver.service` while DUMB
-is preparing the managed instance. The LXC helper masks that package unit so
-only DUMB owns Plex and port `32400`:
+Older test builds created a direct `/etc/systemd/system/plexmediaserver.service`
+mask before Plex was installed. Plex's Debian package rejects that path during
+its pre-install check. If the package was then repaired manually, the generated
+`/plex/Plex Media Server` tree could also remain owned by the package account.
+
+Current LXC helpers use a supported systemd drop-in with an unmet condition.
+That lets the Debian package install successfully without starting its own Plex
+process; DUMB remains the only process supervisor and repairs the writable tree.
 
 ```bash
-systemctl is-enabled plexmediaserver.service
+test ! -e /etc/systemd/system/plexmediaserver.service
+systemctl cat plexmediaserver.service | grep -F 'ConditionPathExists=/run/dumb-allow-package-services'
+systemctl is-active plexmediaserver.service
 ```
 
-The expected result is `masked`. If an LXC created with an earlier test build
-reports `enabled`, run `update` and restart DUMB before retrying Plex onboarding.
+The first command should produce no output, the second should show the condition,
+and the package-owned unit should report `inactive`. For an LXC created with an
+older test build, reconcile the helper and restart the DUMB controller:
+
+```bash
+update
+systemctl restart dumb
+```
+
+If `dpkg` still reports an interrupted installation, complete its pending work
+after `update` has removed the legacy mask:
+
+```bash
+dpkg --configure -a
+apt-get -f install
+```
 
 ## Related pages
 
