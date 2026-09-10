@@ -21,6 +21,18 @@ data/database directories, root-level SQLite files and their active sidecars,
 and symlinked data directories. The guarded paths are also excluded from archive
 merges, while replaceable source and runtime output can still be refreshed.
 
+## Installing a configured release
+
+For services using the shared release installer, an explicit configured-target
+install applies the selected fixed release even when automatic updates are enabled
+or that release is already installed. Scheduled setup still respects release pins;
+saving a release selector alone does not request a reinstall.
+
+Services with dedicated source installers retain their own installation behavior.
+Manual installs continue to use the existing snapshot and failure-recovery flow.
+A failed release download is reported as an installation failure, rather than a
+successful restart of the existing version.
+
 ## Safety model
 
 An external project can always fail to download or build. DUMB's goal is to

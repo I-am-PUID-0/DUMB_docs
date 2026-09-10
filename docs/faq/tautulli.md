@@ -50,3 +50,15 @@ and templates together. Do not delete the `data` directory: it also holds your
 Tautulli configuration and history. An explicit exclusion of `data/interfaces`
 will continue to preserve those templates and should be reviewed if the error
 persists.
+
+## A configured release install keeps the existing version
+
+Older DUMB versions can report a successful configured Tautulli release install
+without downloading it when `auto_update` is enabled. The manual action incorrectly
+reuses the normal setup guard for pinned releases, then retains the existing files.
+
+DUMB now invokes the selected release installer directly for an explicit configured
+target install, including reapplying the same version. After deploying this fix,
+select the desired release and run the configured-target install action. Saving
+the release settings alone is not a request to reinstall. The normal update
+snapshot and runtime-data preservation still apply.
