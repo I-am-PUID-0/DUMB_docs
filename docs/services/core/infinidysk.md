@@ -738,7 +738,12 @@ them in memory, and continues writing the legacy identity back to disk until
 the user opts in. If both top-level service keys are present, DUMB refuses to
 guess which entry owns the existing data.
 
-The dashboard presents existing installations with **Review migration** and
+The automatic migration reminder appears only while InfiniDysk/NzbDAV is enabled.
+Disabled legacy configuration defaults alone do not trigger it. Disabling the
+service preserves migration eligibility, job history, and rollback information;
+re-enabling it restores any otherwise-due reminder.
+
+The dashboard presents enabled existing installations with **Review migration** and
 **Remind me later**. The reminder is stored by the backend, so it applies across
 browsers and reappears after seven days.
 

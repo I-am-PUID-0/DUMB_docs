@@ -99,6 +99,8 @@ The key is stored in `dumb.media_protection.services`, redacted from DUMB config
 ## Recovery and troubleshooting
 
 - **Operation keeps deferring:** activity is busy or unknown. End the stream, configure the Jellyfin/Emby key, or use an explicit manual override.
+- **Unused storage services:** disabled services do not open new protection incidents. DUMB automatically retires completed-operation recovery records for disabled or removed targets only when no scan snapshot, server stop, guard error, or interrupted operation is recorded. Records with possible side effects remain available for recovery.
+- **Protection was disabled:** this prevents new guards and later idle-stop actions; it does not discard existing scan snapshots or restart servers while storage is unavailable.
 - **Protection remains active:** verify the storage process, application health probe, mount state, and directory access. Recovery begins only after all checks remain healthy for the stabilization period.
 - **Media server was not restarted:** DUMB restarts only a server it stopped. A server that was already stopped remains stopped.
 - **Settings were not restored:** review the active incident and DUMB logs. API authentication or a changed/deleted library can prevent restoration and produces a critical recovery notification.
