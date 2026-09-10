@@ -1,6 +1,14 @@
 # Changelog
 
 
+## [1.24.19](https://github.com/I-am-PUID-0/DUMB_docs/compare/1.24.18...1.24.19) (2026-09-10)
+
+
+### 📖 Documentation
+
+* explain embedded routing behavior and Tautulli template recovery ([c6b7101](https://github.com/I-am-PUID-0/DUMB_docs/commit/c6b7101bdb2579607881e1dc3935ba415d0667d2))
+* **proxmox:** explain local dotnet recovery and Jellyfin GPU validation ([e48437f](https://github.com/I-am-PUID-0/DUMB_docs/commit/e48437ffb288ffc2481d1699377910b3cf3a9d83))
+
 ## [1.24.18](https://github.com/I-am-PUID-0/DUMB_docs/compare/1.24.17...1.24.18) (2026-09-02)
 
 
