@@ -99,6 +99,26 @@ journalctl -u dumb -f
 
 Then continue with [Getting Started](../getting-started/index.md).
 
+## .NET repository checks
+
+Debian 13 has an [official Microsoft .NET feed](https://learn.microsoft.com/en-us/dotnet/core/install/linux-debian).
+An updater message claiming that the feed does not exist can also come from a
+failed network probe.
+
+The DUMB install/update scripts wrap the existing Community Scripts .NET
+installer with a local repository check. On Debian, this check runs before the
+shared installer can remove an existing Microsoft source/keyring, retries
+transient failures, and reuses a successful result for the duration of that
+.NET setup invocation. Failed checks stop the update before repository changes.
+The wrapper also avoids the shared probe's reversed cached success/failure
+handling without modifying core or changing checks for other applications.
+
+Use the updated DUMB helper scripts for this fix; updating only DUMB's Python
+controller does not change native runtime reconciliation. No core fork or
+`COMMUNITY_SCRIPTS_CORE_URL` override is required. Existing running services
+remain on the previous controller if dependency reconciliation fails before
+activation.
+
 ## Native LXC paths
 
 | LXC path | Purpose |
@@ -122,6 +142,38 @@ managed-service UID. This is required for PostgreSQL POSIX shared memory after
 temporary setup sessions end. Package-provided PostgreSQL, Plex, and Jellyfin
 systemd units are masked because DUMB, not the distribution unit, supervises
 those processes inside this dedicated LXC.
+
+## GPU passthrough and Jellyfin
+
+When GPU passthrough is enabled, the installer invokes the Community Scripts
+hardware-acceleration helper to select the vendor's drivers and required Debian
+repository components. The update path also reconciles drivers when updating
+the controller. Intel GPU support requires the appropriate VA-API driver;
+OpenCL tone mapping additionally depends on a compute runtime compatible with
+the GPU generation. Installing a package does not prove either path works.
+
+DUMB creates and maintains its own service account. Adding only the
+package-created `jellyfin` account to `render`/`video` does not grant access to
+DUMB's Jellyfin process. After applying the installer and controller fixes,
+restart DUMB and inspect the actual Jellyfin process:
+
+```bash
+pgrep -a -f '/usr/lib/jellyfin/bin/jellyfin'
+ls -ln /dev/dri/renderD*
+# Replace <PID> with the Jellyfin PID shown above.
+grep -E '^(Uid|Gid|Groups):' /proc/<PID>/status
+```
+
+The command should select `/usr/lib/jellyfin-ffmpeg/ffmpeg` unless a custom path
+was configured. The process's primary or supplementary groups must include the
+render device's numeric GID. For an unprivileged LXC, unmapped ownership must be
+corrected in the Proxmox device mapping; making render nodes world-writable is
+not required by DUMB.
+
+Verify playback by forcing a transcode and checking the Jellyfin FFmpeg log for
+the selected binary, QSV/VA-API codec, and successful device initialization.
+Testing only as root can conceal service-user permission failures. See the
+[Jellyfin service guide](../services/core/jellyfin.md#hardware-acceleration).
 
 ## Manage and update DUMB
 
