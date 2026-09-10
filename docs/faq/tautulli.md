@@ -33,3 +33,20 @@ Common questions and fixes for Tautulli in DUMB.
 
 - Make sure your Plex libraries have been scanned recently.
 - Check that Tautulli has permission to access Plex history and metadata.
+
+
+---
+
+## Settings shows `KeyError: 'pms_is_cloud'`
+
+This can happen when an older `data/interfaces` template remains beside newer
+Tautulli Python code. The error can also appear when accessing Tautulli directly;
+it is not an authentication error.
+
+DUMB updates now refresh the bundled `data/interfaces` tree while preserving
+configuration, databases, and other runtime files beside it. After installing a
+DUMB version containing this fix, update Tautulli to refresh the matching source
+and templates together. Do not delete the `data` directory: it also holds your
+Tautulli configuration and history. An explicit exclusion of `data/interfaces`
+will continue to preserve those templates and should be reviewed if the error
+persists.

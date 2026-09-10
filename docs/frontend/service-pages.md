@@ -613,6 +613,16 @@ Features:
 
 InfiniDysk uses a trailing slash in its embedded UI path to match its frontend routing.
 
+You can open different service pages in separate browser tabs. Embedded requests
+carry their service identity, so opening another service or returning to the
+dashboard does not switch the destination of an already-open embedded UI.
+After updating the frontend, reload existing service tabs to load the updated
+embedded routing support.
+
+This separates request routing; it does not give each embedded application a
+separate browser cookie or storage container. If applications use conflicting
+login cookies, use separate browser profiles for independent login sessions.
+
 DUMB discovers public routes through its authenticated loopback integration
 with TPA. A route must be enabled and match the managed service's target port;
 non-loopback targets must also match the service name. dmbdb never guesses a
