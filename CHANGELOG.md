@@ -1,6 +1,14 @@
 # Changelog
 
 
+## [1.24.20](https://github.com/I-am-PUID-0/DUMB_docs/compare/1.24.19...1.24.20) (2026-09-10)
+
+
+### 📖 Documentation
+
+* clarify inactive-service notices and media protection recovery ([1d915ba](https://github.com/I-am-PUID-0/DUMB_docs/commit/1d915bad2b97b5df3ffbee19a94c63220c3d0e6a))
+* **updates:** clarify explicit configured-release installation behavior ([57299d9](https://github.com/I-am-PUID-0/DUMB_docs/commit/57299d9e6f997639dc4af8acf7dc5f53cc079570))
+
 ## [1.24.19](https://github.com/I-am-PUID-0/DUMB_docs/compare/1.24.18...1.24.19) (2026-09-10)
 
 
