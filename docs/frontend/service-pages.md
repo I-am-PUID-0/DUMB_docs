@@ -636,6 +636,19 @@ embedding. TPA's embedded UI remains usable with a local break-glass account;
 start Authelia-backed TPA SSO from **Open TPA for SSO** so both authorization
 and callback run on their registered public HTTPS origins.
 
+### Jellyfin and Emby libraries
+
+Sign in to Jellyfin or Emby inside **Embedded UI** with an account that can
+access the expected libraries. DUMB's dashboard login is separate from the
+media server login. A direct server address and the DUMB frontend also use
+different browser origins, so signing in directly may not sign in the iframe.
+
+If the same account shows libraries at the direct address but the embedded
+view is empty, update the DUMB frontend and reload the service tab. Older
+frontend builds could send library and authentication requests to the web
+client's asset path. The corrected proxy preserves their native routes and
+opens the media web client at its proper entry point.
+
 ---
 
 ## Default tab selection

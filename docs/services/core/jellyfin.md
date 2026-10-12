@@ -53,6 +53,10 @@ icon: lucide/play
 ## Accessing the UI
 
 * Navigate to: `http://<host>:8096` (default Jellyfin port)
+* With service UIs enabled in DUMB, open **Embedded UI** on the Jellyfin service page and sign in to Jellyfin there.
+
+If existing libraries appear at the direct address but not in the iframe, see
+[Jellyfin and Emby embedded libraries](../../frontend/service-pages.md#jellyfin-and-emby-libraries).
 
 Fresh Jellyfin installs add the official Jellyfin APT source directly. They do
 not require the `add-apt-repository` utility, which is intentionally absent from

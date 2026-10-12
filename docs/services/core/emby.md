@@ -76,6 +76,10 @@ icon: lucide/disc
 
 * Navigate to: `http://<host>:8096`
 * Traefik proxy: `http://<host>:18080/service/ui/emby/`
+* With service UIs enabled in DUMB, open **Embedded UI** on the Emby service page and sign in to Emby there.
+
+See [Jellyfin and Emby embedded libraries](../../frontend/service-pages.md#jellyfin-and-emby-libraries)
+for login and empty-library troubleshooting.
 
 ## Media Library Protection
 
