@@ -311,6 +311,23 @@ Use `api_keys` to define provider credentials:
 
     Debrid API keys grant access to your account. Treat them like secrets.
 
+### TorBox API pacing
+
+DUMB uses a conservative starting profile when adding TorBox or filling missing or empty provider settings:
+
+```json
+{
+  "rate_limit": "2/second",
+  "torrents_refresh_interval": "30m"
+}
+```
+
+`rate_limit` paces routine requests at two per second, about 120 per minute sustained. `torrents_refresh_interval` refreshes the provider torrent catalog every 30 minutes, trading catalog freshness for fewer full-list requests. Download-link refresh and worker settings keep their mount-mode defaults.
+
+Existing nonempty tuning is preserved, including values saved by earlier DUMB versions. Defaults for other providers are unchanged. To apply this profile to an existing TorBox entry, open Decypharr's **Service Config** tab in the dashboard, find its entry under `debrids`, and edit only the two fields above. Keep its credentials and other settings, then **Save to File** and restart Decypharr when ready to apply the change. See [service configuration editors](../../frontend/service-pages.md#edit-service-config).
+
+[TorBox's current API limits](https://support.torbox.app/en/articles/13726368-api-rate-limits) specify a general ceiling of 300 requests per minute separately for each endpoint and API key, with tighter hourly limits for some creation operations. DUMB's profile is a starting point for reducing routine API pressure. Retries, media range requests, and other applications using the same key have their own request behavior and can still encounter limits.
+
 ### 1. Bind Mount Setup
 
 If you are passing the rclone mount to an **external** Arr or media server container, include the following bind mounts in both your `DUMB` and `arrs` docker-compose files (replace `...` with the full host path to your DUMB bind mount):
@@ -395,6 +412,8 @@ In your media server (Plex/Jellyfin/Emby), add the Decypharr symlink folders as 
 ---
 
 ## Troubleshooting Tips
+
+For TorBox HTTP `429` responses, check Decypharr's logs for the affected endpoint, retry frequency, and timestamps. Review the saved provider settings and other applications sharing the API key against TorBox's current limits. Persistent stalls need their own request and timeout logs; changing the pacing profile alone does not establish their cause.
 
 !!! tip "Common Issues"
     * When using external services, ensure the bind mounts are correct and both containers see the same `/mnt/debrid` structure
