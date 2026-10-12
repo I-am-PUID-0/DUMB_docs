@@ -636,6 +636,26 @@ embedding. TPA's embedded UI remains usable with a local break-glass account;
 start Authelia-backed TPA SSO from **Open TPA for SSO** so both authorization
 and callback run on their registered public HTTPS origins.
 
+### Service workers and browser notifications
+
+Apps such as Seerr and Jellyfin can register service workers for browser
+notifications and background features. Embedded registrations use the app's
+own service path, so opening another service tab does not change which worker
+is downloaded or let it take control of the dashboard. Worker requests and
+notification destinations retain the same service context.
+
+After updating the frontend, reload service tabs. An obsolete origin-root
+`/sw.js` registration from older embedded routing is retired when the browser
+next updates that worker. The retirement keeps application caches, cookies,
+local storage, and unrelated worker registrations. If the app asks you to
+re-enable push notifications after its registration changes, use that app's
+notification settings. Browser notification permission belongs to the DUMB
+frontend origin when using the embedded UI.
+
+Worker scopes separate controlled pages; embedded apps still share browser
+storage on the frontend origin. Direct access on a dedicated app origin keeps
+that app's native worker behavior.
+
 ### Jellyfin and Emby libraries
 
 Sign in to Jellyfin or Emby inside **Embedded UI** with an account that can
