@@ -1,6 +1,22 @@
 # Changelog
 
 
+## [1.24.21](https://github.com/I-am-PUID-0/DUMB_docs/compare/1.24.20...1.24.21) (2026-10-12)
+
+
+### 📖 Documentation
+
+* **decypharr:** explain TorBox pacing and existing-config tuning ([4177bb4](https://github.com/I-am-PUID-0/DUMB_docs/commit/4177bb474e6cb1dc6ef9f61b3a2b09687742aa00))
+* **emby:** explain native ping health monitoring ([019e956](https://github.com/I-am-PUID-0/DUMB_docs/commit/019e9560e38c6a6de668dd95c5a05d25a7002c1b))
+* explain container init and PID exhaustion recovery ([8b0475b](https://github.com/I-am-PUID-0/DUMB_docs/commit/8b0475b3f63a190fc5676830bed38fea1b0afa9b))
+* explain Pulsarr Bun and Decypharr source-build recovery ([3d7f6be](https://github.com/I-am-PUID-0/DUMB_docs/commit/3d7f6be9c3887f4ff4bb3a947b297e314f5b4d56))
+* **frontend:** document updated build and browser requirements ([cd908a7](https://github.com/I-am-PUID-0/DUMB_docs/commit/cd908a78a312e7d5e2a67b65b54211792474d9de))
+* **frontend:** explain embedded worker scopes and notification migration ([9029810](https://github.com/I-am-PUID-0/DUMB_docs/commit/9029810216ff77116ed35927f74448cd30b78873))
+* **frontend:** explain Jellyfin and Emby embedded library access ([e05bfc3](https://github.com/I-am-PUID-0/DUMB_docs/commit/e05bfc33a80c9036d41f91f6f3c3b16093cd27a2))
+* **frontend:** explain Node guards and legacy backend limits ([8a8ddc3](https://github.com/I-am-PUID-0/DUMB_docs/commit/8a8ddc395b85c41145a73bc1cc2a8d79866e615f))
+* **migration:** explain schema guards and recovered SQLite handling ([0bc403b](https://github.com/I-am-PUID-0/DUMB_docs/commit/0bc403b531e25cdf80f19092940b1a721828b050)), closes [#357](https://github.com/I-am-PUID-0/DUMB_docs/issues/357)
+* **security:** explain download verification and trust boundaries ([f372002](https://github.com/I-am-PUID-0/DUMB_docs/commit/f372002d5d2ea9b8c6a657819e14dc259c03ff51))
+
 ## [1.24.20](https://github.com/I-am-PUID-0/DUMB_docs/compare/1.24.19...1.24.20) (2026-09-10)
 
 
