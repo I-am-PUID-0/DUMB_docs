@@ -40,8 +40,9 @@ make that failure non-destructive:
 
 1. Resolve the requested release, branch head, or exact commit.
 2. Download into a content-addressed cache and verify its SHA-256 digest.
-   Conditional requests reuse unchanged content, and a failed revalidation may
-   use the last digest-verified object for that exact URL.
+   For GitHub release assets, also require the published SHA-256 digest when
+   available. Conditional requests and offline reuse still check that published
+   digest before accepting cached content.
 3. Validate the complete archive before applying files. Unsafe paths, links,
    malformed archives, extraction errors, and configured size limits fail the
    installation.
@@ -65,6 +66,35 @@ recovery behavior.
     migration. DUMB never replaces persistent data with a cached copy. If an
     upstream migration is not backward compatible, leave the restored service
     stopped and follow that application's documented database recovery path.
+
+## Download verification
+
+DUMB uses different checks for different download sources:
+
+| Download | Verification |
+| --- | --- |
+| Managed Bun runtime | Verify the publisher-signed checksum manifest against a bundled, pinned Bun key, then check the selected ZIP's SHA-256 before extraction or execution. |
+| Local .NET SDK bootstrap | Verify Microsoft's installer-script signature against its bundled, pinned key before running the script to resolve an SDK version. Check the SDK archive's SHA-512 against official Microsoft HTTPS release metadata before extraction or execution. |
+| Shared GitHub release assets | Check the selected asset's published SHA-256 digest when the release API supplies it, including cached and offline reuse. |
+| Ubuntu packages, including Tini | Use APT's authenticated repository metadata and package checksums. |
+
+A required Bun or Microsoft signature that is missing, invalid, or signed by an
+unrecognized key stops provisioning. Checksum mismatches also stop provisioning.
+The existing Bun binary or local .NET SDK stays in place until a verified
+candidate passes its version check. DUMB does not retry these failures with an
+unsigned installer or trust a replacement key automatically.
+
+Some GitHub release assets have no published digest. Those remain installable
+with HTTPS and DUMB's cache integrity checks; the log explicitly reports the
+missing published checksum. A present but malformed or unsupported digest
+refuses the download. A cache's own checksum detects changed cached bytes,
+but does not establish who originally published them.
+
+Published SDK and GitHub checksums provide integrity checks, rather than a
+separate publisher signature. OCI digests and package-manager lockfile hashes
+also do not imply universal publisher-signature or provenance verification.
+Bundled signing keys need maintenance when their publishers announce rotations
+or revocations; verification does not fetch new trust roots at runtime.
 
 ## Configuration
 

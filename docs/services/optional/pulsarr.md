@@ -112,6 +112,9 @@ After enabling and starting Pulsarr:
 - DUMB installs Bun under `/config/.bun` when Pulsarr is built from source.
   Setup checks the persistent runtime and upgrades versions older than Bun 1.4.3
   before installing Pulsarr dependencies; newer installed versions are retained.
+  Managed upgrades verify Bun's signed checksum manifest and the selected ZIP
+  before activation. Verification failure preserves the existing runtime. See
+  [download verification](../../features/install-cache.md#download-verification).
 - DUMB runs Pulsarr's idempotent database migrations before each application
   start. This creates a missing schema and applies upgrades without deleting
   the retained SQLite database. A migration failure keeps Pulsarr stopped and
