@@ -121,6 +121,18 @@ The panel shows the latest persisted job for the current service, including its 
 
 Preflight does not change the service configuration.
 
+#### Source schema and recovered databases
+
+DUMB imports columns by name, so differing column order is supported. The source must still be compatible with the installed application's PostgreSQL schema. Imports, table resets, and validation address the application tables explicitly in PostgreSQL's `public` schema. Before truncating those tables, DUMB checks that the source tables and importable columns exist in that schema. A missing-column error identifies the affected table and columns.
+
+The application must also resolve its unqualified table names to those same `public` tables. If the database role's `search_path` selects a same-name table in another schema or hides the `public` table, DUMB blocks import before truncation and reports the mismatch. This check leaves role and server settings unchanged; review the application's database configuration before retrying.
+
+Preflight blocks the default SQLite recovery table `lost_and_found` in the main database and reports a warning when it appears in an optional Arr log database. Import also rejects it if that database is selected. Preserve the original database, recovered copy, unassigned rows, and an independent backup while investigating. Removing the artifact alone does not validate the recovered application data.
+
+[SQLite recovery](https://www.sqlite.org/recovery.html) can alter values and types or move content between tables. Its recovery-table name can also be customized, so the default-name check does not identify every recovery result. A successful `quick_check` does not prove that application values or types are correct. Reconcile recovered data on a separate copy, let the application complete its own SQLite upgrades, and validate its important objects before repeating the PostgreSQL rehearsal.
+
+For a schema or type failure, review the persisted job's error and detailed progress. Useful diagnostic information includes the affected table and column names, SQLite `PRAGMA table_info` column types, PostgreSQL `information_schema.columns` types and schema names, and `search_path`. Share schema metadata and the error message while keeping database rows and credentials private.
+
 ### 2. Run a rehearsal
 
 Rehearsal is required before dmbdb enables cutover. It:
