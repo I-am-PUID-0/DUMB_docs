@@ -148,12 +148,14 @@ host or port.
 
 ## Browser support
 
-The frontend is tested on modern browsers:
+Use an up-to-date version of these browsers:
 
 - Chrome/Chromium (recommended)
 - Firefox
 - Safari
 - Edge
+
+The dependency panel's [**Flow** view](service-pages.md#dependency-graph-view) uses Mermaid 12, which targets **Safari 17.4+** and ES2024-capable browsers. See the [Mermaid 12 release notes](https://github.com/mermaid-js/mermaid/releases/tag/mermaid@12.0.0) for its browser requirements. Mermaid loads only when this view is opened. If the graph cannot render on an older browser, use **Details** to inspect dependencies; this graph requirement does not define the browser floor for the rest of the dashboard.
 
 ---
 

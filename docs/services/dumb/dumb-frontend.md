@@ -19,6 +19,14 @@ and metrics in a single interface.
 
 ---
 
+## Build and update requirements
+
+Installing or rebuilding the current frontend requires **Node.js 24.15 or later within the 24.x series** and **pnpm 10**. This matches the [Nuxt 4.6 toolchain requirements](https://github.com/nuxt/nuxt/releases/tag/v4.6.0).
+
+DUMB builds frontend updates with the Node runtime bundled in its image; updating the frontend alone does not update Node. Before rebuilding from an older image with Node below 24.15, update the DUMB image and recreate its container using your existing persistent volumes. Separately deployed frontends must provide a compatible Node and pnpm installation.
+
+Production starts the compiled Nitro server with `node .output/server/index.mjs`. The version floor above applies to dependency installation and source builds; it does not establish the minimum runtime for every previously compiled frontend.
+
 ## Configuration Settings in `dumb_config.json`
 
 This block is nested at `dumb.frontend` in `/config/dumb_config.json`:
