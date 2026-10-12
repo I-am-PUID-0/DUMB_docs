@@ -21,11 +21,13 @@ and metrics in a single interface.
 
 ## Build and update requirements
 
-Installing or rebuilding the current frontend requires **Node.js 24.15 or later within the 24.x series** and **pnpm 10**. This matches the [Nuxt 4.6 toolchain requirements](https://github.com/nuxt/nuxt/releases/tag/v4.6.0).
+Installing or rebuilding the current frontend requires **Node.js `>=24.15.0 <25`** and **pnpm 10**. This matches the [Nuxt 4.6 toolchain requirements](https://github.com/nuxt/nuxt/releases/tag/v4.6.0). An older frontend pin follows the engine requirement declared by that selected source.
 
-DUMB builds frontend updates with the Node runtime bundled in its image; updating the frontend alone does not update Node. Before rebuilding from an older image with Node below 24.15, update the DUMB image and recreate its container using your existing persistent volumes. Separately deployed frontends must provide a compatible Node and pnpm installation.
+New DUMB image builds and release validation enforce the current Node range. Frontend updates use the runtime already bundled in the running image; updating frontend source alone does not upgrade Node. Before rebuilding from an older image with Node below 24.15, update the DUMB image and recreate its container using your existing persistent volumes. Separately deployed frontends must provide a compatible Node and pnpm installation.
 
-Production starts the compiled Nitro server with `node .output/server/index.mjs`. The version floor above applies to dependency installation and source builds; it does not establish the minimum runtime for every previously compiled frontend.
+The frontend source includes a dependency-free Node check in its install and build commands, so those commands can detect an incompatible runtime even on an older DUMB backend. The check reads that source's own `package.json`; with strict engine validation, pnpm may reject the requirement first with an expected/actual version error. Neither check upgrades Node.
+
+Production starts the compiled Nitro server with `node .output/server/index.mjs`, which does not run the source check. The version floor above applies to dependency installation and source builds; it does not establish the minimum runtime for every previously compiled frontend.
 
 ## Configuration Settings in `dumb_config.json`
 
@@ -121,14 +123,16 @@ frontend after its runtime is ready.
 
 ## Self-update behavior
 
-Manual and scheduled frontend updates are prepared transactionally. DUMB
-downloads, builds, and validates the candidate in an adjacent directory while
+Current DUMB releases prepare manual and scheduled frontend updates transactionally.
+DUMB downloads, builds, and validates the candidate in an adjacent directory while
 the installed frontend continues serving the dashboard. Only the final atomic
 directory swap, process restart, and readiness check create frontend downtime.
 
-If the candidate cannot be built or validated, DUMB removes it and leaves the
-current frontend running. If the replacement cannot configure, start, or become
-ready after activation, DUMB restores and verifies the previous runtime.
+If the candidate cannot be built or validated, including an unsupported Node
+version during preparation, DUMB removes it and leaves the current frontend
+running. If the replacement cannot configure, start, or become ready after
+activation, DUMB restores and verifies the previous runtime. The frontend's Node
+check does not add these update or rollback guarantees to older DUMB backends.
 
 An update started from the frontend can briefly interrupt its own HTTP request
 during the final restart. Current dmbdb clients recognize that transport break,
