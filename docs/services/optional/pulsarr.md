@@ -110,11 +110,26 @@ After enabling and starting Pulsarr:
 
 - Pulsarr uses SQLite by default at `/pulsarr/data/db/pulsarr.db`.
 - DUMB installs Bun under `/config/.bun` when Pulsarr is built from source.
+  Setup checks the persistent runtime and upgrades versions older than Bun 1.4.3
+  before installing Pulsarr dependencies; newer installed versions are retained.
 - DUMB runs Pulsarr's idempotent database migrations before each application
   start. This creates a missing schema and applies upgrades without deleting
   the retained SQLite database. A migration failure keeps Pulsarr stopped and
   preserves the migration error in DUMB's service log.
 - If you intentionally serve Pulsarr behind a separate subfolder reverse proxy, set Pulsarr's own `basePath` environment variable for that external proxy. DUMB's embedded UI route strips its service prefix and does not need `basePath`.
+
+## Troubleshooting
+
+### `Unknown lockfile version` during installation
+
+A Pulsarr `bun.lock` with `lockfileVersion: 2` requires Bun 1.4 or newer.
+Older DUMB installations can retain an older Bun binary under `/config/.bun`
+even after updating the container or creating another Pulsarr instance.
+
+Update DUMB to a build containing the Bun runtime check, then retry the Pulsarr
+installation. DUMB upgrades the managed runtime before running the frozen
+lockfile install. Keep Pulsarr's lockfile and persistent data; removing the
+lockfile would change which dependencies are installed.
 
 ## PostgreSQL migration
 

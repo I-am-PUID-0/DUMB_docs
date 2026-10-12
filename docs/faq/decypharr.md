@@ -32,6 +32,19 @@ When Decypharr has Usenet providers configured, DUMB adds a Sabnzbd-compatible d
 
 Legacy configs may contain per-provider folders while current configs use one top-level `mount.mount_path`. Restart after saving the desired `mount_type` in DUMB so setup can reconcile `config.json`. If existing links still target the old layout, preview the Decypharr migration playbook in **Symlinks** before applying it.
 
+## Why does a source build fail with `undefined: storage.Downgrade`?
+
+Older Decypharr source included a root `downgrade.go` file that newer revisions
+removed along with `storage.Downgrade`. An update that leaves the old root file
+beside the new packages produces this compiler error. Updating Go alone does
+not remove the obsolete source file.
+
+Update DUMB to a build containing the Decypharr source cleanup fix, then retry
+**Install configured release/branch/commit** on the Decypharr service page. DUMB
+clears previous source and build artifacts before extracting the selected
+revision, including obsolete root Go files. This preserves Decypharr's
+configuration, logs, databases, cache, and existing binary during source cleanup.
+
 ## Related pages
 
 - [Decypharr service guide](../services/core/decypharr.md)
