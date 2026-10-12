@@ -97,6 +97,21 @@ environment overrides:
 Keep durable service configuration and databases on storage appropriate for
 their recovery requirements.
 
+## Container process cleanup
+
+DUMB images run the controller under Tini, a small container init process. It
+collects exited orphan processes from bundled services so they do not accumulate
+and exhaust the container's PID limit. DUMB continues to supervise its services;
+Tini forwards container signals to the controller and preserves its exit code.
+
+This protection is active when using the image's default entrypoint. If you
+replace that entrypoint, enable your container runtime's init option, such as
+Docker `--init` or Compose `init: true`. Native systemd installations use the
+host init process.
+
+See [the PID exhaustion troubleshooting guidance](../faq/dumb.md#why-can-no-services-start-after-the-container-has-been-running-for-days)
+for older images.
+
 ## API
 
 When capability `startup_lifecycle` is true:

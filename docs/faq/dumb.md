@@ -94,6 +94,31 @@ http://<host>:18080/service/ui/<service_name>
 
 Or access services directly on their native ports. See [Embedded Service UIs](../features/embedded-ui.md).
 
+### Why can no services start after the container has been running for days?
+
+On older images, orphaned zombie processes from a bundled service can accumulate
+until the container reaches its PID limit. New process and thread creation then
+fails, affecting unrelated services and health checks.
+
+Inspect the PID usage and exited processes while the container still accepts
+commands:
+
+```bash
+docker exec <container> sh -c 'cat /sys/fs/cgroup/pids.current /sys/fs/cgroup/pids.max'
+docker exec <container> ps -eo pid,ppid,stat,comm
+```
+
+Repeated `Z` process states with parent PID `1` and increasing PID usage are
+consistent with this failure. Update to a DUMB image containing the container
+init fix and recreate the container with the same persistent volumes. The new
+init process collects orphaned children after they exit. If you override the
+image entrypoint, enable Docker `--init` or Compose `init: true`.
+
+Recreating or restarting interrupts running services; schedule it during a
+maintenance window. A restart clears existing zombies, while raising the PID
+limit only delays exhaustion if the processes continue accumulating. Preserve
+service configuration and databases when recreating the container.
+
 ### A service keeps restarting - what should I do?
 
 1. Check the service logs for error messages
