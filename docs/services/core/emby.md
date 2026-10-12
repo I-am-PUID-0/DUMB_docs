@@ -89,6 +89,14 @@ See [Media Library Protection](../../features/media-library-protection.md).
 
 ---
 
+## Health monitoring
+
+DUMB checks Emby's `/emby/System/Ping` endpoint. HTTP `200` with the plain-text reply `Emby Server` is a successful application ping. When the process and port checks also pass, DUMB displays **Healthy**.
+
+Health details explain failed or unrecognized responses. The ping confirms server responsiveness; library access, media paths, and playback need their own checks. See [health states and application probes](../../features/auto-restart.md#health-states-and-application-probes).
+
+---
+
 ## Logs and data paths
 
 - Config: `/emby/config/system.xml`
