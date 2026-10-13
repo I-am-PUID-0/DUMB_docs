@@ -1,6 +1,14 @@
 # Changelog
 
 
+## [1.24.22](https://github.com/I-am-PUID-0/DUMB_docs/compare/1.24.21...1.24.22) (2026-10-13)
+
+
+### 📖 Documentation
+
+* explain archive recovery and safer service configuration ([2c1bbe4](https://github.com/I-am-PUID-0/DUMB_docs/commit/2c1bbe4723a366bce2bbbdbd97ead65fdfdaa02b))
+* **whisparr:** document version selection and database upgrade limits ([7cbb303](https://github.com/I-am-PUID-0/DUMB_docs/commit/7cbb30333c918f0b0632bb86a759c4e95cb98570))
+
 ## [1.24.21](https://github.com/I-am-PUID-0/DUMB_docs/compare/1.24.20...1.24.21) (2026-10-12)
 
 
