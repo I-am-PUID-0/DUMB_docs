@@ -446,9 +446,17 @@ replacement for backups or application-native database recovery.
 * `WEBDAV_PASSWORD`: Override the WebDAV password.
 * `CONFIG_PATH`: Override the InfiniDysk config path (defaults to `config_dir`).
 * `FRONTEND_BACKEND_API_KEY`: Backend API key shared with the frontend.
+  DUMB generates and saves it when missing, then preserves it across configure
+  runs and configuration reloads.
 * `ASPNETCORE_URLS`: Backend bind address (defaults to `http://+:<backend_port>`).
 * `PORT`: Frontend port (defaults to `frontend_port`).
 * `BACKEND_URL`: Frontend-to-backend URL (defaults to `http://127.0.0.1:<backend_port>`).
+
+The frontend/backend key and the API key shown in InfiniDysk's settings may
+differ; upstream accepts both. If a running instance rejects DUMB's configured
+key with HTTP 401, DUMB can retry once using the API key from that instance's
+active database. This does not rotate the saved frontend/backend key or fall
+back to a retained SQLite database when PostgreSQL is active.
 
 !!! danger "Protect API keys"
 

@@ -81,6 +81,19 @@ Zurg is configured using the `instances` model to support multiple debrid servic
 
 ---
 
+## YAML configuration
+
+DUMB updates the root `port`, `token`, `username`, and `password` settings in
+each instance's `config_file`. Nested provider settings, including their ports
+and credentials, remain separate. Disabling WebDAV authentication removes only
+the root username and password.
+
+Indented or quoted root keys are supported. Existing comments are retained,
+although YAML spacing and indentation can normalize when the file is saved.
+Invalid YAML is reported without applying these configuration edits.
+
+---
+
 ## Version Targeting
 You can control which version of Zurg is deployed by setting:
 

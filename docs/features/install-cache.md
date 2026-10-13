@@ -67,6 +67,13 @@ recovery behavior.
     upstream migration is not backward compatible, leave the restored service
     stopped and follow that application's documented database recovery path.
 
+If an archive install fails and restoring a previous file also fails, DUMB
+keeps the recovery backup and reports its location. Preserve that backup until
+the service's files have been recovered. Further archive installs and automatic
+directory clears stop while a recovery workspace remains, so a retry cannot
+erase that evidence. A failure to remove backups after a successful install is
+reported separately and does not undo the new runtime.
+
 ## Download verification
 
 DUMB uses different checks for different download sources:
@@ -118,9 +125,11 @@ or revocations; verification does not fetch new trust roots at runtime.
 ```
 
 Keep the cache on persistent local storage when possible. It may reside on a
-different filesystem from service runtimes, but transactional candidate
-directories are always created beside their target so activation uses an
-atomic same-filesystem rename. DUMB refuses broad system/data roots such as
+different filesystem from service runtimes. The shared archive installer
+stages extracted files and rollback backups on the service's filesystem,
+including directly mounted service directories, so file activation uses atomic
+same-filesystem renames. Allow enough free space there for the candidate and
+temporary backups. DUMB refuses broad system/data roots such as
 `/`, `/config`, `/data`, and `/mnt` as the cache root and falls back to the
 default cache directory.
 
