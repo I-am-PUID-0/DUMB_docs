@@ -1,6 +1,13 @@
 # Changelog
 
 
+## [1.24.23](https://github.com/I-am-PUID-0/DUMB_docs/compare/1.24.22...1.24.23) (2026-10-14)
+
+
+### 📖 Documentation
+
+* **whisparr:** explain saved v2 and Eros library profiles ([c7fa839](https://github.com/I-am-PUID-0/DUMB_docs/commit/c7fa839470cde974a5fafca731035b34b221f9b6))
+
 ## [1.24.22](https://github.com/I-am-PUID-0/DUMB_docs/compare/1.24.21...1.24.22) (2026-10-13)
 
 
