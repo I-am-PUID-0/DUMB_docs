@@ -63,7 +63,7 @@ icon: lucide/eye
 
 ### Key Configuration Fields
 
-* `whisparr_version`: Choose `v2` or `v3` (Eros), or leave blank to detect and preserve the existing version. A new instance with no existing version defaults to v2.
+* `whisparr_version`: Choose `v2` or `v3` (Eros), or leave blank to detect and preserve the existing version. DUMB remembers a separate data and release profile for each version when you switch. A new instance with no existing version defaults to v2.
 * `core_service`: Set to `decypharr`, `infinidysk`, `altmount`, or a list of workflow keys to enable DUMB integration.
 * `use_neutarr`: Opt this instance into NeutArr automation.
 * `postgres_enabled`: Opt this instance into DUMB-managed PostgreSQL config. SQLite is the default; set this to `true` only when you want Whisparr to use PostgreSQL.
@@ -74,8 +74,9 @@ icon: lucide/eye
 * `release_version_enabled` / `release_version`: Select a GitHub release using `latest`, `prerelease`, or an exact tag. When disabled, an unpinned instance still installs the latest official release for its selected version.
 * `branch_enabled` / `branch`: Select an update channel: `v2` or `v2-develop` for v2, and `eros` or `eros-develop` for v3. These select packaged releases; Whisparr source builds are not supported.
 * `commit_sha`: Leave blank. Installing Whisparr from a specific source commit is not supported.
-* `clear_on_update` / `exclude_dirs`: Generic install-cleanup settings. Whisparr stages a replacement of its managed binary directory; keep `config_dir` separate from that directory. These fields do not convert or relocate databases.
-* `config_dir`, `config_file`, `log_file`: Paths for config and logs.
+* `clear_on_update` / `exclude_dirs`: Generic install-cleanup settings. Whisparr stages a replacement of its managed binary directory; keep `config_dir` separate from that directory. These fields do not convert databases or control version profiles.
+* `config_dir`, `config_file`, `log_file`: Paths for the selected version's config and logs. DUMB updates them together when you switch profiles.
+* `whisparr_profiles`: Saved v2 and v3 data paths, runtime paths, and release choices managed by DUMB. You normally do not need to edit this field.
 
 ---
 
@@ -90,12 +91,35 @@ Leaving the setting blank preserves the version indicated by the existing databa
 | v2 | [Whisparr/Whisparr](https://github.com/Whisparr/Whisparr/releases) | `v2` / `v2-develop` | `whisparr2.db`; older installs may use `whisparr.db` |
 | v3 (Eros) | [Whisparr/Whisparr-Eros](https://github.com/Whisparr/Whisparr-Eros/releases) | `eros` / `eros-develop` | `whisparr3.db` |
 
-Both versions use `logs.db` for SQLite logs. DUMB keeps each instance's binary separate under `/opt/whisparr/instances/<instance-slug>/Whisparr/Whisparr` and leaves the configured data directory in place.
+Both versions use `logs.db` for SQLite logs. Each saved version profile has its own data directory and managed binary directory, so its config, logs and library stay separate.
 
-!!! warning "Changing versions does not convert the database"
-    v2 and v3 have different databases and library models. Create a separate instance with its own `config_dir` and port when installing the other version.
+### Switching versions on the same instance
 
-    DUMB refuses an installation or startup when the selected version conflicts with existing data, or when both version families are present in the same data directory. It does not rename, delete, or convert those databases.
+For a SQLite-backed instance:
+
+1. Choose **Whisparr v2** or **Whisparr v3 (Eros)** in the instance's version setting.
+2. Save the configuration. DUMB selects that version's saved profile and updates the config, log and runtime paths together.
+3. Start or restart the instance to apply the selected version.
+
+You can keep the same process name and port. Only one version runs on that instance at a time. Choosing the previous version restores its saved library paths and release choices.
+
+A clean existing installation keeps its original data directory. The first switch to the other version normally creates a separate data directory under `<original-config_dir>/whisparr-profiles/v2` or `<original-config_dir>/whisparr-profiles/v3`. Managed binaries use a separate version directory under `/opt/whisparr/instances/<instance-slug>/`. Keep the original config directory on persistent storage so both profiles survive container replacement.
+
+Saving a selection updates DUMB's configuration; installation and any necessary database snapshot happen when the instance is started or restarted. The original database files remain in place.
+
+!!! warning "Each version keeps its own library"
+
+    v2 and v3 have different databases and library models. If the selected version has no existing library, it starts with a fresh library. Switching profiles does not convert a v2 library into a v3 library or transfer later changes between them.
+
+    PostgreSQL-backed instances require separate instances and separate databases for v2 and v3. DUMB refuses a version switch that would reuse an existing PostgreSQL library.
+
+### Existing directories containing both versions
+
+If an older configuration placed both v2 and v3 databases in the same data directory, explicitly choose the version you want to run. DUMB prepares an isolated profile for that version, taking a consistent SQLite snapshot of its main database, including committed writes in its WAL, and copying any existing `config.xml`. Logs and caches are created again in the profile. The original database and native configuration files remain in place.
+
+When you later select the other version, DUMB can prepare its own profile from the matching original database. After a profile is initialized, returning to it reuses that saved profile rather than recopying the original library.
+
+DUMB stops with an explanation if it cannot safely identify or copy the library, including directories containing only recovery files, conflicting legacy/current v2 filenames, invalid SQLite databases, or data already occupying a proposed profile directory. Preserve those files and resolve the reported ambiguity before retrying.
 
 !!! warning "Legacy v2 database filenames require a separate migration"
     Current v2 releases (2.2 and newer) open `whisparr2.db`; they do not automatically discover or rename a legacy `whisparr.db`. Starting a newer binary against only the legacy file could create an empty library. See the [upstream v2 database path](https://github.com/Whisparr/Whisparr/blob/v2.2.0-release.231/src/NzbDrone.Common/Extensions/PathExtensions.cs).
@@ -104,7 +128,7 @@ Both versions use `logs.db` for SQLite logs. DUMB keeps each instance's binary s
 
     Changing `whisparr_version`, clearing the install directory, or changing `exclude_dirs` does not perform this migration. Preserve the original database and recovery files while planning it.
 
-For example, a separate v3 instance using the official stable releases can use:
+To run both versions at the same time, create a separate instance with its own data directory and port. For example, a separate v3 instance using the official stable releases can use:
 
 ```json
 "whisparr": {
