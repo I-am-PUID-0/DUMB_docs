@@ -1,6 +1,15 @@
 # Changelog
 
 
+## [1.24.23](https://github.com/I-am-PUID-0/DUMB_docs/compare/1.24.22...1.24.23) (2026-11-09)
+
+
+### 📖 Documentation
+
+* clarify service startup and update safeguards ([ecfb61e](https://github.com/I-am-PUID-0/DUMB_docs/commit/ecfb61ecdb08d6ca861c53aff1a5371c2b39119d))
+* **infinidysk:** document native v2 upgrades and recovery ([a46edcc](https://github.com/I-am-PUID-0/DUMB_docs/commit/a46edcc38f8fb0f2c221b65c00755b8f27d94116))
+* **whisparr:** explain saved v2 and Eros library profiles ([c7fa839](https://github.com/I-am-PUID-0/DUMB_docs/commit/c7fa839470cde974a5fafca731035b34b221f9b6))
+
 ## [1.24.22](https://github.com/I-am-PUID-0/DUMB_docs/compare/1.24.21...1.24.22) (2026-10-13)
 
 
