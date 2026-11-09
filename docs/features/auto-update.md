@@ -372,6 +372,32 @@ The `auto_update_start_time` and `auto_update_interval` settings control update 
 
 With this example, checks run once per day at 04:00. If you set `auto_update_interval` to another value (for example `12`), checks run every 12 hours anchored from the configured start time.
 
+### Scheduled work and deferrals
+
+DUMB uses one shared scheduler. Scheduled service update checks and installs
+run one at a time. If another scheduled update is still active, or a lifecycle
+or migration operation holds a required lock, a due update records `deferred`
+and retries on a later scheduler tick. Deferred work does not accumulate in
+an install queue, and its enabled state and source selection are checked again
+before it runs. DUMB API release checks and scheduled symlink backups use
+separate bounded workers so a slow service update does not occupy the
+scheduler loop.
+
+The dashboard Updates panel shows recorded update messages. The
+[update-status API](../api/process.md#get-processupdate-status) also reports
+live scheduler state, progress messages, and elapsed time. DUMB API and DUMB
+Frontend retain a known available result during rechecks and deferrals;
+their `scheduler_state` and `scheduler_message` describe the active work
+separately. A scheduled operation
+that has run for five minutes is marked as long-running; DUMB logs its
+continued activity each minute. This is an observation, not a cancellation
+deadline. DUMB retains the active operation's locks and recovery state until
+it returns, and later updates remain deferred where necessary.
+
+An exception records an error and leaves the scheduler available for later
+work. A service process starting successfully does not by itself mean update
+health stabilization and cleanup have finished.
+
 ---
 
 ## Preserving data during updates
@@ -515,6 +541,13 @@ INFO - [Auto-Update] Update complete: frontend v1.33.0
 2. **Check the interval** - updates may not be due yet
 3. **Review logs** for error messages
 4. **Verify network connectivity** to GitHub
+
+If the status is `deferred`, review its message and next retry time. Another
+update, lifecycle operation, or migration can temporarily prevent admission.
+For a running or long-running update, review the active service's install
+stage and logs. Elapsed time alone does not identify the blocking operation;
+collecting a thread traceback may be needed to diagnose a persistent stall.
+The scheduler does not terminate the active installer to start another one.
 
 ### Update fails repeatedly
 

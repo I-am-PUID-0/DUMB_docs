@@ -5,36 +5,38 @@ icon: lucide/battery-charging
 
 # CLI Battery Configuration
 
-In the CLI Debrid layout currently managed by DUMB, **CLI Battery** is a separate
-Flask-based companion application. It provides metadata services and background
-processing, integrates with Trakt, and exposes a lightweight web API for managing
-movies and TV shows. This service must be running for the current DUMB-supported
-CLI Debrid layout to operate properly.
+**CLI Battery** provides metadata services, background processing, and Trakt
+integration for CLI Debrid. Older CLI Debrid layouts run it as a separate
+Flask application. Newer layouts include it inside the CLI Debrid process.
+This service's separate process, port, and web interface apply to the older
+standalone layout.
 
-!!! info "Upstream pre-release architecture change"
+!!! info "DUMB follows the installed CLI Debrid layout"
 
-    [CLI Debrid v0.7.29](https://github.com/godver3/cli_debrid/releases/tag/v0.7.29)
-    is an upstream pre-release. Commit
-    [`ef4deb5`](https://github.com/godver3/cli_debrid/commit/ef4deb5bbed60826ef2aaa48be0ecb17250ea87e)
+    In [CLI Debrid v0.7.29](https://github.com/godver3/cli_debrid/releases/tag/v0.7.29),
+    commit [`ef4deb5`](https://github.com/godver3/cli_debrid/commit/ef4deb5bbed60826ef2aaa48be0ecb17250ea87e)
     replaces the standalone Flask/HTTP service with an in-process Python module,
     removing the separate port and process from that upstream layout.
 
-    DUMB has not yet made its dependency graph version-aware: its configuration
-    still contains `cli_battery/main.py`, port `5001`, and CLI Battery as a
-    prerequisite. Keep this service enabled for stable/older CLI Debrid releases.
-    If you intentionally use v0.7.29 or a newer pre-release with the in-process
-    rewrite, manually disable the standalone CLI Battery service.
+    DUMB inspects the installed files rather than relying on a version label.
+    When it recognizes the embedded layout, it skips the managed standalone
+    Battery process and removes that startup dependency, even if `cli_battery`
+    remains enabled in the saved configuration. Keep Battery enabled when
+    running an older layout that still provides `cli_battery/main.py`.
+    Starting Battery directly on an embedded layout reports that no separate
+    process is needed.
 
-    Normal DUMB startup skips a disabled CLI Battery. A guided **Start Core
-    Service** or onboarding action may re-enable it from the current static
-    dependency map, so re-check the toggle after using those flows.
+    A missing standalone entrypoint alone does not prove Battery is embedded.
+    If DUMB cannot recognize either layout, a direct standalone Battery start
+    reports an error; install or repair CLI Debrid first. Separately configured
+    Battery commands or source directories retain their own behavior.
 
 ## Service relationships
 
 | Classification | Role |
 | -------------- | ---- |
 | Dependent | CLI Debrid companion service |
-| Used By | Stable/older [CLI Debrid](../core/cli-debrid.md) layouts that use the separate port-5001 service |
+| Used By | Installed [CLI Debrid](../core/cli-debrid.md) layouts that use the separate port-5001 service |
 | Exposes UI | Yes |
 
 ---
@@ -92,11 +94,12 @@ CLI Debrid layout to operate properly.
 
 ---
 
-## Required by stable/older CLI Debrid layouts
+## Required by standalone CLI Debrid layouts
 
-CLI Battery must be running **before** a CLI Debrid release that depends on its
-standalone API launches. This ordering does not apply to the in-process v0.7.29+
-pre-release design; disable this separate DUMB service for that layout.
+CLI Battery must be running **before** a CLI Debrid layout that depends on its
+standalone API launches. DUMB starts the enabled managed Battery first for
+that layout. A recognized embedded layout uses the CLI Debrid process and
+does not need a separate port-5001 service.
 
 ---
 

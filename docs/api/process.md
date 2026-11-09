@@ -333,6 +333,32 @@ details; DUMB's normal log redaction remains active.
 
 Returns the last recorded update state for the required `process_name` query parameter.
 
+Scheduled work can add the following fields to `update_status`:
+
+| Field | Meaning |
+| --- | --- |
+| `scheduler_state` | `running`, `deferred`, `error`, `blocked`, `disabled`, or `completed` for the scheduled callback |
+| `scheduler_job` | `update` or `api` |
+| `scheduler_message` | Progress or outcome message for the scheduled callback |
+| `scheduler_started_at` | Callback start time as Unix seconds |
+| `scheduler_elapsed_seconds` | Observed running duration |
+| `scheduler_long_running` | Whether the callback has been running for at least five minutes |
+| `retry_after_seconds`, `next_retry_at` | Retry delay and Unix retry time when admission is deferred |
+| `last_run_status` | Completed callback outcome, including `rescheduled` when its due time moved before execution |
+
+These fields supplement the existing `status`, `message`, schedule, and install
+timing fields. Polling clients should display the message and tolerate absent
+fields on older backends. A long-running flag does not mean the callback has
+been stopped or its locks released. Scheduled service updates remain serial;
+other due services can report `deferred` while the active callback finishes.
+For DUMB API and DUMB Frontend, a known available update remains in `status`
+and `message` during a recheck or deferral. Read `scheduler_state` and
+`scheduler_message` for live progress; a failed recheck also records
+`last_check_error` without discarding that known result.
+Scheduled backups publish corresponding worker fields through
+[`GET /process/symlink-backup-status`](#get-processsymlink-backup-status),
+with `scheduler_job: "symlink_backup"` and `next_backup_at`.
+
 ### `GET /process/update-notices`
 
 Returns available, informational, and recently applied update notices. `scope=project` (default) limits notices to DUMB/dmbdb; `scope=all` includes managed services.

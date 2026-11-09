@@ -89,6 +89,16 @@ InfiniDysk also exposes a **Usenet download client** path in Arr by emulating a 
     follow the maintained repository automatically; intentional custom forks
     remain unchanged. User-visible identity changes remain opt-in.
 
+!!! important "Supported InfiniDysk versions"
+
+    DUMB's current integration installs and updates official InfiniDysk 1.x
+    releases. The `latest` and `prerelease` channels stay on that release line.
+    InfiniDysk 2.x uses a different runtime, configuration and data layout and
+    requires a separate migration; selecting a 2.x release, branch or commit
+    is refused by this integration. Named refs, branches and commit pins must
+    be verified as part of the upstream `v1` maintenance branch before a new
+    runtime is installed. These restrictions apply to the official repository.
+
 !!! tip "Support the maintainer"
 
     If InfiniDysk is useful to your stack, you can support the maintainer

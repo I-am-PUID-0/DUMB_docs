@@ -8,26 +8,25 @@ icon: lucide/terminal
 
 **CLI Debrid** is a core content orchestrator in the DUMB ecosystem. It automates media collection and upgrading through Debrid services (e.g. Real-Debrid), working alongside Trakt, Plex, Seerr, and various scrapers. CLI Debrid can either monitor your Plex libraries or generate symlinks for organized media delivery to Plex or similar servers.
 
-!!! info "CLI Battery transition in the v0.7.29 pre-release"
+!!! info "CLI Battery follows the installed layout"
 
-    Upstream [CLI Debrid v0.7.29](https://github.com/godver3/cli_debrid/releases/tag/v0.7.29)
-    is marked as a pre-release. Its
-    [CLI Battery rewrite](https://github.com/godver3/cli_debrid/commit/ef4deb5bbed60826ef2aaa48be0ecb17250ea87e)
+    The [CLI Battery rewrite](https://github.com/godver3/cli_debrid/commit/ef4deb5bbed60826ef2aaa48be0ecb17250ea87e)
+    introduced in [CLI Debrid v0.7.29](https://github.com/godver3/cli_debrid/releases/tag/v0.7.29)
     converts CLI Battery from a separate Flask service on port `5001` into an
     in-process Python module imported by CLI Debrid.
 
-    DUMB's current configuration model still contains the old standalone CLI
-    Battery process, command, port, and static dependency. If you intentionally
-    select v0.7.29 or a newer pre-release with the in-process rewrite, manually
-    disable `cli_battery`; running both forms is unnecessary and the removed
-    `cli_battery/main.py` command cannot serve that upstream layout. Keep CLI
-    Battery enabled for stable/older CLI Debrid releases that still use port
-    `5001`.
+    DUMB recognizes the installed files rather than inferring the layout from
+    a release tag, branch, or commit label. For a recognized embedded layout,
+    startup and dependency handling skip the managed standalone Battery even
+    when its saved toggle is enabled. For a standalone layout that still
+    provides `cli_battery/main.py`, keep CLI Battery enabled; DUMB starts it
+    before CLI Debrid. A separately configured Battery command or source
+    directory is left under its existing configuration.
 
-    Normal DUMB startup respects the disabled setting. Until DUMB's dependency
-    graph becomes version-aware, a guided **Start Core Service** or onboarding
-    action can re-enable the static dependency; verify that CLI Battery remains
-    disabled after using those flows with the pre-release.
+    Before launching CLI Debrid after a layout change, DUMB stops a tracked
+    managed standalone Battery when the installed layout is embedded. If you
+    return to a standalone layout, the retained enabled setting lets DUMB
+    start Battery first again.
 
 ---
 
@@ -136,8 +135,29 @@ flowchart TD
 * `log_level`, `suppress_logging`: Logging controls.
 * `port`: Flask web interface port.
 * `env`: Environment variable configuration used by CLI Debrid.
-* `env.CLI_DEBRID_BATTERY_PORT`: Battery API port consumed by stable/older CLI Debrid layouts. It is not present in the untouched template; DUMB creates/synchronizes it from `cli_battery.port` during setup and config updates. The v0.7.29 pre-release's in-process layout does not use this network hop.
+* `env.CLI_DEBRID_BATTERY_PORT`: Battery API port consumed by standalone CLI Debrid layouts. It is not present in the untouched template; DUMB creates/synchronizes it from `cli_battery.port` during setup and config updates. The embedded layout does not use this network hop.
 * `clear_on_update`, `exclude_dirs`: Clean old files during update while protecting data dirs.
+
+---
+
+## Persistent data after installation
+
+When the configured paths use `<config_dir>/data`, DUMB checks that this alias
+points to `<data_root>/cli_debrid` after installation and before launching CLI
+Debrid. With the defaults, `/cli_debrid/data` points to `/data/cli_debrid`.
+This check also runs when an exact release is reinstalled.
+
+DUMB can restore a missing alias or replace an empty directory placeholder.
+It refuses to replace a nonempty data directory, a mounted directory, or a
+link pointing somewhere else. Existing data is retained for review. Custom
+absolute config, log, and database paths remain in use; they do not require
+changing back to the default alias.
+
+Required data directories and known writable runtime files are prepared for
+the configured service user. DUMB does not recursively change ownership of
+the whole CLI Debrid installation or unrelated data. If startup reports a
+runtime preparation error, review the exact paths in the message before
+changing their contents or ownership.
 
 ---
 
@@ -162,14 +182,13 @@ flowchart TD
 
 ---
 
-## Stable/Older Releases: Standalone CLI Battery
+## Standalone CLI Battery
 
 !!! warning "Required only by layouts that still use the standalone service"
 
-    Keep CLI Battery running for stable/older CLI Debrid releases that call its
-    API on port `5001`. For v0.7.29+ pre-releases carrying the in-process rewrite,
-    manually disable the standalone CLI Battery service instead. See the
-    transition note near the top of this page.
+    Keep CLI Battery enabled for installed CLI Debrid layouts that call its
+    API on port `5001`. DUMB skips this separate process when it recognizes
+    the embedded layout. See the transition note near the top of this page.
 
 ```json
 "cli_battery": {
