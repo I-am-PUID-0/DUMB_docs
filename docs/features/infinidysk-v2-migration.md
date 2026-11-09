@@ -73,6 +73,17 @@ PostgreSQL database as a generation 2 database.
 
 ## Review and run
 
+The preview inventories the complete source data and runtime trees and checks
+copy capacity. Filesystem entry counts include application blob stores and any
+build or dependency directories inside those trees; they are not counts of
+titles or media files. Allow space for retained copies, the candidate
+installation and PostgreSQL snapshots when applicable.
+
+If an inventory or capacity check blocks the preview, keep the original
+installation and its files intact. Do not bypass the check, truncate the
+inventory or delete blobs or build files to get past it. Review the configured
+source locations and available space, and resolve the blocker before retrying.
+
 1. Open the migration tool and review the detected source, target directories,
    database and exact mount path.
 2. Keep **historical rclone over WebDAV**, or explicitly choose **native FUSE**.
