@@ -8,6 +8,10 @@ icon: lucide/cloud
 
 **InfiniDysk** is a combined backend + frontend WebDAV service for **Usenet** workflows. In DUMB it runs as a single service that exposes a Web UI, a WebDAV endpoint for browsing/serving content, and a backend API used for automation.
 
+DUMB keeps InfiniDysk 1.x as the default. DUMB API 2.24.0 or newer can offer the
+separate [InfiniDysk 2 installation and upgrade wizard](../../features/infinidysk-v2-migration.md).
+The workflow below describes the default 1.x integration unless a section says otherwise.
+
 ## Workflow diagram
 
 ```mermaid
@@ -56,7 +60,7 @@ flowchart TD
 | Classification | Role                                                     |
 | -------------- | -------------------------------------------------------- |
 | Core Service   | NZB WebDAV gateway                                       |
-| Depends On     | [rclone](../dependent/rclone.md)                         |
+| Mount          | [rclone](../dependent/rclone.md) by default; optional native FUSE with generation 2 |
 | Optional       | Sonarr, Radarr, Lidarr, Whisparr, Prowlarr, NeutArr      |
 | Exposes UI     | Yes (Web UI + WebDAV)                                    |
 
@@ -73,7 +77,11 @@ InfiniDysk also exposes a **Usenet download client** path in Arr by emulating a 
 
 !!! info "WebDAV endpoint"
 
-    rclone and Arr download clients point at the WebDAV endpoint on the frontend port.
+    Generation 1 has separate frontend and backend listeners. DUMB's managed
+    rclone uses the internal backend WebDAV endpoint; the frontend can proxy
+    WebDAV for clients. Generation 2 serves its UI, API and WebDAV from one
+    HTTP listener on `frontend_port` and uses its native login for WebDAV Basic
+    authentication. Keep existing external stream origins reachable.
 
 ---
 
@@ -91,13 +99,19 @@ InfiniDysk also exposes a **Usenet download client** path in Arr by emulating a 
 
 !!! important "Supported InfiniDysk versions"
 
-    DUMB's current integration installs and updates official InfiniDysk 1.x
-    releases. The `latest` and `prerelease` channels stay on that release line.
-    InfiniDysk 2.x uses a different runtime, configuration and data layout and
-    requires a separate migration; selecting a 2.x release, branch or commit
-    is refused by this integration. Named refs, branches and commit pins must
-    be verified as part of the upstream `v1` maintenance branch before a new
-    runtime is installed. These restrictions apply to the official repository.
+    `runtime_generation: "1"` remains the default. Its `latest` and `prerelease`
+    channels stay on official InfiniDysk 1.x; selecting a 2.x release through
+    the 1.x release, branch or commit fields is refused. Named 1.x refs must
+    belong to the upstream `v1` maintenance line before installation.
+
+    Generation 2 is an explicit opt-in through the separate wizard and requires
+    DUMB API 2.24.0 or newer plus the advertised protocol 1 capabilities. This
+    integration currently accepts only the verified `v2.0.0-beta.6` native
+    artifact. It does not fall back to a source build or silently replace 1.x.
+    Existing data requires a guarded major migration; changing the generation
+    field does not convert a database. See the
+    [upgrade guide](../../features/infinidysk-v2-migration.md) for eligibility,
+    mount choices and current containment limitations.
 
 !!! tip "Support the maintainer"
 
@@ -172,6 +186,29 @@ InfiniDysk also exposes a **Usenet download client** path in Arr by emulating a 
 * `config_dir`: Path where InfiniDysk data is stored.
 * `log_file`: Path for the consolidated InfiniDysk log.
 * `env`: Optional environment variables (see below).
+
+### Generation 2 configuration
+
+The wizard prepares these fields after reviewing an eligible fresh installation
+or retaining the original 1.x data and recovery state:
+
+| Field | Purpose |
+|-------|---------|
+| `runtime_generation` | `"1"` by default; the guarded workflow selects `"2"` |
+| `mount_backend` | `rclone` by default, or explicit native `fuse` |
+| `mount_path` | Exact consumer-visible mount path; existing paths are preserved |
+| `v2_runtime_dir` | Native program directory, normally `/opt/infinidysk-v2` |
+| `v2_data_dir` | Separate generation 2 data; blank resolves beneath `data_root` as `infinidysk-v2` |
+| `v2_release_version` | Verified native release, currently `v2.0.0-beta.6` |
+
+The 1.x source selection is retained for rollback. Its branch and commit selectors
+are inactive on the prepared native runtime. Do not reuse `postgres_enabled` or
+the 1.x `DATABASE_PROVIDER`/`DATABASE_CONNECTION_STRING` variables for generation 2;
+use its [separate native database conversion](../../features/infinidysk-v2-migration.md#native-postgresql-conversion).
+
+InfiniDysk 2 opens at a dedicated root URL. The frontend does not embed its UI
+under `/ui/infinidysk` unless a validated adapter is explicitly advertised.
+Use the service page's direct local address or configured public portal.
 
 !!! warning "WebDAV credentials"
 
@@ -564,7 +601,7 @@ Create a dedicated rclone instance for InfiniDysk and point it at the WebDAV end
 
 When `key_type` is set to `InfiniDysk`, DUMB configures rclone to use:
 
-* `http://127.0.0.1:<frontend_port>/` as the WebDAV URL
+* `http://127.0.0.1:<backend_port>/` as the internal generation 1 WebDAV URL
 * `WEBDAV_USER` / `WEBDAV_PASSWORD` (or the values stored in the InfiniDysk DB)
 * an rclone RC listener on the first available port starting at `5572`
 
@@ -575,6 +612,14 @@ local RC listener so WebDAV changes can invalidate rclone's VFS directory cache.
 Later InfiniDysk UI changes to the RC enablement, host, username, or password are
 preserved. A saved `--rc-addr` and `--dir-cache-time` in the rclone command are
 also retained when they remain valid.
+
+For generation 2, the WebDAV transport uses its consolidated HTTP listener and
+native Basic login. Its mount can remain rclone or explicitly use native FUSE.
+Generation 2 does not send the 1.x rclone RC directory-refresh notifications, so
+its rclone setup uses a shorter directory-cache policy and retains `--links` for
+`.rclonelink` handling. Native FUSE does not use rclone flags or the optimizer.
+The optimizer described below currently supports generation 1; generation 2
+needs a separately advertised and validated native adapter, even when it keeps rclone.
 
 Default rclone mount path (if not overridden) is:
 

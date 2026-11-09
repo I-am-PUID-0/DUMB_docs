@@ -8,6 +8,11 @@ icon: lucide/database-backup
 
 DUMB provides a guarded tool for moving an existing supported service from SQLite to DUMB-managed PostgreSQL. Open the service page and select **Database Migration**.
 
+For InfiniDysk, this page describes the generation 1 adapter. Generation 2 uses
+its separate [native PostgreSQL conversion workflow](infinidysk-v2-migration.md#native-postgresql-conversion)
+after a validated fresh installation or major upgrade; the frontend selects the
+tool for the active generation.
+
 This tool is deliberately separate from `postgres_enabled`. For most services,
 enabling PostgreSQL directly changes the database used at the next start; it
 does not copy existing SQLite data. InfiniDysk additionally blocks a direct

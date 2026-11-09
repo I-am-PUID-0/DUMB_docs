@@ -24,6 +24,7 @@ nav:
       - Install Cache & Safe Updates: features/install-cache.md
       - Media Library Protection: features/media-library-protection.md
       - PostgreSQL Migration: features/arr-postgres-migration.md
+      - InfiniDysk 2 Upgrade: features/infinidysk-v2-migration.md
       - Symlink Operations: features/symlinks.md
       - Seerr Sync: features/seerr-sync.md
       - FFprobe Monitor: features/ffprobe-monitor.md

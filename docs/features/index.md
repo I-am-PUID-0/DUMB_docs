@@ -30,6 +30,7 @@ DUMB (Distributed Unlimited Media Bridge) is an all-in-one media management solu
 * **[Media Library Protection](media-library-protection.md)** – Guard Plex, Jellyfin, and Emby scans and coordinate active streams when a storage dependency stops, updates, or crashes.
 * **[Symlink Operations](symlinks.md)** – End-to-end guide for repair, migration, backup/restore, scheduled snapshots, and path-transition playbooks.
 * **[SQLite to PostgreSQL Migration](arr-postgres-migration.md)** – Rehearse, validate, cut over, and roll back supported Arr, subtitle, request, and storage services.
+* **[InfiniDysk 2 Installation and Upgrade](infinidysk-v2-migration.md)** – Review the explicit native-generation opt-in, preserved mount and library paths, contained major rehearsal, recovery, and separate native PostgreSQL conversion.
 * **Modular Design** – Each service (Riven, Zurg, Zilean, etc.) is independently configurable and upgradable.
 * **Advanced Logging & Monitoring** – View and filter service logs directly from the [DUMB Frontend](../services/dumb/dumb-frontend.md).
 * **[FFprobe monitor](ffprobe-monitor.md)** – Background worker that detects and unsticks ffprobe scans in Sonarr/Radarr.

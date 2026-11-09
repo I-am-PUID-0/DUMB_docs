@@ -1028,6 +1028,156 @@ Jobs active during a DUMB restart are marked interrupted and are not resumed.
 See [Rclone Streaming Optimizer](../features/rclone-optimizer.md) for test and
 provider-safety behavior.
 
+## InfiniDysk 2 workflows
+
+These routes are independent of the existing NzbDAV namespace migration and
+generation 1 PostgreSQL adapter. See the
+[InfiniDysk 2 upgrade guide](../features/infinidysk-v2-migration.md) for downtime,
+containment, mount/library checks and recovery limits. Paths below are relative
+to the DUMB API; the dashboard accesses them through its `/api` proxy prefix.
+
+Clients require a valid `api_version >= 2.24.0`, explicit boolean
+`infinidysk_v2=true`, `infinidysk_v2_migration=true` and numeric
+`infinidysk_v2_migration_protocol=1`. Native PostgreSQL conversion also requires
+`infinidysk_v2_postgres=true`. Missing, malformed, older or unknown versions and
+protocols disable mutations. Retained job/recovery displays remain independent
+of those new-operation controls.
+
+### Major installation and upgrade
+
+| Method | Route | Purpose |
+|--------|-------|---------|
+| `GET` | `/process/infinidysk-v2/status` | Current generation, fresh/migration mode, mount choices, eligibility and latest retained job |
+| `POST` | `/process/infinidysk-v2/preview` | Review a source-bound plan and receive a short-lived authorization |
+| `POST` | `/process/infinidysk-v2/rehearse` | Run the actual contained native importer against retained source snapshots |
+| `POST` | `/process/infinidysk-v2/start` | Start an eligible fresh install or guarded major cutover |
+| `GET` | `/process/infinidysk-v2/jobs/{job_id}` | Retrieve one persisted job as `{"job": {...}}` |
+| `POST` | `/process/infinidysk-v2/rollback` | Restore the exact retained major-migration source when authorized |
+
+Preview body:
+
+```json
+{
+  "mode": "migrate",
+  "mount_backend": "rclone",
+  "import_strategy": "preserve"
+}
+```
+
+`mode` is `migrate` or `fresh`; fresh mode cannot overwrite an existing source.
+`mount_backend` is `rclone` or explicit `fuse`. The initial major workflow accepts
+only `import_strategy: "preserve"`; it does not regenerate existing outputs.
+The exact consumer-visible mount path is retained. Generation 2 uses separate
+runtime/data directories and the verified beta artifact.
+
+The preview returns `protocol`, `ready`, `preview_token`, `expires_at`,
+`plan_fingerprint`, `confirmation_text`, `current`, `target`, `checks`,
+`blockers`, `warnings`, `inventory`, `required_acknowledgements` and
+`rehearsal_required`. The public fingerprint binds a rehearsal to its plan;
+it is not an authorization token. Recorded inventory is not proof that
+unmanaged consumers or STRM URLs are absent.
+
+Rehearse and start body, using values from the current preview:
+
+```json
+{
+  "preview_token": "<current-preview-token>",
+  "confirmation": "MIGRATE INFINIDYSK TO V2",
+  "acknowledgements": {
+    "backup": true,
+    "downtime": true,
+    "beta": true,
+    "oidc_policy": true,
+    "downstream": true
+  },
+  "rehearsal_job_id": "<validated-rehearsal-job-id>"
+}
+```
+
+Omit `rehearsal_job_id` for the rehearsal request and for a fresh installation
+that does not require one. Always use the backend's exact confirmation text;
+fresh mode has a different phrase. A major cutover requires a completed
+rehearsal with `mode: "rehearsal"`, `result.validated: true` and the matching
+`plan_fingerprint`. Changed source facts, failed containment, skipped native
+media, an unsupported source adapter or failed identity/policy proof block
+activation. External NNTP reads are denied during the contained import, and
+there is no automatic online fallback.
+The required `downstream` review covers current Arr/media mount paths, remote
+path mappings, symlinks/STRM origins and stopped external writers/scanners.
+OIDC-configured sources remain blocked until their target policy is verified;
+the acknowledgement is not an authorization to bypass a blocker.
+
+Start/rehearse responses and `status.job` expose a public job, including its
+identity, mode, status, stage, message, fingerprint and result. Rollback is
+available only when `can_rollback` or `actions.rollback` is explicitly true.
+Send `job_id` and the exact `rollback_confirmation_text` as `confirmation` to
+the rollback route. Recovery retains the original source; later 2.x writes
+are not merged back into v1.
+
+### Native generation 2 PostgreSQL
+
+| Method | Route | Purpose |
+|--------|-------|---------|
+| `GET` | `/process/infinidysk-v2/postgres/status` | Reconcile native provider/job state and advertise guarded actions |
+| `POST` | `/process/infinidysk-v2/postgres/preview` | Verify a dedicated empty destination and its physical identity |
+| `POST` | `/process/infinidysk-v2/postgres/start` | Retain recovery state and start native copy/synchronization |
+| `POST` | `/process/infinidysk-v2/postgres/cutover` | Switch only the current synchronized job to PostgreSQL |
+| `POST` | `/process/infinidysk-v2/postgres/cancel` | Cancel the current native job after destination identity checks |
+| `POST` | `/process/infinidysk-v2/postgres/rollback` | Restore the retained SQLite snapshot when its guards permit |
+
+Managed destination preview:
+
+```json
+{"target": {"use_managed_postgres": true, "database": "infinidysk_v2"}}
+```
+
+An external `target` supplies `host`, `port`, `database`, `user`, `password`
+and `sslmode`. Remote connections require verified TLS or explicit `require`
+mode. Passwords and connection URLs remain private and are not returned in
+public status. Preview returns the current/target summaries, physical
+`target_identity` (`system_identifier`, `database_oid`, `schema`), checks and a
+short-lived `preview_token`/`confirmation_text`.
+Provision the dedicated empty database with `C` collation and its role before previewing; choosing
+`use_managed_postgres` selects DUMB's connection settings, not database creation.
+
+Start requires that token and exact confirmation, plus
+`acknowledge_backup: true` and `acknowledge_destructive_target: true`.
+Subsequent cutover/cancel/rollback requests use the **current `job_id`**, exact
+text from `status.confirmation_texts[action]` and both acknowledgements. They
+do not reuse an expired initial preview token after a long synchronization.
+Only strict `status.actions[action] == true` admits an action; the backend
+rechecks native state, source/target identities and recovery evidence.
+
+Cancel can truncate the dedicated destination's migration tables. Rollback
+does not merge later PostgreSQL writes into SQLite. Environment-managed
+`INFINIDYSK_DATABASE_URL` configurations disable native provider moves, and
+direct upstream cleanup routes must not bypass DUMB's checks.
+
+Confirmed cancellation can return `status: "cancelled"` and
+`cleanup_required: true` while SQLite remains usable and ordinary lifecycle is
+unblocked. Bounded cleanup warnings stay private; they can refer to source
+change-capture cleanup as well as destination tables. Keep a nonblocking review
+notice visible without interpreting it as an active transfer. A warning-directed
+managed restart may be appropriate; direct cleanup SQL is not authorized by
+the notice.
+
+Rollback does not require PostgreSQL connectivity. The wrapper durably records
+the restored SQLite device/inode before startup. A retry after delayed delivery
+checks that same live file rather than replacing newly accepted SQLite writes;
+changed file identity blocks recovery.
+
+### Conflicts and recovery
+
+An expired/mismatched preview, wrong job, changed source/target or competing
+lifecycle/migration operation returns a conflict (`409`). A backend below the
+minimum code version rejects mutations (`426`). Refresh status and obtain a
+fresh preview instead of automatically replaying a failed POST. HTTP timeouts
+do not cancel native workers. Keep retained job identities visible when status
+cannot be confirmed, and disable actions until a valid current response returns.
+
+Neither workflow falls back to `/infinidysk-migration/*`,
+`/postgres-migration/*` or the old `/arr-postgres-migration/*` routes.
+
 ## InfiniDysk migration
 
 ### `GET /process/infinidysk-migration/status`
@@ -1447,6 +1597,12 @@ Returns backend capabilities and feature flags. Used by the frontend to determin
 | `postgres_migration_rehearsal` | Whether isolated rehearsal imports are supported |
 | `postgres_migration_rollback` | Whether jobs can restore preserved SQLite configuration |
 | `postgres_migration_service_keys` | Backend-authoritative service keys offered by the migration UI; clients require explicit `infinidysk` advertisement and keep the old fallback limited to legacy services |
+| `api_version` | Authoritative API code version; generation 2 clients require valid SemVer at least `2.24.0` |
+| `infinidysk_v2` | Explicit native generation 2 runtime support; generation 1 remains the default |
+| `infinidysk_v2_migration` | Separate guarded major installation/upgrade workflow |
+| `infinidysk_v2_migration_protocol` | Exact supported workflow protocol; currently numeric `1` |
+| `infinidysk_v2_postgres` | Native generation 2 PostgreSQL wrapper, separate from the v1 adapter |
+| `infinidysk_v2_rclone_optimizer` | Separate validated optimizer adapter for generation 2; currently `false`, including when rclone is retained |
 | `arr_postgres_migration*` | Legacy Sonarr/Radarr capability aliases retained for older clients |
 | `mediastorm_initial_admin_password` | Whether the no-store mediastorm bootstrap credential endpoint is available |
 
