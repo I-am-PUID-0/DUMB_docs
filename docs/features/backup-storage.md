@@ -6,8 +6,9 @@ icon: lucide/archive
 
 # Backup storage
 
-Register a named destination for **InfiniDysk 2 major-migration archives** or
-**standalone and scheduled symlink snapshots**. These controls appear when the
+Register a named destination for **installation backups**, **InfiniDysk 2
+major-migration archives** or **standalone and scheduled symlink snapshots**.
+Open **Settings → Backups and restore** for the central controls. These appear when the
 backend advertises the corresponding storage capabilities. Existing backup
 paths remain the default until you explicitly select a registered destination.
 
@@ -18,8 +19,9 @@ is insufficient. Mount NFS/SMB storage on the host and expose it to the containe
 through your normal deployment configuration before registration. DUMB does not
 mount network shares or request their credentials.
 
-1. Open **Register destinations and manage the global default** in the
-   InfiniDysk migration or Symlink operations panel.
+1. Open **Register destinations and manage the global default** in
+   **Settings → Backups and restore**, the InfiniDysk migration panel or the
+   Symlink operations panel.
 2. Enter a unique identifier, display name and existing container-visible path.
 3. Select **Preview destination**, review its checks, then **Register destination**.
 4. Select the destination for the current operation. Use **Save global default**
@@ -50,16 +52,16 @@ filesystems. See the [SQLite WAL documentation](https://www.sqlite.org/wal.html)
 Selecting NAS archive storage therefore does not remove local working-space
 requirements. Review each filesystem's capacity before starting.
 
-The initial registered-storage consumers are the two tools listed above.
+The registered-storage consumers are the tools listed above.
 Existing Arr PostgreSQL migration backups, native PostgreSQL recovery snapshots,
 application-managed backups and runtime-install rollback transactions keep
 their existing locations and settings.
 
-DUMB currently provides manual and optional scheduled symlink backups, config
-`.bak` copies, service-reset configuration backups and migration recovery
-bundles. It does not provide a complete-installation backup or an automated
-fresh-container restore. Protect deployment files, configuration, mounted
-service data, databases and keys through your independent backup/restore plan.
+For a managed installation archive, scheduling and fresh-container recovery,
+see [Installation backup and restore](installation-backups.md). Configuration
+`.bak` copies, service-reset configuration backups and migration recovery bundles
+remain separate tools. Protect host deployment files, external systems and media
+through their independent backup/restore plans.
 
 ## Verification and recovery
 

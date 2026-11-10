@@ -16,6 +16,7 @@ nav:
       - Overview: features/index.md
       - Configuration: features/configuration.md
       - Backup Storage: features/backup-storage.md
+      - Installation Backup & Restore: features/installation-backups.md
       - Usage: features/usage.md
       - Service Reset & Removal: features/service-reset.md
       - Authentication: features/authentication.md

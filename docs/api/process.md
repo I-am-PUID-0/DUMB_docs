@@ -843,6 +843,38 @@ Rebuilds symlink-backup schedule state from current service config.
 
 ---
 
+## Installation backup and restore
+
+These routes require `installation_backup=true` and numeric
+`installation_backup_protocol=1`. They follow the normal DUMB authentication
+policy. The frontend exposes them under **Settings → Backups and restore**.
+Paths below are relative to the API; browser requests use its `/api` proxy.
+
+| Method | Route | Purpose |
+|--------|-------|---------|
+| `GET` | `/process/installation-backups/status` | Schedule, operation/recovery state and current job |
+| `GET` | `/process/installation-backups/catalog` | Verified installation archives from the selected destination |
+| `POST` | `/process/installation-backups/preview` | Review coverage, exclusions, destination, capacity and downtime |
+| `POST` | `/process/installation-backups/start` | Start the reviewed backup after explicit acknowledgement |
+| `GET` | `/process/installation-backups/jobs/{job_id}` | Poll a retained backup or restore job |
+| `PUT` | `/process/installation-backups/schedule` | Save an explicitly enabled/disabled schedule, destination and retention |
+| `POST` | `/process/installation-backups/restore/preview` | Verify a selected archive and preview compatible restore targets |
+| `POST` | `/process/installation-backups/restore/start` | Start the reviewed restore with its required confirmations |
+| `POST` | `/process/installation-backups/jobs/{job_id}/rollback` | Recover the exact retained operation after its typed rollback confirmation |
+
+Preview authorization is short-lived and bound to the reviewed source, targets
+and storage identity. A restore can select an owned catalog reference or a
+container-visible archive path, allowing recovery without the original local
+catalog. Archive integrity, paths and file types are validated before replacement.
+The operation preserves rollback evidence and leaves a successful restore
+stopped with a container restart required to reload configuration and auth.
+
+The preview states the actual inventory and exclusions. These archives cover
+managed installation state, not host deployment files, media or external systems.
+Failed admission, capacity, storage or compatibility checks do not authorize a
+partial success. See [Installation backup and restore](../features/installation-backups.md)
+for the operating and recovery procedure.
+
 ## Registered backup storage
 
 Clients gate these authenticated routes using explicit
@@ -1682,7 +1714,9 @@ Returns backend capabilities and feature flags. Used by the frontend to determin
   "symlink_manifest_file_list": true,
   "backup_storage_selection": true,
   "backup_storage_protocol": 1,
-  "backup_storage_kinds": ["symlink_manifest", "infinidysk_v2_archive"],
+  "backup_storage_kinds": ["symlink_manifest", "infinidysk_v2_archive", "installation_backup"],
+  "installation_backup": true,
+  "installation_backup_protocol": 1,
   "infinidysk_v2_migration_backup_storage": true,
   "infinidysk_v2_cleanup": true,
   "infinidysk_v2_cleanup_protocol": 1,
@@ -1769,7 +1803,8 @@ Returns backend capabilities and feature flags. Used by the frontend to determin
 | `infinidysk_v2_rclone_optimizer` | Separate validated optimizer adapter for generation 2; currently `false`, including when rclone is retained |
 | `backup_storage_selection` | Registered local or mounted cold-archive destination selection |
 | `backup_storage_protocol` | Exact supported registered-storage protocol; currently numeric `1` |
-| `backup_storage_kinds` | Supported producers: `symlink_manifest` and `infinidysk_v2_archive` |
+| `backup_storage_kinds` | Supported producers: `symlink_manifest`, `infinidysk_v2_archive` and `installation_backup` |
+| `installation_backup` / `installation_backup_protocol` | Managed installation archive, schedule and restore workflow; exact supported protocol is numeric `1` |
 | `infinidysk_v2_migration_backup_storage` | Explicit registered backup destination in the major-migration preview |
 | `infinidysk_v2_cleanup` | Guarded v1-installation retirement after a verified v2 cutover, retaining backups |
 | `infinidysk_v2_cleanup_protocol` | Exact supported retirement workflow protocol; currently numeric `1` |

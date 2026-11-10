@@ -15,6 +15,7 @@ The Settings page is organized into sections:
 
 - **Appearance** - Frontend color theme
 - **About** - Installed service and frontend versions
+- **Backups and restore** - Installation archives, schedules, restore previews and shared backup destinations when supported by the backend
 - **Onboarding** - Restart the guided setup wizard
 - **Embedded UIs** - Service UI toggle
 - **Notifications** - Outbound destinations, event routing, thresholds, tests, and delivery history
@@ -36,6 +37,17 @@ The settings menu also includes quick links for:
 - Visiting service maintainer sites
 - Jumping to Discord, GitHub, docs, and Docker Hub
 - Viewing contributors
+
+## Backups and restore
+
+Use **Backups and restore** to register mounted storage destinations, preview and
+create installation archives, configure an optional schedule, and review a
+restore or its recovery state. This section requires installation-backup support
+from the backend. A fresh installation can reach its recovery entry before
+application onboarding; normal authentication setup and login still apply.
+
+See [Installation backup and restore](../features/installation-backups.md) for
+coverage, downtime, capacity, archive validation and container-restart steps.
 
 ## Appearance
 
