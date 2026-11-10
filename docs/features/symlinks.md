@@ -209,6 +209,22 @@ Snapshot tab behavior:
     - A specific known root
     - Custom roots (textarea)
 
+### Registered backup destinations
+
+Use the **Backup destination** selection in Snapshot backup or the schedule
+section to choose [registered local/NAS archive storage](backup-storage.md).
+The legacy/local choice preserves your existing manifest path. A manual
+selection applies only to that backup; **Save backup schedule** explicitly saves
+its destination for future scheduled runs. Registering a profile or saving the
+global preference does not silently move existing custom paths.
+
+Registered snapshots appear in the picker as managed artifacts. Their references
+are opaque identifiers, not paths or website URLs. Restore/compare verifies the
+recorded checksum and, when a service context is supplied, its process identity.
+Select an older registered destination explicitly when restoring one of its
+retained snapshots after changing the schedule's destination. A missing or
+changed mount reports an error instead of writing a local fallback.
+
 ### Standalone backup
 
 Create snapshot manifest:
@@ -283,12 +299,14 @@ Enabled with service config keys:
 - `symlink_backup_include_broken`
 - `symlink_backup_roots` (optional override)
 - `symlink_backup_retention_count`
+- `backup_destination_id` (explicit registered destination; empty keeps the existing path)
 
 ### Retention
 
 - `symlink_backup_retention_count = 1` is the default when unset
 - `0` disables pruning (keep all matching manifests)
 - Values `> 0` keep newest `N`, pruning older files matching the service template
+- With registered storage, pruning applies only to that process's scheduled snapshots. Manual managed snapshots remain retained.
 
 ### Default cadence
 

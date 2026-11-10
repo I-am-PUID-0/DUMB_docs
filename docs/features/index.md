@@ -28,6 +28,7 @@ DUMB (Distributed Unlimited Media Bridge) is an all-in-one media management solu
 * **[Authentication](authentication.md)** – Optional JWT-based security with user management and session handling.
 * **[Auto-update](auto-update.md)** – Keep services current with automatic updates from GitHub releases, nightly builds, or specific branches.
 * **[Media Library Protection](media-library-protection.md)** – Guard Plex, Jellyfin, and Emby scans and coordinate active streams when a storage dependency stops, updates, or crashes.
+* **[Backup Storage](backup-storage.md)** – Register local or already-mounted NAS destinations for InfiniDysk migration archives and symlink snapshots, with explicit defaults and verified recovery.
 * **[Symlink Operations](symlinks.md)** – End-to-end guide for repair, migration, backup/restore, scheduled snapshots, and path-transition playbooks.
 * **[SQLite to PostgreSQL Migration](arr-postgres-migration.md)** – Rehearse, validate, cut over, and roll back supported Arr, subtitle, request, and storage services.
 * **[InfiniDysk 2 Installation and Upgrade](infinidysk-v2-migration.md)** – Review the explicit native-generation opt-in, preserved mount and library paths, contained major rehearsal, recovery, and separate native PostgreSQL conversion.

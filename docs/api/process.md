@@ -780,7 +780,7 @@ Lists backup manifests that match the current service `symlink_backup_path` temp
 
 ### `GET /process/symlink-manifest-files`
 
-Lists files from the directory of a provided `manifest_path` (defaults to `/config/symlink-repair/snapshots/latest.json` directory).
+Lists legacy files under `/config/symlink-repair/snapshots` by default. With an explicit registered backup destination, lists only owned symlink catalog artifacts for the selected process; a managed `manifest_path` must verify before its namespace is listed.
 
 Use this to populate manifest pickers in the Snapshot tab for quick restore/overwrite selection.
 
@@ -797,6 +797,60 @@ Rebuilds symlink-backup schedule state from current service config.
 ```
 
 ---
+
+## Registered backup storage
+
+Clients gate these authenticated routes using explicit
+`backup_storage_selection=true`, numeric `backup_storage_protocol=1` and the
+required kind in `backup_storage_kinds`. Mutating storage routes require DUMB
+API 2.24.0 or newer. InfiniDysk migration/cleanup clients additionally enforce
+the strict API version floor and their specific workflow capabilities. See
+[Backup Storage](../features/backup-storage.md) for mount, privacy and local
+working-storage requirements.
+
+| Method | Route | Purpose |
+|--------|-------|---------|
+| `GET` | `/process/backup-storage` | List registered destinations and the explicitly saved global default |
+| `POST` | `/process/backup-storage/preview` | Inspect an existing container-mounted directory without creating it |
+| `POST` | `/process/backup-storage/profiles` | Register a named destination and bind its mounted identity |
+| `POST` | `/process/backup-storage/default` | Explicitly save or clear the shared default |
+| `GET` | `/process/backup-storage/artifacts` | List owned catalog receipts for `destination_id` and `namespace` |
+| `GET` | `/process/backup-storage/download` | Verify and download the registered artifact identified by `reference` |
+
+Preview/registration body:
+
+```json
+{
+  "id": "archive",
+  "name": "Archive storage",
+  "path": "/backups/dumb",
+  "enabled": true,
+  "make_default": false
+}
+```
+
+The directory must already exist inside the container. `make_default` is an
+explicit opt-in; the dedicated default route accepts
+`{"destination_id": "archive"}` or an empty identifier to clear it. Missing or
+replaced mounts and invalid receipts return a conflict; no local fallback is
+created. Catalog readiness reflects saved registration, while each artifact
+operation revalidates the mounted identity.
+
+Symlink backup requests accept optional `backup_destination_id`; `backup_path`
+is required only for the legacy/path choice. Supplying a registered identifier
+or `@default` explicitly selects managed storage. An empty or omitted selection
+keeps the supplied path, including a custom path. Saved schedules use the
+service's `backup_destination_id` field with the same semantics.
+
+Managed results retain `backup_manifest` as an opaque `dumb-backup://` reference
+and add checksum/readback metadata. Manual and scheduled artifacts have separate
+retention scopes. `/process/symlink-manifest-files` accepts
+`backup_destination_id` plus optional `process_name` for catalog browsing, or a
+verified managed `manifest_path`. No arbitrary filesystem browsing is added.
+Compare/restore accept the reference and optional process/destination context;
+provided context must match. Explicitly choosing an older destination can restore
+its retained snapshot after the current service preference changes. Global
+restore without process context still requires a verified symlink artifact kind.
 
 ## SQLite-to-PostgreSQL Migration
 
@@ -1522,6 +1576,9 @@ Returns backend capabilities and feature flags. Used by the frontend to determin
   "symlink_backup_schedule": true,
   "symlink_backup_manifest_list": true,
   "symlink_manifest_file_list": true,
+  "backup_storage_selection": true,
+  "backup_storage_protocol": 1,
+  "backup_storage_kinds": ["symlink_manifest"],
   "arr_postgres_migration": true,
   "arr_postgres_migration_rehearsal": true,
   "arr_postgres_migration_rollback": true,
@@ -1603,6 +1660,9 @@ Returns backend capabilities and feature flags. Used by the frontend to determin
 | `infinidysk_v2_migration_protocol` | Exact supported workflow protocol; currently numeric `1` |
 | `infinidysk_v2_postgres` | Native generation 2 PostgreSQL wrapper, separate from the v1 adapter |
 | `infinidysk_v2_rclone_optimizer` | Separate validated optimizer adapter for generation 2; currently `false`, including when rclone is retained |
+| `backup_storage_selection` | Registered local or mounted cold-archive destination selection |
+| `backup_storage_protocol` | Exact supported registered-storage protocol; currently numeric `1` |
+| `backup_storage_kinds` | Supported producer: `symlink_manifest` |
 | `arr_postgres_migration*` | Legacy Sonarr/Radarr capability aliases retained for older clients |
 | `mediastorm_initial_admin_password` | Whether the no-store mediastorm bootstrap credential endpoint is available |
 
