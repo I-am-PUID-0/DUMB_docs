@@ -852,6 +852,12 @@ provided context must match. Explicitly choosing an older destination can restor
 its retained snapshot after the current service preference changes. Global
 restore without process context still requires a verified symlink artifact kind.
 
+The InfiniDysk major preview accepts optional `backup_destination_id` to
+explicitly select a registered destination or `@default`. An empty or omitted
+selection keeps its legacy local backup tree. Live SQLite databases, migration
+control records, database scratch
+and runtime-install transactions retain their local storage contracts.
+
 ## SQLite-to-PostgreSQL Migration
 
 These endpoints power the guarded migration workflow for Sonarr, Radarr,
@@ -1107,6 +1113,8 @@ of those new-operation controls.
 | `POST` | `/process/infinidysk-v2/start` | Start an eligible fresh install or guarded major cutover |
 | `GET` | `/process/infinidysk-v2/jobs/{job_id}` | Retrieve one persisted job as `{"job": {...}}` |
 | `POST` | `/process/infinidysk-v2/rollback` | Restore the exact retained major-migration source when authorized |
+| `POST` | `/process/infinidysk-v2/cleanup/preview` | Review owned v1 removal paths and retained backups after a validated cutover |
+| `POST` | `/process/infinidysk-v2/cleanup` | Retire automated rollback and remove only the approved unchanged v1 entries |
 
 Preview body:
 
@@ -1167,6 +1175,44 @@ available only when `can_rollback` or `actions.rollback` is explicitly true.
 Send `job_id` and the exact `rollback_confirmation_text` as `confirmation` to
 the rollback route. Recovery retains the original source; later 2.x writes
 are not merged back into v1.
+
+A successful rehearsal can record `candidate_discarded=true` after the native
+candidate/group is proven stopped and v1 plus managed consumers are restored.
+Only its full job-owned candidate is removed; receipts, the source archive or
+backup and minimal database proof remain. Failed rehearsal candidates are kept.
+The later cutover still needs local candidate capacity and fresh source checks.
+
+### Retire a completed v1 installation
+
+This separate workflow also requires `infinidysk_v2_cleanup=true` and numeric
+`infinidysk_v2_cleanup_protocol=1`. It is available only for an eligible completed
+v1-to-v2 cutover, with healthy owned v2 delivery and verified retained backups.
+A fresh generation 2 installation has no old v1 installation to retire.
+
+Preview with `{"job_id": "SERVER_JOB_ID"}`. The response supplies the exact
+removal/retention lists, estimated reclaim, expiring `preview_token`, typed
+`confirmation_text` and acknowledgement names. Start using those server values:
+
+```json
+{
+  "job_id": "SERVER_JOB_ID",
+  "preview_token": "SERVER_PREVIEW_TOKEN",
+  "confirmation": "SERVER_CONFIRMATION_TEXT",
+  "acknowledgements": {
+    "playback": true,
+    "test_import": true,
+    "rollback_retirement": true
+  }
+}
+```
+
+Poll the existing job endpoint for cleanup progress. The backend verifies the
+full retained backup and a bounded immutable deletion whitelist before durably
+retiring automated rollback. It then removes only verified original entries.
+Interruption keeps rollback retired; a fresh preview can resume the same
+whitelist. Backups, retirement receipts and PostgreSQL databases remain retained.
+See [Retire the old v1 installation](../features/infinidysk-v2-migration.md#retire-the-old-v1-installation)
+for operator checks and recovery limits.
 
 ### Native generation 2 PostgreSQL
 
@@ -1578,7 +1624,10 @@ Returns backend capabilities and feature flags. Used by the frontend to determin
   "symlink_manifest_file_list": true,
   "backup_storage_selection": true,
   "backup_storage_protocol": 1,
-  "backup_storage_kinds": ["symlink_manifest"],
+  "backup_storage_kinds": ["symlink_manifest", "infinidysk_v2_archive"],
+  "infinidysk_v2_migration_backup_storage": true,
+  "infinidysk_v2_cleanup": true,
+  "infinidysk_v2_cleanup_protocol": 1,
   "arr_postgres_migration": true,
   "arr_postgres_migration_rehearsal": true,
   "arr_postgres_migration_rollback": true,
@@ -1662,7 +1711,10 @@ Returns backend capabilities and feature flags. Used by the frontend to determin
 | `infinidysk_v2_rclone_optimizer` | Separate validated optimizer adapter for generation 2; currently `false`, including when rclone is retained |
 | `backup_storage_selection` | Registered local or mounted cold-archive destination selection |
 | `backup_storage_protocol` | Exact supported registered-storage protocol; currently numeric `1` |
-| `backup_storage_kinds` | Supported producer: `symlink_manifest` |
+| `backup_storage_kinds` | Supported producers: `symlink_manifest` and `infinidysk_v2_archive` |
+| `infinidysk_v2_migration_backup_storage` | Explicit registered backup destination in the major-migration preview |
+| `infinidysk_v2_cleanup` | Guarded v1-installation retirement after a verified v2 cutover, retaining backups |
+| `infinidysk_v2_cleanup_protocol` | Exact supported retirement workflow protocol; currently numeric `1` |
 | `arr_postgres_migration*` | Legacy Sonarr/Radarr capability aliases retained for older clients |
 | `mediastorm_initial_admin_password` | Whether the no-store mediastorm bootstrap credential endpoint is available |
 

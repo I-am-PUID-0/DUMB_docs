@@ -75,6 +75,19 @@ and successful dump/restore proof. If that path is unavailable or unverified,
 the preview blocks it. The major importer does not directly reuse the v1
 PostgreSQL database as a generation 2 database.
 
+## Choose archive storage
+
+The migration panel's **Backup destination** selects the legacy local backup
+tree or [registered local/NAS archive storage](backup-storage.md) for this job.
+Use **Register destinations and manage the global default** to register an
+existing container-mounted directory. Registration alone does not move backups
+or adopt a new default. Review the selected destination and local working-space
+requirements in each new preview.
+
+A registered destination holds a closed, verified source archive. Active v2
+SQLite data, job/control state and import/database-restore scratch remain local.
+Keep independent backups even when DUMB retains and verifies its own archive.
+
 ## Review and run
 
 The preview inventories the complete source data and runtime trees and checks
@@ -113,6 +126,14 @@ source locations and available space, and resolve the blocker before retrying.
 6. Start the installation or migration and follow the persistent job. A changed
    source or expired preview requires another review; a successful rehearsal can
    be reused only when its public plan fingerprint still matches.
+
+After a validated rehearsal, DUMB confirms that the native candidate and its
+process group have stopped and that v1 and its managed consumers were restored.
+It then removes only that job's full private candidate copy, retaining the
+verification receipts, source archive or backup and minimal database evidence.
+Failed rehearsals retain their candidate for investigation. Cutover prepares
+its local working candidate after the source checks pass again; allow enough
+space for that peak even when a successful rehearsal has released its copy.
 
 Closing the panel or visiting another page does not cancel the backend job.
 The global notice reopens progress or recovery after navigation and reload.
@@ -222,6 +243,29 @@ rollback and exact job confirmation. Major rollback restores the retained v1
 runtime/configuration; later generation 2 writes are not copied back. A failed
 rollback or unavailable recovery action needs investigation before restarting
 imports, scans or services. Do not delete retained state to clear a banner.
+
+## Retire the old v1 installation
+
+After a verified cutover and real-library validation, the same migration panel
+can offer **Retire the old v1 installation**. Keep independent backups and
+confirm successful playback and a test import before using it.
+
+1. Select **Review old-installation cleanup** and review the exact old paths,
+   estimated reclaim and retained backups.
+2. Confirm playback, test-import and rollback-retirement acknowledgements, then
+   type the server's exact confirmation.
+3. Select **Retire rollback and remove reviewed v1 files** and follow the job.
+
+Cleanup verifies the retained source backup and unchanged v1 files, then durably
+retires automated major rollback before removing reviewed entries. Backups and
+receipts remain retained; PostgreSQL databases, shared mounts and unrelated
+libraries are not removed. Later v2 writes are never merged into a v1 backup.
+
+If cleanup stops, the old tree can be partially removed and automated rollback
+stays retired. Preserve the job and deletion-manifest evidence; use a fresh
+review to resume the same removal plan. Changed files or mounts stop remaining
+removal, and new files are retained rather than added to the deletion plan.
+Do not delete backups or job state to clear a cleanup warning.
 
 See [Process Management API](../api/process.md#infinidysk-2-workflows),
 [Media Library Protection](media-library-protection.md),
