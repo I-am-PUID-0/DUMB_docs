@@ -18,7 +18,10 @@ For example, the [Check for New Release Tags](https://github.com/I-am-PUID-0/DUM
 
 To pair DUMB `dev` with an unreleased frontend, maintainers can use the manual
 [frontend image-build selection](../services/dumb/dumb-frontend.md#build-a-development-image-with-a-chosen-frontend).
-The normal build continues to select a tagged frontend release.
+Each frontend choice on DUMB `dev` publishes the normal `:dev` image tag, so
+that tag follows the last published backend/frontend combination. Automatic builds
+continue to select a tagged frontend release. Use a registry digest to retain an
+exact image; selecting a frontend commit alone does not pin the backend.
 
 ### What versions are in the latest **DUMB** image
 
