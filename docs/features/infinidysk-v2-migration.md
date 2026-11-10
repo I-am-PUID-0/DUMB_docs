@@ -24,8 +24,12 @@ recovery information remain visible. The supported native artifact is currently
 |--------|------------------|
 | Runtime generation | Keep 1.x until an explicit, validated 2.x installation or cutover |
 | Mount | Preserve the existing rclone-over-WebDAV mount by default; native FUSE is an explicit alternative |
-| Database | Stage generation 2 SQLite first; PostgreSQL conversion is a separate native workflow |
+| Database | Import v1 SQLite or v1 PostgreSQL into a separate generation 2 SQLite database first; PostgreSQL conversion is optional afterward |
 | Import strategy | Preserve existing outputs; changing generation or mount does not regenerate symlinks or STRM files |
+
+SQLite-to-SQLite migration converts the generation 1 schema and data into the
+generation 2 format while retaining the original source. PostgreSQL is optional;
+you can keep generation 2 SQLite or convert it separately after validation.
 
 The original 1.x runtime, configuration and data remain the rollback source.
 Generation 2 program files and data use separate directories. The native runtime
@@ -76,8 +80,15 @@ PostgreSQL database as a generation 2 database.
 The preview inventories the complete source data and runtime trees and checks
 copy capacity. Filesystem entry counts include application blob stores and any
 build or dependency directories inside those trees; they are not counts of
-titles or media files. Allow space for retained copies, the candidate
-installation and PostgreSQL snapshots when applicable.
+titles or media files. The storage review shows source entry counts and logical
+size, then each filesystem's required space, available space, shortfall and status.
+Required space already includes retained backups, the candidate installation,
+PostgreSQL staging and restore overhead when applicable, up to 512 MiB for the
+inventory manifest, and a safety margin. Paths sharing a filesystem use one
+combined budget. An unavailable estimate does not pass the capacity check.
+
+These estimates do not reserve space. DUMB checks capacity again before copying;
+keep enough space available throughout the operation.
 
 If an inventory or capacity check blocks the preview, keep the original
 installation and its files intact. Do not bypass the check, truncate the
