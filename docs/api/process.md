@@ -1158,8 +1158,9 @@ Rehearse and start body, using values from the current preview:
 
 Omit `rehearsal_job_id` for the rehearsal request and for a fresh installation
 that does not require one. Always use the backend's exact confirmation text;
-fresh mode has a different phrase. A major cutover requires a completed
-rehearsal with `mode: "rehearsal"`, `result.validated: true` and the matching
+fresh mode has a different phrase. A major cutover requires a successful
+rehearsal with `status: "rehearsed"`, `mode: "rehearsal"`,
+`result.validated: true` and the matching
 `plan_fingerprint`. Changed source facts, failed containment, skipped native
 media, an unsupported source adapter or failed identity/policy proof block
 activation. External NNTP reads are denied during the contained import, and
@@ -1170,8 +1171,11 @@ OIDC-configured sources remain blocked until their target policy is verified;
 the acknowledgement is not an authorization to bypass a blocker.
 
 Start/rehearse responses and `status.job` expose a public job, including its
-identity, mode, status, stage, message, fingerprint and result. Rollback is
-available only when `can_rollback` or `actions.rollback` is explicitly true.
+identity, mode, status, stage, message, fingerprint and result. A successful
+cutover uses `status: "completed"`. The terminal `status: "failed_restored"`
+confirms the source was restored and permits a fresh preview; recovery flags
+remain authoritative for available actions. Rollback is available only when
+`can_rollback` or `actions.rollback` is explicitly true.
 Send `job_id` and the exact `rollback_confirmation_text` as `confirmation` to
 the rollback route. Recovery retains the original source; later 2.x writes
 are not merged back into v1.
