@@ -225,6 +225,12 @@ InfiniDysk 2 opens at a dedicated root URL. The frontend does not embed its UI
 under `/ui/infinidysk` unless a validated adapter is explicitly advertised.
 Use the service page's direct local address or configured public portal.
 
+When DUMB retains a distinct 1.x backend port for generation 2 clients, its
+compatibility relay requires native **Required** authentication. DUMB applies a
+runtime lock, preserving the saved native setting and rejecting conflicting
+mode overrides. See the [compatibility authentication policy](../../features/infinidysk-v2-migration.md#authentication-with-the-retained-backend-port)
+before changing listener ports or native authentication.
+
 !!! warning "WebDAV credentials"
 
     If `webdav_password` is blank, DUMB generates one at startup and stores it in the config.

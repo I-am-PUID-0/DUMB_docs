@@ -1184,6 +1184,15 @@ The preview returns `protocol`, `ready`, `preview_token`, `expires_at`,
 it is not an authorization token. Recorded inventory is not proof that
 unmanaged consumers or STRM URLs are absent.
 
+Updated status responses include `current.compatibility_auth_policy`; previews
+include `target.compatibility_auth_policy`. When the legacy compatibility relay
+is enabled, it reports
+`{"enforced": true, "mode": "required", "reason": "legacy_compatibility_listener"}`.
+This is a read-only explanation of the authentication policy DUMB enforces at
+native launch, not a runtime settings probe or a mutation option. With no relay the values are `false`, `null` and `null`.
+The backend rejects conflicting explicit authentication overrides before native
+setup or migration. Older backends may omit the object.
+
 Rehearse and start body, using values from the current preview:
 
 ```json

@@ -98,6 +98,10 @@ When DUMB starts for the first time, the frontend detects that no users exist an
 
 When authentication is enabled, users must log in to access the dashboard and API.
 
+After either login method succeeds, the dashboard can return to an internal page
+on the same origin. External destinations and malformed or ambiguous return
+paths fall back to the dashboard home page.
+
 ### Local login
 
 1. Navigate to the DUMB frontend

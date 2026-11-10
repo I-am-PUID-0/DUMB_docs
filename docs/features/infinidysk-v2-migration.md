@@ -224,6 +224,25 @@ is delayed, retrying verifies that same SQLite file and its health without
 restoring over writes accepted since the first restart. A missing or replaced
 file remains blocked for investigation.
 
+## Authentication with the retained backend port
+
+When `backend_port` differs from `frontend_port`, DUMB runs a compatibility
+relay so existing SAB, WebDAV and signed-stream URLs can retain their port.
+The relay cannot preserve the original network peer identity, so DUMB locks
+native **Required** authentication at launch while it is enabled. Native **Local** or
+**Disabled** exemptions cannot be used through this relay.
+
+The wizard reports this policy, and the native settings UI shows the
+DUMB-enforced authentication lock. Explicit conflicting `INFINIDYSK__AUTH__MODE`
+overrides are rejected before installation or migration. DUMB does not rewrite
+the saved native authentication setting; the runtime override keeps it inactive
+while compatibility forwarding is enabled, including after native UI/API changes.
+
+To use native authentication policy without this relay, configure matching
+backend and frontend ports. Review and update existing client and stream origins
+before removing the old port. Authentication requirements on the native listener
+then follow its own configuration.
+
 ## Validate and recover
 
 Before resuming normal work, verify queue/history/provider settings, timezone,
