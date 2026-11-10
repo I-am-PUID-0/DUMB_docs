@@ -1,6 +1,24 @@
 # Changelog
 
 
+## [1.24.24](https://github.com/I-am-PUID-0/DUMB_docs/compare/1.24.23...1.24.24) (2026-11-10)
+
+
+### 📖 Documentation
+
+* **audiobookshelf:** describe persistence and onboarding ([82567c5](https://github.com/I-am-PUID-0/DUMB_docs/commit/82567c51e760b04ecf7a68fe6859748176f5b3e9))
+* **backups:** document installation archives and recovery ([58cd634](https://github.com/I-am-PUID-0/DUMB_docs/commit/58cd6349b0119667f0088c26045a83533dac3bb9))
+* **backups:** explain registered storage and symlink recovery ([3d21a3f](https://github.com/I-am-PUID-0/DUMB_docs/commit/3d21a3fede020b2f5d26814dfa7a7f1d500fbeeb))
+* **build:** explain normal dev tags and About build identity ([3c39ec1](https://github.com/I-am-PUID-0/DUMB_docs/commit/3c39ec1ce9a2312e9bc3d35821daa5df7e26024d))
+* **build:** explain selecting the frontend for dev images ([09c488f](https://github.com/I-am-PUID-0/DUMB_docs/commit/09c488fe987b034c6b4f26bfab4ca2310503cf5f))
+* **infinidysk:** clarify storage checks and SQLite migration ([df7cbf3](https://github.com/I-am-PUID-0/DUMB_docs/commit/df7cbf37abc9dcc41c8ddafb2afd7c56f1e33239))
+* **infinidysk:** clarify terminal rehearsal states ([a418dde](https://github.com/I-am-PUID-0/DUMB_docs/commit/a418dde505397fd81c434abbe759764b0b772bfb))
+* **infinidysk:** explain archive storage and v1 retirement ([77bcdbd](https://github.com/I-am-PUID-0/DUMB_docs/commit/77bcdbde1cbc80b2b5c84e7974b3e26cd72c8648))
+* **infinidysk:** explain complete migration source inventory ([a3412a0](https://github.com/I-am-PUID-0/DUMB_docs/commit/a3412a01a249aede78b26a73e5133efe66b9fe8d))
+* **security:** explain compatibility authentication and login returns ([f1048bd](https://github.com/I-am-PUID-0/DUMB_docs/commit/f1048bdf4c679abc3f817c4bf8bada26d24bf360))
+* **setup:** explain checklist lookup and readiness failures ([ad39225](https://github.com/I-am-PUID-0/DUMB_docs/commit/ad39225b0f4c932895d3c49dbfb4c59382a08e49))
+* **setup:** explain retained checklists and native handoff ([211282c](https://github.com/I-am-PUID-0/DUMB_docs/commit/211282c2938a698250121f034cce1893a74919bb))
+
 ## [1.24.23](https://github.com/I-am-PUID-0/DUMB_docs/compare/1.24.22...1.24.23) (2026-11-09)
 
 
