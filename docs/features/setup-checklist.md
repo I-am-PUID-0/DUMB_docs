@@ -71,6 +71,28 @@ Each action reports automation, configuration, verification, missing input and a
 
 There is no success timer or forced redirect. Leaving onboarding changes a navigation preference, not verification. A backend restart or browser change does not turn interrupted work into success. Correct rejected credentials in the relevant task and retry it rather than restarting unrelated applications.
 
+### If the checklist cannot load
+
+No saved setup run is a normal result for an existing installation that has not
+used the retained setup workflow. The dashboard does not require you to rerun
+onboarding to dismiss that empty state.
+
+A failed lookup is different: DUMB cannot establish whether a saved run exists.
+The checklist retains any previously loaded results and offers a retry, including
+when no results have loaded yet. Its error identifies the request and, when
+available, its HTTP status and a safe explanation. It does not discard saved
+state or treat an unavailable request as completed setup.
+
+- Authentication failures require restoring the browser's login session.
+- An unreachable API or gateway failure requires checking API/proxy availability.
+- A private-state ownership or permissions failure requires checking controller
+  access to its setup state. Startup preserves controller-owned state separately
+  from the application PUID/PGID; do not delete the saved records to silence it.
+
+The startup/readiness banner is separate from retained setup actions. A green
+process tile does not establish that every configured service endpoint is ready.
+See [Startup lifecycle](startup-lifecycle.md) for phases and readiness checks.
+
 ## Understand automation coverage
 
 Coverage counts **applicable required setup actions**, including required manual work. Automatic work, automatic work after input, manual work, applied configuration and verified checks are separate counts.
