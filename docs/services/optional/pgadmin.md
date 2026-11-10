@@ -71,7 +71,8 @@ restore test.
 ---
 
 ## Server Configuration
-- pgAdmin is preconfigured with a server connection named **DUMB**.
+- The retained setup task can register managed PostgreSQL through pgAdmin's supported provisioning CLI, with a connection name and group you choose. It reuses an exact existing connection and preserves unrelated definitions and saved-password settings.
+- The default server group is **DUMB**. Confirm the saved PostgreSQL connection's name and address in pgAdmin.
 - On first login, you must enter the password for the PostgreSQL server connection.
     - Default password: `postgres`
     - Or, use the value of `POSTGRES_PASSWORD` if set in your environment.

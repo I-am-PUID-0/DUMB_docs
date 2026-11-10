@@ -9,6 +9,13 @@ Tautulli is a monitoring and statistics application for Plex Media Server. It tr
 
 ---
 
+## Setup checklist and remaining work
+
+The checklist can configure/check Plex after Tautulli generates configuration and authorized credentials exist. Existing nonempty settings are preserved unless a deliberate supported change is selected. Complete administrator setup, notifications and retention separately. Process readiness does not verify Plex access. Applying a connection change restarts Tautulli only after explicit permission; opening or rechecking the checklist does not grant that permission.
+
+Requires the backend setup-arrangement capability. See [Setup checklist and automation](../../features/setup-checklist.md) for retained tasks, coverage and safe retries.
+
+
 ## Overview
 
 Tautulli provides:

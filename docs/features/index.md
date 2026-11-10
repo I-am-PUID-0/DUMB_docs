@@ -12,6 +12,8 @@ DUMB (Distributed Unlimited Media Bridge) is an all-in-one media management solu
 
 ### Key Features
 
+* **[Setup checklist and automation](setup-checklist.md)** – Preview automatic changes, choose exact connections, reuse provider accounts, and retain manual or failed setup tasks after leaving onboarding.
+
 * **Unified Deployment** – Combines multiple tools into a single, easy-to-deploy system with onboarding-driven setup.
 * **Built-In Media Server Integration** – Includes **Plex Media Server, Jellyfin, and Emby**, fully embedded in the container to eliminate mount propagation issues.
 * **Automated Content Management** – Uses **Debrid** and **Usenet** services alongside **Plex Discover Watchlists**, **Trakt lists**, and **Seerr** to automate media retrieval.

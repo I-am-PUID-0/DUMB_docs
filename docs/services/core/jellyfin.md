@@ -10,6 +10,13 @@ icon: lucide/play
 
 ---
 
+## Setup checklist and remaining work
+
+The checklist guides supported fresh-administrator setup and explicit library creation/reuse. Existing initialized servers are not reinitialized. Supported new-library forms offer an optional initial scan, off by default; review the paths before enabling it. Existing libraries are not rescanned by this creation choice. Choose sharing, remote access, hardware acceleration and playback policy, then test real library access/playback.
+
+Requires the backend setup-arrangement capability. See [Setup checklist and automation](../../features/setup-checklist.md) for retained tasks, coverage and safe retries.
+
+
 ## Service Relationships
 
 | Classification | Role                               |
@@ -87,7 +94,7 @@ and [Jellyfin's Intel GPU guide](https://jellyfin.org/docs/general/post-install/
 
 ## Media Library Protection
 
-Protection is enabled by default, but Jellyfin requires a dedicated API key before DUMB can inspect sessions and temporarily control scan tasks/library real-time monitoring. DUMB does not create this key during Jellyfin's first-run administrator setup. Create it in Jellyfin's dashboard, then save it under **Library Protection** on the Jellyfin service page. Until then, safe unattended storage maintenance is deferred because activity is unknown.
+Jellyfin requires an authorized API key before DUMB can inspect sessions and temporarily control scan tasks/library real-time monitoring. Compatible guided first-administrator setup can create a dedicated application key; the checklist offers a separate explicit choice to save that key for Library Protection. You can also create a key in Jellyfin's dashboard and save it under **Library Protection** on the Jellyfin service page. New setup-created protection policies remain disabled until you review their mount scope and enable them. Without usable credentials, unattended storage maintenance is deferred because activity is unknown.
 
 See [Media Library Protection](../../features/media-library-protection.md).
 

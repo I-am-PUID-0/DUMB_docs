@@ -10,6 +10,13 @@ Maintainerr helps keep a media library lean by finding content that matches your
 
 ---
 
+## Setup checklist and remaining work
+
+The checklist guides supported connections after authorization. Review exact instances and adoption of existing settings. Connection setup never authorizes deletion, unmonitoring or retention actions; preview and activate rules deliberately inside Maintainerr.
+
+Requires the backend setup-arrangement capability. See [Setup checklist and automation](../../features/setup-checklist.md) for retained tasks, coverage and safe retries.
+
+
 ## Overview
 
 Maintainerr provides:

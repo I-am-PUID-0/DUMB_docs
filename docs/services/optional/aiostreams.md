@@ -180,6 +180,10 @@ When Cloudflare Tunnel terminates public TLS, leave TPA's **Certificate Resolver
 
 ## Connect DUMB services
 
+On setup-arrangement backends, the retained checklist can add explicitly selected managed Prowlarr/Zilean presets and InfiniDysk/AltMount playback settings to one encrypted AIOStreams profile. Supply the existing profile UUID/password or deliberately authorize a new profile. Its password is separate from the dashboard login and stays protected for readback/retries. Select compatible Debrid credentials when a new Zilean profile requires them. Existing presets and unrelated preferences remain preserved; DUMB does not change shared templates or install an addon in your player.
+
+The guided playback-engine task requires the selected engine's WebDAV credentials and an explicitly chosen public HTTPS origin. Review public-origin TLS/private-endpoint permissions. The manual alternatives below, including AIOStreams' authenticated proxy, remain available in its native interface. See [Setup checklist and automation](../../features/setup-checklist.md) for preview, retained tasks and verification scope.
+
 Use direct loopback URLs for services in the same DUMB container. Do not enter a DUMB embedded `/ui/<service>` URL. Because DUMB can resolve port conflicts dynamically, verify each service's saved port before copying the example.
 
 ### Prowlarr

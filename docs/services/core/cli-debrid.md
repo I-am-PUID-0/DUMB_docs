@@ -30,6 +30,13 @@ icon: lucide/terminal
 
 ---
 
+## Setup checklist and remaining work
+
+Review the selected source's standalone/integrated Battery layout and PhalanxDB choice. Dependencies and installation are separate from native content, collection, scraper and library choices. Finish those tasks and validate a real import/playback.
+
+Requires the backend setup-arrangement capability. See [Setup checklist and automation](../../features/setup-checklist.md) for retained tasks, coverage and safe retries.
+
+
 ## Workflow diagram
 
 ```mermaid

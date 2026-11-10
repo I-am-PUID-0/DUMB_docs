@@ -5,7 +5,7 @@ icon: lucide/wand-2
 
 # Onboarding Wizard
 
-The onboarding wizard guides you through the initial setup of DUMB, helping you configure core services, debrid credentials, and optional components in a step-by-step process.
+The onboarding wizard guides you through the initial setup of DUMB, helping you choose an arrangement, review automatic changes, and retain unfinished configuration tasks.
 
 ---
 
@@ -13,12 +13,14 @@ The onboarding wizard guides you through the initial setup of DUMB, helping you 
 
 The wizard walks you through:
 
-1. Selecting core services (orchestrators and related tools)
+1. Choosing the services in your arrangement by role
 2. Running preflight health/readiness checks
 3. Configuring debrid service credentials (when applicable)
-4. Choosing optional services
+4. Choosing companion services
 5. Customizing service-specific options
-6. Reviewing and applying your configuration
+6. Choosing exact connections, libraries and policies when supported
+7. Reviewing and applying your configuration
+8. Following the retained checklist and finishing remaining tasks
 
 ---
 
@@ -29,10 +31,10 @@ The wizard walks you through:
 flowchart TD
     A([App start<br/>or launch onboarding])
     B{Onboarding Required?}
-    C[Core Service Selection]
+    C[Choose services by role]
     D[Preflight Checks]
     E[Apply Configuration]
-    F[Run Setup + Start Services]
+    F[Apply setup and track actions]
     G([Dashboard])
 
     A ==> B
@@ -41,7 +43,8 @@ flowchart TD
     C ==> D
     D ==> E
     E ==> F
-    F ==> G
+    F ==> H[Retained checklist and manual tasks]
+    H ==> G
 ```
 
 ---
@@ -60,9 +63,9 @@ You can also re-run onboarding at any time from the Settings page to reconfigure
 
 ## Wizard steps
 
-### Step 1: Select core services
+### Step 1: Choose services
 
-Choose one or more core services. The manual service list groups them by role,
+Choose the services that form your arrangement. The manual list groups them by role,
 including **Download workflows**, **Library automation**, **Media servers and
 playback**, and **Requests and discovery**. Category headings and service names
 are sorted alphabetically.
@@ -80,9 +83,9 @@ category does not change your selections.
 Categories containing selected services open initially. If no core services are
 selected, the first category opens to help you get started.
 
-!!! info "Multiple core services"
+!!! info "Chosen services and required dependencies"
 
-    You can select multiple core services if needed. Each will be configured with its own dependencies.
+    Choose the complete arrangement you want. The review distinguishes your choices, required dependencies and optional companions. Historical core/optional catalog names do not mean every core service is mandatory.
 
 !!! note "Guided setup"
 
@@ -104,7 +107,7 @@ selected, the first category opens to help you get started.
 
 ### Step 2: Preflight checks
 
-The wizard performs these blocking frontend-proxied requests before proceeding:
+The wizard checks these frontend-proxied endpoints before proceeding:
 
 - `GET /api/health`
 - `GET /api/process/capabilities`
@@ -112,7 +115,7 @@ The wizard performs these blocking frontend-proxied requests before proceeding:
 - `GET /api/config`
 - `GET /api/config/service-ui`
 
-Blocking check failures must be resolved before moving to the next step.
+Backend health, capability and service-catalog failures block the next step. The storage configuration inventory remains **Not verified** because configured path strings do not prove mount readiness or consumer access. It and embedded UI readiness are advisory. Arrangement review adds its own checks: unknown remote storage, timeout or consumer-namespace results remain **Not verified**, distinct from a passed check or a confirmed critical failure.
 
 ---
 
@@ -135,7 +138,7 @@ For Decypharr, DUMB writes the selected provider, API key, download folder, and 
 
 ---
 
-### Step 4: Select optional services
+### Step 4: Choose companion services
 
 Choose additional services to enable from the same alphabetical, expandable
 category layout. Optional roles include **Access and security**, **Databases and
@@ -193,10 +196,32 @@ Configure additional settings for selected services:
 - **Phalanx DB**: Enable/disable for CLI Debrid
 - **Decypharr**: FUSE, embedded rclone, external rclone, or no-mount mode
 - **AltMount**: FUSE, embedded rclone, external rclone, or no-mount mode
-- **InfiniDysk**: Fresh-install SQLite or PostgreSQL main database
+- **InfiniDysk 1**: Fresh-install SQLite or PostgreSQL main database
+- **InfiniDysk 2**: Guarded native installation or migration, with historical rclone or native FUSE
 - **AIOStreams**: Public base URL and Dashboard administrator credentials
 
 Default values are pre-filled but can be customized.
+
+!!! info "InfiniDysk runtime and mount choices"
+
+    With the advertised setup runtime capability, arrangement review distinguishes
+    InfiniDysk 1 from InfiniDysk 2. Generation 1 keeps historical rclone. Generation
+    2 can use rclone over WebDAV or native FUSE; FUSE requires the device,
+    permissions and mount visibility in every consumer namespace.
+
+    Choosing generation 2 opens the existing guarded installation/migration tool.
+    It passes your mount preference without starting a job or accepting its
+    acknowledgements. Complete that tool, then refresh the setup plan before
+    starting setup. Existing generation 1 data requires major migration; a setup
+    option does not convert it. An existing generation 2 installation keeps its
+    detected mount choice and paths.
+
+    Native FUSE omits the associated rclone dependency and its options. Review
+    Arr/media paths, remote mappings, symlinks and STRM origins separately. Native
+    provider/account, Arr-link and import-strategy configuration remains manual
+    where no generation 2 setup adapter is advertised. These tasks stay visible;
+    process readiness does not complete them. See the
+    [InfiniDysk 2 guide](../features/infinidysk-v2-migration.md).
 
 !!! info "InfiniDysk onboarding PostgreSQL is fresh-install only"
 
@@ -216,11 +241,12 @@ Default values are pre-filled but can be customized.
     installation still needs an InfiniDysk identity or namespace migration,
     complete that before making any PostgreSQL selection.
 
-!!! note "AltMount still needs application setup"
+!!! note "AltMount still needs deliberate choices"
 
-    Onboarding selects AltMount's mount mode and wires Arr download clients.
-    After first start, create the AltMount administrator, add an NNTP provider,
-    choose an import strategy, and validate the Arr/media-library paths. See the
+    Select the mount mode, provider account/reference and intended Arr links.
+    Create the administrator, choose an import strategy and validate library
+    paths. Unfinished choices remain in the
+    [setup checklist](../features/setup-checklist.md); see the
     [AltMount guide](../services/core/altmount.md#first-start-checklist).
 
 !!! info "Instances"
@@ -230,53 +256,29 @@ Default values are pre-filled but can be customized.
 
 ---
 
-### Step 6: Enable embedded UIs
+### Connections and choices
 
-If your backend supports embedded service UIs, you'll be asked:
+On compatible backends, choose exact application connections and settings DUMB cannot safely infer: provider-account references, per-client connection budgets, library creation/reuse, actual quality profiles and roots, languages, and default/4K request routes.
 
-> Would you like to enable embedded service UIs?
+Choices refresh when you select targets. Profiles or roots needing an initialized application remain unfinished until first start and can be selected later. **External services** and **No media server** are separate choices. Existing connections require deliberate adoption when DUMB would change unowned settings.
 
-When enabled, you can access service web interfaces directly within the DUMB frontend using embedded tabs, direct link buttons, and split view.
+### Embedded service access
 
----
+When offered, enable proxied service tabs, direct links and split view. This choice does not configure public DNS or external HTTPS origins.
 
-### Step 7: Review configuration
+### Review configuration
 
-Review your complete configuration before applying:
+Review selected services, required dependencies and companions, followed by meaningful library/provider/routing choices with credentials masked.
 
-- Core services selected
-- Debrid credentials (API key masked)
-- Optional services
-- Custom options
+The plan groups tasks into **DUMB will configure**, **Information you must provide**, and **Finish manually**. Click **Start services** on this review step to apply the plan. A preview or healthy process is not proof of a working complete arrangement.
 
-!!! warning "Verify before proceeding"
+### Setup progress and retained tasks
 
-    Review carefully - the wizard will start services immediately after confirmation.
+The progress page shows the backend checklist and live logs. Configuration, verification, failures and missing input remain distinct. Use targeted apply, retry and recheck controls after correcting the relevant choice.
 
----
+**Continue to dashboard** leaves onboarding without discarding unfinished work. The checklist remains on the dashboard and matching service pages. There is no fixed success delay or automatic redirect. Manual completion records your confirmation separately from a passed connection test.
 
-### Step 8: Live setup logs
-
-Watch the setup progress in real-time:
-
-- Service initialization
-- Dependency resolution
-- Configuration application
-- Startup confirmations
-
-The log viewer shows output from all services being started.
-
----
-
-### Step 9: Success or error
-
-**Success**: All services started successfully. You'll be redirected to the dashboard.
-
-**Error**: If any service failed to start, you'll see:
-
-- Which services failed
-- Error messages
-- Option to retry or skip
+See [Setup checklist and automation](../features/setup-checklist.md) for coverage, account reuse and remaining manual tasks. Older backends without this capability show an honest startup result and require you to check each application's configuration.
 
 ---
 
@@ -305,7 +307,7 @@ If you prefer to configure services manually:
 The wizard updates `dumb_config.json` with:
 
 - Enabled services
-- Debrid API keys (injected into Zurg/Decypharr)
+- Selected provider inputs, including supported direct source-mode mappings
 - Service options
 - Instance configurations
 
@@ -329,11 +331,19 @@ combined root automatically.
 
 ---
 
+## External media and Plex authorization
+
+Guided setup separates **External server** from **No media server**. The selected choice becomes the initial connection choice for selected request and maintenance applications; review each application's typed connection form before applying it. External URLs must be reachable from DUMB, and private network endpoints require deliberate authorization.
+
+Plex options no longer require an early claim token before you can continue. Use the retained account task after Plex is ready to submit a fresh claim token when needed. Existing claimed servers retain their account. Plex API tokens and claim inputs are masked.
+
+---
+
 ## After onboarding
 
-Once complete:
+After leaving the wizard:
 
-1. **Dashboard** shows your running services
+1. **Dashboard** shows your services and retained setup checklist
 2. **Settings** allows further customization
 3. **Service UIs** are accessible (if enabled)
 4. **Logs** can be viewed for each service
@@ -352,13 +362,13 @@ Once complete:
 
 - Fill in all required fields
 - Check for validation errors (red highlights)
-- Refresh the page and try again
+- Retry the failed request after resolving its explanation. Refreshing loses unsubmitted credential drafts, but not the backend setup run.
 
 ### Need to change configuration
 
-- Complete onboarding first
+- Resume the retained checklist for unfinished connections or manual tasks
 - Use Settings to modify individual services
-- Or Launch Onboarding to start fresh
+- Launch Onboarding to review another arrangement; re-running it is not a database migration
 
 ---
 

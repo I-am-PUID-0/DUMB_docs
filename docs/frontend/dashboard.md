@@ -22,6 +22,10 @@ The dashboard displays service cards for each configured service, showing:
 
 ---
 
+## Setup checklist
+
+Compatible backends retain the latest or remembered setup run, automatic/manual tasks and independent connection results. Correct inputs, retry an action or recheck connections without repeating successful installations. Leaving onboarding does not complete missing tasks. See [Setup checklist and automation](../features/setup-checklist.md).
+
 ## Service cards
 
 Each service is represented by a card with the following elements:

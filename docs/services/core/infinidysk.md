@@ -12,6 +12,21 @@ DUMB keeps InfiniDysk 1.x as the default. DUMB API 2.24.0 or newer can offer the
 separate [InfiniDysk 2 installation and upgrade wizard](../../features/infinidysk-v2-migration.md).
 The workflow below describes the default 1.x integration unless a section says otherwise.
 
+## Setup checklist and remaining work
+
+Choose intended Arr instances and provider accounts in the setup checklist. Other selected Usenet clients can reference InfiniDysk's accounts with separate connection allocations. Review the shared limit, add/test indexers, verify mount access and test a real import. Runtime readiness and Arr connections are separate results.
+
+Requires the backend setup-arrangement capability. See [Setup checklist and automation](../../features/setup-checklist.md) for retained tasks, coverage and safe retries.
+
+The account-sharing and automatic connection steps above describe generation 1.
+Generation 2 uses the guarded native wizard for installation/migration and
+mount selection. Refresh the setup plan afterward; native account/provider,
+Arr-link and import-strategy work remains manual where no generation 2 adapter
+is advertised. Native FUSE excludes the associated rclone dependency while
+preserving the existing consumer path.
+
+
+
 ## Workflow diagram
 
 ```mermaid

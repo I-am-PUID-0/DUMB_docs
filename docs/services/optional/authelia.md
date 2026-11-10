@@ -14,6 +14,13 @@ reusable Traefik ForwardAuth middleware for selected application routes.
 Authelia is optional. You can instead connect DUMB authentication to an
 external Authelia deployment or another standards-compatible OIDC provider.
 
+## Setup checklist and remaining work
+
+The checklist retains guided bootstrap/enrollment tasks and service links. Installation intentionally can leave Authelia stopped before bootstrap. Domain/DNS/HTTPS routes, notifier verification, factor enrollment and optional OIDC/ForwardAuth remain deliberate choices.
+
+Requires the backend setup-arrangement capability. See [Setup checklist and automation](../../features/setup-checklist.md) for retained tasks, coverage and safe retries.
+
+
 ## What DUMB manages
 
 | Item | DUMB behavior |

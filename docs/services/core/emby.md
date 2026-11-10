@@ -10,6 +10,13 @@ icon: lucide/disc
 
 ---
 
+## Setup checklist and remaining work
+
+Complete first administrator setup where required and supply authorized credentials for supported library actions. Existing initialized servers and paths are preserved. Supported new-library forms offer an optional initial scan, off by default; this choice does not rescan an existing library. Configure Library Protection separately where required; review remote access, GPU mapping and actual playback.
+
+Requires the backend setup-arrangement capability. See [Setup checklist and automation](../../features/setup-checklist.md) for retained tasks, coverage and safe retries.
+
+
 ## Service Relationships
 
 | Classification | Role                               |
@@ -83,7 +90,7 @@ for login and empty-library troubleshooting.
 
 ## Media Library Protection
 
-Protection is enabled by default, but Emby requires a dedicated API key before DUMB can inspect sessions and temporarily control scan tasks/library real-time monitoring. DUMB does not create this key during Emby's first-run administrator setup. Create it in Emby's dashboard, then save it under **Library Protection** on the Emby service page. Until then, safe unattended storage maintenance is deferred because activity is unknown.
+Emby requires a dedicated API key before DUMB can inspect sessions and temporarily control scan tasks/library real-time monitoring. DUMB does not create this key during Emby's first-run administrator setup. Create it in Emby's dashboard, then save it under **Library Protection** on the Emby service page. New setup-created protection policies remain disabled until you review their mount scope and enable them; existing policy settings are preserved. Without usable credentials, unattended storage maintenance is deferred because activity is unknown.
 
 See [Media Library Protection](../../features/media-library-protection.md).
 

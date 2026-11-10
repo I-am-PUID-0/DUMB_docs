@@ -10,6 +10,13 @@ icon: lucide/book-open
 
 DUMB handles installation, updates, process control, and web access. Add existing book files through your media mounts and configure libraries in Audiobookshelf. Book acquisition and download-client integration remain separate workflows; podcast subscriptions and episode downloads are configured in Audiobookshelf.
 
+## Setup checklist and remaining work
+
+The checklist can guide demonstrably fresh root-account setup and explicit library creation/reuse. Initialized servers remain preserved. Choose audiobook/podcast paths and user access, then test scans and actual playback. Readiness is not a library/playback test.
+
+Requires the backend setup-arrangement capability. See [Setup checklist and automation](../../features/setup-checklist.md) for retained tasks, coverage and safe retries.
+
+
 ## Runtime requirements
 
 The managed installation supports Linux amd64 and arm64 and uses Node.js 24 and FFmpeg from the DUMB image. Update the DUMB image before enabling Audiobookshelf if an older image lacks these runtimes.

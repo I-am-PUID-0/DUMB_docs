@@ -45,6 +45,10 @@ Each service page includes:
 
 ---
 
+## Setup checklist
+
+Compatible backends show retained setup tasks scoped to this service and instance. Expand **Configure this step** to supply advertised inputs; apply, retry or recheck the intended action. Manual completion records your confirmation rather than a passed connection test. The backend retains unfinished work across browser or controller restarts. See [Setup checklist and automation](../features/setup-checklist.md).
+
 ## Status and controls
 
 The header shows the service name, status dot, and health badge. When auto-restart is

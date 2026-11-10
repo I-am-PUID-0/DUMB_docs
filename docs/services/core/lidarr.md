@@ -8,6 +8,8 @@ icon: lucide/music
 
 **Lidarr** is a music manager that automates searching, grabbing, and organizing albums through indexers and download clients.
 
+The [setup checklist](../../features/setup-checklist.md) can discover existing music roots and their native quality and metadata profiles. Select the intended defaults, preview the changes and approve saving them. DUMB reads the result back without changing existing artists, monitoring choices or tags. Profile availability depends on the installed Lidarr instance.
+
 ---
 
 ## Service Relationships

@@ -7,6 +7,13 @@ icon: lucide/captions
 
 [Bazarr](https://www.bazarr.media/) is an optional subtitle manager for movies and TV shows. It reads library information from Sonarr and Radarr, searches configured subtitle providers, and writes downloaded subtitles beside the media files.
 
+## Setup checklist and remaining work
+
+Compatible checklists populate selected Sonarr/Radarr connections, guide discovered languages/profiles, and expose supported subtitle-provider credential fields. Preview the exact settings, then explicitly approve saving credentials or activating a provider. Existing providers remain preserved. Configuration readback does not verify a third-party provider login or subtitle search; test those with your account in Bazarr. Activating integrations can activate existing schedules: enable them deliberately after review. Manual instructions below remain useful for older backends or unsupported interfaces.
+
+Requires the backend setup-arrangement capability. See [Setup checklist and automation](../../features/setup-checklist.md) for retained tasks, coverage and safe retries.
+
+
 ## How DUMB runs Bazarr
 
 DUMB installs the official Bazarr release inside the DUMB container and runs it as a managed service:

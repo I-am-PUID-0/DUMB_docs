@@ -10,6 +10,13 @@ icon: lucide/shield
 
 ---
 
+## Setup checklist and remaining work
+
+The checklist separates Debrid-only, Usenet and hybrid decisions. Enter a Usenet account or reference another selected client with its own allocation. Arr/client/root wiring is reconciled after both endpoints are ready. Missing credentials or choices remain visible instead of requiring restarts to discover missed links.
+
+Requires the backend setup-arrangement capability. See [Setup checklist and automation](../../features/setup-checklist.md) for retained tasks, coverage and safe retries.
+
+
 ## Workflow diagram
 
 ```mermaid

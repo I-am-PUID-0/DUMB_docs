@@ -12,6 +12,19 @@ In DUMB, AltMount is a core Usenet workflow service. DUMB installs and starts Al
 
 ---
 
+## Setup checklist and remaining work
+
+Choose the mount/import arrangement deliberately. The checklist collects or references provider accounts and guides selected Arr connections. Authorize the AltMount administrator, choose direct/symlink/STRM behavior, provide external mounts and validate paths. Sharing an account does not create an unlimited connection budget.
+
+On recognized guarded versions, enter an administrator name and password and explicitly choose **Create the first AltMount administrator**. DUMB registers only while the native server confirms zero users and open first-user registration, then verifies the authenticated session. Existing administrators are reused rather than recreated. You can also complete this step in AltMount's own UI. The checklist exchanges an authorized temporary administrator login for a protected settings session and removes the submitted password after successful authorization.
+
+The download-client/SABnzbd API key does not authorize administrator settings changes. A settings session can expire; authorize the relevant task again when AltMount rejects it. Administrator authorization does not move library files or enable existing scan/sync schedules.
+
+The WebDAV task reuses authenticated existing custom credentials when possible. To set or rotate them, enter the replacement credentials, review the masked field preview and explicitly approve that exact proposal. DUMB verifies authenticated WebDAV access and keeps the handoff to selected consumers private. Coordinate external clients separately: DUMB cannot rewrite unknown consumers. For an internal rclone mount, changing credentials requires an explicitly authorized AltMount-only restart, which can interrupt active playback. External/no-mount layouts can use the supported native hot configuration path. API/configuration checks do not prove FUSE mounts or the complete playback workflow.
+
+Requires the backend setup-arrangement capability. See [Setup checklist and automation](../../features/setup-checklist.md) for retained tasks, coverage and safe retries.
+
+
 ## Workflow diagram
 
 ```mermaid
@@ -78,9 +91,9 @@ AltMount owns the media-processing behavior. DUMB supplies the service lifecycle
 
 | DUMB manages | You manage in AltMount |
 |--------------|------------------------|
-| Downloads the architecture-specific release binary and records its version | Initial AltMount administrator registration |
-| Creates the config, metadata, logs, rclone, and mount directories | NNTP provider hostnames, credentials, connection limits, and TLS settings |
-| Generates `JWT_SECRET` and `ALTMOUNT_API_KEY` when missing | WebDAV credentials and any public/reverse-proxy cookie-domain changes |
+| Downloads the architecture-specific release binary and records its version; guides guarded first-administrator creation or existing login | Administrator credentials and application access policy |
+| Creates directories and applies supported explicitly supplied/referenced NNTP accounts after administrator authorization | Provider accounts, connection allocation and TLS policy |
+| Generates `JWT_SECRET` and `ALTMOUNT_API_KEY` when missing; guides reviewed WebDAV credential handoff | Credential rotation/restart consent, existing external clients and public/reverse-proxy cookie-domain changes |
 | Maps DUMB's mount choice into AltMount's native `mount_type` | Import strategy, import directory, streaming cache, health monitoring, and advanced provider behavior |
 | Enables SABnzbd compatibility and adds standard media categories | Arr root folders, media-server library paths, and validation of the complete import path |
 | Adds linked Arr instances to AltMount and adds AltMount as their download client | Optional AltMount webhooks and any tuning beyond DUMB's baseline |
@@ -212,18 +225,18 @@ During guided onboarding, DUMB then:
 5. Enables AltMount's SABnzbd-compatible API and standard categories (`movies`, `tv`, `music`, and `adult`).
 6. Creates or updates an `altmount` SABnzbd download client in each linked Arr with the matching category.
 
-The integration is scoped by `core_service`; DUMB does not add every enabled Arr automatically. Existing AltMount Arr entries are updated by name or URL rather than replaced wholesale.
+Standard configuration scopes integration through `core_service`. Compatible setup checklists also retain exact selected Arr assignments. DUMB does not add every enabled Arr automatically. Existing native entries are preserved or adopted only through the supported reviewed task.
 
 !!! warning "Finish the AltMount-owned setup"
 
-    DUMB intentionally leaves `providers` empty. Add at least one NNTP provider, choose and validate the import strategy, confirm the Arr root/import paths, and test playback before relying on automation.
+    A new native configuration starts with `providers` empty. Use the compatible checklist to supply or reference provider accounts and apply authorized settings, or configure them in AltMount's UI. Choose and validate the import strategy, confirm the Arr root/import paths, and test playback before relying on automation.
 
 ## First-start checklist
 
 1. Select **AltMount** as the Usenet workflow in guided onboarding, then choose its mount mode.
-2. Open AltMount from the DUMB service page and create the first AltMount administrator account.
-3. Replace the generated first-run WebDAV credentials (`usenet` / `usenet`) before exposing the endpoint outside a trusted network.
-4. Add and test at least one TLS-enabled NNTP provider in AltMount.
+2. Explicitly create the first administrator through a supported checklist task, or use AltMount's own UI; authorize an existing administrator when reusing a server.
+3. Replace first-run WebDAV credentials through the reviewed task or native UI before exposing the endpoint outside a trusted network. Coordinate external clients and authorize an internal-rclone restart when needed.
+4. Supply/reference and test at least one TLS-enabled NNTP provider through the checklist or AltMount's UI.
 5. Review the DUMB-selected mount type/path in AltMount's Mount settings.
 6. Choose `NONE`, `SYMLINK`, or `STRM` and configure any required import directory.
 7. Verify the linked Arr instances and their `altmount` download clients.

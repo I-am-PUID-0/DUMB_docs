@@ -86,6 +86,40 @@ The first TPA screen asks you to create a local admin account.
 
 After this, TPA admin auth protects the TPA UI and API.
 
+## Guided domain and application routes
+
+On backends with the setup-arrangement capability, the retained checklist can
+configure recognized TPA 1.24 installations through their authenticated API.
+Create the first administrator in TPA, then supply that administrator's temporary
+login to the checklist account task. DUMB verifies the native administrator
+session, retains it in protected backend setup state and clears the temporary
+password. Preview and recheck do not sign in or change routes.
+
+1. Add a root domain or select an existing domain after rechecking discovery.
+   New domains are never made the global default; existing domain certificate
+   and default settings stay in TPA's native configuration.
+2. Add the full application hostname and select an enabled managed application's
+   advertised listener. Choose the existing Traefik entrypoint and, for a new
+   domain, the existing certificate resolver if Traefik should issue certificates.
+3. Choose application-managed login or an existing reusable TPA Basic Auth/SSO
+   profile. SSO needs allowed users/groups, or a separate explicit choice to allow
+   every authenticated user of that provider. Keep **Preserve this existing
+   route's protection** when updating an existing protected route.
+4. Choose whether to enable the route, preview every proposed field, then accept
+   that exact preview and authorize public exposure before applying.
+
+DUMB creates new routes disabled, reads their settings back, attaches and checks
+the chosen protection, and only then enables an authorized route. A failed step
+does not authorize a blind retry. A retained, unchanged disabled route can be
+completed after a fresh review. Existing headers, middleware, route groups and
+timing settings are preserved; omitted routes are not removed. Changing an
+existing protection policy, a route with multiple hostnames, advanced routers or
+an external target still uses TPA's native UI.
+
+A passed routing task verifies native configuration and protection readback.
+It does not verify public DNS, certificate issuance or an end-to-end login.
+Complete the separate public-route checks and the DNS/tunnel configuration below.
+
 !!! tip "SSO can come later"
     Start with local admin auth so you have a known-good break-glass login. You can configure admin SSO later from TPA's Security page.
 

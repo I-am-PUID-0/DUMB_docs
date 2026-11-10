@@ -23,6 +23,13 @@ Cloudflared gets traffic to Traefik. Traefik still decides which local service r
 
 ---
 
+## Setup checklist and remaining work
+
+Starting a connector and publishing a usable application are separate tasks. Supply an authorized token, create the matching tunnel/DNS/application route and check the final HTTPS origin. Connector readiness does not provision DNS or verify the external route.
+
+Requires the backend setup-arrangement capability. See [Setup checklist and automation](../../features/setup-checklist.md) for retained tasks, coverage and safe retries.
+
+
 ## Before you start
 
 You need:

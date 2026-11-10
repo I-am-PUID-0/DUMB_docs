@@ -10,6 +10,13 @@ Pulsarr monitors Plex watchlists and routes requested movies and shows to Sonarr
 
 ---
 
+## Setup checklist and remaining work
+
+Select exact Sonarr/Radarr and media-server connections with discovered profiles, roots and default routes where supported. Authorize the administrator, provide required metadata credentials, then choose watchlists, approvals, quotas, notifications and activation. A connection does not establish active watchlist processing.
+
+Requires the backend setup-arrangement capability. See [Setup checklist and automation](../../features/setup-checklist.md) for retained tasks, coverage and safe retries.
+
+
 ## Overview
 
 Pulsarr provides:

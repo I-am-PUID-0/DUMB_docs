@@ -21,6 +21,7 @@ nav:
       - Authentication: features/authentication.md
       - Auto-restart: features/auto-restart.md
       - Startup lifecycle: features/startup-lifecycle.md
+      - Setup Checklist & Automation: features/setup-checklist.md
       - Auto-update: features/auto-update.md
       - Install Cache & Safe Updates: features/install-cache.md
       - Media Library Protection: features/media-library-protection.md

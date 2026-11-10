@@ -10,6 +10,13 @@ Profilarr is a profile and custom format manager for **Sonarr** and **Radarr**. 
 
 ---
 
+## Setup checklist and remaining work
+
+Arr connections and profile installation are separate tasks. On supported installed contracts, the retained task can authorize a profile-database repository, discover available profiles for exact Arr targets, and apply explicitly selected synchronization. Supply administrator/API authorization when requested; private repository authorization stays protected. Preview existing/proposed fields and approve the exact proposal before adopting user-managed settings. Connected Arrs do not establish that profiles were applied or their effects reviewed. Review profiles, custom formats and synchronization effects deliberately.
+
+Requires the backend setup-arrangement capability. See [Setup checklist and automation](../../features/setup-checklist.md) for retained tasks, coverage and safe retries.
+
+
 ## Overview
 
 Profilarr provides:

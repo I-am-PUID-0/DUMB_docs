@@ -10,6 +10,13 @@ icon: lucide/search
 
 ---
 
+## Setup checklist and remaining work
+
+Select exact managed or registered external Arr targets on setup-arrangement backends. Review adoption before changing an unowned application connection. For private/Usenet indexers, add a stable entry, choose a native definition, refresh its advertised settings and provide its credentials. Preview the proposed fields and deliberately authorize its connection test and save. Enablement, synchronization policy and effective category/tag routing remain explicit decisions; a saved entry is distinct from a successful connection test. Existing unrelated indexers, application entries and tags are preserved.
+
+Requires the backend setup-arrangement capability. See [Setup checklist and automation](../../features/setup-checklist.md) for retained tasks, coverage and safe retries.
+
+
 ## Service Relationships
 
 | Classification | Role                               |
@@ -124,7 +131,7 @@ This is an AIOStreams runtime integration, not a Prowlarr application entry that
 
 ### Automated Arr sync
 
-DUMB can auto-configure Prowlarr applications for enabled Arr instances. It reads each Arr API key from the Arr `config_file`, waits for the services to come up, and creates the matching Prowlarr app entries (full sync). Apps are created using the Arr `process_name`.
+DUMB reads Arr API keys after initialization and can create managed Prowlarr applications. On setup-arrangement backends, choose each Prowlarr instance's exact targets and review adoption/sync policy for existing entries. Older backends retain their broad enabled-Arr synchronization; review those entries manually. Connection tests remain separate from saving an entry.
 
 Requirements:
 
@@ -141,13 +148,14 @@ set (single value or list):
 |------------------|-------------------------|
 | `decypharr` | `decypharr` |
 | `infinidysk` | `infinidysk` |
+| `altmount` | `altmount` |
 
 These tags are created automatically if they do not exist.
 
 ### Indexer routing via tags
 
 Prowlarr uses tags to decide which indexers sync into which Arr apps. DUMB links each Arr app
-to the tag matching its core service(s), so Decypharr, InfiniDysk, and AltMount indexers stay separated.
+to workflow tags derived from its selected provider links. Review effective categories and indexer tags for the installed Prowlarr version; a tag name alone is not proof that traffic or results are isolated.
 
 When you add custom indexers in Prowlarr, make sure the correct tag is applied so they sync to
 the intended Arr apps.
@@ -163,7 +171,7 @@ When Decypharr is enabled, DUMB also syncs custom indexer definitions and create
 
 If Decypharr is enabled, DUMB automatically enables the public StremThru indexer.
 
-For Whisparr applications, DUMB widens Prowlarr sync categories to include the Movie/TV roots used by the Zilean/StremThru custom definitions plus the common XXX categories. This lets the custom indexers sync to Whisparr while keeping the normal Decypharr/InfiniDysk/AltMount tag separation.
+For Whisparr applications, DUMB widens Prowlarr sync categories to include the Movie/TV roots used by the Zilean/StremThru custom definitions plus the common XXX categories. This permits those custom indexers to sync to Whisparr with its selected workflow tags. Validate effective routing with the installed Prowlarr version and your indexer categories; tag names alone do not establish isolation.
 
 Custom definitions are pulled from the `Prowlarr-Indexers` repository and stored in
 `<prowlarr_config_dir>/Definitions/Custom` (or `<prowlarr_config_dir>/indexer/Definitions/Custom` when present).

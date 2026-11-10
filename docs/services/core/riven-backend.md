@@ -10,6 +10,15 @@ The **Riven Backend** is the core component responsible for data handling, autom
 
 ---
 
+## Setup checklist and remaining work
+
+The checklist distinguishes selected source modes and direct supported provider inputs from legacy mounts. On recognized Riven versions, it checks the generated backend key, native settings schema and version before offering a media-server connection. Select managed Plex, Jellyfin or Emby, or supply an explicitly authorized external server. Existing custom connection changes need a fresh field-by-field preview and acceptance.
+
+Saving a media-server connection preserves its existing updater enablement, library path and all content policies; supplying a URL/key does not enable an updater. Review and deliberately enable the desired native behavior in Riven. Content sources, scrapers, rankings and library policy remain separate choices. Do not enable an obsolete mount just to carry a provider key; source-specific manual work remains visible. A verified settings save is not proof of library scanning or a complete download workflow.
+
+Requires the backend setup-arrangement capability. See [Setup checklist and automation](../../features/setup-checklist.md) for retained tasks, coverage and safe retries.
+
+
 ## Workflow diagram
 
 ```mermaid
@@ -158,7 +167,7 @@ After completing the DUMB onboarding, navigate to the **Riven Frontend** and ope
 ### Recommended Setup Areas
 
 - **General** – Adjust base settings like min/max files size, etc.
-- **Media Server** – Add your Plex, Jellyfin, or Emby server details for library syncing.
+- **Media Server** – Review the checklist-saved connection or add your Plex, Jellyfin, or Emby server details, then choose whether its updater should run.
 - **Content** – Configure sources such as Trakt, Seerr, or the Plex Watchlist, MDB List, Listrr.
 - **Scrapers** – Enable one or more scrapers (e.g., Zilean, Torrentio, Knightcrawler, Orionoid, Jackett, Mediafusion, Prowlarr, Comet).
 - **Ranking** – Customize how results are scored and filtered.

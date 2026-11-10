@@ -10,6 +10,13 @@ icon: lucide/tv
 
 ---
 
+## Setup checklist and remaining work
+
+Review account/claim authorization separately from libraries. The checklist can create or reuse explicitly selected libraries when authorized, preserving existing libraries and paths. Sharing, remote access, host GPU mapping and real playback remain deliberate decisions/checks.
+
+Requires the backend setup-arrangement capability. See [Setup checklist and automation](../../features/setup-checklist.md) for retained tasks, coverage and safe retries.
+
+
 ## Service Relationships
 
 | Classification | Role                             |
@@ -84,7 +91,7 @@ icon: lucide/tv
 
 ### Media Library Protection
 
-The Plex service page includes **Library Protection**, enabled by default. DUMB uses its existing Plex token to check sessions, inhibit scans before rclone/InfiniDysk/Decypharr/Zurg/AltMount/CLI Debrid maintenance, and restore Plex after the dependency stabilizes. The same panel exposes live Plex library preferences, including **Empty trash automatically after every scan**; keep that option off for remote or virtual libraries.
+The Plex service page includes **Library Protection**. Existing configured policies retain their settings; a new policy created by arrangement setup remains disabled until its mount scope and enablement are reviewed. When enabled, DUMB uses its existing Plex token to check sessions, inhibit scans before rclone/InfiniDysk/Decypharr/Zurg/AltMount/CLI Debrid maintenance, and restore Plex after the dependency stabilizes. The same panel exposes live Plex library preferences, including **Empty trash automatically after every scan**; keep that option off for remote or virtual libraries.
 
 See [Media Library Protection](../../features/media-library-protection.md) for the override choices, recommended Plex settings, recovery journal, and limitations.
 
@@ -259,13 +266,21 @@ Once complete, your DUMB-based Plex server should fully replicate your prior set
 
 --- 
 
+## Claim authorization during setup
+
+With the arrangement checklist, start Plex first and use its retained account task when a fresh claim is needed. Claim tokens are short-lived; submit one when the server is ready, then retry that account task without reinstalling the arrangement. An already claimed Plex server keeps its account.
+
+The checklist tracks account authorization, library configuration and verified connection checks separately. A successful account claim does not verify playback, sharing or remote access. See [Setup Checklist and Automation](../../features/setup-checklist.md).
+
+---
+
 ## How to Start
 
 ### Utilize the onboarding process
 
 !!! tip "The onboarding process can be re-launched from the DUMB Frontend settings menu"
 
-  1. Onboarding will prompt for the Plex Claim Token.
+  1. Start Plex through onboarding. With the arrangement checklist, finish any fresh claim in the retained account task after the server is ready. Older backends can accept the initial Plex Claim Token in service options.
   2. Onboarding will optionally prompt for your Plex Token. If provided, this enables:
 
     * Enhanced functionality for Plex Pass members (e.g., downloads)
@@ -274,7 +289,7 @@ Once complete, your DUMB-based Plex server should fully replicate your prior set
 
 ### Manually
   1. Ensure the `plex` block is properly configured in `dumb_config.json`.
-  2. Provide a `plex_claim` token if starting fresh.
+  2. When starting fresh without the arrangement checklist, provide a short-lived `plex_claim` token immediately before startup.
   3. Start the container with DUMB orchestration, or manually start the Plex service.
   4. Access via: `http://<host>:32400/web`
 

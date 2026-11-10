@@ -10,6 +10,13 @@ NeutArr is DUMB's default backlog-search automation service. It continuously sea
 
 ---
 
+## Setup checklist and remaining work
+
+The checklist tracks owned Arr connections independently from search policy. Review schedules and limits. Owned opt-outs/disabled targets are reconciled while unowned entries and intentional user disables are preserved. Starting NeutArr does not authorize a new search policy.
+
+Requires the backend setup-arrangement capability. See [Setup checklist and automation](../../features/setup-checklist.md) for retained tasks, coverage and safe retries.
+
+
 ## Overview
 
 NeutArr integrates with your Arr stack to automate the hunt for:

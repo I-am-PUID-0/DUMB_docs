@@ -10,6 +10,13 @@ Seerr (Overseerr/Jellyseerr) is a media request and discovery platform that inte
 
 ---
 
+## Setup checklist and remaining work
+
+Choose exact media-server and Sonarr/Radarr targets, then actual discovered profiles, roots and default/4K routes. External servers and no server are different choices. Complete administrator authorization, library access and approval policy in Seerr. Review adoption of existing connections.
+
+Requires the backend setup-arrangement capability. See [Setup checklist and automation](../../features/setup-checklist.md) for retained tasks, coverage and safe retries.
+
+
 ## Overview
 
 Seerr provides:
@@ -86,7 +93,7 @@ Seerr provides:
 
 !!! note "No core_service routing for Seerr"
 
-    Seerr request routing is configured inside the Seerr UI by adding Radarr/Sonarr apps, and Seerr Sync is controlled by `sync_role` plus the top-level `seerr_sync` block. The low-level `core_service` field is not used for Decypharr/InfiniDysk/AltMount workflow routing on Seerr and is intentionally hidden from onboarding options.
+    Seerr request routing can be selected through the setup checklist on compatible backends or configured in Seerr. Seerr Sync is controlled by `sync_role` plus the top-level `seerr_sync` block. The low-level `core_service` field is not used for Decypharr/InfiniDysk/AltMount workflow routing on Seerr and is intentionally hidden from onboarding options.
 
 - **`process_name`**: Display name used in logs and the frontend.
 - **`repo_owner`** / **`repo_name`**: GitHub repository to pull from.

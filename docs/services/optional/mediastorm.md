@@ -92,6 +92,12 @@ Pinned releases, commits, and digests disable automatic updates through DUMB's s
 
 ## Initial setup
 
+With the setup-arrangement capability, the retained checklist supports the MediaStorm 1.5 settings contract. Its account task accepts your current primary administrator login; when MediaStorm confirms the default password is still active, you can explicitly authorize a replacement. DUMB retains the resulting administrator session privately and removes both submitted password inputs after authenticated readback. It preserves an already initialized account.
+
+Source tasks can add selected managed Prowlarr indexers, Zilean, InfiniDysk/Decypharr/AltMount playback-engine settings, chosen Debrid credentials and native NNTP accounts. Shared NNTP references use a separate MediaStorm connection allocation within the account budget. Provide the selected engine's authorized WebDAV account, path and category. Preview proposed changes and explicitly authorize connection tests; existing unowned settings need approval of that exact preview. Existing entries keep their order and unrelated fields. Native engine tests use the basic connection check and never submit a test NZB.
+
+The metadata task can save and test supplied TMDB/TVDB keys through the supported administrator API. Connection/settings readback does not establish download, import or playback success. Unrecognized versions retain guidance for native setup. See [Setup checklist and automation](../../features/setup-checklist.md).
+
 !!! warning "First login credentials"
 
     - **Username:** `admin`
@@ -112,7 +118,7 @@ Pinned releases, commits, and digests disable automatic updates through DUMB's s
 2. Start mediastorm. On first install, DUMB downloads and verifies the architecture-specific OCI layers, builds the local Python subtitle-helper environment, starts PostgreSQL, and waits for it before launching the service. The initial download is several hundred MiB.
 3. Open the mediastorm embedded UI. It starts at `/admin`.
 4. Sign in as `admin` with the password shown on the DUMB service page. For current builds this is `admin`; enter and confirm a replacement password in the additional first-login fields. Pinned builds without those fields should be changed immediately under **Admin UI → Accounts → Change Password**.
-5. Add TMDB and TVDB API keys in mediastorm's admin settings. Media discovery will be incomplete until both are configured.
+5. Add the required TMDB API key in mediastorm's metadata settings. TVDB is optional enrichment for alternate episode orders and related metadata.
 6. Configure the Debrid, torrent, or Usenet providers you intend to use.
 7. Open `/watch` for the browser client, or point a supported mediastorm mobile/TV client at the reachable DUMB host and mediastorm port.
 
