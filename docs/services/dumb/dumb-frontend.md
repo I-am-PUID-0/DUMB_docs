@@ -29,6 +29,58 @@ The frontend source includes a dependency-free Node check in its install and bui
 
 Production starts the compiled Nitro server with `node .output/server/index.mjs`, which does not run the source check. The version floor above applies to dependency installation and source builds; it does not establish the minimum runtime for every previously compiled frontend.
 
+## Build a development image with a chosen frontend
+
+Maintainers with workflow access can build a DUMB `dev` image containing
+unreleased frontend changes without creating a frontend release tag.
+
+1. In the DUMB GitHub repository, open **Actions → Docker Image CI → Run workflow**.
+2. Under **Use workflow from**, select **dev**.
+3. Choose **Frontend source**:
+
+   | Choice | Frontend selected | Published image tag |
+   |---|---|---|
+   | **Latest release** (default) | Latest tagged dmbdb release | Normal image tags, including `dev` on the DUMB `dev` branch |
+   | **dmbdb dev** | The dmbdb `dev` commit resolved when the workflow starts | `dev-frontend-dev` |
+   | **Exact commit** | The specified dmbdb source revision | `dev-frontend-<first 12 SHA characters>` |
+
+4. For **Exact commit**, enter its complete 40-character hexadecimal SHA in
+   **Frontend commit SHA (Exact commit only)**. Leave that field empty for the
+   other choices.
+5. Run the workflow. After it completes, check **Build Summary** for the frontend
+   repository, requested reference, full resolved SHA, package version and
+   published image tags.
+
+Both architectures use the same resolved frontend SHA. **dmbdb dev** and
+**Exact commit** are available only for a manual run on DUMB's `dev` branch.
+They publish their separate tags to Docker Hub and GHCR, leaving the normal
+`dev` image tag and rolling dev-build announcement unchanged. Automatic builds
+keep the **Latest release** selection.
+
+These tags can move, including a commit-specific tag rebuilt with a different
+DUMB revision. Record the published registry digest when testing an exact
+backend/frontend image pair. Pull and recreate the container with that digest
+and your existing persistent volumes. The frontend package version can remain
+the same across unreleased commits; use the full SHA and installed-source
+details rather than the version number alone.
+
+### Image selection and saved frontend settings
+
+The build choice sets the frontend baked into the image. It leaves your saved
+`dumb.frontend` configuration intact. A saved commit, branch or release target
+can trigger a different frontend installation at startup, even with
+`auto_update: false`. Automatic frontend updates default to disabled; enabling
+release updates or manually installing a release can replace the baked
+development frontend.
+
+For an exact image test, check both the image digest and the installed
+frontend's source details after startup. If you instead want to test only a
+frontend revision in an existing image, set `dumb.frontend.commit_sha` to its full
+SHA and install that configured target using the
+[commit targeting settings](#commit--branch--version-targeting). This rebuilds
+the frontend using the image's existing Node runtime and leaves the backend
+image unchanged.
+
 ## Configuration Settings in `dumb_config.json`
 
 This block is nested at `dumb.frontend` in `/config/dumb_config.json`:

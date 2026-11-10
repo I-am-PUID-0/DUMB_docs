@@ -16,6 +16,10 @@ The GitHub repository for **DUMB** uses continuous integration and deployment wo
 
 For example, the [Check for New Release Tags](https://github.com/I-am-PUID-0/DUMB/actions/workflows/fetch-latest-tags.yml) workflow is automated to run every three hours and check for updates to the various services/projects utilized in DUMB. If an update is found, the [Docker Image CI](https://github.com/I-am-PUID-0/DUMB/actions/workflows/docker-image.yml) workflow is called to build a new image with the latest services. 
 
+To pair DUMB `dev` with an unreleased frontend, maintainers can use the manual
+[frontend image-build selection](../services/dumb/dumb-frontend.md#build-a-development-image-with-a-chosen-frontend).
+The normal build continues to select a tagged frontend release.
+
 ### What versions are in the latest **DUMB** image
 
 The image often contains current upstream releases, but not every service is updated by the same workflow or at the same time. Compatibility pins and services installed at runtime can also differ from the image-build inputs. Treat the running service page/version marker and the relevant Docker build summary as authoritative.
