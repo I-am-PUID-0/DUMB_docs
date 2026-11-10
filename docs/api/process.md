@@ -865,9 +865,14 @@ Paths below are relative to the API; browser requests use its `/api` proxy.
 Preview authorization is short-lived and bound to the reviewed source, targets
 and storage identity. A restore can select an owned catalog reference or a
 container-visible archive path, allowing recovery without the original local
-catalog. Archive integrity, paths and file types are validated before replacement.
-The operation preserves rollback evidence and leaves a successful restore
-stopped with a container restart required to reload configuration and auth.
+catalog. Backends advertising `installation_backup_shared_permissions=true`
+accept the strict boolean `allow_shared_permissions` (default `false`) for that
+mounted-file choice. Set it to `true` only with `archive_path` after explicit
+consent to the source's shared access controls; `true` with an owned reference is
+rejected because its registered profile supplies the policy. The choice is
+bound into the reviewed source. Archive integrity, paths and file types are
+validated before replacement. The operation preserves rollback evidence and
+leaves a successful restore stopped with a container restart required to reload configuration and auth.
 
 The preview states the actual inventory and exclusions. These archives cover
 managed installation state, not host deployment files, media or external systems.
@@ -912,6 +917,20 @@ explicit opt-in; the dedicated default route accepts
 replaced mounts and invalid receipts return a conflict; no local fallback is
 created. Catalog readiness reflects saved registration, while each artifact
 operation revalidates the mounted identity.
+
+Backends advertising `backup_storage_shared_permissions=true` also accept
+the strict boolean `allow_shared_permissions` in preview/registration requests.
+It defaults to `false`, including for existing profiles without the field.
+Explicit `true` permits fixed/shared mode bits on external managed directories
+and artifacts; it acknowledges trust in storage access controls rather than
+proving privacy. The saved profile and private binding retain this choice.
+Private local controller/catalog state remains strict. Older backends must not
+receive the new field.
+
+Preview and catalog records can include `warnings` and
+`observed_permissions`, with `directory_mode` and `file_mode` strings such as
+`"0777"` and `"0666"`, or `null` when not observed. These describe visible
+modes, not server ACL verification; cached catalog reads do not probe the NAS.
 
 Symlink backup requests accept optional `backup_destination_id`; `backup_path`
 is required only for the legacy/path choice. Supplying a registered identifier
@@ -1714,9 +1733,11 @@ Returns backend capabilities and feature flags. Used by the frontend to determin
   "symlink_manifest_file_list": true,
   "backup_storage_selection": true,
   "backup_storage_protocol": 1,
+  "backup_storage_shared_permissions": true,
   "backup_storage_kinds": ["symlink_manifest", "infinidysk_v2_archive", "installation_backup"],
   "installation_backup": true,
   "installation_backup_protocol": 1,
+  "installation_backup_shared_permissions": true,
   "infinidysk_v2_migration_backup_storage": true,
   "infinidysk_v2_cleanup": true,
   "infinidysk_v2_cleanup_protocol": 1,
@@ -1803,8 +1824,10 @@ Returns backend capabilities and feature flags. Used by the frontend to determin
 | `infinidysk_v2_rclone_optimizer` | Separate validated optimizer adapter for generation 2; currently `false`, including when rclone is retained |
 | `backup_storage_selection` | Registered local or mounted cold-archive destination selection |
 | `backup_storage_protocol` | Exact supported registered-storage protocol; currently numeric `1` |
+| `backup_storage_shared_permissions` | Explicit per-profile consent for fixed/shared external permissions; local control state remains private |
 | `backup_storage_kinds` | Supported producers: `symlink_manifest`, `infinidysk_v2_archive` and `installation_backup` |
 | `installation_backup` / `installation_backup_protocol` | Managed installation archive, schedule and restore workflow; exact supported protocol is numeric `1` |
+| `installation_backup_shared_permissions` | Explicit shared permissions consent for an existing mounted restore archive; registered references use their profile policy |
 | `infinidysk_v2_migration_backup_storage` | Explicit registered backup destination in the major-migration preview |
 | `infinidysk_v2_cleanup` | Guarded v1-installation retirement after a verified v2 cutover, retaining backups |
 | `infinidysk_v2_cleanup_protocol` | Exact supported retirement workflow protocol; currently numeric `1` |

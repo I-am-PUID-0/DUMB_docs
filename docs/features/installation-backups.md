@@ -33,19 +33,25 @@ unresolved nested mounts are blockers. Nested controller-auth paths or an
 inventory that exceeds the restorable transaction budget also require review;
 the utility does not silently discard that state.
 
-Archives contain credentials and private keys. They are private files, not
-encrypted exports. Restrict access to the destination and downloaded copies.
+Archives contain credentials and private keys and are not encrypted.
+Restrict access to the destination, partial exports and downloaded copies;
+shared storage permission consent does not prove confidentiality.
 
 ## Choose storage
 
-In **Backup destination**, expand **Register destinations and manage the global
-default**. Register an existing container-visible directory, then explicitly
-select that destination or **Use global default**. See
+In **Backup destination**, expand **Register a backup destination**.
+Register an existing container-visible directory, then explicitly select that
+destination or **Use global default**. The separate **Global default** controls
+show, set or clear the saved preference. See
 [Backup storage](backup-storage.md) for registration and mount requirements.
 
 An already-mounted NFS/SMB directory can hold closed archives when it passes the
-storage checks. DUMB does not mount shares. Active database and recovery working
-files remain local. A missing or replaced destination mount blocks the operation;
+storage checks. Enable **Allow shared archive permissions** during registration
+only when you trust the destination's access controls; it starts unchecked and
+restrictive POSIX checks remain the default.
+DUMB does not mount shares or change their existing ownership/permissions.
+Active database and private recovery working files remain local. A missing or
+replaced destination mount blocks the operation;
 DUMB does not write into an underlying local directory as a fallback.
 
 ## Create a backup
@@ -110,6 +116,10 @@ Restore only archives whose origin you trust.
 2. Select a catalogued archive, or enter the container-visible path of an
    installation archive already mounted into the container. The mounted-file
    option does not require the old installation's local catalog receipts.
+   If that file has fixed/shared permissions, review its origin and access
+   controls before enabling **Allow shared archive permissions**. This is an
+   independent checkbox for the mounted file and starts unchecked.
+   Catalogued archives use their registered destination's permission policy.
 3. Request a restore preview. Review archive integrity, application data roots,
    container/database compatibility, destination identity, space requirements,
    and any existing data that would be replaced.

@@ -79,10 +79,11 @@ PostgreSQL database as a generation 2 database.
 
 The migration panel's **Backup destination** selects the legacy local backup
 tree or [registered local/NAS archive storage](backup-storage.md) for this job.
-Use **Register destinations and manage the global default** to register an
-existing container-mounted directory. Registration alone does not move backups
-or adopt a new default. Review the selected destination and local working-space
-requirements in each new preview.
+Expand **Register a backup destination** to register an existing
+container-mounted directory. The separate **Global default** controls save or
+clear that preference; registration alone does not move backups or adopt a new
+default. Review the selected destination and local working-space requirements
+in each new preview.
 
 A registered destination holds a closed, verified source archive. Active v2
 SQLite data, job/control state and import/database-restore scratch remain local.
