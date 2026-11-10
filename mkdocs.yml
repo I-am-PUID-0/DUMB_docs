@@ -83,6 +83,7 @@ nav:
         - pgAdmin: services/optional/pgadmin.md
         - Riven Frontend: services/optional/riven-frontend.md
         - Tautulli: services/optional/tautulli.md
+        - Audiobookshelf: services/optional/audiobookshelf.md
         - Bazarr: services/optional/bazarr.md
         - Pulsarr: services/optional/pulsarr.md
         - Maintainerr: services/optional/maintainerr.md

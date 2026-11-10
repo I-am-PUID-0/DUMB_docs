@@ -222,6 +222,14 @@ If you do not see the UI:
 
 ---
 
+## Optional Audiobookshelf storage
+
+When Audiobookshelf is enabled, its default database and metadata live under `/data/audiobookshelf/config` and `/data/audiobookshelf/metadata`. The normal `/data` volume preserves them across container replacement. Add separate media mounts for your books and podcasts.
+
+Audiobookshelf's SQLite configuration directory needs local storage. If `/data` is network-backed, use a separate local bind and set `audiobookshelf.config_dir` to that container path. See the [Audiobookshelf guide](../services/optional/audiobookshelf.md) for mounts and first-time setup.
+
+---
+
 ## Expose ports for direct UI access
 
 Docker only exposes ports you explicitly map in your `docker-compose.yml`.

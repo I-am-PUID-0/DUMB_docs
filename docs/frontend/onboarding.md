@@ -62,14 +62,23 @@ You can also re-run onboarding at any time from the Settings page to reconfigure
 
 ### Step 1: Select core services
 
-Choose one or more core services:
+Choose one or more core services. The manual service list groups them by role,
+including **Download workflows**, **Library automation**, **Media servers and
+playback**, and **Requests and discovery**. Category headings and service names
+are sorted alphabetically.
 
-| Category | Services |
-|----------|----------|
-| **Orchestrators** | Riven Backend, CLI Debrid, Decypharr, InfiniDysk, AltMount |
-| **Request/automation** | Seerr, NeutArr |
-| **Media servers** | Plex, Jellyfin, Emby |
-| **Arr services** | Sonarr, Radarr, Lidarr, Prowlarr, Whisparr |
+Open a category to browse its services, then open a service to read its details
+and configure its instances. Expanded descriptions preserve paragraphs, lists,
+emphasis, and inline code, with clickable documentation links in both core and
+optional service details.
+
+You can keep several categories open at once or use **Expand all** and
+**Collapse all**. Category summaries show your selection counts, so you can
+review your choices while a category is collapsed. Expanding or collapsing a
+category does not change your selections.
+
+Categories containing selected services open initially. If no core services are
+selected, the first category opens to help you get started.
 
 !!! info "Multiple core services"
 
@@ -128,17 +137,21 @@ For Decypharr, DUMB writes the selected provider, API key, download folder, and 
 
 ### Step 4: Select optional services
 
-Choose additional services to enable:
+Choose additional services to enable from the same alphabetical, expandable
+category layout. Optional roles include **Access and security**, **Databases and
+administration**, **Library automation**, **Media servers and playback**,
+**Requests and discovery**, and **Utilities and interfaces**.
 
-| Category | Services |
-|----------|----------|
-| **Database/discovery** | PostgreSQL, pgAdmin, Zilean |
-| **Riven UI** | Riven Frontend |
-| **Media automation** | Tautulli, Bazarr, Pulsarr, Maintainerr |
-| **Streaming** | mediastorm, AIOStreams |
-| **Identity/reverse proxy/exposure** | Authelia, Traefik Proxy Admin, Cloudflared |
+Categories containing selected optional services open initially; the others stay
+collapsed until you open them. Use **Expand all** to browse everything or
+**Collapse all** to review the category summaries. Those summaries show selected
+and already enabled service counts. Already enabled services remain visible in
+their categories with a disabled selection control.
 
-Optional services are filtered based on core dependencies and earlier selections. For example, PostgreSQL may be enabled/hidden automatically when a selected service requires it.
+The available services still depend on your backend's supported integrations,
+core dependencies, and earlier selections. For example, PostgreSQL may be added
+automatically as a dependency rather than offered as a separate choice.
+Categories with no matching services are omitted.
 
 Authelia is additionally gated by the backend's `authelia_integration`
 capability. dmbdb removes it from the Optional Services list when connected to

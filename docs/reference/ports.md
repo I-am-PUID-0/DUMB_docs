@@ -54,6 +54,7 @@ This reference documents all ports used by DUMB services. Use this guide to conf
 | 9091 | Zurg (typical second instance; dynamically reassigned on conflict) | API |
 | 9696 | Prowlarr | Web UI |
 | 9705 | NeutArr | Web UI |
+| 13378 | Audiobookshelf | Web UI / API |
 | 18080 | Traefik | Proxy |
 | 18081 | Traefik Dashboard/API | Web UI/API |
 | 32400 | Plex Media Server | Web UI |
@@ -414,6 +415,20 @@ http://localhost:8182
 ```
 http://localhost:3004
 ```
+
+### Audiobookshelf
+
+| Property | Value |
+|----------|-------|
+| **Port** | 13378 |
+| **Type** | Web UI / API |
+| **Application path** | `/audiobookshelf/` |
+
+```text
+http://localhost:13378/audiobookshelf/
+```
+
+Publish the assigned port for direct access, or open Audiobookshelf from its DUMB service page. Reverse proxies must support WebSocket connections. See the [Audiobookshelf guide](../services/optional/audiobookshelf.md).
 
 ### Cloudflared
 

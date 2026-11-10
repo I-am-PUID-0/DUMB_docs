@@ -5,7 +5,7 @@ icon: lucide/puzzle
 
 # Optional Services
 
-Optional services enhance the DUMB ecosystem by adding scraping capabilities, database tools, request automation, or controlled access paths. These are not required by every core service to function, but they can improve performance, visibility, automation, and how you expose selected services.
+Optional services enhance the DUMB ecosystem by adding scraping capabilities, database tools, request automation, audiobook libraries, or controlled access paths. These are not required by every core service to function, but they can improve performance, visibility, automation, and how you expose selected services.
 
 ---
 
@@ -26,6 +26,7 @@ Optional services are:
 | [pgAdmin](../optional/pgadmin.md) | Web-based PostgreSQL administration UI                      | PostgreSQL                     |
 | [Riven Frontend](../optional/riven-frontend.md) | Web-based UI for management of the [Riven Backend](../core/riven-backend.md) | Riven |
 | [Tautulli](../optional/tautulli.md) | Plex monitoring and statistics                            | Plex Media Server              |
+| [Audiobookshelf](audiobookshelf.md) | Audiobook and podcast libraries with basic ebook reading | Standalone media libraries |
 | [Bazarr](../optional/bazarr.md) | Subtitle search and management                              | Sonarr, Radarr                 |
 | [Pulsarr](../optional/pulsarr.md) | Plex watchlist request automation                         | Plex, Sonarr, Radarr           |
 | [Maintainerr](../optional/maintainerr.md) | Rule-based library cleanup and leaving-soon collections | Plex/Jellyfin/Emby, Sonarr, Radarr, Seerr, Tautulli |
@@ -45,6 +46,7 @@ Optional services attach to the DUMB ecosystem dynamically:
 * **[pgAdmin](../optional/pgadmin.md)** provides a GUI for exploring and managing DUMB's shared PostgreSQL cluster and its registered service databases.
 * **[Riven Frontend](../optional/riven-frontend.md)** provides a GUI for exploring and managing content requests that are facilitated by the [Riven Backend](../core/riven-backend.md).
 * **[Tautulli](../optional/tautulli.md)** monitors your Plex server, tracking playback history, user activity, and providing detailed statistics.
+* **[Audiobookshelf](audiobookshelf.md)** serves your mounted book and podcast libraries, with its own accounts, listening progress, and library settings.
 * **[Bazarr](../optional/bazarr.md)** connects to Sonarr and Radarr and manages subtitles for their movie and TV libraries using the same DUMB media paths.
 * **[Pulsarr](../optional/pulsarr.md)** monitors Plex watchlists and routes approved requests into Sonarr and Radarr.
 * **[Maintainerr](../optional/maintainerr.md)** builds review collections from media-server and automation data, then applies delayed cleanup actions you explicitly configure.

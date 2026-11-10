@@ -38,6 +38,7 @@ DUMB is built as a collection of microservices that communicate over internal AP
     *  **Plex** is the core service that hosts and serves collected content to users
         * It relies on symlinked or mounted content made available through rclone/Zurg from the other core services
     *  **Jellyfin** and **Emby** can be used as alternatives to Plex for library playback
+    *  **Audiobookshelf** serves audiobook, podcast, and basic ebook libraries from folders you provide
     *  **AIOStreams** creates a configurable Stremio addon from Debrid, Usenet, Prowlarr, Zilean, InfiniDysk, AltMount, and other supported sources
 
 4. **Storage & Retrieval**
@@ -95,6 +96,7 @@ DUMB is built as a collection of microservices that communicate over internal AP
 | [pgAdmin](../services/optional/pgadmin.md)               | Optional  | PostgreSQL GUI                                            |
 | [Riven Frontend](../services/optional/riven-frontend.md) | Optional  | UI for Riven Backend                                      |
 | [Bazarr](../services/optional/bazarr.md)                 | Optional  | Subtitle search and management for Sonarr/Radarr          |
+| [Audiobookshelf](optional/audiobookshelf.md)             | Optional  | Audiobook and podcast libraries with basic ebook reading  |
 | [Pulsarr](../services/optional/pulsarr.md)               | Optional  | Plex watchlist request automation                         |
 | [Maintainerr](../services/optional/maintainerr.md)       | Optional  | Rule-based library cleanup and review collections         |
 | [mediastorm](../services/optional/mediastorm.md)         | Optional  | Self-hosted Debrid, torrent, and Usenet streaming         |
