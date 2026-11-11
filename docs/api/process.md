@@ -1208,6 +1208,7 @@ of those new-operation controls.
 | `POST` | `/process/infinidysk-v2/rehearse` | Run the actual contained native importer against retained source snapshots |
 | `POST` | `/process/infinidysk-v2/start` | Start an eligible fresh install or guarded major cutover |
 | `GET` | `/process/infinidysk-v2/jobs/{job_id}` | Retrieve one persisted job as `{"job": {...}}` |
+| `GET` | `/process/infinidysk-v2/jobs/{job_id}/report` | Read the retained native import report as plain text with `Cache-Control: no-store` |
 | `POST` | `/process/infinidysk-v2/rollback` | Restore the exact retained major-migration source when authorized |
 | `POST` | `/process/infinidysk-v2/cleanup/preview` | Review owned v1 removal paths and retained backups after a validated cutover |
 | `POST` | `/process/infinidysk-v2/cleanup` | Retire automated rollback and remove only the approved unchanged v1 entries |
@@ -1227,6 +1228,29 @@ Preview body:
 only `import_strategy: "preserve"`; it does not regenerate existing outputs.
 The exact consumer-visible mount path is retained. Generation 2 uses separate
 runtime/data directories and the verified beta artifact.
+
+A supporting backend advertises
+`infinidysk_v2_low_space_migration: true`. For an existing-data migration only,
+the optional boolean `reclaim_source_space: true` selects guarded reuse of the
+local v1 data tree after full archive verification. It requires an explicit
+registered `backup_destination_id` on a different filesystem and a supported
+local source/candidate layout. Omit the field or use `false` to retain the
+default local-source recovery. Clients must not send this option to older
+backends or treat archive selection alone as permission to reuse source data.
+
+A low-space preview includes `source_storage` with
+`mode: "archive_recovery"`, `reclaim_source_space: true` and
+`rollback_requires_archive: true`. Its `required_acknowledgements` additionally
+requires `archive_recovery`. Both rehearsal and rollback can release the exact
+owned candidate before restoring original v1 files from the retained archive.
+Recovery refuses an unavailable/replaced archive or changed owned path.
+The capacity review retains actual free-space readings and includes remaining
+local database, verification and safety requirements. Reuse removes a complete
+candidate-copy allocation; it does not remove native output growth. New v2
+metadata and retained v1 blobs can coexist, so native headroom also includes at
+least a comparable full source-tree logical allocation. This remains an estimate
+because the native metadata/compression formats differ. Recovery checks local
+restore capacity before releasing the owned candidate and again after removal.
 
 The preview returns `protocol`, `ready`, `preview_token`, `expires_at`,
 `plan_fingerprint`, `confirmation_text`, `current`, `target`, `checks`,
@@ -1266,8 +1290,8 @@ that does not require one. Always use the backend's exact confirmation text;
 fresh mode has a different phrase. A major cutover requires a successful
 rehearsal with `status: "rehearsed"`, `mode: "rehearsal"`,
 `result.validated: true` and the matching
-`plan_fingerprint`. Changed source facts, failed containment, skipped native
-media, an unsupported source adapter or failed identity/policy proof block
+`plan_fingerprint`. Changed source facts, failed containment, unexplained native
+omissions, an unsupported source adapter or failed identity/policy proof block
 activation. External NNTP reads are denied during the contained import, and
 there is no automatic online fallback.
 The required `downstream` review covers current Arr/media mount paths, remote
@@ -1282,14 +1306,33 @@ confirms the source was restored and permits a fresh preview; recovery flags
 remain authoritative for available actions. Rollback is available only when
 `can_rollback` or `actions.rollback` is explicitly true.
 Send `job_id` and the exact `rollback_confirmation_text` as `confirmation` to
-the rollback route. Recovery retains the original source; later 2.x writes
-are not merged back into v1.
+the rollback route. The default mode retains the original local source;
+low-space recovery restores it from the retained archive. Later 2.x writes are
+not merged back into v1.
+
+Updated jobs can expose `import_report` with `status` equal to `accepted`,
+`review_required` or `blocked`, `imported_files`, `skipped_files`,
+`reasons` entries `{reason, count}`, `skipped` entries `{path, reason}`,
+`review_required`, `review_digest` and `blocking_reasons`.
+The optional sample counts and truncation flags explain bounded public details;
+the complete native report remains in private job storage.
+
+Known source incompatibilities may complete a validated rehearsal with
+`import_report.status: "review_required"`. Starting its cutover also requires
+`acknowledgements.skipped_media: true` and `skip_review_digest` matching that
+rehearsal's server-issued `review_digest`. The digest covers every omitted
+identity, path and reason, including entries beyond a public sample. Actual
+cutover omissions must match the reviewed set. Unknown/provider failures,
+ambiguous identities and unrecognized reports remain blockers; the
+acknowledgement is not a general skip override.
 
 A successful rehearsal can record `candidate_discarded=true` after the native
 candidate/group is proven stopped and v1 plus managed consumers are restored.
 Only its full job-owned candidate is removed; receipts, the source archive or
-backup and minimal database proof remain. Failed rehearsal candidates are kept.
-The later cutover still needs local candidate capacity and fresh source checks.
+backup and minimal database proof remain. Default-mode failed rehearsal
+candidates are kept. Low-space recovery can remove its candidate before archive
+restoration. The later cutover still needs its mode's local capacity and fresh
+source checks.
 
 ### Retire a completed v1 installation
 
@@ -1297,6 +1340,8 @@ This separate workflow also requires `infinidysk_v2_cleanup=true` and numeric
 `infinidysk_v2_cleanup_protocol=1`. It is available only for an eligible completed
 v1-to-v2 cutover, with healthy owned v2 delivery and verified retained backups.
 A fresh generation 2 installation has no old v1 installation to retire.
+Low-space jobs also withhold original-tree cleanup because their source data was
+reused; their archive remains required for rollback.
 
 Preview with `{"job_id": "SERVER_JOB_ID"}`. The response supplies the exact
 removal/retention lists, estimated reclaim, expiring `preview_token`, typed
@@ -1739,6 +1784,7 @@ Returns backend capabilities and feature flags. Used by the frontend to determin
   "installation_backup_protocol": 1,
   "installation_backup_shared_permissions": true,
   "infinidysk_v2_migration_backup_storage": true,
+  "infinidysk_v2_low_space_migration": true,
   "infinidysk_v2_cleanup": true,
   "infinidysk_v2_cleanup_protocol": 1,
   "arr_postgres_migration": true,
@@ -1829,6 +1875,7 @@ Returns backend capabilities and feature flags. Used by the frontend to determin
 | `installation_backup` / `installation_backup_protocol` | Managed installation archive, schedule and restore workflow; exact supported protocol is numeric `1` |
 | `installation_backup_shared_permissions` | Explicit shared permissions consent for an existing mounted restore archive; registered references use their profile policy |
 | `infinidysk_v2_migration_backup_storage` | Explicit registered backup destination in the major-migration preview |
+| `infinidysk_v2_low_space_migration` | Explicit reuse of local v1 data after verified external archive capture, with archive-based rollback |
 | `infinidysk_v2_cleanup` | Guarded v1-installation retirement after a verified v2 cutover, retaining backups |
 | `infinidysk_v2_cleanup_protocol` | Exact supported retirement workflow protocol; currently numeric `1` |
 | `arr_postgres_migration*` | Legacy Sonarr/Radarr capability aliases retained for older clients |

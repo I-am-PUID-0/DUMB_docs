@@ -28,10 +28,11 @@ recovery information remain visible. The supported native artifact is currently
 | Import strategy | Preserve existing outputs; changing generation or mount does not regenerate symlinks or STRM files |
 
 SQLite-to-SQLite migration converts the generation 1 schema and data into the
-generation 2 format while retaining the original source. PostgreSQL is optional;
+generation 2 format while retaining a recoverable original source. PostgreSQL is optional;
 you can keep generation 2 SQLite or convert it separately after validation.
 
-The original 1.x runtime, configuration and data remain the rollback source.
+The original 1.x runtime, configuration and data remain the rollback source,
+locally by default or in the verified archive when local storage is reused.
 Generation 2 program files and data use separate directories. The native runtime
 uses its verified artifact; active 1.x branch/commit selectors are cleared in
 the prepared 2.x configuration while the original selection stays in recovery.
@@ -65,8 +66,9 @@ an empty recorded STRM list does not prove that none exist.
     newer. Failed containment checks block the operation.
 
     Imports needing external NNTP/provider reads can skip records when network
-    access is denied. Skipped, failed or incompletely proven media prevents
-    activation; the original generation 1 installation is retained. There is
+    access is denied. Provider failures, unexplained omissions or incompletely
+    proven media prevent activation. Known source incompatibilities have the
+    separate reviewed-omission flow below; there is
     no automatic online or uncontained fallback. Keep using 1.x when its data
     cannot pass these checks.
 
@@ -89,6 +91,38 @@ A registered destination holds a closed, verified source archive. Active v2
 SQLite data, job/control state and import/database-restore scratch remain local.
 Keep independent backups even when DUMB retains and verifies its own archive.
 
+### Reuse local v1 storage
+
+For an existing installation with limited local space, a supporting backend can
+offer **Reuse local v1 storage**. This is a separate, unchecked migration option;
+selecting an archive destination alone keeps the original v1 installation local.
+Choose a registered archive destination on a different filesystem and generate a
+new preview after changing this option.
+
+With this option, DUMB stops v1 and its affected consumers, writes and verifies
+the complete retained archive, then reuses the original local data tree as the
+private migration candidate. This avoids a second complete local data copy.
+The source and candidate must support the guarded local move; mounted source
+roots or incompatible filesystem layouts block the preview. Active databases,
+local control state and native working data remain local.
+
+The archive now supplies v1 recovery. Both a rehearsal and a rollback can need to
+remove the owned v2 candidate before restoring v1 from that archive. Review the
+additional archive-recovery acknowledgement: the destination must remain mounted
+and readable, recovery takes time, and later v2 changes are not merged into v1.
+A missing, replaced or damaged archive stops recovery and leaves the job needing
+attention; DUMB does not start v1 against an empty replacement directory.
+
+The capacity preview still includes database conversion, verification files,
+runtime files and safety headroom. Native conversion writes new metadata into
+the v2 database while old v1 blobs can still occupy the working tree, so DUMB
+also estimates native output growth using at least a comparable source-tree
+allocation. Compression and metadata formats differ; this remains an estimate.
+Reusing the source does not increase the filesystem's reported free space or
+eliminate the space needed for that new database. After an
+interruption, keep the job state and archive, restore the archive mount and use
+the offered recovery action before restarting normal services.
+
 ## Review and run
 
 The preview inventories the complete source data and runtime trees and checks
@@ -97,8 +131,9 @@ build or dependency directories inside those trees; they are not counts of
 titles or media files. The storage review shows source entry counts and logical
 size, then each filesystem's required space, available space, shortfall and status.
 Required space already includes retained backups, the candidate installation,
-PostgreSQL staging and restore overhead when applicable, up to 512 MiB for the
-inventory manifest, and a safety margin. Paths sharing a filesystem use one
+native output growth while v1 blobs remain, PostgreSQL staging and restore
+overhead when applicable, up to 512 MiB for the inventory manifest, and a safety
+margin. Paths sharing a filesystem use one
 combined budget. An unavailable estimate does not pass the capacity check.
 
 These estimates do not reserve space. DUMB checks capacity again before copying;
@@ -132,15 +167,43 @@ After a validated rehearsal, DUMB confirms that the native candidate and its
 process group have stopped and that v1 and its managed consumers were restored.
 It then removes only that job's full private candidate copy, retaining the
 verification receipts, source archive or backup and minimal database evidence.
-Failed rehearsals retain their candidate for investigation. Cutover prepares
-its local working candidate after the source checks pass again; allow enough
-space for that peak even when a successful rehearsal has released its copy.
+In the default mode, failed rehearsals retain their candidate for investigation.
+The low-space option uses the archive-recovery ordering described above. Cutover
+prepares its local working candidate after the source checks pass again; allow
+enough space for that mode's peak even when a successful rehearsal has released
+its candidate.
 
 Closing the panel or visiting another page does not cancel the backend job.
 The global notice reopens progress or recovery after navigation and reload.
 Only job identities are saved for browser recovery; preview authorizations and
 database passwords are not. A transport error does not prove that a job stopped.
 Refresh status before retrying, and retain an unconfirmed job's recovery evidence.
+
+### Review native import omissions
+
+The job's import report distinguishes imported files, omitted files and their
+reported reasons. Omitted files are absent from v2; a completed native import does
+not establish that those files will be repaired or replaced automatically.
+
+A known, fully accounted source incompatibility can require a separate review
+before cutover. Read the reasons and affected paths, then explicitly accept the
+reviewed omissions. This acceptance is bound to the validated rehearsal's exact
+omitted identities and reasons. Changed omissions require another review.
+There is no generic allowance for a maximum number or percentage of skipped files.
+
+Provider/NNTP failures, unrecognized reasons or report formats, unexplained
+missing identities, changed names, database integrity failures and missing
+history still block migration. The isolated import denies external network
+access; some sources require provider access to recover missing metadata.
+An acknowledgement does not override that blocker.
+
+The dashboard bounds its path/reason samples and identifies truncated details;
+DUMB retains the full native report privately with the migration job. The
+job's report action retrieves that plain-text report through the authenticated
+API. Preserve that report and the retained candidate when investigating a
+blocked import.
+In low-space mode, recovery can need to release the candidate's storage before
+restoring v1; the retained archive and diagnostic report remain protected.
 
 ## Mount and library continuity
 
@@ -267,8 +330,11 @@ imports, scans or services. Do not delete retained state to clear a banner.
 ## Retire the old v1 installation
 
 After a verified cutover and real-library validation, the same migration panel
-can offer **Retire the old v1 installation**. Keep independent backups and
-confirm successful playback and a test import before using it.
+can offer **Retire the old v1 installation** for a migration that retained the
+original local tree. Low-space migrations have already reused that data and do
+not offer original-tree retirement; keep their retained archive for recovery.
+Keep independent backups and confirm successful playback and a test import
+before retiring a retained local installation.
 
 1. Select **Review old-installation cleanup** and review the exact old paths,
    estimated reclaim and retained backups.

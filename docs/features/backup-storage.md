@@ -101,9 +101,18 @@ Network availability and server durability still depend on your deployment.
 
 Managed backups use opaque references. Select them through the picker or use
 the authenticated download API; the reference is not a website URL or a
-filesystem path. InfiniDysk creates its local import candidate from the original
-source; the archive provides retained data for manual recovery. Automated major
-rollback starts the retained originals until that rollback is explicitly retired.
+filesystem path. By default, InfiniDysk creates its local import candidate from
+the original source; automated major rollback starts the retained originals
+until that rollback is explicitly retired.
+
+The separate **Reuse local v1 storage** migration option changes that recovery
+contract. It requires a supporting backend, an explicitly reviewed plan and a
+registered archive on a different filesystem. The verified archive becomes the
+v1 recovery source while the original local data tree is reused for migration.
+Rollback restores v1 from the archive and can remove the owned v2 candidate to
+make room first. Keep the destination available throughout migration, rehearsal
+and any later rollback. This option does not move an active database onto NAS.
+See [the migration guide](infinidysk-v2-migration.md#reuse-local-v1-storage).
 
 Scheduled symlink retention removes only that process's scheduled managed
 snapshots. Manual snapshots are retained separately from automatic pruning.
