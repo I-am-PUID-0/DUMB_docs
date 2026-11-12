@@ -18,13 +18,24 @@ configured symlink state. Existing data belonging to disabled services is
 included when it is discovered. Review the actual roots and exclusions rather
 than assuming that a process's working directory is its complete data directory.
 
+Plex DBRepair's native installation and database directories are included from
+the nested `plex.dbrepair` settings when they exist, including when scheduled
+repair is disabled. The default installation directory is `/data/dbrepair`.
+Its supported `install_dir` and `databases_path` settings supplement the
+existing Plex database coverage; see the
+[Plex configuration guide](../services/core/plex-media-server.md). A command's
+working directory alone does not add its contents to the archive.
+
 Media content, mounted remote libraries, external services and databases,
 container images, host deployment files and separate log/cache stores are outside
 the installation archive. Application-owned logs, artwork, blob stores and caches
 inside an included data root may still be included. Preserve your Compose/Portainer deployment, bind mounts
 and external systems separately. A symlink's target text is preserved without
-copying the referenced media. DUMB refuses unsupported or ambiguous state instead
-of silently reporting a complete backup.
+copying the referenced media. Recognized STRM, subtitle, metadata and artwork
+sidecars in managed library-link directories are included. Actual media files
+and unrecognized regular payloads in those directories remain blockers; DUMB
+identifies the path instead of silently omitting it. DUMB refuses unsupported
+or ambiguous state instead of silently reporting a complete backup.
 
 The first archive format preserves regular files, directories, literal symlinks,
 normal POSIX ownership/permissions and modification times. Hardlinks are stored
@@ -78,8 +89,21 @@ Database consistency follows the requirements for a stopped
 and a quiescent [SQLite database and its journals](https://sqlite.org/howtocorrupt.html#_backup_or_restore_while_a_transaction_is_active).
 
 Capacity is checked for the archive destination and local working storage.
+There is no fixed overall file-count or archive-payload-size ceiling.
+Preview measures the inventory and its verification metadata, then checks
+whether the available local space can support the verification ledgers.
+Archive overhead and restore staging also count toward the estimates. A large
+backup destination does not replace the need for local working space.
+
+Large artwork, blob and application-data trees can require a lengthy metadata
+scan before a preview is ready. This phase inventories entries rather than
+copying the complete file contents, and it does not stop applications.
+Individual path, nesting, record and supported-metadata checks still apply;
+available disk space does not make an unsafe archive restorable.
+
 Estimates are not a reservation: another process can consume space afterward.
-Failed or incomplete output is never advertised as a verified backup.
+Admission is checked again during the operation, and failed or incomplete
+output is never advertised as a verified backup.
 
 If the connection drops after a start request, the operation may already have
 been accepted. Reconnect through direct frontend/API access and refresh status
@@ -90,6 +114,24 @@ The archive list reports completed archives separately from running or failed
 jobs. Record the selected archive and retain an independent copy before relying
 on it for disaster recovery. A checksum verifies the recorded bytes; a successful
 restore rehearsal remains the practical test of your recovery procedure.
+
+## Unclassified data in a backup preview
+
+A preview can stop on an unrecognized child of `data_root`, even when that
+directory is empty. Current backends identify the first unclassified path and
+entry type in the blocker; long or unusual paths are escaped and can be marked
+as truncated. The backup job has not started and managed services have not
+been stopped.
+
+The inventory follows supported application persistence settings. There is no
+generic application/media classification wizard or arbitrary include/exclude
+switch for this guard. Review the reported path and its owning service's
+actual configuration. Do not add unrelated settings, rename, move or delete
+state just to clear the warning. If an existing DUMB-managed path is missing
+from coverage, retain it and report its path and owning tool so that its
+persistence can be qualified. Custom state and external media require their
+own backup/deployment review; DUMB does not silently omit them or sweep them
+into an installation archive.
 
 ## Schedule backups
 
