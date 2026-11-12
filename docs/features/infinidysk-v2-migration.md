@@ -58,19 +58,26 @@ mounts, enabled managed consumers and configured link roots. Check external
 consumers, remote path mappings, library roots and signed stream URLs separately;
 an empty recorded STRM list does not prove that none exist.
 
-!!! warning "Contained import can block an upgrade"
+!!! warning "Contained import and provider reads"
 
-    DUMB rehearses the actual upstream importer in a private environment with
-    external network access and writes to the original data denied. The host
-    must support the required Linux namespaces, `nsenter` and Landlock ABI 3 or
-    newer. Failed containment checks block the operation.
+    DUMB rehearses the actual upstream importer in a private environment.
+    Writes outside its working candidate and general external networking remain
+    denied. The host must support the required Linux namespaces, `nsenter` and
+    Landlock ABI 3 or newer. Failed containment checks block the operation.
 
-    Imports needing external NNTP/provider reads can skip records when network
-    access is denied. Provider failures, unexplained omissions or incompletely
-    proven media prevent activation. Known source incompatibilities have the
-    separate reviewed-omission flow below; there is
-    no automatic online or uncontained fallback. Keep using 1.x when its data
-    cannot pass these checks.
+    Some older metadata needs NNTP article reads to recover segment sizes or
+    inspect RAR volumes. Supporting builds provide a read-only relay restricted
+    to the source's configured providers. It uses at most two connections per
+    provider and four overall, respecting any lower configured provider limit,
+    with one article request at a time on each connection. DUMB stops v1 and its
+    affected managed consumers first so the source does not compete for those
+    provider connections. Active TLS-enabled providers must pass certificate
+    verification; an insecure legacy setting on an active provider is blocked.
+
+    Temporary relay addresses belong only to the contained import. Normal
+    provider settings are preserved for the restored v1 service and the live
+    v2 runtime. Provider failures, unexplained omissions or incompletely proven
+    media still prevent activation. There is no unrestricted network fallback.
 
 A v1 PostgreSQL source also needs a backend-supported source snapshot adapter
 and successful dump/restore proof. If that path is unavailable or unverified,
@@ -161,7 +168,9 @@ source locations and available space, and resolve the blocker before retrying.
    prove that it will not overwrite existing data.
 6. Start the installation or migration and follow the persistent job. A changed
    source or expired preview requires another review; a successful rehearsal can
-   be reused only when its public plan fingerprint still matches.
+   be reused only when its public plan fingerprint still matches. Successful
+   rehearsal refreshes the reviewed authorization for 30 minutes, allowing time
+   to review cutover after a long import.
 
 After a validated rehearsal, DUMB confirms that the native candidate and its
 process group have stopped and that v1 and its managed consumers were restored.
@@ -179,6 +188,36 @@ Only job identities are saved for browser recovery; preview authorizations and
 database passwords are not. A transport error does not prove that a job stopped.
 Refresh status before retrying, and retain an unconfirmed job's recovery evidence.
 
+### Progress, cancellation and recovery
+
+The displayed phase distinguishes native import, DUMB validation and source
+recovery. Native counts and any time estimate describe that phase only; unknown
+counts do not establish completion. **Native stage: done** means the upstream conversion finished; DUMB
+still needs to reconcile its report and database identities. A rehearsal then
+restores v1 and its previous consumers, while a cutover must validate the target
+before starting normal v2 work.
+
+Large imports may run for more than 30 minutes when they keep progressing.
+Current builds use a **30-minute inactivity watchdog**, replacing the old
+five-minute total import limit. Native progress changes or provider-read activity
+reset the watchdog. A status polling heartbeat alone does not count as import
+progress. A timeout stops the owned importer and attempts protected v1 recovery;
+it does not authorize ignoring failed provider reads.
+
+A supporting backend offers **Cancel migration** for a cancellable running job.
+Use that job's exact confirmation. Cancellation is cooperative: DUMB records the
+request, waits for an owned checkpoint, stops the native writer and restores v1
+before reporting completion. Closing the panel does not request cancellation.
+Keep imports, scans and playback stopped while cancellation or recovery runs.
+
+After a controller restart, or if recovery fails, use the offered **Rollback**
+action for the retained job and its exact confirmation. A job that still blocks
+new work takes priority over newer completed attempts in the migration panel;
+its current recovery actions determine what can proceed. Low-space recovery
+also requires the original archive destination to be mounted and readable.
+Preserve the job files, native report, archives and any retained candidate.
+Deleting a database or job file to clear a lock can destroy the recovery path.
+
 ### Review native import omissions
 
 The job's import report distinguishes imported files, omitted files and their
@@ -193,9 +232,10 @@ There is no generic allowance for a maximum number or percentage of skipped file
 
 Provider/NNTP failures, unrecognized reasons or report formats, unexplained
 missing identities, changed names, database integrity failures and missing
-history still block migration. The isolated import denies external network
-access; some sources require provider access to recover missing metadata.
-An acknowledgement does not override that blocker.
+history still block migration. Review provider failures separately from known
+source exclusions: the restricted relay can recover missing metadata only when
+the configured provider permits the required reads. An acknowledgement does not
+override unavailable providers or unexplained omissions.
 
 The dashboard bounds its path/reason samples and identifies truncated details;
 DUMB retains the full native report privately with the migration job. The

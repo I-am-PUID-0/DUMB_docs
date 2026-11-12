@@ -1209,6 +1209,7 @@ of those new-operation controls.
 | `POST` | `/process/infinidysk-v2/start` | Start an eligible fresh install or guarded major cutover |
 | `GET` | `/process/infinidysk-v2/jobs/{job_id}` | Retrieve one persisted job as `{"job": {...}}` |
 | `GET` | `/process/infinidysk-v2/jobs/{job_id}/report` | Read the retained native import report as plain text with `Cache-Control: no-store` |
+| `POST` | `/process/infinidysk-v2/cancel` | Request cooperative cancellation of the exact active major job and protected source recovery |
 | `POST` | `/process/infinidysk-v2/rollback` | Restore the exact retained major-migration source when authorized |
 | `POST` | `/process/infinidysk-v2/cleanup/preview` | Review owned v1 removal paths and retained backups after a validated cutover |
 | `POST` | `/process/infinidysk-v2/cleanup` | Retire automated rollback and remove only the approved unchanged v1 entries |
@@ -1290,10 +1291,20 @@ that does not require one. Always use the backend's exact confirmation text;
 fresh mode has a different phrase. A major cutover requires a successful
 rehearsal with `status: "rehearsed"`, `mode: "rehearsal"`,
 `result.validated: true` and the matching
-`plan_fingerprint`. Changed source facts, failed containment, unexplained native
-omissions, an unsupported source adapter or failed identity/policy proof block
-activation. External NNTP reads are denied during the contained import, and
-there is no automatic online fallback.
+`plan_fingerprint`. A successful rehearsal refreshes its reviewed preview's
+expiry for 30 minutes and exposes `preview_expires_at` as Unix seconds; clients
+can update that preview's countdown without treating a changed plan as approved.
+Changed source facts, failed containment, unexplained native omissions, an
+unsupported source adapter or failed identity/policy proof block
+activation. General external networking remains denied during the contained
+import. Supporting builds permit read-only NNTP article reads only through a
+relay bound to the configured source providers, capped at two connections per
+provider or its lower configured limit, and four overall with one request in
+flight per connection. Active TLS-enabled upstream connections retain certificate and
+hostname verification; insecure legacy TLS overrides are refused. Source and
+affected managed consumers remain quiesced. Temporary relay configuration must
+not replace the normal provider settings used after import; there is no
+unrestricted network fallback.
 The required `downstream` review covers current Arr/media mount paths, remote
 path mappings, symlinks/STRM origins and stopped external writers/scanners.
 OIDC-configured sources remain blocked until their target policy is verified;
@@ -1309,6 +1320,30 @@ Send `job_id` and the exact `rollback_confirmation_text` as `confirmation` to
 the rollback route. The default mode retains the original local source;
 low-space recovery restores it from the retained archive. Later 2.x writes are
 not merged back into v1.
+
+The `infinidysk_v2_cancel: true` capability gates new cancellation requests.
+For a job advertising `can_cancel: true` or `actions.cancel: true`, send
+`{"job_id": "SERVER_JOB_ID", "confirmation": "SERVER_CANCEL_CONFIRMATION"}` to
+`/process/infinidysk-v2/cancel`, using its exact `cancel_confirmation_text`.
+The response can set `cancel_requested: true` while the owned worker reaches a
+checkpoint and restores the source. Repeating that same accepted cancellation
+is idempotent. Do not treat the acknowledgement as completed recovery: poll the
+job until its terminal state and recovery flags confirm the outcome. If source
+recovery fails, retain the evidence and use the offered rollback action.
+
+`status.job` prioritizes a retained blocking job over newer completed attempts;
+`blocking_job_count` explains when other blocked jobs also remain. Updated jobs
+can expose `import_progress` with a native `stage`, `elapsed_seconds`, and
+`processed`/`total` counts when the native API provides them. These describe
+native conversion rather than the entire validation/cutover/recovery pipeline.
+The outer `stage` and `message` describe the current DUMB phase.
+
+Native execution uses a 30-minute inactivity watchdog rather than the old
+five-minute total deadline. Native progress changes and provider-read activity
+refresh it; publishing polling heartbeats alone does not. Long progressing
+imports can exceed 30 minutes in total. Timeouts and cancellation stop owned
+writers before protected source recovery; they do not bypass admission or data
+validation.
 
 Updated jobs can expose `import_report` with `status` equal to `accepted`,
 `review_required` or `blocked`, `imported_files`, `skipped_files`,
