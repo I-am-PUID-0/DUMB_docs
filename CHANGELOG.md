@@ -1,6 +1,17 @@
 # Changelog
 
 
+## [1.24.26](https://github.com/I-am-PUID-0/DUMB_docs/compare/1.24.25...1.24.26) (2026-11-12)
+
+
+### 📖 Documentation
+
+* **backups:** explain capacity-based installation archives ([50e7eea](https://github.com/I-am-PUID-0/DUMB_docs/commit/50e7eea5357fe13f4b45a6e5cd18428d3753d19b))
+* **backups:** explain saved destination management and mount checks ([74c2849](https://github.com/I-am-PUID-0/DUMB_docs/commit/74c28495dc2a076aa81cea2df5f625d1d7ad5b99))
+* **infinidysk:** describe cancellable long-running migrations ([7f0f0f3](https://github.com/I-am-PUID-0/DUMB_docs/commit/7f0f0f36062ccb9580c2e388c3bcba2094df3275))
+* **settings:** describe saved sections and Advanced utilities ([2a58a09](https://github.com/I-am-PUID-0/DUMB_docs/commit/2a58a09963262ee6e13b5d93726b451d6a6b078b))
+* **versioning:** explain independent backend and frontend dev versions ([7a60061](https://github.com/I-am-PUID-0/DUMB_docs/commit/7a60061857ae0821271f1acbc2d5a6f47f6fbd74))
+
 ## [1.24.25](https://github.com/I-am-PUID-0/DUMB_docs/compare/1.24.24...1.24.25) (2026-11-12)
 
 
