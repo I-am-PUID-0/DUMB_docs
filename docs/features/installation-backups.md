@@ -37,6 +37,12 @@ and unrecognized regular payloads in those directories remain blockers; DUMB
 identifies the path instead of silently omitting it. DUMB refuses unsupported
 or ambiguous state instead of silently reporting a complete backup.
 
+A managed file or selected service alias is checked as a literal entry, so a
+final symlink is preserved without inspecting its target. Archive storage
+locations and intermediate directories must still be verifiable without
+following symlinks. An ancestry error identifies the component that failed and
+the reason; clearing it must not require deleting or retargeting service aliases.
+
 The first archive format preserves regular files, directories, literal symlinks,
 normal POSIX ownership/permissions and modification times. Hardlinks are stored
 as independent files. Extended attributes, ACLs, special permission bits and
