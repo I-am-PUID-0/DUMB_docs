@@ -890,11 +890,22 @@ the strict API version floor and their specific workflow capabilities. See
 [Backup Storage](../features/backup-storage.md) for mount, privacy and local
 working-storage requirements.
 
+Destination editing and explicit availability checks additionally require
+`backup_storage_profile_management=true` and numeric
+`backup_storage_management_protocol=1`. Mount-change review also requires
+`backup_storage_revalidation=true`. Older backends keep their registration
+controls; clients must not send unsupported management requests.
+
 | Method | Route | Purpose |
 |--------|-------|---------|
 | `GET` | `/process/backup-storage` | List registered destinations and the explicitly saved global default |
 | `POST` | `/process/backup-storage/preview` | Inspect an existing container-mounted directory without creating it |
 | `POST` | `/process/backup-storage/profiles` | Register a named destination and bind its mounted identity |
+| `PUT` | `/process/backup-storage/profiles/{destination_id}` | Edit metadata for the same identifier/root |
+| `DELETE` | `/process/backup-storage/profiles/{destination_id}` | Remove registration while retaining archive ownership and receipts |
+| `POST` | `/process/backup-storage/profiles/{destination_id}/check` | Explicitly check current mounted storage |
+| `POST` | `/process/backup-storage/profiles/{destination_id}/revalidate/preview` | Review a changed runtime mount for the same owned storage |
+| `POST` | `/process/backup-storage/profiles/{destination_id}/revalidate` | Confirm the unexpired runtime mount review |
 | `POST` | `/process/backup-storage/default` | Explicitly save or clear the shared default |
 | `GET` | `/process/backup-storage/artifacts` | List owned catalog receipts for `destination_id` and `namespace` |
 | `GET` | `/process/backup-storage/download` | Verify and download the registered artifact identified by `reference` |
@@ -923,7 +934,8 @@ the strict boolean `allow_shared_permissions` in preview/registration requests.
 It defaults to `false`, including for existing profiles without the field.
 Explicit `true` permits fixed/shared mode bits on external managed directories
 and artifacts; it acknowledges trust in storage access controls rather than
-proving privacy. The saved profile and private binding retain this choice.
+proving privacy. The saved profile and private controller metadata retain this choice; the
+immutable ownership binding is preserved.
 Private local controller/catalog state remains strict. Older backends must not
 receive the new field.
 
@@ -931,6 +943,62 @@ Preview and catalog records can include `warnings` and
 `observed_permissions`, with `directory_mode` and `file_mode` strings such as
 `"0777"` and `"0666"`, or `null` when not observed. These describe visible
 modes, not server ACL verification; cached catalog reads do not probe the NAS.
+
+### Saved-destination management
+
+`PUT /process/backup-storage/profiles/{destination_id}` accepts the same full
+profile body as registration. Both `id` and `path` must match the existing
+registration; its name, enabled state and supported shared-permission policy
+can change. The same identity/use guards apply to an existing profile passed
+through the registration route. Name edits can remain local during an outage.
+
+`DELETE /process/backup-storage/profiles/{destination_id}` takes no body and
+removes only the saved registration. Its result includes `removed: true`,
+`archives_preserved: true` and `receipts_preserved: true`. The owned marker and
+immutable binding remain, reserving the identifier for the same storage.
+Re-registering that identifier/root can restore access to historical receipts.
+The delete does not rewrite consumers or defaults, delete archive bytes or
+adopt a new root. Active leases, configured selections and retained recovery
+references block removal/disable; narrowing permission consent is also guarded
+when an operation still depends on it.
+
+`POST /process/backup-storage/profiles/{destination_id}/check` takes no body.
+It explicitly checks the mounted destination and returns a `profile` with
+`live_checked`, `validation_state`, `revalidation_required`, check time and
+`blockers`, plus safe `usage` labels for current references. Cached catalog
+reads remain local and do not perform that check. A blocked check can return
+readiness/blockers without changing the registration.
+
+### Review a controller mount change
+
+Across a new controller, a changed Linux device number alone is accepted only
+when durable storage coordinates, directory inode/mode and the existing owned
+marker match. The persisted binding/fingerprint stays unchanged, preserving
+old archive and migration references. During a controller's lifetime, full
+runtime mount identity remains pinned and is rechecked throughout artifact I/O.
+
+`POST /process/backup-storage/profiles/{destination_id}/revalidate/preview`
+takes no body. A successful review returns `ready`, `revalidation_required`,
+a single-use `token`, Unix-seconds `expires_at`, registered/observed storage
+descriptors, `changes` and `blockers`. The token expires after five minutes.
+Confirm only the same owned storage:
+
+```json
+{
+  "token": "<review token>",
+  "confirm": true
+}
+```
+
+Send that body to `POST /process/backup-storage/profiles/{destination_id}/revalidate`.
+`confirm` is a strict boolean. Expired/changed reviews or active artifact use
+are rejected. Revalidation refreshes only the runtime pin after repeat checks;
+it does not rewrite the durable binding, enable a disabled profile, recreate
+a missing namespace/marker or accept replaced storage. Removing an unused
+registration retires its runtime check; later registration must prove the
+same retained binding and marker again.
+
+### Tool-specific selections
 
 Symlink backup requests accept optional `backup_destination_id`; `backup_path`
 is required only for the legacy/path choice. Supplying a registered identifier

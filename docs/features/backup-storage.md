@@ -41,6 +41,57 @@ Saving a symlink schedule applies its selected destination to that schedule;
 changing a draft selection does not save it. Use a new identifier when moving
 an existing registered root to another directory or filesystem.
 
+## Manage saved destinations
+
+Backends supporting destination management show **Registered destinations**
+with each destination's path, default badge, last check and any blockers.
+**Not checked**, **Available at last check** and **Unavailable at last check**
+describe the latest explicit check; listing or refreshing the catalog does not
+probe the NAS. Select **Check availability** to check the current mount.
+An operation error stays with its destination until you address it.
+
+- **Edit** changes the display name, enabled state and, when supported, shared
+  archive-permission consent. The identifier and path stay fixed. Select
+  **Save changes** or **Cancel**; editing does not move files or change another
+  operation's destination/default. A name change can be saved without reaching
+  the storage.
+- **Remove registration** opens a review. **Confirm remove registration**
+  removes the saved choice, while archive files, the owned marker and local
+  ownership/catalog receipts remain. It does not delete backups.
+- Disabling or removing a destination is blocked while a saved default,
+  configured consumer, active operation or retained recovery still needs it.
+  Review the listed reason: change the relevant selection or finish/recover
+  the operation first. Do not purge recovery records to bypass a blocker.
+
+To use a removed destination's retained catalog again with the same DUMB
+configuration, register the same identifier and original storage path.
+The original identifier stays associated with that owned storage; use a new
+identifier for a different root. If the old controller state/catalog is
+unavailable, installation restore also supports an existing
+[mounted archive file](installation-backups.md#restore-an-existing-or-fresh-installation).
+
+### Mount checks after a container update
+
+Linux can assign a different device number to the same mounted share after a
+container is recreated. Current backends can recognize that change when the
+registered storage coordinates, directory identity/permissions and owned
+marker still match. Existing archive ownership and references stay intact;
+you do not need to remove the destination for this device-number change alone.
+
+A mount change while the same controller is running remains blocked until
+reviewed. After **Check availability**, an eligible destination offers
+**Review mount change**. Compare the registered and observed storage, confirm
+that it is the same archive storage containing the retained backups, then
+select **Confirm controller mount check**. A review expires after five minutes;
+changed storage or settings require a fresh review. A disabled destination can
+be reviewed without enabling it, then enabled separately.
+
+This refreshes the controller's check for the same owned storage. It cannot
+adopt a different share, directory or marker, move backups, or bypass permission
+checks. Missing/replaced storage remains blocked. Check the host mount and
+container-visible path before retrying; DUMB never writes into the local
+directory underneath an absent registered mount.
+
 ## Cold archives and local working storage
 
 Local directories and already-mounted NFS/SMB directories can hold closed
