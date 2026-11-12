@@ -92,6 +92,39 @@ not enable transcoding.
 See [native Proxmox GPU setup](../../deployment/proxmox.md#gpu-passthrough-and-jellyfin)
 and [Jellyfin's Intel GPU guide](https://jellyfin.org/docs/general/post-install/transcoding/hardware-acceleration/intel/).
 
+### Intel OpenCL tone mapping
+
+AMD64 DUMB images include the distribution's current and legacy Intel OpenCL
+GPU runtimes, generic ICD loader and `clinfo`. They are installed when the image
+is built, so updating or recreating the container does not require reinstalling
+them manually. ARM64 images do not install these Intel GPU packages. This does
+not install a host kernel driver or provide AMD/NVIDIA runtime support.
+
+The current and legacy packages cover different Intel GPU generations. Check
+the [upstream supported-platform list](https://github.com/intel/compute-runtime)
+and [legacy platforms](https://github.com/intel/compute-runtime/blob/master/documentation/LEGACY_PLATFORMS.md)
+for your hardware. The host still needs a working GPU driver, a passed-through
+`/dev/dri/renderD*` device and permission for DUMB's configured service account
+to use that device. The runtime packages do not enable Jellyfin's transcoding
+settings automatically.
+
+Replace `dumb` with your container name, and select the correct render device:
+
+```bash
+docker exec dumb clinfo -l
+docker exec dumb /usr/lib/jellyfin-ffmpeg/ffmpeg -v verbose \
+  -init_hw_device vaapi=va:/dev/dri/renderD128 -init_hw_device opencl@va \
+  -f lavfi -i color=size=16x16:rate=1 -frames:v 1 -f null -
+```
+
+The second command checks device initialization and VA-API/OpenCL
+interoperability. Repeat device checks with the same user and GPU groups as
+Jellyfin; a successful root-run check does not verify the service account's access. Package installation or an empty `clinfo` result does not
+establish working GPU tone mapping. Configure OpenCL tone mapping in Jellyfin,
+then test a short HDR transcode and inspect Jellyfin's FFmpeg log before relying
+on it for playback. See [Jellyfin's Intel guide](https://jellyfin.org/docs/general/post-install/transcoding/hardware-acceleration/intel/)
+for the current hardware and codec requirements.
+
 ## Media Library Protection
 
 Jellyfin requires an authorized API key before DUMB can inspect sessions and temporarily control scan tasks/library real-time monitoring. Compatible guided first-administrator setup can create a dedicated application key; the checklist offers a separate explicit choice to save that key for Library Protection. You can also create a key in Jellyfin's dashboard and save it under **Library Protection** on the Jellyfin service page. New setup-created protection policies remain disabled until you review their mount scope and enable them. Without usable credentials, unattended storage maintenance is deferred because activity is unknown.
