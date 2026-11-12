@@ -1,6 +1,16 @@
 # Changelog
 
 
+## [1.24.25](https://github.com/I-am-PUID-0/DUMB_docs/compare/1.24.24...1.24.25) (2026-11-12)
+
+
+### 📖 Documentation
+
+* **backups:** clarify shared permissions and backup controls ([d99867d](https://github.com/I-am-PUID-0/DUMB_docs/commit/d99867d835f431f88ba1f6295ed98fe57cd9d235))
+* **backups:** explain private recovery holds at startup ([a2269ee](https://github.com/I-am-PUID-0/DUMB_docs/commit/a2269ee8cb0501ddc0d8e6bee18718c9456c70de))
+* **infinidysk:** explain contained provider reads and migration recovery ([6c93d7f](https://github.com/I-am-PUID-0/DUMB_docs/commit/6c93d7ff36aba7d2e5bb44d173f3235d69a8397e))
+* **infinidysk:** explain low-space recovery and reviewed omissions ([b90dc3c](https://github.com/I-am-PUID-0/DUMB_docs/commit/b90dc3c5fc98ae9093a61222b31788bd3c71d4f4))
+
 ## [1.24.24](https://github.com/I-am-PUID-0/DUMB_docs/compare/1.24.23...1.24.24) (2026-11-10)
 
 
