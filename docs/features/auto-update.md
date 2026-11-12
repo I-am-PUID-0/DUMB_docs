@@ -115,7 +115,12 @@ The global **DUMB Updates** banner and review dialog show the current and availa
 
 DUMB API release checks are always enabled: the backend checks once during startup and then daily in check-only mode. This does not opt the deployment into automatic container replacement or API self-installation. Applying an API update remains an operator-owned image/stack update. DUMB Frontend checking and installation continue to follow its normal manual and configured auto-update controls.
 
-DUMB dev images use rolling versions such as `v2.4.2-dev.5`. These are treated as dev builds, not production release tags, so their notice action points to the rolling dev-build reference instead of a per-version release page. Production semver releases still link to their release notes, and branch builds with commit markers link to the relevant commit or comparison.
+DUMB dev images use rolling versions such as `v2.24.0-dev.34`. The core (`2.24.0` in this example) is the candidate API version; the `-dev.N` suffix identifies the development image build. These are treated as dev builds, so their notice action points to the rolling dev-build reference. Production semver releases link to their release notes, and branch builds with commit markers link to the relevant commit or comparison. See [development and release versions](../services/dumb/api.md#development-and-release-versions) for synchronization and stable promotion.
+
+The frontend's candidate version follows dmbdb's own stable releases and
+commits, independently of the DUMB API version. Verified development source
+continues to show its **Dev build** badge and branch/SHA in **Settings → About**.
+See [frontend development versions](../services/dumb/dumb-frontend.md#frontend-development-versions).
 
 Dismissals are stored in browser local storage and only hide the global banner for that browser. They do not remove the backend's retained available state or applied-update history. The About page continues to show the retained status, and its review dialog can restore a dismissed banner; a different browser can also still review the notice.
 

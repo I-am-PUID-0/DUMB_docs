@@ -29,6 +29,40 @@ The frontend source includes a dependency-free Node check in its install and bui
 
 Production starts the compiled Nitro server with `node .output/server/index.mjs`, which does not run the source check. The version floor above applies to dependency installation and source builds; it does not establish the minimum runtime for every previously compiled frontend.
 
+## Frontend development versions
+
+The frontend has its own release history. dmbdb releases from `main`; DUMB API
+releases from `master`. Their candidate versions are calculated independently.
+For example, with frontend stable `1.91.0`, dmbdb `dev` can declare `1.92.0` in
+`package.json` while `.github/.release-please-manifest.json` stays at `1.91.0`.
+Normal promotion through `main` then releases `1.92.0`. The DUMB API version
+does not determine the frontend version.
+
+The dmbdb **Sync dev version** workflow runs after `dev` pushes, published
+stable frontend releases, and manual requests. It uses dmbdb's actual stable
+release and subsequent commits to update only the candidate package version
+and stable release-manifest baseline. After `1.92.0` is released, the next
+candidate is normally `1.92.1`, or `1.93.0` when later feature commits require
+it. Repeating the same plan creates no commit.
+
+Maintainers can open **Actions → Sync dev version → Run workflow** in the
+**dmbdb repository**, select **dev**, and enable
+**Calculate the dev version without committing it** to preview the plan.
+Leave that option disabled to apply a needed update. The existing
+`RELEASE_PLEASE_TOKEN` supplies the authenticated GitHub commit identity and
+must have repository-content access permitted by the `dev` branch rules.
+Head checks prevent an outdated plan from replacing newer branch work.
+Token-created commits run normal CI; the follow-on synchronization makes no
+further version change.
+
+This workflow creates no image, release PR, stable tag, or GitHub release.
+DUMB image builds still use the released frontend by default; select
+**dmbdb dev** or an exact frontend commit when testing unreleased changes.
+In **Settings → About**, the frontend row shows the candidate package version
+with its **Dev build** badge and branch/SHA when the installed source metadata
+matches that package and compiled output. Backend and frontend build identities
+remain separate.
+
 ## Build a development image with a chosen frontend
 
 Maintainers with workflow access can build a DUMB `dev` image containing
@@ -66,6 +100,15 @@ with that digest and your existing persistent volumes. The frontend package
 version can remain the same across unreleased commits. In **Settings → About**,
 the **DUMB Frontend** row shows the **Dev build** badge and source/SHA details
 when the installed development build has verified source metadata.
+
+Both architecture builds also use one calculated DUMB API version for the
+requested immutable backend commit. The calculated API core is passed to both
+architecture builds and stamped inside each final image, even before the
+branch's version-synchronization commit lands. The selected backend SHA stays
+unchanged. **Build Summary** records the source identity and
+version. Source-version synchronization does not automatically build an image.
+See [development and release versions](api.md#development-and-release-versions)
+for how the candidate version and stable release baseline relate.
 
 ### Image selection and saved frontend settings
 
