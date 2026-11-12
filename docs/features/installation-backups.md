@@ -151,6 +151,30 @@ cannot be safely resumed, DUMB keeps applications blocked for recovery instead
 of starting them against a mixture of old and restored data. Use the offered
 rollback/recovery action and retain its files until recovery completes.
 
+## Startup and private recovery state
+
+DUMB checks its local installation-recovery records before normal applications
+start. If those records require recovery or cannot be trusted, only the API and
+already-installed frontend start. Service actions can return `409` while this
+installation-wide hold is active; the recovery banner identifies the blocked
+controller rather than an individual application's startup failure.
+
+Some configuration mounts give new directories a group-inheritance bit
+(**SGID**), even when DUMB creates them with private `0700` permissions. Current
+builds recognize that inheritance on otherwise private, eligible controller
+state and clear it after a complete safety check. New installation-control
+folders are created with controller ownership and mode `0700`. This repair does
+not make shared or writable recovery payloads trustworthy: unexpected owners,
+shared/special file permissions, links and changed mounts still require review.
+The diagnostic distinguishes ownership, permission and mount failures.
+
+Preserve `/config/installation-backups`, its job records and referenced backups
+when investigating a hold. Use the relevant retained recovery action, then
+restart when instructed. Do not delete the directory, purge databases or apply
+recursive ownership/permission changes to clear the banner. A
+[major InfiniDysk migration](infinidysk-v2-migration.md#progress-cancellation-and-recovery)
+has its own job, cancellation and rollback flow.
+
 ## Related tools
 
 - [Symlink operations](symlinks.md) provides smaller link snapshots and schedules.
