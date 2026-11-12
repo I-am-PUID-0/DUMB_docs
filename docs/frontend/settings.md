@@ -15,18 +15,20 @@ The Settings page is organized into sections:
 
 - **Appearance** - Frontend color theme
 - **About** - Installed service and frontend versions
-- **Backups and restore** - Installation archives, schedules, restore previews and shared backup destinations when supported by the backend
 - **Onboarding** - Restart the guided setup wizard
 - **Embedded UIs** - Service UI toggle
 - **Notifications** - Outbound destinations, event routing, thresholds, tests, and delivery history
 - **Tokens** - API keys and service tokens
 - **Log Timestamp Format** - Date order, clock format, and zero-padding preferences
-- **Advanced** - Geek Mode and debug-level UI options
+- **Advanced** - Service and instance utilities, plus Geek Mode
 - **Authentication** - Enable or disable auth and manage users when supported
+- **Backups and restore** - Installation archives, schedules, restore previews and shared backup destinations when supported by the backend
 - **Support** - Project community, source, documentation, and image links
 - **Contributors** - Project contributor links
 
-Every top-level section can be expanded or collapsed from its heading. Sections start expanded for existing and first-time users, and each browser remembers the open/closed state independently for the next visit. Collapsing a section changes only the page layout; it does not disable, reset, or stop the feature inside it.
+Every top-level section can be expanded or collapsed from its heading. Sections start collapsed until you make a choice; each browser remembers your explicit open/closed choices for the next visit. A direct link to a section opens it for that visit without overwriting your saved choice. Collapsing a section changes only the page layout; it does not disable, reset, or stop the feature inside it.
+
+**Backups and restore** is near the bottom of the page, after Authentication and before Support. A recovery link opens it directly.
 
 ### Settings menu
 
@@ -66,6 +68,8 @@ Displays current versions:
 - Individual service versions
 
 The DUMB API and DUMB Frontend rows also summarize retained project update state. Published releases show an **Update available** badge and, when the installed tag is present in the bounded GitHub release history, how many releases the component is behind. Select the badge to open the shared **DUMB Updates** dialog. Development versions show a **Dev build** badge; DUMB does not invent a releases-behind count for a moving development build.
+
+Ordinary stable-release notices are suppressed when the installed version is already equal to or ahead of that release. For example, a frontend development build of 1.92.0 does not offer 1.91.0 as an upgrade. Explicitly configured branch/commit targets and deliberate release pins remain available for review; the **Dev build** badge still identifies the running development build.
 
 These About-page indicators remain visible after a browser-local banner dismissal because the update result is retained by the backend. The review dialog marks a dismissed entry as **Hidden in this browser** and lets the operator show its banner again.
 
@@ -190,6 +194,28 @@ Customize how timestamps appear in the log viewer:
 
 
 ## Advanced
+
+### Service utilities
+
+Choose **Service or instance** to find the tools available for an enabled or
+running service, or an exact instance with saved utility configuration or
+history. Unconfigured disabled templates are omitted. Availability also depends
+on the connected backend and the selected service's capabilities.
+
+The supported tools include:
+
+- **Media Protection** for a media server's protection policies, mounts and library settings.
+- **Symlinks** for repairs, snapshots, restores and backup schedules.
+- **Database Health** and guarded **Database Migration** tools.
+- **InfiniDysk 2 migration** and native database conversion when supported.
+- **Rclone Optimizer** for a qualified rclone provider.
+- **Seerr Sync** and **Plex Status** for their respective services.
+
+Select a tool to open its existing controls with the chosen instance. Opening
+the shortcut does not run a repair, migration or restore, and the tool's normal
+preparation checks and confirmations still apply. Database Health remains
+opt-in; visiting its panel does not enable collection. InfiniDysk's FUSE mount
+does not expose an rclone optimization shortcut.
 
 ### Geek Mode
 
