@@ -197,17 +197,25 @@ still needs to reconcile its report and database identities. A rehearsal then
 restores v1 and its previous consumers, while a cutover must validate the target
 before starting normal v2 work.
 
-Large imports may run for more than 30 minutes when they keep progressing.
-Current builds use a **30-minute inactivity watchdog**, replacing the old
-five-minute total import limit. Native progress changes or provider-read activity
-reset the watchdog. A status polling heartbeat alone does not count as import
-progress. A timeout stops the owned importer and attempts protected v1 recovery;
-it does not authorize ignoring failed provider reads.
+Bulk migration work has **no fixed overall time limit**. Large file copies,
+PostgreSQL dump and restore verification, and native import can take longer on
+slow local or network storage. DUMB does not stop a running worker just because
+an elapsed-time or inactivity threshold was reached.
+
+After 30 minutes without observable native progress or provider-read activity,
+DUMB shows a warning and keeps waiting. A status polling heartbeat or changing
+time estimate does not clear that warning; observed progress does. PostgreSQL
+steps similarly warn when their activity cannot be observed. A warning is a
+reason to review the current stage, not proof that the operation has failed.
+Actual process failure, a failed native report or failed verification still
+stops acceptance and preserves the recovery path.
 
 A supporting backend offers **Cancel migration** for a cancellable running job.
 Use that job's exact confirmation. Cancellation is cooperative: DUMB records the
 request, waits for an owned checkpoint, stops the native writer and restores v1
 before reporting completion. Closing the panel does not request cancellation.
+A slow or blocked operating-system I/O call can delay a cancellation checkpoint;
+wait for the job to confirm recovery rather than assuming the request completed.
 Keep imports, scans and playback stopped while cancellation or recovery runs.
 
 After a controller restart, or if recovery fails, use the offered **Rollback**
@@ -216,6 +224,9 @@ new work takes priority over newer completed attempts in the migration panel;
 its current recovery actions determine what can proceed. Low-space recovery
 also requires the original archive destination to be mounted and readable.
 Preserve the job files, native report, archives and any retained candidate.
+If DUMB cannot confirm that its owned helper stopped, recovery remains held.
+Rollback becomes available only after helper termination is confirmed; retain
+the private recovery files while reviewing that state.
 Deleting a database or job file to clear a lock can destroy the recovery path.
 
 ### Review native import omissions
