@@ -37,8 +37,10 @@ and unrecognized regular payloads in those directories remain blockers; DUMB
 identifies the path instead of silently omitting it. DUMB refuses unsupported
 or ambiguous state instead of silently reporting a complete backup.
 
-A managed file or selected service alias is checked as a literal entry, so a
-final symlink is preserved without inspecting its target. Archive storage
+A managed file or selected service alias is archived as a literal entry, so a
+final symlink is preserved without copying its target. A sibling alias under
+`data_root` pointing to an already-covered managed directory is also preserved
+as literal link state; its target is not copied again. Archive storage
 locations and intermediate directories must still be verifiable without
 following symlinks. An ancestry error identifies the component that failed and
 the reason; clearing it must not require deleting or retargeting service aliases.
@@ -70,6 +72,13 @@ DUMB does not mount shares or change their existing ownership/permissions.
 Active database and private recovery working files remain local. A missing or
 replaced destination mount blocks the operation;
 DUMB does not write into an underlying local directory as a fallback.
+
+A configured backup profile cannot use a managed persistence root itself or a
+directory containing one. This includes unselected or disabled profiles:
+excluding such a backup location would hide application state from the archive.
+Review the reported paths and correct the conflicting profile. A separate
+destination or a dedicated child archive directory can still be used when it
+passes the storage checks.
 
 ## Choose an archive format
 
@@ -144,6 +153,22 @@ managed mount before its consumers; previously stopped services are not
 started just because a backup ran. Resuming services is a separate stage. A
 failed or blocked resume retains its recovery guidance rather than reporting
 that the backup has finished successfully.
+
+Seerr request synchronization reserves installation persistence for its entire
+cycle. It skips synchronization and checkpoint writes while a backup, restore
+or retained recovery owns that persistence, then resumes on its next normal
+interval after the hold ends. If a sync cycle is already running, backup
+admission reports busy until that cycle finishes; wait, then retry the operation
+and follow any renewed preview requirement. This prevents the controller's
+`seerr_sync_state.json` updates from continuing after managed services stop.
+
+PostgreSQL's configured `{postgres_config_dir}` and `{postgres_config_file}`
+launch placeholders are expanded on every managed start, including backup resume
+and recovery. A missing path containing a literal placeholder on an older build
+is a problem with launch arguments, separate from a change to the archive's
+source files. Expanding the command leaves saved settings and existing PostgreSQL
+data intact; it does not run initial database setup. Follow the job's service
+resume or recovery instructions before retrying a backup.
 
 Database consistency follows the requirements for a stopped
 [PostgreSQL cluster](https://www.postgresql.org/docs/current/backup-file.html)
@@ -309,12 +334,23 @@ instead returns the retained application state from before live replacement.
 After an instructed restart, refresh status; a recovered job can still show the
 failed backup's historical error without indicating another failure.
 
-A file changed during a cold archive means the stopped-state assumptions were
-not met. Retain the reported path and job error for investigation; that failed
-output is not a verified backup. Do not delete state or edit the job to force
-acceptance. An operation still marked queued or running is not eligible for
-rollback, even if its displayed stage or error indicates failure. If it cannot
-reach a terminal recovery state, preserve its records and request diagnosis.
+A change during a cold archive means the stopped-state assumptions were not
+met. DUMB also checks the complete source again after streaming. If that final
+check fails, the job error identifies a representative added, removed or changed
+path, naming the metadata fields that changed or indicating changed file
+contents. This is a limited sample, not a complete list of changes. Paths are
+escaped for display; field values, file contents and checksums are not included
+in the diagnostic.
+
+Retain the path and job error, then identify what can still write to that path,
+including another container or host process sharing the directory. Resolve the
+actual writer before requesting a fresh preview and backup. An older generic
+error alone cannot identify the changed entry or its writer. The failed output
+is not a verified backup; do not delete state or edit the job to force acceptance.
+Follow the service-resume or recovery guidance above. An operation still marked
+queued or running is not eligible for rollback, even if its displayed stage or
+error indicates failure. If it cannot reach a terminal recovery state, preserve
+its records and request diagnosis.
 
 ## Startup and private recovery state
 
