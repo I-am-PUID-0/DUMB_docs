@@ -1,6 +1,16 @@
 # Changelog
 
 
+## [1.24.27](https://github.com/I-am-PUID-0/DUMB_docs/compare/1.24.26...1.24.27) (2026-11-13)
+
+
+### 📖 Documentation
+
+* **backups:** document streamed Zstandard archives ([9c65cf8](https://github.com/I-am-PUID-0/DUMB_docs/commit/9c65cf8416d22ebc4d1413b5c878bb3171e68094))
+* **backups:** explain literal root ancestry checks ([87b4aef](https://github.com/I-am-PUID-0/DUMB_docs/commit/87b4aef1a2b78307d16c62b235698d3e1d0db84d))
+* **backups:** explain progress and reviewed recovery ([b3b32a7](https://github.com/I-am-PUID-0/DUMB_docs/commit/b3b32a78c56aee1984226cddcd1abf67df8aaf9b))
+* **jellyfin:** describe bundled Intel OpenCL support ([115e762](https://github.com/I-am-PUID-0/DUMB_docs/commit/115e7623c00f8118e463eb4b3fc20c7566fb90aa))
+
 ## [1.24.26](https://github.com/I-am-PUID-0/DUMB_docs/compare/1.24.25...1.24.26) (2026-11-12)
 
 
