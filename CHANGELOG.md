@@ -1,6 +1,14 @@
 # Changelog
 
 
+## [1.24.28](https://github.com/I-am-PUID-0/DUMB_docs/compare/1.24.27...1.24.28) (2026-11-13)
+
+
+### 📖 Documentation
+
+* **backups:** explain cold snapshot failures and recovery ([320d8d4](https://github.com/I-am-PUID-0/DUMB_docs/commit/320d8d42982a43adc4b3c59ef0c6f0a76b573204))
+* **infinidysk:** describe guarded migration recovery and prerequisites ([11182f1](https://github.com/I-am-PUID-0/DUMB_docs/commit/11182f16d9dc9853d02aef93158bf65dd05c53e0))
+
 ## [1.24.27](https://github.com/I-am-PUID-0/DUMB_docs/compare/1.24.26...1.24.27) (2026-11-13)
 
 
