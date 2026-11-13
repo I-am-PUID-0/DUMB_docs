@@ -1348,6 +1348,8 @@ of those new-operation controls.
 | `GET` | `/process/infinidysk-v2/jobs/{job_id}/report` | Read the retained native import report as plain text with `Cache-Control: no-store` |
 | `POST` | `/process/infinidysk-v2/cancel` | Request cooperative cancellation of the exact active major job and protected source recovery |
 | `POST` | `/process/infinidysk-v2/rollback` | Restore the exact retained major-migration source when authorized |
+| `POST` | `/process/infinidysk-v2/retry-consumers` | Verify/restart the owned exposed v2 target and retry only retained pending consumers |
+| `POST` | `/process/infinidysk-v2/finish-consumer-recovery` | Acknowledge leaving pending consumers stopped after verified v2 delivery |
 | `POST` | `/process/infinidysk-v2/cleanup/preview` | Review owned v1 removal paths and retained backups after a validated cutover |
 | `POST` | `/process/infinidysk-v2/cleanup` | Retire automated rollback and remove only the approved unchanged v1 entries |
 
@@ -1454,7 +1456,10 @@ confirms the source was restored and permits a fresh preview; recovery flags
 remain authoritative for available actions. Rollback is available only when
 `can_rollback` or `actions.rollback` is explicitly true.
 Send `job_id` and the exact `rollback_confirmation_text` as `confirmation` to
-the rollback route. The default mode retains the original local source;
+the rollback route. When `rollback_requires_discard_ack: true`, also send
+`acknowledge_discard_v2_writes: true` after explicitly reviewing that v2 writes
+will be discarded. A held exposed target does not offer ordinary v1 rollback.
+The default mode retains the original local source;
 low-space recovery restores it from the retained archive. Later 2.x writes are
 not merged back into v1.
 
@@ -1467,6 +1472,8 @@ checkpoint and restores the source. Repeating that same accepted cancellation
 is idempotent. Do not treat the acknowledgement as completed recovery: poll the
 job until its terminal state and recovery flags confirm the outcome. If source
 recovery fails, retain the evidence and use the offered rollback action.
+Once `activation_exposed: true`, cancellation cannot implicitly restore v1;
+follow the current exposed-target recovery actions instead.
 
 `status.job` prioritizes a retained blocking job over newer completed attempts;
 `blocking_job_count` explains when other blocked jobs also remain. Updated jobs
@@ -1475,12 +1482,13 @@ can expose `import_progress` with a native `stage`, `elapsed_seconds`, and
 native conversion rather than the entire validation/cutover/recovery pipeline.
 The outer `stage` and `message` describe the current DUMB phase.
 
-Native execution uses a 30-minute inactivity watchdog rather than the old
-five-minute total deadline. Native progress changes and provider-read activity
-refresh it; publishing polling heartbeats alone does not. Long progressing
-imports can exceed 30 minutes in total. Timeouts and cancellation stop owned
-writers before protected source recovery; they do not bypass admission or data
-validation.
+Bulk native import, file copy and database snapshot/restore have no fixed
+overall deadline. Thirty minutes without observable native progress or provider
+reads produces a warning while the worker continues; polling heartbeats alone
+do not establish progress. Actual process or verification failures still block
+acceptance. Startup dependency/readiness checks remain separate from bulk work;
+neither a warning nor a transport timeout authorizes repeating a mutation or
+bypassing retained recovery checks.
 
 Updated jobs can expose `import_report` with `status` equal to `accepted`,
 `review_required` or `blocked`, `imported_files`, `skipped_files`,
@@ -1489,13 +1497,27 @@ Updated jobs can expose `import_report` with `status` equal to `accepted`,
 The optional sample counts and truncation flags explain bounded public details;
 the complete native report remains in private job storage.
 
+Supporting reports also expose a bounded `import_report.history` summary with
+`source_rows`, `completed`, `failed`, `unsupported_status`, `invalid_identity`
+and `imported_this_attempt`. Verified history adds `verified_present` and
+`attempt_count_differs`; missing required identities can add `missing_completed`
+and `missing_failed` counts. These diagnostics distinguish a per-attempt report
+count from actual preserved history; they do not relax identity checks.
+
 Known source incompatibilities may complete a validated rehearsal with
 `import_report.status: "review_required"`. Starting its cutover also requires
 `acknowledgements.skipped_media: true` and `skip_review_digest` matching that
 rehearsal's server-issued `review_digest`. The digest covers every omitted
 identity, path and reason, including entries beyond a public sample. Actual
-cutover omissions must match the reviewed set. Unknown/provider failures,
-ambiguous identities and unrecognized reports remain blockers; the
+cutover omissions may be the same set or a strict subset, including none, only
+with unchanged complete canonical source media/history census and identical
+remaining identities, names, paths and exact reasons. Every required completed
+and failed history identity must still exist in the actual native database;
+a lower per-attempt report count alone is not a history-loss allowance.
+The private complete census also binds referenced metadata/NZB blob contents
+while excluding volatile health scheduling. Changed source facts or stale proof
+require a fresh isolated rehearsal; public samples cannot reauthorize it.
+Unknown/provider failures, ambiguous identities and unrecognized reports remain blockers; the
 acknowledgement is not a general skip override.
 
 A successful rehearsal can record `candidate_discarded=true` after the native
@@ -1505,6 +1527,59 @@ backup and minimal database proof remain. Default-mode failed rehearsal
 candidates are kept. Low-space recovery can remove its candidate before archive
 restoration. The later cutover still needs its mode's local capacity and fresh
 source checks.
+
+### Recover an exposed v2 target or pending consumers
+
+These additive protocol 1 controls require
+`infinidysk_v2_consumer_recovery: true` and numeric
+`infinidysk_v2_consumer_recovery_protocol: 1`. Keep `status: "recovery_required"`
+or an interrupted controller's retained state distinct from a request to restore v1:
+
+- `recovery_kind: "v2_activation"` means the v2 target was exposed and may contain
+  new writes, but accepted runtime/mount activation still needs verification.
+- `recovery_kind: "v2_consumers"` with `activation_committed: true` means the
+  healthy native target and delivery mount passed cutover acceptance before
+  downstream service resumption. A later consumer failure retains that cutover.
+- `consumer_recovery` contains `failed` records with `process_name`, `reason_code`
+  and a sanitized `message`, plus `pending` and `resumed` process-name arrays.
+  Its boolean `ready` combines the last verified native health with current
+  registered-process and delivery-mount checks. Status reads do not perform a
+  new native health probe; each recovery action rechecks health before changing
+  state. It does not mean every consumer resumed.
+
+For an explicitly advertised `can_retry_consumers: true`, post `job_id` and the
+exact `confirmation_texts.retry_consumers` as `confirmation` to
+`/process/infinidysk-v2/retry-consumers`. This action can be offered while
+`ready: false`: it verifies the owned accepted target and can restart its
+provider/mount before retrying only the exact retained pending consumers in
+dependency order. It does not repeat native import or restore v1.
+
+Finishing requires both `can_finish_consumer_recovery: true` and `ready: true`.
+After reviewing the remaining stopped consumers, post `job_id`, the exact
+`confirmation_texts.finish_consumer_recovery` as `confirmation`, and
+`acknowledge_pending_consumers: true` to
+`/process/infinidysk-v2/finish-consumer-recovery`. The job completes with warnings
+and keeps its recovery kind, activation flags and consumer results available
+after reload. Provider conversion, unrelated mutations and v1 cleanup remain
+blocked while recovery is held.
+
+If the controller booted with only the recovery control plane, a successful
+retry or finish can return `result.restart_required: true` with a job message
+instructing a DUMB restart. Retained applications can already be running, but
+normal background workers were not initialized on that controller. Restart the
+container when instructed, then refresh status and verify normal startup;
+`status: "completed"` alone does not remove this requirement.
+
+Older held activated jobs without the new private target binding require
+manual review, with both v1 and v2 data retained. Possible exposure does not
+itself authorize retry, cancellation, cleanup or ordinary rollback, and the
+backend does not fabricate replacement acceptance evidence for those records.
+
+Do not infer ordinary rollback or cancel permission from `recovery_required`.
+After exposure, a healthy completed cutover can separately advertise a manual
+rollback requiring `rollback_requires_discard_ack: true` and its explicit
+`acknowledge_discard_v2_writes` request acknowledgement. Missing acknowledgements
+are refused; retained v1 state does not contain later v2 writes.
 
 ### Retire a completed v1 installation
 
@@ -1959,6 +2034,8 @@ Returns backend capabilities and feature flags. Used by the frontend to determin
   "infinidysk_v2_low_space_migration": true,
   "infinidysk_v2_cleanup": true,
   "infinidysk_v2_cleanup_protocol": 1,
+  "infinidysk_v2_consumer_recovery": true,
+  "infinidysk_v2_consumer_recovery_protocol": 1,
   "arr_postgres_migration": true,
   "arr_postgres_migration_rehearsal": true,
   "arr_postgres_migration_rollback": true,
@@ -2039,6 +2116,7 @@ Returns backend capabilities and feature flags. Used by the frontend to determin
 | `infinidysk_v2_migration` | Separate guarded major installation/upgrade workflow |
 | `infinidysk_v2_migration_protocol` | Exact supported workflow protocol; currently numeric `1` |
 | `infinidysk_v2_postgres` | Native generation 2 PostgreSQL wrapper, separate from the v1 adapter |
+| `infinidysk_v2_consumer_recovery` / `infinidysk_v2_consumer_recovery_protocol` | Guarded recovery of an exposed v2 target and its retained pending consumers; exact supported protocol is numeric `1` |
 | `infinidysk_v2_rclone_optimizer` | Separate validated optimizer adapter for generation 2; currently `false`, including when rclone is retained |
 | `backup_storage_selection` | Registered local or mounted cold-archive destination selection |
 | `backup_storage_protocol` | Exact supported registered-storage protocol; currently numeric `1` |

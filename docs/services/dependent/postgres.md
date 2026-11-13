@@ -110,6 +110,21 @@ It is pre-installed and automatically initialized during container startup.
     PostgreSQL is selected. See
     [InfiniDysk](../core/infinidysk.md#postgresql-in-infinidysk-v120).
 
+!!! info "InfiniDysk 2 uses its native conversion workflow"
+
+    A generation 1 to generation 2 upgrade first imports into generation 2
+    SQLite, including when the old service used PostgreSQL. A later provider
+    conversion uses **InfiniDysk 2 database conversion**, with a new, empty
+    destination prepared by an administrator. The v1 `postgres_enabled` toggle
+    does not perform this conversion.
+
+    The ordinary `postgres.databases` list inherits the cluster's database
+    locale; it does not request the exact `C` locale required by DUMB's guarded
+    v2 workflow. Follow the
+    [dedicated destination preparation example](../../features/infinidysk-v2-migration.md#prepare-a-postgresql-destination)
+    before previewing. Do not change the existing cluster locale or replace an
+    existing application's database to satisfy that check.
+
 !!! danger "The PostgreSQL toggle is not a migration tool"
     DUMB does not copy existing SQLite data merely because `postgres_enabled`
     is set. For services other than InfiniDysk, directly enabling it

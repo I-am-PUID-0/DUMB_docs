@@ -45,9 +45,18 @@ signing keys, symlink trees and existing STRM files. DUMB's retained migration
 state is useful recovery evidence, not a replacement for those backups.
 
 An existing source must meet the 1.3-era database schema floor checked by the
-backend and have an empty job queue after quiescence. The release label alone
-does not establish schema compatibility. Finish or resolve any existing
-namespace or database migration before starting another workflow.
+backend and have an empty **InfiniDysk 1 download-task queue** after quiescence.
+The preview identifies that queue; a stopped-source snapshot refusal reports
+its remaining task count. Review and finish those tasks, or explicitly remove
+tasks you intend to discard, before retrying. Failed history records alone do
+not block this queue check.
+
+This check does not require deleting Sonarr history or media-library files.
+If an Arr application reports a separate failed-download problem, review that
+queue item and its actual error in the Arr application. DUMB does not
+automatically clear those records. The release label alone does not establish
+schema compatibility. Finish or resolve any existing namespace or database
+migration before starting another workflow.
 
 Sources with OIDC configured are currently blocked until the target policy has
 been verified. The login/OIDC acknowledgement does not override that blocker.
@@ -57,6 +66,19 @@ playback and scans for the approved downtime. The preview records managed
 mounts, enabled managed consumers and configured link roots. Check external
 consumers, remote path mappings, library roots and signed stream URLs separately;
 an empty recorded STRM list does not prove that none exist.
+
+The major workflow validates the retained source and selected target dependency
+orders before stopping managed processes. It stops dependants first, restores
+the selected InfiniDysk service and mount, verifies delivery readiness, then
+resumes the previously running consumers in dependency order. Sonarr/Radarr
+therefore resume before a dependent Prowlarr. Configured consumers that were
+already stopped remain stopped; DUMB does not enable unrelated applications.
+
+With a native FUSE target, the old associated rclone process stays stopped.
+Rehearsal recovery or rollback restores the original transport when it was
+previously running. An upstream start failure or uncertain original-process
+termination keeps recovery held instead of starting downstream consumers over
+an unverified mount.
 
 !!! warning "Contained import and provider reads"
 
@@ -210,24 +232,81 @@ reason to review the current stage, not proof that the operation has failed.
 Actual process failure, a failed native report or failed verification still
 stops acceptance and preserves the recovery path.
 
-A supporting backend offers **Cancel migration** for a cancellable running job.
-Use that job's exact confirmation. Cancellation is cooperative: DUMB records the
-request, waits for an owned checkpoint, stops the native writer and restores v1
-before reporting completion. Closing the panel does not request cancellation.
+A supporting backend offers **Cancel migration** while its current job permits
+restoring v1. Use that job's exact confirmation. Cancellation is cooperative:
+DUMB records the request, waits for an owned checkpoint, stops the contained
+native writer and restores v1 before reporting completion. Once the live v2
+target has been exposed and may have accepted writes, cancellation cannot
+silently restore v1. Closing the panel does not request cancellation.
 A slow or blocked operating-system I/O call can delay a cancellation checkpoint;
 wait for the job to confirm recovery rather than assuming the request completed.
 Keep imports, scans and playback stopped while cancellation or recovery runs.
 
-After a controller restart, or if recovery fails, use the offered **Rollback**
-action for the retained job and its exact confirmation. A job that still blocks
-new work takes priority over newer completed attempts in the migration panel;
-its current recovery actions determine what can proceed. Low-space recovery
+After a controller restart, or if recovery fails, review the retained job's
+current authorized actions. A pre-activation job can offer **Rollback** with its
+exact confirmation to recover v1. A job that still blocks new work takes priority
+over newer completed attempts in the migration panel; its current recovery
+actions determine what can proceed. Low-space recovery
 also requires the original archive destination to be mounted and readable.
 Preserve the job files, native report, archives and any retained candidate.
 If DUMB cannot confirm that its owned helper stopped, recovery remains held.
 Rollback becomes available only after helper termination is confirmed; retain
 the private recovery files while reviewing that state.
 Deleting a database or job file to clear a lock can destroy the recovery path.
+
+### Recover v2 activation or pending consumers
+
+Starting the live v2 target establishes a different recovery boundary from the
+isolated rehearsal. It may already contain new writes. DUMB retains that target
+and the original v1 recovery evidence instead of automatically restoring v1
+because a later activation check or downstream start failed.
+
+After native health and the selected delivery mount are verified, DUMB records
+the accepted cutover before resuming the previously running consumers. A
+consumer start failure leaves that cutover retained and the job held for service
+recovery. Review the named failed and pending services and their reported reasons.
+Ordered process launch is not proof that every Arr API or playback client is
+healthy; verify those separately.
+
+Backends advertising the guarded service recovery controls offer:
+
+- **Verify/restart v2 and retry consumers**, or **Retry pending consumers** after
+  accepted cutover. Type the job's displayed confirmation. The backend verifies
+  the owned target, current configuration, native health and delivery mount,
+  restarting its selected runtime or mount when needed. It then retries only
+  the retained pending consumers in dependency order, without repeating the
+  import or duplicating already-running services. This action can be available
+  while the target still needs verification; a failed verification keeps the hold.
+- **Finish with pending services stopped** only when the backend has verified
+  the v2 runtime and delivery mount. Review every pending service, acknowledge
+  leaving those services stopped and type the separate confirmation. Completion
+  retains their warnings and the dashboard reminder after reload. Review their
+  errors before starting them later.
+
+If DUMB started with only its recovery control plane, retry or finish can resume
+retained services and complete the job before normal background workers have
+been initialized. Follow an explicit **restart DUMB** instruction in the job:
+restart the container, then refresh status and verify normal startup. The API
+marks this condition with `result.restart_required: true`; a completed recovery
+job alone does not replace that restart.
+
+Keep media protections and retained evidence while recovery is held. Database
+provider changes and old-installation cleanup remain blocked until the held
+operation is resolved. Lost mount readiness or uncertain process ownership is
+not a successful degraded migration; retain the data and follow the reported
+recovery checks.
+
+An older job that already activated v2 can lack the private target-binding
+evidence required for these recovery controls. Such a held job needs manual
+review of both retained v1 and existing v2 data. Updating DUMB does not invent a
+new acceptance receipt or authorize blindly restoring v1; keep both data sets
+and the job evidence while resolving its reported blocker.
+
+After a healthy completed cutover, a supporting backend can offer a separate
+manual v1 rollback. Its confirmation also requires explicitly accepting the
+loss of writes accepted by v2. Preserve any v2 data you need first. This action
+restores retained v1 state; it does not merge v2 writes into v1. A held activation
+or consumer recovery does not offer this ordinary rollback.
 
 ### Review native import omissions
 
@@ -237,9 +316,28 @@ not establish that those files will be repaired or replaced automatically.
 
 A known, fully accounted source incompatibility can require a separate review
 before cutover. Read the reasons and affected paths, then explicitly accept the
-reviewed omissions. This acceptance is bound to the validated rehearsal's exact
-omitted identities and reasons. Changed omissions require another review.
-There is no generic allowance for a maximum number or percentage of skipped files.
+reviewed omissions. This acceptance is bound to the validated rehearsal's full
+private evidence, not the dashboard's limited path samples.
+
+Cutover can omit the same items or fewer, including none, when the complete
+canonical source media and history census is unchanged. Every remaining omitted
+identity, name, path and exact reason must match the reviewed evidence. An item
+that succeeds at cutover no longer needs omission consent. New omissions or
+changed identities or reasons require another verified review; there is no
+generic allowance for a maximum number or percentage of skipped files.
+
+The complete proof also binds referenced metadata and NZB blob contents;
+identifiers alone do not establish that those bytes stayed unchanged. Validation
+can therefore read many metadata files from the retained source. This proof uses
+filesystem reads rather than adding NNTP requests. Keep its full private
+evidence with the job; a bounded public sample cannot replace it.
+Volatile health scheduling is excluded from this census. Changed source facts
+or stale private proof require a fresh isolated rehearsal and review.
+
+A lower count in one native import report is not accepted as a history-loss
+tolerance. Every required completed and failed source-history identity must
+still exist in the actual v2 database. Unsupported source states, invalid
+reserved identities and missing required history remain blockers.
 
 Provider/NNTP failures, unrecognized reasons or report formats, unexplained
 missing identities, changed names, database integrity failures and missing
@@ -272,6 +370,12 @@ A foreign, ambiguous, busy or stale mount blocks a transition. DUMB does not
 mount over another owner or force-detach a mount to make the check pass. Keep
 unrelated rclone instances and shared storage workflows intact.
 
+Before stopping the source, the native FUSE prerequisite check reports missing
+`/dev/fuse`, `fusermount3`, or an explicit `user_allow_other` policy in
+`/etc/fuse.conf` for a non-root configured mount owner. DUMB's image includes
+that policy; review it in a custom image if the check fails. The check does not
+edit the policy, detach a stale mount or change unrelated directory ownership.
+
 For symlinks, compare raw targets and verify they resolve through the selected
 mount. For STRM files, preserve identity/signing material and the original
 reachable origin and signed path. A valid token does not repair a retired URL
@@ -290,12 +394,13 @@ After generation 2 is validated, open **Service tools → InfiniDysk 2 database
 conversion**. This uses the native copy, synchronization and cutover engine,
 not DUMB's generation 1 SQLite-to-PostgreSQL adapter.
 
-1. Provision and start a dedicated, empty PostgreSQL database with **`C`
-   collation** and a suitable role
-   first. For DUMB-managed PostgreSQL, configure its
-   [database list](../services/dependent/postgres.md); otherwise use your external
-   administrator workflow. The migration preview does not create a destination.
-   Then select that managed database or supply its external TCP address and TLS policy.
+1. Have an administrator create and start a dedicated, empty PostgreSQL database
+   with **`C` collation** and a suitable owner role first. DUMB's managed option
+   uses its configured PostgreSQL connection; it does not create the named
+   database. The ordinary [database list](../services/dependent/postgres.md)
+   inherits the cluster's locale and does not request `C` explicitly. Use the
+   destination example below, then select that database or supply its external
+   TCP address and TLS policy. The migration preview only verifies the destination.
 2. Preview the destination. Review its physical cluster identity, database OID
    and schema, along with source, emptiness and recovery checks.
 3. Confirm backups and the destination reset acknowledgement, type the exact
@@ -303,6 +408,74 @@ not DUMB's generation 1 SQLite-to-PostgreSQL adapter.
 4. Wait for the backend to advertise **cutover**. Review and confirm that action
    separately. The native restart may retain its process ID; wait for confirmed
    provider state and service health.
+
+### Prepare a PostgreSQL destination
+
+The following PostgreSQL 16 example creates a **new** database with an explicit
+locale. Connect as a database administrator to a maintenance database such as
+`postgres`, and run the statement outside a transaction. Replace
+`example_role` with the existing role that the conversion will use; for
+DUMB-managed PostgreSQL this is its configured `postgres.user`. Choose an unused
+database name and enter that same name in the conversion form.
+
+```sql
+CREATE DATABASE infinidysk_v2
+  OWNER "example_role"
+  TEMPLATE template0
+  ENCODING 'UTF8'
+  LOCALE_PROVIDER libc
+  LC_COLLATE 'C'
+  LC_CTYPE 'C';
+```
+
+`template0` permits an explicit locale even when the cluster was initialized
+with another default. Adding an ordinary database-list entry alone can inherit
+`C.UTF-8`, which differs from DUMB's supported exact-`C` destination contract.
+Do not change an existing cluster's locale or drop/recreate an existing database
+to make the preview pass. Select a separate, empty destination; retain the old
+v1 database and all other applications' databases.
+
+InfiniDysk's native tool can warn and continue with other collations; DUMB's
+guarded workflow requires `C` so its supported destination keeps the intended
+folder ordering and path-search behavior. See PostgreSQL's
+[CREATE DATABASE reference](https://www.postgresql.org/docs/16/sql-createdatabase.html)
+and the native [PostgreSQL preparation guide](https://www.infinidysk.com/v2/operate/postgresql/).
+
+Successful playback after the major upgrade verifies the current SQLite-backed
+installation. It does not establish that this separate PostgreSQL destination
+exists or is reachable. SQLite remains current while native copying and
+synchronization run; PostgreSQL is selected only after confirmed cutover.
+
+### Destination preview problems
+
+Preview failures concern the selected PostgreSQL destination. Resolve the
+reported condition, then request and review a fresh preview:
+
+| Reported condition | Next step |
+| --- | --- |
+| The destination database does not exist | Create the new empty database first, using the same name and role as the conversion form. Selecting managed PostgreSQL reuses its connection settings. |
+| PostgreSQL rejects the credentials | Check the configured role, password and PostgreSQL connection/authentication policy. Keep credentials out of screenshots and shared logs. |
+| Physical identity inspection is denied | Ask the database administrator to review the named permission in the destination database. Keep the identity check enabled. |
+| The destination could not be verified | Check that the server is running and listening, the address/port and database name are correct, and the connection and TLS policies permit DUMB's selected connection. |
+| The database does not satisfy DUMB's `C`-collation or emptiness checks | Prepare a different dedicated destination with the supported locale. Keep the existing database intact. |
+
+Ordinary PostgreSQL roles can normally execute the catalog identity function.
+If an administrator has revoked it and the preview explicitly reports that
+denial, the administrator can grant only the required function in the
+**destination database**, using the role selected for conversion:
+
+```sql
+GRANT EXECUTE ON FUNCTION pg_catalog.pg_control_system()
+  TO "example_role";
+```
+
+This does not require making the application role a superuser. A successful
+login alone does not establish that DUMB can verify the destination's physical
+identity and safety requirements. PostgreSQL documents the
+[control data functions](https://www.postgresql.org/docs/16/functions-info.html#FUNCTIONS-CONTROLDATA)
+and [function privileges](https://www.postgresql.org/docs/16/ddl-priv.html).
+
+### Copy, cutover and recovery
 
 External credentials are sent only to the private backend preview and cleared
 from the form. They are not returned in public status or browser job storage.
@@ -339,6 +512,28 @@ is delayed, retrying verifies that same SQLite file and its health without
 restoring over writes accepted since the first restart. A missing or replaced
 file remains blocked for investigation.
 
+## Existing Arr download-client credentials
+
+For a new v1-to-v2 migration, DUMB carries the effective v1 **SAB-compatible
+download API key** into v2 and verifies it before accepting the candidate. This
+includes supported v1 environment key overrides. The native v2 administrative
+API key is a separate credential; do not substitute it into an Arr SAB download
+client.
+
+Whole-section JSON overrides such as `INFINIDYSK__SAB` are refused during
+v1-to-v2 migration: native section replacement can hide the retained download API
+key. Remove that override or express the settings as individual
+`INFINIDYSK__SAB__...` fields. An explicit `INFINIDYSK__SAB__API_KEY` must match
+the retained v1 key; other individual SAB fields remain supported. If DUMB
+requests renewed key proof, generate and review a fresh preview, then run a new
+isolated rehearsal before cutover.
+
+DUMB does not edit Arr applications' settings. If v2 is already running after an
+earlier migration or manual credential changes, compare the Arr download client's
+host, port and SAB API key with the current v2 configuration, then test that
+client's connection. Updating DUMB does not automatically rotate working v2 or
+Arr credentials back to the retained v1 key.
+
 ## Authentication with the retained backend port
 
 When `backend_port` differs from `frontend_port`, DUMB runs a compatibility
@@ -371,12 +566,14 @@ InfiniDysk 2 uses a dedicated root URL for its UI. Use the direct local address
 or configured public portal; embedded subpath login/playback remains unavailable
 unless the backend explicitly advertises a validated adapter.
 
-If the job is interrupted or needs recovery, keep the original data and private
-job evidence under `/config/migrations/infinidysk-v2`. Use the offered guarded
-rollback and exact job confirmation. Major rollback restores the retained v1
-runtime/configuration; later generation 2 writes are not copied back. A failed
-rollback or unavailable recovery action needs investigation before restarting
-imports, scans or services. Do not delete retained state to clear a banner.
+If the job is interrupted or needs recovery, keep the original data, any exposed
+v2 target and private job evidence under `/config/migrations/infinidysk-v2`.
+Use the offered action for that recovery boundary: retrying v2 service recovery
+keeps the target, while an authorized v1 rollback restores retained v1 state.
+Post-cutover rollback requires accepting discarded v2 writes; those writes are
+not copied back. A failed rollback or unavailable recovery action needs
+investigation before restarting imports, scans or services. Do not delete
+retained state to clear a banner.
 
 ## Retire the old v1 installation
 
