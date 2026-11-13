@@ -852,15 +852,59 @@ Paths below are relative to the API; browser requests use its `/api` proxy.
 
 | Method | Route | Purpose |
 |--------|-------|---------|
-| `GET` | `/process/installation-backups/status` | Schedule, operation/recovery state and current job |
+| `GET` | `/process/installation-backups/status` | Schedule, preparation, operation/recovery state and current job |
 | `GET` | `/process/installation-backups/catalog` | Verified installation archives from the selected destination |
 | `POST` | `/process/installation-backups/preview` | Review coverage, exclusions, destination, capacity and downtime |
+| `GET` | `/process/installation-backups/preview/status` | Reconnect to the current or selected tracked backup preview when supported |
+| `POST` | `/process/installation-backups/preview/{preview_id}/cancel` | Request cooperative cancellation of that tracked backup preview when supported |
 | `POST` | `/process/installation-backups/start` | Start the reviewed backup after explicit acknowledgement |
 | `GET` | `/process/installation-backups/jobs/{job_id}` | Poll a retained backup or restore job |
 | `PUT` | `/process/installation-backups/schedule` | Save an explicitly enabled/disabled schedule, destination and retention |
 | `POST` | `/process/installation-backups/restore/preview` | Verify a selected archive and preview compatible restore targets |
 | `POST` | `/process/installation-backups/restore/start` | Start the reviewed restore with its required confirmations |
 | `POST` | `/process/installation-backups/jobs/{job_id}/rollback` | Recover the exact retained operation after its typed rollback confirmation |
+
+The current `GET /status` response also includes `preparation`: `null` or an
+object with `stage: "checking_capacity"`, `message` and `started_at`. It describes
+a confirmed manual or scheduled backup's coverage/capacity recheck before a
+durable archive job is admitted and managed writers are stopped. The marker
+allows the frontend to reconnect to preparation after navigation or refresh.
+It reports elapsed time rather than per-entry preview counters and is cleared
+when job admission or the failed recheck finishes.
+
+Job `created_at` / `updated_at` and preparation `started_at` values use Unix
+seconds and can contain fractional seconds. Newer backends can include a `progress` object with optional
+`entries`, `logical_bytes` and `bytes_processed` counters. These are relative to
+the current `stage` and reset at a phase change: `inventorying` is a metadata
+census, `archiving` is archive streaming, `checking_source` hashes source file
+contents again, and `verifying` reads back the archive. In archive streaming
+and verification, `bytes_processed` counts actual stored stream bytes, including
+the stream containing headers, padding and manifest data. `logical_bytes` remains an uncompressed source measure.
+In source checking, `bytes_processed` counts source file bytes hashed.
+Consumers must tolerate omitted counters and must not infer an overall
+percentage or advancement merely from a successful status request.
+
+Backends advertising `installation_backup_preview_status=true` track the
+backup preview while the existing synchronous `POST /preview` is running.
+Poll `GET /preview/status`; optional query parameter `preview_id` pins a selected
+operation. The response contains `protocol`, `controller_session` and `preview`
+(`null` when no current preview is retained). An explicitly queried unknown or
+expired ID returns `409`; it does not start another scan. The operation reports `preview_id`,
+`status`, `stage`, `message`, start/update/completion and last-progress timestamps,
+`elapsed_seconds`, `entries`, `logical_bytes`, completed/total root counts,
+`current_root` and `destination_id`. Statuses are `running`, `cancelling`,
+`completed`, `failed` and `cancelled`; scan counters do not imply a known total or
+an archive write. A completed operation supplies its original review `result`
+and expiry. A completed scan can still return blockers and requires a separate
+explicit `/start` request before a backup begins.
+
+`POST /preview/{preview_id}/cancel` requests a stop; it does not claim immediate
+completion. Wait for `cancelled` after the worker cleans its temporary ledger
+and releases its preview lock. Preview never stops managed writers. Status is
+held in controller memory, so a changed `controller_session` or a missing result
+after a restart requires an explicitly requested new preview, not automatic
+replay. Confirmation expiry begins after scanning completes. The capability
+adds no fixed scan deadline and does not change restore-preview behavior.
 
 Preview authorization is short-lived and bound to the reviewed source, targets
 and storage identity. A restore can select an owned catalog reference or a
@@ -879,6 +923,12 @@ managed installation state, not host deployment files, media or external systems
 Failed admission, capacity, storage or compatibility checks do not authorize a
 partial success. See [Installation backup and restore](../features/installation-backups.md)
 for the operating and recovery procedure.
+
+An installation-recovery hold continues to allow normal login/refresh and the
+stateless `POST /auth/verify` session check under their ordinary authentication
+rules. This exception does not allow other HTTP methods or unrelated mutations.
+A held service/setup request's `409` is not an instruction to clear credentials;
+clients retain the session unless authentication itself establishes its expiry.
 
 ## Registered backup storage
 

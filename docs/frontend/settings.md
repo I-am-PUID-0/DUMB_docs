@@ -48,8 +48,32 @@ restore or its recovery state. This section requires installation-backup support
 from the backend. A fresh installation can reach its recovery entry before
 application onboarding; normal authentication setup and login still apply.
 
+Supported backends show a tracked **Preview backup** status with the current
+stage, managed root, scanned entries and bytes, and elapsed time. The progress
+notice and completion notification follow the user-run update style. You can
+return to Settings or refresh the browser to reconnect while the same DUMB
+controller is running. **Cancel preview** waits for the scan to stop and clean
+up; it does not cancel by merely closing the page. Applications remain running
+throughout preview, and creating an archive still requires a separate reviewed
+confirmation. Older backends show only a pending-request spinner and elapsed
+time, so keep that page open for its result.
+
+Manual and scheduled installation backups also show an application-wide notice
+while preparing, queued or running, with their stage and elapsed time.
+Preparation is the confirmed backup's coverage/capacity recheck, before
+applications are stopped or an archive job is admitted. The notice remains
+visible when you navigate away from Settings and reconnects after a browser
+refresh. Do not stop the DUMB container or shut
+down its host until the backup finishes. A lost connection leaves the backup's
+state unconfirmed; reconnect to obtain its terminal status. **Recovery required**
+is a separate attention state with retained recovery instructions. Session
+verification and refresh remain available during recovery; a backup hold does
+not itself discard the browser's credentials. Service/setup controls can remain
+blocked while you inspect and complete the retained recovery.
+
 See [Installation backup and restore](../features/installation-backups.md) for
-coverage, downtime, capacity, archive validation and container-restart steps.
+coverage, preview tracking and cancellation, downtime, capacity, archive
+validation and container-restart steps.
 
 ## Appearance
 

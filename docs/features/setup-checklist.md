@@ -71,6 +71,23 @@ Each action reports automation, configuration, verification, missing input and a
 
 There is no success timer or forced redirect. Leaving onboarding changes a navigation preference, not verification. A backend restart or browser change does not turn interrupted work into success. Correct rejected credentials in the relevant task and retry it rather than restarting unrelated applications.
 
+### During an installation backup or recovery
+
+Setup checks and configuration pause while an installation backup, restore or
+recovery controls application data. This is an expected hold, not a failed
+connection check or lost setup run. Previously loaded results and the remembered
+run remain available; the pause does not clear the open panel's input draft.
+Use **Open Backup and restore for status** to inspect the operation.
+
+The checklist suppresses ordinary result requests and disables its configuration
+controls while a known hold is active, then refreshes when that hold ends.
+A hold reported by the backend before global status is available is checked
+again periodically. Other authentication, gateway and unrelated conflict errors
+keep their normal error/retry behavior; they are not relabeled as a backup hold.
+The hold does not itself log you out: session verification and refresh remain
+available while the retained backup/recovery state is reviewed. Complete that
+recovery before retrying setup changes; rerunning onboarding does not release it.
+
 ### If the checklist cannot load
 
 No saved setup run is a normal result for an existing installation that has not

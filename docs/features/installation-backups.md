@@ -83,12 +83,42 @@ embedded ingress path may be unavailable during the operation.
    acknowledgement before starting.
 4. Follow the job until its archive has passed complete readback verification.
 
+Manual and scheduled installation backups show an application-wide status
+notice from preparation through queued and running archive work, with the
+current stage and elapsed time. **Preparing installation backup** means that
+DUMB is rechecking coverage and capacity before accepting the archive job;
+applications have not been stopped for that check. The notice stays available
+when you leave Settings, move to another frontend page or refresh the browser.
+**Do not stop the DUMB container or shut down its host until the backup
+finishes.** If the interface loses contact, the backup may still be running;
+reconnect and confirm its terminal status rather than assuming it stopped.
+A **Recovery required** notice needs separate operator attention: open the job's
+retained recovery details and follow the offered action.
+
+The worker reports separate phases. **Inventorying** measures entries and
+logical source sizes; it is not an archive transfer. **Archiving** streams the
+archive, **Checking source** re-reads and hashes source files to detect changes,
+and **Verifying** reads back the archive. When supported, entry, logical-size and
+processed-byte counters describe the current counted phase and reset between
+those phases. Archive-stream counters measure bytes actually written or read on archive
+storage, including the stream containing headers, padding and manifest data.
+Logical-size and source-hash bytes describe uncompressed source file data. They are not interchangeable totals
+or an overall completion percentage.
+
+Last-update times reflect actual worker reports, including fractional-second
+backend timestamps. Refreshing status alone does not establish new inventory or
+transfer progress. Older backends can show stage and elapsed time without these
+optional counters.
+
 DUMB records which managed services are running and quiesces them for a
 consistent filesystem snapshot, including managed SQLite and PostgreSQL state.
 The API and frontend remain available through their direct ports for progress.
 Previously running services
-are resumed after a backup when it is safe; previously stopped services are not
-started just because a backup ran. An error is retained with recovery guidance.
+are resumed in dependency order after a backup when it is safe, including the
+managed mount before its consumers; previously stopped services are not
+started just because a backup ran. Resuming services is a separate stage. A
+failed or blocked resume retains its recovery guidance rather than reporting
+that the backup has finished successfully.
 
 Database consistency follows the requirements for a stopped
 [PostgreSQL cluster](https://www.postgresql.org/docs/current/backup-file.html)
@@ -106,6 +136,44 @@ scan before a preview is ready. This phase inventories entries rather than
 copying the complete file contents, and it does not stop applications.
 Individual path, nesting, record and supported-metadata checks still apply;
 available disk space does not make an unsafe archive restorable.
+
+### Follow or cancel a backup preview
+
+On backends with tracked backup-preview support, the progress notice shows the
+current stage and managed root, entries scanned, logical bytes inventoried and
+elapsed time. These are inventory counters, not bytes already copied to an
+archive. DUMB does not show a percentage or remaining-time estimate before it
+knows the complete scope. A quiet counter while a filesystem call is pending
+does not by itself mean that the scan failed.
+
+You can leave Settings and return, or refresh the browser, to reconnect to the
+same preview while the DUMB controller remains running. The interface checks
+its retained status and result rather than automatically starting another scan.
+Completion is reported with the same notification style as a user-run update;
+review the returned blockers and capacity report before confirming a backup.
+
+**Cancel preview** requests a cooperative stop. Wait until the status reports
+**Cancelled**: an in-flight filesystem operation can need time to return, and
+the temporary local inventory must be cleaned up before the scan releases its
+lock. Cancellation does not stop applications, create an archive or remove
+application files. Closing the tab alone does not request cancellation.
+
+Preview tracking is held by the running controller, not a resumable disk job.
+After a DUMB restart, request a new preview explicitly. A completed review's
+15-minute confirmation window begins after the scan finishes, not when scanning
+starts. There is no fixed scan-duration limit.
+
+Starting the confirmed backup repeats the coverage and capacity check before
+stopping managed writers, so this step can take as long as the preview. The
+application-wide preparation notice shows elapsed time, without per-entry
+preview counters, and reconnects after a browser refresh. Archive-job progress
+begins after admission; a pending recheck is not evidence that applications
+have already stopped or an archive is being written.
+
+Older backends keep the synchronous preview flow. Its spinner and elapsed time
+indicate a pending request, but cannot provide scan counters, reconnection or
+cancellation. Keep that page open to receive its result; refreshing it does not
+reliably stop the backend scan.
 
 Estimates are not a reservation: another process can consume space afterward.
 Admission is checked again during the operation, and failed or incomplete
@@ -192,12 +260,32 @@ and live state is replaced.
 Archives are checked before extraction into private local staging. Paths,
 checksums and file types are validated; archive links cannot direct extraction
 outside that staging tree. The restore retains rollback evidence for replaced
-state. A failure during read-only verification does not stop applications.
+state. Where a job advertises **Rollback**, the control is available only after
+an eligible completed, failed or recovery-required state; it cannot run while
+that job is queued or running. This is recovery of retained state, not a way to
+cancel an active backup or restore. A failure during read-only verification does not stop applications.
 Before live replacement, DUMB attempts to resume any writers it stopped if the
 operation fails. Once replacement has started, or if the previous running set
 cannot be safely resumed, DUMB keeps applications blocked for recovery instead
 of starting them against a mixture of old and restored data. Use the offered
 rollback/recovery action and retain its files until recovery completes.
+
+For a failed installation backup, **Finish backup recovery** continues the
+retained service/startup recovery. The original application data remains in
+place: this action does not install applications or restore an archive. Follow
+any container-restart instruction before expecting services to resume. Older
+frontends label this same guarded action **Rollback**; the displayed
+job-specific confirmation is still required. For a restore, **Request reviewed rollback**
+instead returns the retained application state from before live replacement.
+After an instructed restart, refresh status; a recovered job can still show the
+failed backup's historical error without indicating another failure.
+
+A file changed during a cold archive means the stopped-state assumptions were
+not met. Retain the reported path and job error for investigation; that failed
+output is not a verified backup. Do not delete state or edit the job to force
+acceptance. An operation still marked queued or running is not eligible for
+rollback, even if its displayed stage or error indicates failure. If it cannot
+reach a terminal recovery state, preserve its records and request diagnosis.
 
 ## Startup and private recovery state
 
@@ -206,6 +294,19 @@ start. If those records require recovery or cannot be trusted, only the API and
 already-installed frontend start. Service actions can return `409` while this
 installation-wide hold is active; the recovery banner identifies the blocked
 controller rather than an individual application's startup failure.
+
+Normal sign-in, session refresh and stateless session verification remain
+available during this hold. A held service/setup request does not itself mean
+that the browser's credentials expired. Use the retained recovery details
+through direct frontend/API access; unrelated configuration and service
+mutations remain blocked.
+
+Newer frontends recognize this installation hold during the normal
+post-login/onboarding check and open **Settings → Backups and restore**. This
+does not mark onboarding complete or perform rollback. With an older frontend,
+open and reload `/settings#backups` directly to reach that recovery entry;
+normal login is still required. Unrelated API or authentication errors retain
+their own diagnostics.
 
 Some configuration mounts give new directories a group-inheritance bit
 (**SGID**), even when DUMB creates them with private `0700` permissions. Current
