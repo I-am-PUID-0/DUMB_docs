@@ -859,10 +859,28 @@ Paths below are relative to the API; browser requests use its `/api` proxy.
 | `POST` | `/process/installation-backups/preview/{preview_id}/cancel` | Request cooperative cancellation of that tracked backup preview when supported |
 | `POST` | `/process/installation-backups/start` | Start the reviewed backup after explicit acknowledgement |
 | `GET` | `/process/installation-backups/jobs/{job_id}` | Poll a retained backup or restore job |
-| `PUT` | `/process/installation-backups/schedule` | Save an explicitly enabled/disabled schedule, destination and retention |
+| `PUT` | `/process/installation-backups/schedule` | Save an explicitly enabled/disabled schedule, destination, compression and retention |
 | `POST` | `/process/installation-backups/restore/preview` | Verify a selected archive and preview compatible restore targets |
 | `POST` | `/process/installation-backups/restore/start` | Start the reviewed restore with its required confirmations |
 | `POST` | `/process/installation-backups/jobs/{job_id}/rollback` | Recover the exact retained operation after its typed rollback confirmation |
+
+Backends advertising `installation_backup_compression=true` accept
+`compression` in `POST /preview` and `PUT /schedule`: `"none"` selects the default
+uncompressed `.tar`; `"zstd"` selects `.tar.zst` and additionally requires
+`installation_backup_zstd=true`. The schema capability is independent of runtime
+codec availability: with schema support and Zstandard unavailable, clients can
+still explicitly save `"none"` to replace a schedule's previous `"zstd"` choice.
+A preview response and its tracked operation report the reviewed compression
+choice, which is bound to the preview token. Changing it requires another
+preview. An omitted schedule field preserves its saved compression choice; a
+newly configured schedule defaults to `"none"`. Clients lacking the schema
+capability omit the field and keep the legacy uncompressed flow.
+
+The catalog reports each archive's compression. Restore detects the actual
+format from its bytes rather than trusting the extension, so legacy `.tar`
+archives continue to work. Both formats are complete standalone archives.
+Compression streams directly to the destination; capacity admission uses a
+conservative uncompressed estimate plus overhead, not an assumed ratio.
 
 The current `GET /status` response also includes `preparation`: `null` or an
 object with `stage: "checking_capacity"`, `message` and `started_at`. It describes
@@ -879,7 +897,8 @@ the current `stage` and reset at a phase change: `inventorying` is a metadata
 census, `archiving` is archive streaming, `checking_source` hashes source file
 contents again, and `verifying` reads back the archive. In archive streaming
 and verification, `bytes_processed` counts actual stored stream bytes, including
-the stream containing headers, padding and manifest data. `logical_bytes` remains an uncompressed source measure.
+the stream containing headers, padding and manifest data; for Zstandard these
+are compressed bytes. `logical_bytes` remains an uncompressed source measure.
 In source checking, `bytes_processed` counts source file bytes hashed.
 Consumers must tolerate omitted counters and must not infer an overall
 percentage or advancement merely from a successful status request.

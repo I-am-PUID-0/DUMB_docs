@@ -43,7 +43,7 @@ locations and intermediate directories must still be verifiable without
 following symlinks. An ancestry error identifies the component that failed and
 the reason; clearing it must not require deleting or retargeting service aliases.
 
-The first archive format preserves regular files, directories, literal symlinks,
+Both supported archive formats preserve regular files, directories, literal symlinks,
 normal POSIX ownership/permissions and modification times. Hardlinks are stored
 as independent files. Extended attributes, ACLs, special permission bits and
 unresolved nested mounts are blockers. Nested controller-auth paths or an
@@ -70,6 +70,30 @@ DUMB does not mount shares or change their existing ownership/permissions.
 Active database and private recovery working files remain local. A missing or
 replaced destination mount blocks the operation;
 DUMB does not write into an underlying local directory as a fallback.
+
+## Choose an archive format
+
+Uncompressed `.tar` is the default. When the backend supports Zstandard,
+manual backups and the schedule can each select compressed `.tar.zst` archives.
+Choose the format before requesting a preview; changing it requires a new
+review. Older backends retain uncompressed backups.
+
+Zstandard streams directly to the selected destination without making a
+complete uncompressed archive on local disk first. Compression can reduce
+storage and transfer volume, but requires CPU time and may save little for
+already-compressed data. It does not encrypt the archive or make shared storage
+private. Each archive remains a complete, standalone backup; compression adds
+neither incremental backups nor deduplication.
+
+Capacity checks remain conservative: they reserve an uncompressed archive
+estimate plus overhead, without assuming a compression ratio. A preview can
+therefore block for space even if the actual compressed output might fit.
+Local inventory/verification ledgers and restore staging still require their
+own working space.
+
+DUMB verifies the stored archive bytes and the complete logical contents before
+publishing either format. Restore detects compression from the file contents,
+not its filename; existing uncompressed archives remain supported.
 
 ## Create a backup
 
@@ -102,7 +126,8 @@ and **Verifying** reads back the archive. When supported, entry, logical-size an
 processed-byte counters describe the current counted phase and reset between
 those phases. Archive-stream counters measure bytes actually written or read on archive
 storage, including the stream containing headers, padding and manifest data.
-Logical-size and source-hash bytes describe uncompressed source file data. They are not interchangeable totals
+For Zstandard they count compressed stored bytes. Logical-size and source-hash
+bytes describe uncompressed source file data. They are not interchangeable totals
 or an overall completion percentage.
 
 Last-update times reflect actual worker reports, including fractional-second
@@ -210,7 +235,11 @@ into an installation archive.
 ## Schedule backups
 
 Scheduling is off by default. Enable it deliberately, choose its destination,
-interval and retention, and save the schedule. Scheduled backups use the same
+interval, archive format and retention, and save the schedule. The schedule
+keeps its own format choice; changing a manual backup does not change it.
+Each manual or scheduled run
+creates a full, standalone archive; incremental or deduplicated installation
+backups are not currently supported. Scheduled backups use the same
 coverage, quiescence, admission and verification checks as manual backups, so
 schedule them during a suitable maintenance window.
 

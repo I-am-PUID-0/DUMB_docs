@@ -48,6 +48,13 @@ restore or its recovery state. This section requires installation-backup support
 from the backend. A fresh installation can reach its recovery entry before
 application onboarding; normal authentication setup and login still apply.
 
+On supported backends, choose uncompressed `.tar` (the default) or Zstandard
+`.tar.zst` before previewing a manual backup. The schedule has its own saved
+compression choice. Changing the manual choice requires a fresh preview and
+does not alter the schedule. Restore recognizes either format automatically.
+Compression streams to the destination, does not encrypt the archive, and does
+not add incremental backups. Space estimates do not assume a compression ratio.
+
 Supported backends show a tracked **Preview backup** status with the current
 stage, managed root, scanned entries and bytes, and elapsed time. The progress
 notice and completion notification follow the user-run update style. You can
