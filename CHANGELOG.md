@@ -1,6 +1,13 @@
 # Changelog
 
 
+## [1.24.29](https://github.com/I-am-PUID-0/DUMB_docs/compare/1.24.28...1.24.29) (2026-11-14)
+
+
+### 📖 Documentation
+
+* **backups:** explain cancellation, downtime and archive recovery ([1087f9b](https://github.com/I-am-PUID-0/DUMB_docs/commit/1087f9bdade00d193323c931499de29cef4755e2))
+
 ## [1.24.28](https://github.com/I-am-PUID-0/DUMB_docs/compare/1.24.27...1.24.28) (2026-11-13)
 
 
