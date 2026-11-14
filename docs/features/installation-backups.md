@@ -114,8 +114,10 @@ direct ports. Large installations or slow network storage can take hours; there
 is no promised finish time. A schedule starts the same complete operation and
 does not limit how long applications stay stopped.
 
-Preview and the pre-start coverage check do not stop applications. After the
-actual backup begins, leave the container and host running until the job reports
+Optional preview does not stop applications. On backends advertising
+`installation_backup_direct_start`, both reviewed and direct starts promptly
+return a durable job instead of running a second live census in the request.
+After the actual backup begins, leave the container and host running until the job reports
 completion, completed cancellation, or recovery instructions. A failed service
 resume can require recovery before applications become available again.
 
@@ -123,11 +125,35 @@ Use the container's direct frontend/API access before starting. Managed reverse
 proxies and tunnels can be stopped with the applications, so their public or
 embedded ingress path may be unavailable during the operation.
 
-1. Select a destination and request a backup preview.
+When supported, choose **Back up without preview** to skip the live size and
+file inventory. Select the destination and archive format, then confirm the
+downtime, credential handling and external-state acknowledgements and the exact
+displayed phrase. This option provides no advance size estimate. DUMB checks
+managed-root coverage, stops the retained running applications, and uses one
+cold inventory for both space checks and archive creation. Insufficient space
+fails before archive payload is written; DUMB resumes applications or reports
+the exact service recovery needed. Scheduled backups use this same path.
+When available, the job shows measured free, required and missing space for
+each filesystem. An admitted scheduled failure waits for its normal interval
+rather than repeatedly stopping applications every five minutes. Transient
+blockers before job admission can still retry after five minutes.
+
+The optional preview remains useful for reviewing paths and estimated space
+while applications are available. Starting a reviewed backup does not repeat
+that full live scan: its cold inventory supplies the authoritative size. The
+source-content consistency pass and closed-archive readback are separate checks
+and still run before the archive is accepted.
+
+1. To review first, select a destination and request a backup preview.
 2. Review included paths, exclusions, space estimates and any blockers.
 3. Stop external writers to the included data. Confirm the displayed downtime
    acknowledgement before starting.
 4. Follow the job until its archive has passed complete readback verification.
+
+If a request times out, refresh backup status before submitting another
+operation. A proxy timeout does not prove the job failed. The UI reconnects to
+the admitted job; a consumed preview cannot be reused to create a second job.
+Direct-start retries use the same request identity to recover that job.
 
 Manual and scheduled installation backups show an application-wide status
 notice from preparation through queued and running archive work, with the

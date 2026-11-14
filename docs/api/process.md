@@ -858,6 +858,7 @@ Paths below are relative to the API; browser requests use its `/api` proxy.
 | `GET` | `/process/installation-backups/preview/status` | Reconnect to the current or selected tracked backup preview when supported |
 | `POST` | `/process/installation-backups/preview/{preview_id}/cancel` | Request cooperative cancellation of that tracked backup preview when supported |
 | `POST` | `/process/installation-backups/start` | Start the reviewed backup after explicit acknowledgement |
+| `POST` | `/process/installation-backups/start-direct` | Admit an acknowledged backup without a live preview when supported |
 | `GET` | `/process/installation-backups/jobs/{job_id}` | Poll a retained backup or restore job |
 | `POST` | `/process/installation-backups/jobs/{job_id}/cancel` | Request cooperative cancellation of an active backup when supported |
 | `PUT` | `/process/installation-backups/schedule` | Save an explicitly enabled/disabled schedule, destination, compression and retention |
@@ -883,13 +884,45 @@ archives continue to work. Both formats are complete standalone archives.
 Compression streams directly to the destination; capacity admission uses a
 conservative uncompressed estimate plus overhead, not an assumed ratio.
 
-The current `GET /status` response also includes `preparation`: `null` or an
-object with `stage: "checking_capacity"`, `message` and `started_at`. It describes
-a confirmed manual or scheduled backup's coverage/capacity recheck before a
-durable archive job is admitted and managed writers are stopped. The marker
-allows the frontend to reconnect to preparation after navigation or refresh.
-It reports elapsed time rather than per-entry preview counters and is cleared
-when job admission or the failed recheck finishes.
+Backends advertising `installation_backup_direct_start=true` support
+`POST /start-direct`. The status response advertises `direct_start` with
+`confirmation_text` and `required_acknowledgements`. Send:
+
+```json
+{
+  "request_id": "0123456789abcdef0123456789abcdef",
+  "destination_id": "registered_destination",
+  "compression": "none",
+  "confirmation": "BACK UP DUMB INSTALLATION",
+  "acknowledgements": {
+    "downtime": true,
+    "secrets": true,
+    "external_state": true
+  }
+}
+```
+
+Use a fresh random 32-character lowercase hexadecimal request identity for each
+intended backup. Retries of the same identity and options return the original
+durable job; different options with a spent identity are refused. The job
+exposes its `request_id` for transport-loss reconciliation. A direct start skips
+the live census and does not provide a reviewed size estimate. Its worker checks
+coverage and destination, stops managed writers, and checks capacity from the
+cold census before emitting archive payload. If it fails, poll the job for its
+reason and service-resume outcome.
+The job may include `capacity` with `from_census: true`, measured source totals
+and filesystem-role free/required/shortfall byte counts. Failed admitted
+scheduled jobs keep the normal interval; pre-admission blockers retain the
+five-minute retry without stopping services.
+
+On these backends, reviewed `POST /start` also admits a job without repeating
+the preview's full census. Scheduled backups use direct admission. Both retain
+configuration/destination identity checks and final source/archive verification.
+The legacy `preparation` field remains `null`; older backends may expose
+`checking_capacity` before admission. Clients must gate direct start by its
+capability and keep polling status while a start response is pending or uncertain.
+Never treat an older completed job as confirmation of a new request, and do not
+automatically submit a fresh operation after a proxy timeout.
 
 Job `created_at` / `updated_at` and preparation `started_at` values use Unix
 seconds and can contain fractional seconds. Newer backends can include a `progress` object with optional
