@@ -859,6 +859,7 @@ Paths below are relative to the API; browser requests use its `/api` proxy.
 | `POST` | `/process/installation-backups/preview/{preview_id}/cancel` | Request cooperative cancellation of that tracked backup preview when supported |
 | `POST` | `/process/installation-backups/start` | Start the reviewed backup after explicit acknowledgement |
 | `GET` | `/process/installation-backups/jobs/{job_id}` | Poll a retained backup or restore job |
+| `POST` | `/process/installation-backups/jobs/{job_id}/cancel` | Request cooperative cancellation of an active backup when supported |
 | `PUT` | `/process/installation-backups/schedule` | Save an explicitly enabled/disabled schedule, destination, compression and retention |
 | `POST` | `/process/installation-backups/restore/preview` | Verify a selected archive and preview compatible restore targets |
 | `POST` | `/process/installation-backups/restore/start` | Start the reviewed restore with its required confirmations |
@@ -902,6 +903,57 @@ are compressed bytes. `logical_bytes` remains an uncompressed source measure.
 In source checking, `bytes_processed` counts source file bytes hashed.
 Consumers must tolerate omitted counters and must not infer an overall
 percentage or advancement merely from a successful status request.
+
+For an installation backup, `archive_verified=true` reports a persisted
+`result.complete=true` with a verified archive receipt and its nonempty
+reference in `result.archive`. This proof is saved before service resume. The
+overall job can still be `recovery_required` because applications could not
+resume; that status does not invalidate the published archive. Backup recovery
+preserves the archive result and merges restart fields into it. Restore rollback
+keeps its separate existing semantics.
+
+The flag describes verification and publication at backup time, not a new
+full-file integrity check on every status poll. Do not derive it from copied
+bytes, elapsed time, a finished phase or a filename. A publication-stage
+failure without a recorded receipt has an unconfirmed outcome: retain recovery
+evidence and review the archive catalogue rather than declaring a verified
+backup or assuming that publication never happened.
+
+`archive_publication_uncertain=true` identifies that recorded publication
+uncertainty. Its persistent marker survives a controller restart that changes
+the job stage to `interrupted`; clients must not rely on the stage alone.
+During service recovery, keep the archive receipt visible separately from the
+overall job status. For scheduled backups, `last_success_at` records accepted
+archive publication and the normal next interval is retained even when services
+need recovery. Publication uncertainty also avoids an immediate heavy retry,
+but does not create a successful-backup timestamp or verified-archive claim.
+
+Backends advertising `installation_backup_phase_progress=true` can include measured
+phase totals. When a phase has a measured total, `progress` can include `total_entries`,
+`total_logical_bytes` or `total_bytes`, together with `percent` and
+`percent_basis` (`"entries"` or `"bytes"`). These fields describe only the current
+phase. Omit the progress bar when its measured percentage is absent; a finished
+phase does not establish that the archive has passed later checks or been
+published. Do not mix compressed stream bytes with logical source totals.
+
+Job `services_stopped` and `stopped_process_names`, when present, report the
+exact retained service names whose complete quiescence was verified. Clients
+must invalidate stale running/health data when an installation hold begins,
+show an unknown or transitioning state while stopping/resuming, and only label
+named services stopped when the backend supplies that evidence. The API and
+frontend remain control-plane services. A cached green badge is not proof that
+an application stayed running through a cold backup.
+
+`installation_backup_cancellation=true` enables `POST /jobs/{job_id}/cancel`
+with an empty request body. Public job fields `can_cancel` and
+`cancel_requested` advertise whether the worker can accept the request and
+whether cancellation is pending. This operation is only for an active
+`installation_backup`, including a scheduled run; it does not cancel restores
+or invoke rollback. Keep polling: the worker must leave its current I/O, remove
+its own unpublished output and safely resume the retained service set before
+reporting `cancelled`. Resume failure remains `recovery_required`. Cancellation
+acceptance closes before verified archive publication; clients must respect
+`can_cancel` rather than infer eligibility from a running status alone.
 
 Backends advertising `installation_backup_preview_status=true` track the
 backup preview while the existing synchronous `POST /preview` is running.
@@ -2123,6 +2175,8 @@ Returns backend capabilities and feature flags. Used by the frontend to determin
 | `backup_storage_shared_permissions` | Explicit per-profile consent for fixed/shared external permissions; local control state remains private |
 | `backup_storage_kinds` | Supported producers: `symlink_manifest`, `infinidysk_v2_archive` and `installation_backup` |
 | `installation_backup` / `installation_backup_protocol` | Managed installation archive, schedule and restore workflow; exact supported protocol is numeric `1` |
+| `installation_backup_cancellation` | Cooperative cancellation of an active installation backup, with job-specific eligibility |
+| `installation_backup_phase_progress` | Measured per-phase totals and percentages; no overall completion estimate |
 | `installation_backup_shared_permissions` | Explicit shared permissions consent for an existing mounted restore archive; registered references use their profile policy |
 | `infinidysk_v2_migration_backup_storage` | Explicit registered backup destination in the major-migration preview |
 | `infinidysk_v2_low_space_migration` | Explicit reuse of local v1 data after verified external archive capture, with archive-based rollback |

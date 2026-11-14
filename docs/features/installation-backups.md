@@ -106,6 +106,19 @@ not its filename; existing uncompressed archives remain supported.
 
 ## Create a backup
 
+**Plan for application downtime, including scheduled backups.** Once DUMB stops
+the managed applications, playback, library imports, scans and their service UIs
+are unavailable until archive creation, source checks, readback verification and
+service resume finish. The DUMB API and frontend remain available through their
+direct ports. Large installations or slow network storage can take hours; there
+is no promised finish time. A schedule starts the same complete operation and
+does not limit how long applications stay stopped.
+
+Preview and the pre-start coverage check do not stop applications. After the
+actual backup begins, leave the container and host running until the job reports
+completion, completed cancellation, or recovery instructions. A failed service
+resume can require recovery before applications become available again.
+
 Use the container's direct frontend/API access before starting. Managed reverse
 proxies and tunnels can be stopped with the applications, so their public or
 embedded ingress path may be unavailable during the operation.
@@ -139,6 +152,14 @@ For Zstandard they count compressed stored bytes. Logical-size and source-hash
 bytes describe uncompressed source file data. They are not interchangeable totals
 or an overall completion percentage.
 
+On backends with measured phase progress, the interface shows a percentage only
+when that phase has a known total, such as the expected entries or archive bytes
+to verify. The label names the phase; it is not a percentage for the whole
+backup. A phase can reach its total while later checks and service resume still
+remain. Phases without a complete denominator show activity and counters rather
+than a guessed percentage. Compression output size and elapsed time do not
+predict a reliable overall percentage or finish time.
+
 Last-update times reflect actual worker reports, including fractional-second
 backend timestamps. Refreshing status alone does not establish new inventory or
 transfer progress. Older backends can show stage and elapsed time without these
@@ -151,8 +172,26 @@ Previously running services
 are resumed in dependency order after a backup when it is safe, including the
 managed mount before its consumers; previously stopped services are not
 started just because a backup ran. Resuming services is a separate stage. A
-failed or blocked resume retains its recovery guidance rather than reporting
-that the backup has finished successfully.
+failed or blocked resume retains its recovery guidance without discarding an
+already verified and saved archive.
+
+Archive completion and application availability are separate results. **Archive
+verified and saved** means that source-consistency checks, logical archive
+verification, stored-byte readback and catalogue publication completed. The job
+keeps that archive receipt while services resume. If resume fails, DUMB reports
+that the archive was saved but services need recovery. **Finish backup recovery**
+preserves the receipt and does not require repeating the backup just to restart
+applications. Future configured retention can still retire older scheduled
+archives; save independent copies according to your backup policy.
+
+A finished copying pass or a phase reaching its total does not establish those
+checks. If source consistency or archive verification fails before publication,
+DUMB does not advertise the partial output as a valid backup. If publication
+was interrupted before the job could record a receipt, its outcome is unconfirmed:
+review the archive catalogue and recovery details rather than assuming either
+that it was saved or that no archive exists. A saved receipt describes the
+verification performed when the backup was made; restore preview still checks
+the actual archive before using it.
 
 Seerr request synchronization reserves installation persistence for its entire
 cycle. It skips synchronization and checkpoint writes while a backup, restore
@@ -162,6 +201,12 @@ admission reports busy until that cycle finishes; wait, then retry the operation
 and follow any renewed preview requirement. This prevents the controller's
 `seerr_sync_state.json` updates from continuing after managed services stop.
 
+Metrics history also reserves installation persistence for its complete storage
+operations. SQLite connections are closed before that reservation is released,
+so delayed garbage collection cannot checkpoint or remove WAL/SHM files during
+the cold archive. Read and status operations use the same admission boundary
+because opening a SQLite connection can change its journal files.
+
 PostgreSQL's configured `{postgres_config_dir}` and `{postgres_config_file}`
 launch placeholders are expanded on every managed start, including backup resume
 and recovery. A missing path containing a literal placeholder on an older build
@@ -169,6 +214,13 @@ is a problem with launch arguments, separate from a change to the archive's
 source files. Expanding the command leaves saved settings and existing PostgreSQL
 data intact; it does not run initial database setup. Follow the job's service
 resume or recovery instructions before retrying a backup.
+
+pgAdmin's automatic PostgreSQL connection registration is separate from starting
+its web service. A registration warning, for example when the configured setup
+email differs from an existing pgAdmin account, preserves the running web service
+and existing definitions instead of blocking the remaining services' resume.
+The setup checklist can still report that the requested connection registration
+needs attention; DUMB does not replace accounts or connections to clear it.
 
 Database consistency follows the requirements for a stopped
 [PostgreSQL cluster](https://www.postgresql.org/docs/current/backup-file.html)
@@ -239,6 +291,32 @@ jobs. Record the selected archive and retain an independent copy before relying
 on it for disaster recovery. A checksum verifies the recorded bytes; a successful
 restore rehearsal remains the practical test of your recovery procedure.
 
+### Cancel a running backup
+
+On backends advertising backup cancellation, **Cancel backup** requests a
+cooperative stop for a manual or scheduled installation backup. Keep the
+container running and wait for **Cancelled**. An in-flight filesystem or network
+operation can take time to return before the worker reaches a cancellation
+checkpoint.
+
+This job control becomes available after admission. The earlier coverage and
+capacity recheck has not stopped applications or admitted an archive job, so it
+does not offer that job's cancel action. Closing the page does not cancel a
+submitted start request; keep monitoring its preparation and accepted job state.
+
+DUMB stops archive work, removes only the unpublished output owned by that job,
+and attempts to resume the previously running applications in dependency order.
+It does not restore an archive or replace application data. Existing completed
+archives remain available. If services cannot resume safely, the job reports
+**Recovery required** and retains its recovery evidence instead of claiming that
+cancellation restored service availability.
+
+Cancellation closes before the verified archive is published. The control is
+unavailable once the job has passed that boundary, after completion, and for
+installation restores. Closing the browser does not cancel a job. Older backends
+can expose **Cancel preview** without supporting cancellation of an actual
+backup; those are separate operations.
+
 ## Unclassified data in a backup preview
 
 A preview can stop on an unrecognized child of `data_root`, even when that
@@ -267,6 +345,13 @@ creates a full, standalone archive; incremental or deduplicated installation
 backups are not currently supported. Scheduled backups use the same
 coverage, quiescence, admission and verification checks as manual backups, so
 schedule them during a suitable maintenance window.
+
+Saving or enabling a schedule requires reviewing the same downtime warning as
+a manual backup. Every scheduled run stops the managed applications until its
+backup and resume stages finish, which may extend beyond the intended window.
+The global backup notice shows scheduled activity too. Changing or disabling
+the schedule does not cancel an already-running job; use that job's supported
+**Cancel backup** control and wait for its terminal result.
 
 Missed or blocked jobs remain visible. A schedule does not bypass startup,
 another active operation, unavailable storage or insufficient space. Retention
@@ -316,8 +401,9 @@ checksums and file types are validated; archive links cannot direct extraction
 outside that staging tree. The restore retains rollback evidence for replaced
 state. Where a job advertises **Rollback**, the control is available only after
 an eligible completed, failed or recovery-required state; it cannot run while
-that job is queued or running. This is recovery of retained state, not a way to
-cancel an active backup or restore. A failure during read-only verification does not stop applications.
+that job is queued or running. This is recovery of retained state; use the
+separate supported **Cancel backup** control for an active backup. It does not
+cancel an active restore. A failure during read-only verification does not stop applications.
 Before live replacement, DUMB attempts to resume any writers it stopped if the
 operation fails. Once replacement has started, or if the previous running set
 cannot be safely resumed, DUMB keeps applications blocked for recovery instead
@@ -327,7 +413,10 @@ rollback/recovery action and retain its files until recovery completes.
 For a failed installation backup, **Finish backup recovery** continues the
 retained service/startup recovery. The original application data remains in
 place: this action does not install applications or restore an archive. Follow
-any container-restart instruction before expecting services to resume. Older
+any container-restart instruction before expecting services to resume. If the
+archive was already verified and saved, its receipt remains available through
+this recovery; an application-startup failure does not invalidate that archive.
+Older
 frontends label this same guarded action **Rollback**; the displayed
 job-specific confirmation is still required. For a restore, **Request reviewed rollback**
 instead returns the retained application state from before live replacement.
