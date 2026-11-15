@@ -1477,6 +1477,64 @@ least a comparable full source-tree logical allocation. This remains an estimate
 because the native metadata/compression formats differ. Recovery checks local
 restore capacity before releasing the owned candidate and again after removal.
 
+For a backend advertising the strict boolean
+`infinidysk_v2_external_blob_staging: true`, an existing-data preview can also
+request `offload_legacy_blobs: true`:
+
+```json
+{
+  "mode": "migrate",
+  "mount_backend": "rclone",
+  "import_strategy": "preserve",
+  "backup_destination_id": "migration_archive",
+  "reclaim_source_space": true,
+  "offload_legacy_blobs": true
+}
+```
+
+This option requires `mode: "migrate"`, `reclaim_source_space: true` and the
+registered recovery archive on a different filesystem. Omit it for ordinary
+reuse. Archive selection or the older low-space capability alone does not
+authorize offload. The major status response can additionally advertise
+`capabilities.external_blob_staging: true`; clients must gate the new option
+using its explicit capability rather than the backend version alone.
+
+The preview retains `source_storage.mode: "archive_recovery"` and adds
+`source_storage.offload_legacy_blobs: true` for the chosen mode.
+`required_acknowledgements` additionally requires `external_blob_staging`.
+Use the acknowledgements returned by that preview for rehearsal and start.
+
+DUMB verifies the cold recovery archive, copies and verifies a separate expanded
+legacy blob input at the destination, then releases only the corresponding owned
+local blob files. Public job stages distinguish `staging_blobs`,
+`verifying_blob_staging` and `releasing_local_blobs`. The importer reads the
+staged input while active SQLite, control state and PostgreSQL verification
+scratch remain local. The archive remains the authoritative v1 rollback source;
+a missing or damaged expanded copy does not substitute for that archive.
+
+Capacity reporting includes `external_blob_staging` for the expanded input
+on the destination and `native_import_growth` for local v2 output, in addition
+to the recovery archive and other working requirements. The same destination
+therefore needs room for both the archive and expanded input.
+
+`capacity.phases` contains objects with `phase`, `status` and `filesystems`.
+The phases are `before_blob_release` and `after_blob_release`; the flattened
+`capacity.filesystems` rows also identify their `phase`. Each row's
+`free_bytes` remains the measured filesystem value. Preview can separately
+report `projected_released_bytes` and `projected_available_bytes`, with
+`release_is_projected: true`; these are estimates, not increased observed free
+space or a reservation. The worker checks fresh actual capacity after unlinking
+the verified owned local files, without projected release credit, before import.
+Source moves or symlinks created outside this workflow are not an offload
+request.
+
+After accepted import or completed v1 restoration, DUMB attempts cleanup of
+only the recorded, unchanged expanded input. The verified recovery archive
+remains retained. A missing, changed or otherwise unremovable staging copy can
+leave `job.staging_cleanup_required: true` without invalidating an accepted
+import or blocking restoration from the valid archive. Preserve the warning
+and retained evidence; it does not authorize deleting a replacement directory.
+
 The preview returns `protocol`, `ready`, `preview_token`, `expires_at`,
 `plan_fingerprint`, `confirmation_text`, `current`, `target`, `checks`,
 `blockers`, `warnings`, `inventory`, `required_acknowledgements` and
@@ -1547,6 +1605,13 @@ will be discarded. A held exposed target does not offer ordinary v1 rollback.
 The default mode retains the original local source;
 low-space recovery restores it from the retained archive. Later 2.x writes are
 not merged back into v1.
+
+For an offload-enabled job, accepted rollback promptly returns its persisted
+`rolling_back` job while archive restoration continues in the worker. Poll the
+job route until restoration and service recovery finish; the response does not
+mean v1 is already running. Other existing migration modes retain their
+synchronous rollback behavior. The exact confirmation and any required
+`acknowledge_discard_v2_writes` consent are checked before either path starts.
 
 The `infinidysk_v2_cancel: true` capability gates new cancellation requests.
 For a job advertising `can_cancel: true` or `actions.cancel: true`, send
@@ -2117,6 +2182,7 @@ Returns backend capabilities and feature flags. Used by the frontend to determin
   "installation_backup_shared_permissions": true,
   "infinidysk_v2_migration_backup_storage": true,
   "infinidysk_v2_low_space_migration": true,
+  "infinidysk_v2_external_blob_staging": true,
   "infinidysk_v2_cleanup": true,
   "infinidysk_v2_cleanup_protocol": 1,
   "infinidysk_v2_consumer_recovery": true,
@@ -2213,6 +2279,7 @@ Returns backend capabilities and feature flags. Used by the frontend to determin
 | `installation_backup_shared_permissions` | Explicit shared permissions consent for an existing mounted restore archive; registered references use their profile policy |
 | `infinidysk_v2_migration_backup_storage` | Explicit registered backup destination in the major-migration preview |
 | `infinidysk_v2_low_space_migration` | Explicit reuse of local v1 data after verified external archive capture, with archive-based rollback |
+| `infinidysk_v2_external_blob_staging` | Explicit verified external legacy blob input for low-space migration; the recovery archive remains separate |
 | `infinidysk_v2_cleanup` | Guarded v1-installation retirement after a verified v2 cutover, retaining backups |
 | `infinidysk_v2_cleanup_protocol` | Exact supported retirement workflow protocol; currently numeric `1` |
 | `arr_postgres_migration*` | Legacy Sonarr/Radarr capability aliases retained for older clients |

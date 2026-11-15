@@ -106,51 +106,94 @@ and successful dump/restore proof. If that path is unavailable or unverified,
 the preview blocks it. The major importer does not directly reuse the v1
 PostgreSQL database as a generation 2 database.
 
-## Choose archive storage
+## Choose migration storage
 
-The migration panel's **Backup destination** selects the legacy local backup
-tree or [registered local/NAS archive storage](backup-storage.md) for this job.
-Expand **Register a backup destination** to register an existing
-container-mounted directory. The separate **Global default** controls save or
-clear that preference; registration alone does not move backups or adopt a new
-default. Review the selected destination and local working-space requirements
-in each new preview.
+**Migration backup location** is where DUMB saves the verified v1 recovery
+archive for this migration. It does not select the live v2 database location.
+Choose the existing local backup tree or
+[registered local/NAS archive storage](backup-storage.md). To use a share,
+mount it inside the DUMB container first, then expand **Register a backup
+destination** and register that existing directory.
 
-A registered destination holds a closed, verified source archive. Active v2
-SQLite data, job/control state and import/database-restore scratch remain local.
-Keep independent backups even when DUMB retains and verifies its own archive.
+Registration does not move existing files or set a global default. The separate
+**Global default** controls save or clear that preference. Review the selected
+location and its available space in each new preview.
+
+### Choose what stays on local storage
+
+| Choice | What DUMB does | Space to allow |
+|--------|----------------|----------------|
+| Keep v1 local (default) | Retains the original v1 installation and creates a separate migration candidate. | The original, recovery archive, candidate and new v2 output can coexist. An external backup location moves the archive off local storage. |
+| Reuse v1 directory (avoid a second copy) | Verifies the recovery archive, then reuses the original local data as the candidate. | Avoids a second complete local source copy. Old blobs still occupy local storage while the new v2 database grows. |
+| Move legacy blobs to migration backup location | Verifies the recovery archive and a separate copy of the legacy blobs on the selected share, then removes the corresponding owned local blob files. | Frees their local allocation for v2 output. The share needs room for both the recovery archive and expanded legacy input. |
+
+The last two choices are separate, explicit options on supporting backends.
+Selecting a migration backup location alone keeps v1 local. Both require a
+registered destination on a different filesystem and a supported local
+source/candidate layout. Mounted source roots or incompatible layouts block the
+preview. Generate a new preview after changing the storage choice.
 
 ### Reuse local v1 storage
 
-For an existing installation with limited local space, a supporting backend can
-offer **Reuse local v1 storage**. This is a separate, unchecked migration option;
-selecting an archive destination alone keeps the original v1 installation local.
-Choose a registered archive destination on a different filesystem and generate a
-new preview after changing this option.
+**Reuse v1 directory** avoids a duplicate source tree; it does not make the
+old blobs disappear or increase reported free space. DUMB stops v1 and its
+affected consumers, writes and verifies the complete recovery archive, then
+reuses the original local data as the private candidate.
 
-With this option, DUMB stops v1 and its affected consumers, writes and verifies
-the complete retained archive, then reuses the original local data tree as the
-private migration candidate. This avoids a second complete local data copy.
-The source and candidate must support the guarded local move; mounted source
-roots or incompatible filesystem layouts block the preview. Active databases,
-local control state and native working data remain local.
+Native conversion still writes a new v2 database. Allow space for that output,
+runtime files, local verification scratch and safety headroom. The preview
+includes a conservative estimate because native metadata and compression
+formats differ from v1.
 
-The archive now supplies v1 recovery. Both a rehearsal and a rollback can need to
-remove the owned v2 candidate before restoring v1 from that archive. Review the
-additional archive-recovery acknowledgement: the destination must remain mounted
-and readable, recovery takes time, and later v2 changes are not merged into v1.
-A missing, replaced or damaged archive stops recovery and leaves the job needing
-attention; DUMB does not start v1 against an empty replacement directory.
+### Move legacy blobs to migration backup location
 
-The capacity preview still includes database conversion, verification files,
-runtime files and safety headroom. Native conversion writes new metadata into
-the v2 database while old v1 blobs can still occupy the working tree, so DUMB
-also estimates native output growth using at least a comparable source-tree
-allocation. Compression and metadata formats differ; this remains an estimate.
-Reusing the source does not increase the filesystem's reported free space or
-eliminate the space needed for that new database. After an
-interruption, keep the job state and archive, restore the archive mount and use
-the offered recovery action before restarting normal services.
+This option also reuses the local source, but moves its legacy blob input out of
+the way before native import. DUMB first verifies the complete recovery archive,
+then copies and verifies the legacy blobs separately on the selected storage.
+It frees the corresponding local blob files only after that copy is verified,
+then checks the actual available local space again before import. Preview's
+projected release is an estimate, not free space already available to use.
+The importer reads that expanded legacy input without changing it while writing
+the new v2 database locally.
+
+The recovery archive and expanded input have different jobs: the archive can
+restore v1, while the expanded files let the importer read individual legacy
+blobs. DUMB needs space for both on the share. Moving only the archive does not
+free the local blobs, and an expanded input copy does not replace the verified
+recovery archive.
+
+Active SQLite databases, DUMB job/control state and PostgreSQL dump/restore
+verification scratch still require local storage. External blob input can be
+on a mounted NAS share; it is not a request to run the live database there.
+Do not manually move the source or replace blob paths with symlinks to bypass
+the workflow.
+
+After a successful accepted import or a completed v1 restore, DUMB attempts to
+remove only that job's recorded, unchanged expanded input. The verified recovery
+archive stays available. If the working copy cannot be safely removed, the job
+reports that staging cleanup needs attention and retains its evidence. A changed
+directory is kept for review; do not delete it just to clear that warning.
+
+### Recovery when v1 storage is reused
+
+The verified archive is the v1 recovery source for both low-space choices.
+A rehearsal or rollback can need to remove the owned v2 candidate before
+restoring v1 from that archive. Keep the selected storage mounted and readable
+through migration and any recovery.
+
+Review the archive-recovery acknowledgement before continuing. Restoring v1
+takes time and needs local capacity; later v2 writes are not merged into v1.
+An unavailable, replaced or damaged recovery archive keeps recovery held;
+DUMB does not start v1 over an empty directory. Import needs its expanded legacy
+input, but recovery restores from the verified archive if that working copy is
+missing. After an interruption, reconnect the same storage and use the job's
+recovery action. Keep its files and evidence until recovery completes.
+
+For a migration that moved legacy blobs externally, **Rollback** starts a
+persistent recovery job and returns before the archive has finished restoring.
+Follow that job until v1 and its retained services are restored; keep the
+container and selected storage available while it runs. Returning to the panel
+or refreshing status does not restart the restore.
 
 ## Review and run
 
@@ -159,11 +202,12 @@ copy capacity. Filesystem entry counts include application blob stores and any
 build or dependency directories inside those trees; they are not counts of
 titles or media files. The storage review shows source entry counts and logical
 size, then each filesystem's required space, available space, shortfall and status.
-Required space already includes retained backups, the candidate installation,
-native output growth while v1 blobs remain, PostgreSQL staging and restore
-overhead when applicable, up to 512 MiB for the inventory manifest, and a safety
-margin. Paths sharing a filesystem use one
-combined budget. An unavailable estimate does not pass the capacity check.
+Required space accounts for the selected storage choice: recovery archive,
+candidate or staged legacy input, new v2 output, PostgreSQL verification and
+restore overhead when applicable, up to 512 MiB for the inventory manifest, and
+a safety margin. The review shows local and external requirements separately;
+paths on the same filesystem share one budget. An unavailable estimate does not
+pass the capacity check.
 
 These estimates do not reserve space. DUMB checks capacity again before copying;
 keep enough space available throughout the operation.
@@ -185,8 +229,8 @@ source locations and available space, and resolve the blocker before retrying.
    The downstream review confirms existing Arr/media mount paths, remote path
    mappings, symlinks and STRM origins, and that external writers/scanners are
    stopped. It is an operator review, not an automatic audit of external players.
-5. For existing data, run the isolated rehearsal. Cutover requires a validated
-   rehearsal matching the reviewed plan. A fresh installation must instead
+5. For existing data, select **Test migration** to run the isolated rehearsal.
+   Cutover requires a successful test matching the reviewed plan. A fresh installation must instead
    prove that it will not overwrite existing data.
 6. Start the installation or migration and follow the persistent job. A changed
    source or expired preview requires another review; a successful rehearsal can
@@ -199,10 +243,10 @@ process group have stopped and that v1 and its managed consumers were restored.
 It then removes only that job's full private candidate copy, retaining the
 verification receipts, source archive or backup and minimal database evidence.
 In the default mode, failed rehearsals retain their candidate for investigation.
-The low-space option uses the archive-recovery ordering described above. Cutover
-prepares its local working candidate after the source checks pass again; allow
-enough space for that mode's peak even when a successful rehearsal has released
-its candidate.
+The low-space choices recover v1 from the verified archive as described above.
+Cutover prepares the selected working layout after source checks pass again.
+Allow for that choice's peak local and external use even after a successful
+rehearsal has released its candidate.
 
 Closing the panel or visiting another page does not cancel the backend job.
 The global notice reopens progress or recovery after navigation and reload.
@@ -247,7 +291,8 @@ current authorized actions. A pre-activation job can offer **Rollback** with its
 exact confirmation to recover v1. A job that still blocks new work takes priority
 over newer completed attempts in the migration panel; its current recovery
 actions determine what can proceed. Low-space recovery
-also requires the original archive destination to be mounted and readable.
+also requires the selected migration backup location to be mounted and readable.
+Keep any expanded legacy input until the job no longer needs it.
 Preserve the job files, native report, archives and any retained candidate.
 If DUMB cannot confirm that its owned helper stopped, recovery remains held.
 Rollback becomes available only after helper termination is confirmed; retain
@@ -580,7 +625,8 @@ retained state to clear a banner.
 After a verified cutover and real-library validation, the same migration panel
 can offer **Retire the old v1 installation** for a migration that retained the
 original local tree. Low-space migrations have already reused that data and do
-not offer original-tree retirement; keep their retained archive for recovery.
+not offer original-tree retirement. Their recovery archive remains separate from
+temporary migration copies; keep it for recovery.
 Keep independent backups and confirm successful playback and a test import
 before retiring a retained local installation.
 

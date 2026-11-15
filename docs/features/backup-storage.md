@@ -156,14 +156,24 @@ filesystem path. By default, InfiniDysk creates its local import candidate from
 the original source; automated major rollback starts the retained originals
 until that rollback is explicitly retired.
 
-The separate **Reuse local v1 storage** migration option changes that recovery
-contract. It requires a supporting backend, an explicitly reviewed plan and a
-registered archive on a different filesystem. The verified archive becomes the
-v1 recovery source while the original local data tree is reused for migration.
-Rollback restores v1 from the archive and can remove the owned v2 candidate to
-make room first. Keep the destination available throughout migration, rehearsal
-and any later rollback. This option does not move an active database onto NAS.
-See [the migration guide](infinidysk-v2-migration.md#reuse-local-v1-storage).
+The migration panel's **Migration backup location** selects the recovery
+archive location. Selecting a share alone does not move the original v1 data.
+On supporting backends, **Reuse v1 directory** avoids a second local source copy;
+**Move legacy blobs to migration backup location** also copies and verifies
+legacy blob input on that storage before releasing its owned local files.
+Both require a registered destination on a different filesystem and a reviewed
+plan.
+
+The verified archive is the v1 recovery source in both modes. Expanded legacy
+input is a separate working copy, so the share needs capacity for both when
+offload is selected. Active SQLite, DUMB control state and PostgreSQL verification
+scratch remain local. Rollback restores v1 from the archive and can remove the
+owned v2 candidate to make room first. Keep the destination mounted through the
+operation and any recovery; a missing expanded input does not replace or
+invalidate the separate verified archive. DUMB attempts to remove only its
+recorded unchanged working copy after accepted import or completed v1 restoration.
+A retained staging-cleanup warning does not authorize deleting changed files.
+See [migration storage choices](infinidysk-v2-migration.md#choose-migration-storage).
 
 Scheduled symlink retention removes only that process's scheduled managed
 snapshots. Manual snapshots are retained separately from automatic pruning.
