@@ -49,9 +49,9 @@ jobs:
         uses: peter-evans/create-pull-request@v8
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
-          commit-message: "Update Changelog"
+          commit-message: "docs: sync DUMB changelog"
           branch: changelog-update
-          title: "Automated Changelog Update"
+          title: "docs: sync DUMB changelog"
           body: "This PR updates the changelog from the upstream repo."
           delete-branch: true
 

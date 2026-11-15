@@ -4,6 +4,8 @@ on:
   push:
     branches: [master]
   workflow_dispatch:
+  schedule:
+    - cron: '31 */6 * * *'
 
 permissions:
   contents: write
@@ -15,7 +17,9 @@ concurrency:
 
 jobs:
   release-please:
+    if: github.repository == 'I-am-PUID-0/DUMB_docs' && github.ref == 'refs/heads/master'
     runs-on: ubuntu-latest
+    timeout-minutes: 20
     steps:
       - uses: googleapis/release-please-action@v5
         id: release
@@ -23,3 +27,30 @@ jobs:
           token: ${{ secrets.RELEASE_PLEASE_TOKEN }}
           config-file: .github/release-please-config.json
           manifest-file: .github/.release-please-manifest.json
+
+      # Execute only trusted default-branch automation, never the release PR's
+      # checkout. The helper limits the admin actor to generated version changes
+      # and explicitly waits for docs validation and CodeQL on the current head.
+      - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+
+      - uses: actions/setup-python@v6
+        with:
+          python-version: '3.11'
+
+      - name: Merge a validated generated release PR
+        env:
+          GITHUB_TOKEN: ${{ secrets.RELEASE_PLEASE_TOKEN }}
+        run: |
+          python - <<'PY'
+          import subprocess
+          from scripts.sync_release import DOCS, GitHub
+
+          api = GitHub(__import__('os').environ['GITHUB_TOKEN'])
+          candidates = api.request(f'/repos/{DOCS}/pulls?state=open&base=master&head=I-am-PUID-0:release-please--branches--master&per_page=100')
+          if len(candidates) > 1:
+              raise SystemExit('More than one generated release PR needs review.')
+          for candidate in candidates:
+              subprocess.run(['python', 'scripts/automate_docs_release.py', '--pr', str(candidate['number']), '--wait', '600', '--interval', '10'], check=True)
+          PY

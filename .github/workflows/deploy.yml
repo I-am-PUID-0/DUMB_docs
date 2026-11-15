@@ -1,4 +1,4 @@
-name: Build and publish documentation
+name: Validate documentation
 
 on:
   push:
@@ -12,10 +12,10 @@ on:
 permissions:
   contents: read
 
-# Publication and scheduled promotion share one queue. Never interrupt a Pages
-# deployment after its release metadata has been accepted.
+# Source validation and backend-channel promotion never publish Pages. Published
+# documentation releases use publish-release.yml and their immutable tag instead.
 concurrency:
-  group: docs-${{ github.event_name == 'pull_request' && github.ref || 'pages' }}
+  group: docs-validation-${{ github.event_name == 'pull_request' && github.ref || 'master' }}
   cancel-in-progress: false
 
 jobs:
@@ -67,25 +67,13 @@ jobs:
       - name: Audit reader paths and audience boundaries
         run: poetry run python scripts/audit_reader_paths.py site
 
-      - name: Upload validated Pages artifact
-        if: github.event_name != 'pull_request' && github.repository == 'I-am-PUID-0/DUMB_docs'
-        uses: actions/upload-pages-artifact@v5
-        with:
-          path: site
-
-  deploy:
-    name: Publish validated documentation
+  promote:
+    name: Record verified DUMB channel promotion
     needs: build
     if: github.event_name != 'pull_request' && github.repository == 'I-am-PUID-0/DUMB_docs' && github.ref == 'refs/heads/master'
     runs-on: ubuntu-latest
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
     permissions:
       contents: write
-      actions: read
-      pages: write
-      id-token: write
     steps:
       - uses: actions/checkout@v7
         with:
@@ -107,41 +95,3 @@ jobs:
           DOCS_PROMOTION_METADATA: ${{ needs.build.outputs.metadata }}
           DOCS_VALIDATED_HEAD: ${{ github.sha }}
         run: python scripts/sync_release.py --publish --expected-head "$DOCS_VALIDATED_HEAD"
-
-      - name: Confirm this artifact still matches the branch
-        env:
-          GITHUB_TOKEN: ${{ github.token }}
-          DOCS_VALIDATED_HEAD: ${{ steps.promote.outputs.commit_sha }}
-        run: python scripts/sync_release.py --assert-current --expected-head "$DOCS_VALIDATED_HEAD"
-
-      - uses: actions/configure-pages@v6
-
-      - name: Deploy GitHub Pages
-        uses: actions/deploy-pages@v5
-        id: deployment
-
-      # Both destinations receive the same validated artifact. The optional legacy
-      # mirror preserves the DUMB repository's existing gh-pages deployment.
-      - name: Download validated artifact for the legacy mirror
-        env:
-          GH_TOKEN: ${{ github.token }}
-          GH_REPO: ${{ github.repository }}
-          DOCS_RUN_ID: ${{ github.run_id }}
-        run: |
-          gh run download "$DOCS_RUN_ID" --name github-pages --dir /tmp/docs-pages
-          mkdir -p /tmp/docs-mirror
-          tar -xf /tmp/docs-pages/artifact.tar -C /tmp/docs-mirror
-
-      - name: Confirm the mirror still matches the branch
-        env:
-          GITHUB_TOKEN: ${{ github.token }}
-          DOCS_VALIDATED_HEAD: ${{ steps.promote.outputs.commit_sha }}
-        run: python scripts/sync_release.py --assert-current --expected-head "$DOCS_VALIDATED_HEAD"
-
-      - name: Mirror to DUMB gh-pages
-        uses: peaceiris/actions-gh-pages@v4
-        with:
-          external_repository: I-am-PUID-0/DUMB
-          personal_token: ${{ secrets.DMB_MIRROR_TOKEN }}
-          publish_dir: /tmp/docs-mirror
-          publish_branch: gh-pages

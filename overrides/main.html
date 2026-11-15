@@ -43,6 +43,13 @@
   {% set href = config.theme.favicon | d("assets/images/favicon.png") %}
   <link rel="icon" href="{{ href | url }}">
   <meta name="generator" content="{{ generator }}">
+  {% if config.extra.documentation %}
+    {% set identity = config.extra.documentation %}
+    <meta name="dumb-docs-package-version" content="{{ identity.version | e }}">
+    <meta name="dumb-docs-build-kind" content="{{ identity.kind | e }}">
+    {% if identity.commit %}<meta name="dumb-docs-build-commit" content="{{ identity.commit | e }}">{% endif %}
+    {% if identity.tag %}<meta name="dumb-docs-release-tag" content="{{ identity.tag | e }}">{% endif %}
+  {% endif %}
 {% endblock %}
 
 {% block extrahead %}
@@ -151,6 +158,21 @@
       <a href="{{ 'contributing/' | url }}">Help improve DUMB</a>
     </nav>
   </aside>
+  {% if config.extra.documentation %}
+    {% set identity = config.extra.documentation %}
+    <div class="docs-build-identity" aria-label="Documentation release and build" data-docs-build-kind="{{ identity.kind | e }}">
+      {% if identity.kind == 'release' %}
+        <span>Documentation release {{ identity.version | e }}</span>
+        <a href="{{ identity.release_url | e }}">Release notes</a>
+      {% else %}
+        <span>Documentation preview {{ identity.version | e }} (unreleased)</span>
+      {% endif %}
+      {% if identity.source_url %}
+        <a href="{{ identity.source_url | e }}" title="Documentation source commit {{ identity.commit | e }}">Source {{ identity.commit[:8] }}</a>
+      {% endif %}
+      {% if identity.dirty %}<span>Local changes</span>{% endif %}
+    </div>
+  {% endif %}
   {{ super() }}
 {% endblock %}
 

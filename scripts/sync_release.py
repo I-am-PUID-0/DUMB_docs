@@ -341,7 +341,7 @@ def main(argv: list[str] | None = None) -> int:
             assert_current(api, commit)
             write_outputs({"commit_sha": commit})
             print(
-                "Release metadata is current and the validated head is ready for deployment."
+                "Verified DUMB channel metadata is recorded. Docs publication follows its own release."
             )
             return 0
         path = ROOT / METADATA_PATH

@@ -18,9 +18,11 @@ import yaml
 
 if __package__:
     from .asset_fingerprints import fingerprint_assets
+    from .docs_identity import IdentityError, agent_identity, documentation_identity
     from .markdown_fixes import repair_table_continuations
 else:
     from asset_fingerprints import fingerprint_assets
+    from docs_identity import IdentityError, agent_identity, documentation_identity
     from markdown_fixes import repair_table_continuations
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -353,6 +355,7 @@ def build_channel(
     )
     base_path = "../" if channel == "dev" else "./"
     extra = {
+        "documentation": metadata["_documentation"],
         "docs_channel": channel,
         "docs_version": settings["version"],
         "docs_release_version": metadata["release"]["version"],
@@ -409,7 +412,8 @@ def build_channel(
     intro = (
         f"# DUMB {settings['label']} documentation ({settings['version']})\n\n"
         f"> Channel: {channel}. Canonical base: {channel_url}\n\n"
-        "DUMB coordinates media services. Match instructions to the installed backend version. "
+        + agent_identity(metadata["_documentation"])
+        + "DUMB coordinates media services. Match instructions to the installed backend version. "
         "Development guides can describe features absent from the latest release.\n\n"
     )
     (output / "llms.txt").write_text(
@@ -430,6 +434,7 @@ def build_channel(
             {
                 "channel": channel,
                 "version": settings["version"],
+                "documentation": metadata["_documentation"],
                 "pages": pages,
                 "available_pages": [
                     page
@@ -449,6 +454,10 @@ def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--output", type=Path, default=ROOT / "site")
     parser.add_argument("--site-url", default="https://dumbarr.com/")
+    parser.add_argument(
+        "--release-tag",
+        help="Published docs release tag; requires matching versions, exact HEAD, and clean source",
+    )
     args = parser.parse_args()
     output = args.output.resolve()
     try:
@@ -456,6 +465,10 @@ def main() -> None:
     except ValueError as error:
         parser.error(str(error))
     metadata = json.loads((ROOT / "docs-versions.json").read_text())
+    try:
+        metadata["_documentation"] = documentation_identity(ROOT, args.release_tag)
+    except IdentityError as error:
+        parser.error(str(error))
     metadata["_dev_pages"] = [
         markdown_url(p.relative_to(ROOT / "docs"))
         for p in (ROOT / "docs").rglob("*.md")

@@ -59,10 +59,10 @@ also checks that a published stable dashboard release contains the reviewed
 frontend commit. The frontend has its own version number. This checks that the
 compatible dashboard is available; existing images can still contain older
 bundled frontends until they are updated.
-The workflow
-promotes the candidate's development sections, builds and audits both channels,
-then records only the verified version metadata and publishes the artifact.
-The publication step uses the existing `RELEASE_PLEASE_TOKEN` credential because
+The validation workflow promotes the candidate's development sections, builds
+and audits both channels, then records only the verified version metadata.
+That commit enters the normal docs release process; it does not publish Pages.
+The metadata step uses the existing `RELEASE_PLEASE_TOKEN` credential because
 the default branch requires pull requests and permits administrator bypass.
 It verifies the publisher's repository permission even when no promotion is
 needed. Build jobs keep their read-only Actions token. GitHub supplies the
@@ -92,9 +92,49 @@ See [contributing](docs/contributing.md) and the concise
 compatibility links when splitting a long guide. Use reserved examples and keep
 credentials and deployment state out of Git.
 
-Pull requests build and audit both channels. Pushes to `master` publish the
-verified artifact to GitHub Pages and mirror it to DUMB's existing `gh-pages`
-branch. Documentation publishing does not publish a DUMB image.
+Pull requests and pushes to `master` build and audit both channels. Public
+publication follows a **DUMB_docs release**, with its own version number:
+
+1. Write conventional commits, such as `docs: explain a setup task` or
+   `fix(docs): correct a control label`. The Python release strategy includes
+   documentation changes as releasable work.
+2. Release Please maintains a generated release PR with the package version,
+   release manifest and `CHANGELOG.md`. `automate_docs_release.py` accepts only
+   that same-repository generated PR, a current base, and those three files.
+   It checks that the changes contain only the version bump and a prepended
+   changelog section, then waits for the current-head docs gate and all three
+   CodeQL checks. Queued/rerunning checks prevent merging; it rechecks the head
+   and base immediately before a head-pinned merge.
+3. The existing administrator release actor merges that exact head. This narrow
+   automation uses the repository's existing bypass because its owner-authored
+   version PR cannot approve itself. It does not weaken branch rules, approve
+   arbitrary PRs or automatically merge content/dependency changes.
+4. Release Please creates the GitHub release and immutable tag. Its published
+   event dispatches `publish-release.yml` on `master`, preserving the Pages
+   environment's existing branch policy. The workflow verifies the latest
+   published stable docs release, checks out its **resolved commit**, and builds
+   with `--release-tag`. It never runs backend promotion in that checkout.
+5. Both channels are audited again. Package version, manifest, tag, clean source,
+   HTML footer/meta and channel JSON must agree. Pages and DUMB's legacy
+   `gh-pages` mirror receive the same validated artifact. Both publication steps
+   recheck that the tag has not moved or been superseded. Newer unreleased master
+   commits do not prevent deployment of the latest published release.
+
+The footer shows **Documentation release X.Y.Z**, its release notes and source
+commit in both channels. The header continues to show the **DUMB backend**
+release/development version. Dedicated `dumb-docs-*` metadata, the nested
+`documentation` object in each `channel.json`, and both `llms` exports expose
+the same documentation artifact identity without changing channel versions.
+Local builds and PR previews say **Documentation preview (unreleased)**; a
+package version alone never establishes that a build is a published release.
+
+Release Please and publication reconcile every six hours and can be run
+manually. To retry publication, run **Publish documentation release** from
+`master` and leave `release_tag` blank to select the latest release, or supply
+that exact tag. Older tags, prereleases, moved tags and releases outside master
+ancestry are refused. The existing release credential drives downstream events;
+default-token events alone are insufficient for this unattended chain.
+Documentation publishing does not publish a DUMB image.
 
 Release pages retain their public URLs. Development pages are `noindex, follow`
 with their own canonical URLs, and release-unavailable pages stay out of search
