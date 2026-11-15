@@ -6,18 +6,24 @@ icon: lucide/shield
 
 # Decypharr (Core Service)
 
-Decypharr exposes qBittorrent-compatible Debrid clients and SABnzbd-compatible Usenet clients to Arr applications. Choose DFS, built-in rclone, DUMB-managed external rclone, or no mount to match your library layout. DFS and native Usenet are available in Decypharr 2.0+; they do not require a beta branch.
+Decypharr connects Sonarr and Radarr to Debrid providers, Usenet providers, or both. Use DUMB to select and start the workflow, then use Decypharr to review providers and queues. The instructions below cover a new setup; existing libraries also need a path and backup review before changes.
 
 ---
 
 ## First start
 
-1. Choose Decypharr during onboarding and select Debrid, Usenet, or both.
-2. Add the provider credentials and choose the mount mode that fits your library layout.
-3. Open Decypharr to review native settings, then check the linked Arr download clients and root folders.
-4. Test an intended import and playback before enabling broad automatic acquisition.
+1. Choose **Decypharr** in DUMB onboarding and select Debrid, Usenet, or both. Select the Arr applications and media server that will use it. Reopen onboarding from **Settings → Launch Onboarding** when needed.
+2. Enter the Debrid account API keys you intend to use and choose the mount mode. For a new Decypharr-managed filesystem, `dfs` is the recommended default. Existing libraries should retain their current paths until a migration is planned.
+3. Open the Decypharr service card. On **DUMB Config**, choose **Start** if stopped, then open **Embedded UI**. Review the provider configuration. For Usenet, add and test your NNTP account in Decypharr; a Debrid key does not replace that account.
+4. Open Sonarr or Radarr's **Embedded UI → Settings → Download Clients** and test the generated Decypharr client. A Debrid client uses the qBittorrent-compatible connection; Usenet uses the SABnzbd-compatible connection. Test indexers under **Settings → Indexers** too.
+5. Review **Settings → Media Management → Root Folders** in each Arr. Use the saved curated folder as the corresponding media-server library source. See [root folders](#2-configure-root-folders-in-arrs) for Decypharr-only and combined paths.
+6. Request one intended item and follow its Arr queue through import. Scan the media-server library and play it before enabling broad acquisition.
 
-For an existing library, preview the symlink migration tools before changing mount paths.
+For an existing library, preview [Symlink Operations](../../features/symlinks.md) before changing mount paths. Keep a backup and review the preview before applying a repair.
+
+!!! danger "Protect provider credentials"
+
+    Debrid API keys and Usenet credentials grant access to your accounts. Keep them private and do not include them in shared screenshots or logs.
 
 <!-- dev:start -->
 ## Setup checklist and remaining work
@@ -28,6 +34,16 @@ Requires the backend setup-arrangement capability. See [Setup checklist and auto
 <!-- dev:end -->
 
 ## Workflow diagram
+
+<figure class="docs-visual" markdown="1">
+
+![Decypharr setup with separate Debrid, Usenet and combined provider choices before connection, import and playback checks](../../assets/images/guides/decypharr-user-workflow.svg)
+
+<figcaption class="docs-visual-caption">Choose the provider route you actually use. Both routes need a working Arr connection and a library folder your media server can read.</figcaption>
+</figure>
+
+<details class="geek-details" markdown="1">
+<summary>Geek details: how requests, providers, mounts and libraries connect</summary>
 
 ```mermaid
 %%{ init: { "flowchart": { "curve": "basis" } } }%%
@@ -69,9 +85,18 @@ flowchart TD
         
 ```
 
+</details>
+
+
+
 ---
 
 ## Service Relationships
+
+Decypharr connects the Arr applications you select to Debrid or Usenet providers. Your media server reads the organized library. DUMB starts the selected supporting services; keep the workflow and provider choices consistent with the library you want.
+
+<details class="geek-details" markdown="1">
+<summary>Geek details: service classification and runtime dependencies</summary>
 
 | Classification | Role                                                           |
 | -------------- | -------------------------------------------------------------- |
@@ -79,6 +104,8 @@ flowchart TD
 | Depends On     | None by default; external rclone mode uses [rclone](../dependent/rclone.md) |
 | Optional       | Sonarr, Radarr, Lidarr, Whisparr, Prowlarr, NeutArr            |
 | Exposes UI     | Yes (Web UI)                                                   |
+
+</details>
 
 
 ---
@@ -164,6 +191,11 @@ Because `release_version_enabled` is `false`, the stored `v1.0.0` value is only 
 ## What Decypharr does
 
 
+Use Decypharr's web interface to review providers and the queue. Linked Arr applications request content and organize it into the root folders you selected. The media server should scan those curated folders.
+
+<details class="geek-details" markdown="1">
+<summary>Geek details: download-client compatibility and processing features</summary>
+
 ### How It Works
 
 Decypharr acts as both a torrent manager and a renaming/organizing engine:
@@ -187,7 +219,14 @@ Decypharr acts as both a torrent manager and a renaming/organizing engine:
 
 ---
 
+</details>
+
 ## Integration with DUMB
+
+Select the intended Arr applications during onboarding. Test the generated clients and saved folders in their own interfaces before adding broad automation. The maintenance steps below apply when moving or repairing an existing library.
+
+<details class="geek-details" markdown="1">
+<summary>Geek details: how DUMB generates Decypharr and Arr settings</summary>
 
 When Decypharr starts, DUMB performs several automation steps:
 
@@ -202,9 +241,16 @@ When Decypharr starts, DUMB performs several automation steps:
 
 When Decypharr is installed through DUMB onboarding, this pre-start configuration satisfies Decypharr's own first-run checks. You should land in the normal Decypharr UI instead of being asked to repeat its standalone setup wizard. The Decypharr wizard remains useful for installations managed outside DUMB.
 
+</details>
+
 ### Symlink repair and migration
 
 For the complete DUMB symlink guide (UI option behavior, root scope, backup/restore, schedule, retention, and migration playbooks), see [Symlink Operations](../../features/symlinks.md).
+
+Open [Symlink Operations](../../features/symlinks.md) for the frontend repair, backup and restore workflow. Preview the affected library roots first, then review the proposed changes and keep a recovery manifest before applying them. This is a library maintenance task, not part of a new setup.
+
+<details class="geek-details" markdown="1">
+<summary>Geek details: repair or migrate links through the API</summary>
 
 If mount layouts change (for example provider-path changes between Decypharr modes), use
 `POST /api/process/symlink-repair` to rewrite existing symlink targets instead of manually relinking.
@@ -263,6 +309,11 @@ Set `symlink_backup_retention_count` to keep only the newest N scheduled manifes
     DUMB configures the Arr qBittorrent download client to point at `127.0.0.1:<port>` and uses the Arr host/API key
     as the username/password pair expected by Decypharr.
 
+</details>
+
+<details class="geek-details" markdown="1">
+<summary>Geek details: select workflow services with JSON</summary>
+
 ### Arr `core_service` setting
 
 For Sonarr/Radarr/Lidarr/Whisparr instances you want wired to Decypharr, set
@@ -285,9 +336,16 @@ See [Core Service Routing](../../reference/core-service.md) for how `core_servic
 
 To successfully run Decypharr with DUMB, review the mount mode and path guidance below:
 
+</details>
+
 ### Mount modes
 
 Decypharr 2.0+ includes DFS and native Usenet support in stable releases. You no longer need to install the `beta` branch to use these features.
+
+Choose the mount behavior during onboarding or in Decypharr's **DUMB Config**. Save DUMB-level changes with **Save to File**; apply them when it is safe to restart the service.
+
+<details class="geek-details" markdown="1">
+<summary>Geek details: mount configuration example</summary>
 
 Choose the mount behavior with `mount_type`:
 
@@ -300,6 +358,13 @@ Choose the mount behavior with `mount_type`:
 }
 ```
 
+</details>
+
+For a new Decypharr-managed folder, `dfs` is the recommended default. Built-in `rclone` is another managed folder option. `external_rclone` uses a separate DUMB-managed mount, while `none` is for setups that do not need Decypharr to supply a local folder. Review existing consumers before changing a working mount.
+
+<details class="geek-details" markdown="1">
+<summary>Geek details: mount implementations and provider synchronization</summary>
+
 | Mount Type | Description |
 |-----------|-------------|
 | `dfs` | Decypharr File System. Recommended default for Decypharr-managed streaming paths. |
@@ -307,9 +372,21 @@ Choose the mount behavior with `mount_type`:
 | `external_rclone` | DUMB-managed external rclone mount pointed at Decypharr WebDAV. |
 | `none` | No mount; Decypharr exposes API/WebDAV behavior only. |
 
+</details>
+
+<details class="geek-details" markdown="1">
+<summary>Geek details: mount ownership and configuration reconciliation</summary>
+
 When `mount_type` is `rclone`, DUMB builds the embedded rclone block and synchronizes `debrids` entries from the `api_keys` map. When `mount_type` is `external_rclone`, DUMB reconciles the matching managed rclone instance. DFS settings such as `mount.dfs.cache_dir` are app-owned; DUMB only ensures required startup paths exist and have the configured ownership.
 
+</details>
+
 ### Native Usenet
+
+Add and test your Usenet provider account in Decypharr's **Embedded UI**. Then open the linked Arr's **Embedded UI → Settings → Download Clients** and test `decypharr-usenet`. If you also use Debrid, keep and test the separate Debrid download client. Both can be used by the same Arr.
+
+<details class="geek-details" markdown="1">
+<summary>Geek details: alternative manual SABnzbd-compatible client setup</summary>
 
 Decypharr 2.0+ can connect directly to NNTP providers (no Sabnzbd container needed).
 Configure Usenet inside the Decypharr UI or `config.json`. DUMB does not manage
@@ -317,12 +394,25 @@ Usenet provider credentials.
 
 To wire Arrs to Decypharr Usenet manually, add a **Sabnzbd** download client in Sonarr/Radarr:
 
-- Host: `http://decypharr:8282`
-- API Key: Decypharr API token (Settings → Auth)
-- Category: `sonarr` / `radarr`
+- Host: `127.0.0.1` for an Arr running inside DUMB; use a reachable DUMB address for an external Arr.
+- Port: Decypharr's saved DUMB port, normally `8282`.
+- API Key: Decypharr API token (Settings → Auth).
+- Category: the category configured for that Arr instance, normally `sonarr` or `radarr`.
+
+<!-- release:start -->
+DUMB 2.23.0 creates this client with an empty **URL Base**. Check that generated client before making manual changes.
+<!-- release:end -->
+<!-- dev:start -->
+The development integration uses **URL Base** `/sabnzbd`, preceded by Decypharr's configured URL base when one is set. Use the generated client as the reference rather than copying an older release's URL base.
+<!-- dev:end -->
 
 DUMB creates this Sabnzbd-compatible client automatically for Arr instances whose
 `core_service` includes `decypharr` after Decypharr has Usenet providers configured. You can keep the normal Decypharr qBittorrent-style client for torrents and use the Sabnzbd-style client for NZBs.
+
+</details>
+
+<details class="geek-details" markdown="1">
+<summary>Geek details: manual credentials, API pacing and external-container mounts</summary>
 
 #### Embedded provider keys
 
@@ -356,7 +446,7 @@ DUMB uses a conservative starting profile when adding TorBox or filling missing 
 
 `rate_limit` paces routine requests at two per second, about 120 per minute sustained. `torrents_refresh_interval` refreshes the provider torrent catalog every 30 minutes, trading catalog freshness for fewer full-list requests. Download-link refresh and worker settings keep their mount-mode defaults.
 
-Existing nonempty tuning is preserved, including values saved by earlier DUMB versions. Defaults for other providers are unchanged. To apply this profile to an existing TorBox entry, open Decypharr's **Service Config** tab in the dashboard, find its entry under `debrids`, and edit only the two fields above. Keep its credentials and other settings, then **Save to File** and restart Decypharr when ready to apply the change. See [service configuration editors](../../frontend/service-pages.md#edit-service-config).
+Existing nonempty tuning is preserved, including values saved by earlier DUMB versions. Defaults for other providers are unchanged. To apply this profile to an existing TorBox entry, open Decypharr's **Service Config** tab in the dashboard, find its entry under `debrids`, and edit only the two fields above. Keep its credentials and other settings, then **Save Service Config** and restart Decypharr when ready to apply the change. See [service configuration editors](../../frontend/service-pages.md#edit-service-config).
 
 [TorBox's current API limits](https://support.torbox.app/en/articles/13726368-api-rate-limits) specify a general ceiling of 300 requests per minute separately for each endpoint and API key, with tighter hourly limits for some creation operations. DUMB's profile is a starting point for reducing routine API pressure. Retries, media range requests, and other applications using the same key have their own request behavior and can still encounter limits.
 
@@ -380,6 +470,8 @@ If you are passing the rclone mount to an **external** Arr or media server conta
 
 !!! note "When Required"
     These mounts are only required when Arrs or media servers run **outside** the DUMB container and need access to the rclone mount and Decypharr symlinks.
+
+</details>
 
 ### 2. Configure Root Folders in Arrs
 
@@ -432,10 +524,12 @@ Follow the [official Arr integration guide](https://docs.decypharr.com/guides/ar
 
 ### 4. Media server library setup
 
-In your media server (Plex/Jellyfin/Emby), add the Decypharr symlink folders as library sources:
+In your media server (Plex/Jellyfin/Emby), add the same curated folders saved in your Arr root-folder settings. For a Decypharr-only setup these are:
 
 * **Movies Library**: `/mnt/debrid/decypharr_symlinks/{slugged folder name}`
 * **TV Shows Library**: `/mnt/debrid/decypharr_symlinks/{slugged folder name}`
+
+For combined workflows, use the saved `/mnt/debrid/combined_symlinks/<slug>` folder instead. Avoid adding the entire provider mount when you want only the organized Arr library.
 
 !!! note "Library Benefits"
     This ensures the media server indexes files processed and renamed by Decypharr, enabling clean and consistent playback.

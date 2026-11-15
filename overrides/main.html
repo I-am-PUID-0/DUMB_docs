@@ -143,6 +143,17 @@
 
 {% block announce %}{% endblock %}
 
+{% block footer %}
+  <aside class="docs-community-strip">
+    <nav class="md-grid" aria-label="Community and maintainer support">
+      <a href="https://github.com/sponsors/I-am-PUID-0">Support the DUMB maintainer</a>
+      <a href="https://discord.gg/8dqKUBtbp5">Get help from the community</a>
+      <a href="{{ 'contributing/' | url }}">Help improve DUMB</a>
+    </nav>
+  </aside>
+  {{ super() }}
+{% endblock %}
+
 {% block content %}
   {% if page and page.canonical_url and config.extra.docs_channel %}
     <aside class="docs-channel-context" data-channel="{{ config.extra.docs_channel }}" aria-label="Documentation channel">

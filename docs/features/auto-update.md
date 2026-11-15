@@ -8,17 +8,40 @@ icon: lucide/download
 
 Choose how each service checks for new versions and whether it should install them automatically. Checking does not restart the service; installing normally does.
 
-## Set an update policy
+## Check and install one update
 
 1. Open the service page and select **Tools → Updates**.
-2. Run **Check for updates** to inspect the current and available versions.
-3. Enable scheduled checks if wanted, then choose **Show on dashboard** or **Install automatically**.
-4. Set the start time and interval, and save.
-5. Review source pins and media-library protection before installing.
+2. Select **Check for updates**. Compare the current version with the available version and open the release notes when offered.
+3. Select **Install update** when you are ready for that service to restart. Review any playback or library-protection prompt before confirming.
+4. Keep the panel open while the install runs. When it completes, check the reported result, service health, and **Service Logs**. For a storage service, also test an item in your media player.
 
-Use [dashboard Updates](../frontend/dashboard.md#check-and-update-multiple-services) to install several ordinary available updates. A fixed branch, commit, release, or version choice needs review on its own service page.
+```mermaid
+flowchart LR
+    Open[Open service Updates] --> Check[Check for updates]
+    Check --> Review[Review versions and release notes]
+    Review --> Install[Install update and confirm protection choices]
+    Install --> Verify[Check result, health, and playback]
+```
 
----
+The frontend can reconnect while its own update runs. Wait for the final result after reconnection before retrying an install.
+
+## Set an update policy
+
+1. In **Tools → Updates**, enable **Scheduled update checks**.
+2. Under **When available**, choose **Show on dashboard** to review updates yourself, or **Install automatically** to allow scheduled installation and restarts.
+3. Choose **Start time** and **Interval (hours)**. Use a time when interruptions are acceptable.
+4. Select **Save auto-update** and wait for **Auto-update saved**.
+5. Check **Next check** and reopen the panel to verify your saved choices. If no check is scheduled, review the fixed-version warning below.
+
+**Show on dashboard** leaves the service running. When an update is found, the dashboard **Updates** button shows a count and the service card offers an update shortcut. Use [dashboard Updates](../frontend/dashboard.md#check-and-update-multiple-services) to install one or several selected updates.
+
+## Install a saved release, branch, or commit
+
+A fixed source selection is installed from the individual service's **Updates** panel. Choose **Install configured release**, **Install configured branch**, or **Install configured commit**, then review the result and service health. You do not have to run an update check before the configured-install button appears.
+
+**Check for updates** refreshes version details and resolves the current branch head. Installing a configured target keeps your saved selection. **Override + latest** bypasses that selection for one installation of the latest stable release, then restores the saved configuration; use it only when that is the version you intend to install.
+
+When an update affects storage used by Plex, Jellyfin, or Emby, [Media Library Protection](media-library-protection.md) offers protection and playback choices before the service stops. Scheduled installs wait when playback is active or cannot be checked.
 
 ## Overview
 
@@ -140,7 +163,7 @@ The candidate core in `v2.24.0-dev.34` is `2.24.0`; `-dev.34` identifies the rol
 !!! warning "Fixed versions and update schedules"
 
     Fixed release, branch, commit, and pinned-version choices can disable automatic
-    scheduling. Review the configuration details below before relying on a saved
+    scheduling. Check **Next check** after saving and review your selected source before relying on a saved
     schedule; an enabled auto-update toggle alone does not guarantee checks run.
 
 <details class="geek-details" markdown="1">
@@ -205,33 +228,12 @@ Auto-update settings are configured per-service in `dumb_config.json`:
     installed method and any fallback reason when the backend supports
     `infinidysk_install_info` (or the legacy `nzbdav_install_info` alias).
 
-After saving a fixed release, branch, or commit selection, the Updates panel
-shows **Install configured release**, **Install configured branch**, or
-**Install configured commit** without requiring a successful update check.
-**Check for updates** remains useful for resolving the exact current branch
-head and refreshing displayed version details. Applying the configured target
-keeps the saved selection active. **Override + latest** is a separate escape
-hatch that temporarily bypasses any saved release, branch, commit, or
-pinned-version selection and installs the latest stable release. DUMB restores
-the saved configuration after that one installation.
-
-### Check only and review on the dashboard
-
-Set `auto_update` to `true` and `auto_update_mode` to `check_only` when you want
-DUMB to check on schedule without stopping, restarting, or changing the
-service. When a newer ordinary release is found, the dashboard **Updates**
-button shows a count, the service card exposes its update shortcut, and the
-Updates panel includes the current and available versions. You can then install
-one update or select several for sequential installation.
-
-The dashboard refreshes the cached results while it remains open. A later
-scheduled or manual check clears the pending state when the service is current.
-Existing configurations that do not contain `auto_update_mode` retain the
-legacy `install` behavior.
-
----
+Existing configurations that omit `auto_update_mode` retain the legacy `install` behavior. Set an explicit mode when changing the policy.
 
 </details>
+
+<details class="geek-details" markdown="1">
+<summary>Technical details: source selectors, JSON examples, schedules, and service behavior</summary>
 
 ## Update strategies
 
@@ -516,6 +518,7 @@ Different services have specialized update handling:
     while GitHub-based services rely on release or branch downloads.
 
 ---
+</details>
 
 ## Monitoring updates
 

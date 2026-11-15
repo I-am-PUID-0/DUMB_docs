@@ -64,6 +64,9 @@ jobs:
       - name: Audit development metadata and links
         run: poetry run python scripts/audit_seo.py site/dev --base-url https://dumbarr.com/dev/ --development
 
+      - name: Audit reader paths and audience boundaries
+        run: poetry run python scripts/audit_reader_paths.py site
+
       - name: Upload validated Pages artifact
         if: github.event_name != 'pull_request' && github.repository == 'I-am-PUID-0/DUMB_docs'
         uses: actions/upload-pages-artifact@v5

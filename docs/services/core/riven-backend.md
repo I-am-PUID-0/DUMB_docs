@@ -6,18 +6,22 @@ icon: lucide/database
 
 # Riven Backend Configuration
 
-Riven acquires content through configured sources and scrapers, then presents an organized library for your media server. DUMB manages the runtime and PostgreSQL dependency. Configure Riven's provider, source, scraper, and library policies before enabling acquisition.
+Riven collects media from your chosen lists and requests, then organizes it for your media server. DUMB starts the supporting services; **Riven Frontend** is where you choose accounts, sources, scrapers and library behavior.
 
 ---
 
 ## Initial Setup: Riven Backend
 
-Before Riven Backend can be used, **initial configuration is required**.
+1. Select **Riven Backend** and **Riven Frontend** in DUMB onboarding, along with your provider and media server. Reopen onboarding from **Settings → Launch Onboarding** when needed.
+2. Open the Riven Backend service card and check that it is running. Use **DUMB Config → Start** if stopped and wait for its supporting services to become ready.
+3. Open the **Riven Frontend** service card, start it if needed, then select **Embedded UI → Settings**.
+4. Configure your provider account and library paths. Enable at least one **Content** source so Riven knows what to collect, and at least one suitable **Scraper** so it can find sources. Review **Ranking** before importing a large list.
+5. Under **Media Server**, review the connection to Plex, Jellyfin or Emby and deliberately choose whether its updater should run. Saving a connection alone does not enable that updater.
+6. Add one intended request through the source you enabled. Follow its progress in Riven, check the media-server library, and play the result before enabling broad acquisition.
 
-After completing the DUMB onboarding, navigate to the **Riven Frontend** and open the `Settings` page. The following sections should be reviewed and updated:
+!!! important "Required configuration"
 
-!!! important "Required Configuration"
-    At a minimum, **enable at least one Content source** under the `Content` section. Without this, Riven cannot function.
+    Installing Riven is only the first step. An account, usable content source, scraper and matching library paths are needed for a working collection workflow.
 
 ### Recommended Setup Areas
 
@@ -43,6 +47,16 @@ Requires the backend setup-arrangement capability. See [Setup checklist and auto
 <!-- dev:end -->
 
 ## Workflow diagram
+
+<figure class="docs-visual" markdown="1">
+
+![Riven setup through the Riven Frontend Settings page, providers, content and scrapers, media-server updater choice and test playback](../../assets/images/guides/riven-user-workflow.svg)
+
+<figcaption class="docs-visual-caption">Configure Riven in Riven Frontend. Choose content, scrapers and updater behavior explicitly, then test one request.</figcaption>
+</figure>
+
+<details class="geek-details" markdown="1">
+<summary>Geek details: how requests, providers, mounts and libraries connect</summary>
 
 ```mermaid
 %%{ init: { "flowchart": { "curve": "basis" } } }%%
@@ -72,6 +86,10 @@ flowchart TD
     class e1,e2,e3,e4 animate
 
 ```
+
+</details>
+
+
 
 !!! warning "Port conflicts and auto-shift"
 
@@ -170,9 +188,21 @@ flowchart TD
 
 </details>
 
+## Service updates
+
+Review update settings on **DUMB Config**, then **Save to File**. Read the [update guide](../../features/auto-update.md) before changing a working installation's source or enabling automatic installation.
+
+<details class="geek-details" markdown="1">
+<summary>Geek details: alternative release, branch and exact-commit targets</summary>
+
 ## Commit / Branch / Version Targeting
 
 Choose a full `commit_sha`, a release selector, or an enabled branch in this service's DUMB settings. A commit pin takes precedence over the other selectors and disables automatic updates until you clear it. Review [source selection and update modes](../../features/auto-update.md) before changing a running service.
+
+</details>
+
+<details class="geek-details" markdown="1">
+<summary>Geek details: environment overrides and maintenance operations</summary>
 
 ## Riven's Environment Variables in the `.env.example`
 
@@ -192,6 +222,8 @@ Each Riven env can also be set within DUMB, either through the **"env"** section
 [View full example on GitHub](https://github.com/rivenmedia/riven/blob/main/.env.example)
 
 ---
+
+</details>
 
 ## Additional Resources
 

@@ -6,6 +6,15 @@ icon: lucide/activity
 
 # Startup lifecycle
 
+## Check startup progress
+
+1. Open the dashboard and read the startup banner. DUMB can show the dashboard while larger services are still installing or starting.
+2. Wait while work is progressing. If a service needs attention, open its page, read its health reason, and open **Service Logs**.
+3. Use **Tools → Dependencies** to see whether that service is waiting for storage, a database, or another application. Correct the reported problem before retrying **Start**.
+4. When startup reaches **Ready**, open the applications you use and test an ordinary import/playback task. **Degraded** means DUMB is still available but at least one enabled service needs attention.
+
+A green running indicator confirms that a process started. Its application and storage may still be preparing; use the readiness result and a real task to check usability.
+
 DUMB distinguishes a service that is still starting from one that is unhealthy
 in steady state. The lifecycle is:
 
@@ -38,12 +47,17 @@ During `stabilizing`, DUMB checks every enabled process and each configured
 service must remain ready for the stabilization window before the lifecycle
 becomes `ready`.
 
+<details class="geek-details" markdown="1">
+<summary>Technical alternative: startup timing configuration</summary>
+
 ```json
-"dumb": {
-  "startup": {
-    "readiness_timeout_seconds": 300,
-    "readiness_poll_interval_seconds": 5,
-    "stabilization_seconds": 15
+{
+  "dumb": {
+    "startup": {
+      "readiness_timeout_seconds": 300,
+      "readiness_poll_interval_seconds": 5,
+      "stabilization_seconds": 15
+    }
   }
 }
 ```
@@ -53,6 +67,7 @@ becomes `ready`.
 | `readiness_timeout_seconds` | `300` | Maximum time to wait for all enabled services |
 | `readiness_poll_interval_seconds` | `5` | Delay between readiness checks |
 | `stabilization_seconds` | `15` | Continuous healthy period required before `ready` |
+</details>
 
 <!-- dev:start -->
 The readiness deadline starts after the dependency-aware service-launch phase
@@ -88,6 +103,9 @@ Auto-restart then applies its grace period. A successful process spawn is only
 an attempt; DUMB records `service.auto_restart.succeeded` after the restarted
 service passes health checks.
 
+<details class="geek-details" markdown="1">
+<summary>Technical details: install concurrency, ownership checks, and network caches</summary>
+
 ## Preinstall behavior
 
 Every enabled instance is preinstalled. Instances of the same service key run
@@ -116,6 +134,10 @@ environment overrides:
 
 Keep durable service configuration and databases on storage appropriate for
 their recovery requirements.
+</details>
+
+<details class="geek-details" markdown="1">
+<summary>Technical details: init process, child cleanup, and lifecycle API</summary>
 
 ## Container process cleanup
 
@@ -142,3 +164,4 @@ GET /api/process/startup-status
 
 The response includes the current phase, timestamps, expected services,
 per-service `pending`/`starting`/`ready` state, and terminal failures.
+</details>

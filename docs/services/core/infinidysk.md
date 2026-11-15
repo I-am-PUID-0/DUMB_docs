@@ -6,7 +6,7 @@ icon: lucide/cloud
 
 # InfiniDysk (Core Service)
 
-**InfiniDysk** is a combined backend + frontend WebDAV service for **Usenet** workflows. In DUMB it runs as a single service that exposes a Web UI, a WebDAV endpoint for browsing/serving content, and a backend API used for automation.
+**InfiniDysk** connects your Usenet accounts to Sonarr, Radarr and your media server. Use its web interface to manage providers and watch requests progress; DUMB installs it and connects the Arr applications you select.
 
 <!-- dev:start -->
 DUMB keeps InfiniDysk 1.x as the default. DUMB API 2.24.0 or newer can offer the
@@ -16,10 +16,16 @@ The workflow below describes the default 1.x integration unless a section says o
 
 ## First start
 
-1. Choose InfiniDysk as your Usenet workflow in onboarding.
-2. Open InfiniDysk and add/test your NNTP provider accounts. Allocate connections within each provider's account limit.
-3. Review the selected Arr clients, categories, and library paths. Add and test indexers in Prowlarr or the Arr application.
-4. Verify that the mount is readable, then test an intended import and playback through your media server.
+Have a usable Usenet provider account and an indexer ready. A provider supplies the content; an indexer helps Sonarr or Radarr find it.
+
+1. In DUMB onboarding, choose **InfiniDysk** and the Arr applications and media server you want to use. To reopen onboarding, go to **Settings → Launch Onboarding**.
+2. Open the InfiniDysk service card. On **DUMB Config**, use **Start** if it is stopped, then select **Embedded UI** to open InfiniDysk.
+3. Add your Usenet provider account in InfiniDysk and test it. Keep the total connections used by all your apps within the provider's account limit.
+4. Open each selected Arr service's **Embedded UI**. Check **Settings → Download Clients** for InfiniDysk and test the connection. Check **Settings → Indexers** too; add and test an indexer directly or through Prowlarr.
+5. In the Arr application's **Settings → Media Management → Root Folders**, review the library folder DUMB created. Use that same curated folder in your media server. The normal InfiniDysk-only base is `/mnt/debrid/infinidysk-symlinks`; combined workflows can use another base, so use the saved folder rather than guessing.
+6. Add one intended movie or episode, watch the Arr queue through import, then scan the media library and play it. If a step fails, fix that connection or path before adding more requests.
+
+DUMB completing startup means the application is running. A successful import and playback confirm that the full workflow is ready.
 
 Existing NzbDAV installations should read [Migration from NzbDAV](infinidysk-migration.md) before changing names or paths.
 
@@ -38,7 +44,24 @@ is advertised. Native FUSE excludes the associated rclone dependency while
 preserving the existing consumer path.
 <!-- dev:end -->
 
+!!! tip "Support the maintainer"
+
+    If InfiniDysk is useful to your stack, you can support the maintainer
+    through [Buy Me a Coffee](https://buymeacoffee.com/hoivikaj). DUMB also
+    exposes this link through the frontend's InfiniDysk service page and
+    **Settings → About**.
+
 ## Workflow diagram
+
+<figure class="docs-visual" markdown="1">
+
+![InfiniDysk setup: choose the workflow, open the UI, test the provider, check Arr connections, import and play](../../assets/images/guides/infinidysk-user-workflow.svg)
+
+<figcaption class="docs-visual-caption">Use the browser steps above for setup. If the test import fails, return to the provider, connection or folder check that failed.</figcaption>
+</figure>
+
+<details class="geek-details" markdown="1">
+<summary>Geek details: how requests, providers, mounts and libraries connect</summary>
 
 ```mermaid
 %%{ init: { "flowchart": { "curve": "basis" } } }%%
@@ -79,26 +102,41 @@ flowchart TD
     class e1,e2,e3,e4,e5 animate
 ```
 
+</details>
+
+
+
 ---
 
 ## Service Relationships
 
+Sonarr and Radarr find and request media through your indexers. InfiniDysk accesses it through your Usenet account. Your media server plays the organized library. DUMB starts the supporting mount service when required.
+
+<details class="geek-details" markdown="1">
+<summary>Geek details: service classification and runtime dependencies</summary>
+
 | Classification | Role                                                     |
 | -------------- | -------------------------------------------------------- |
 | Core Service   | NZB WebDAV gateway                                       |
-<!-- dev:start -->
-| Mount          | [rclone](../dependent/rclone.md) by default; optional native FUSE with generation 2 |
-<!-- dev:end -->
-<!-- release:start -->
-| Mount | [rclone](../dependent/rclone.md) |
-<!-- release:end -->
-
+| Mount          | [rclone](../dependent/rclone.md)                          |
 | Optional       | Sonarr, Radarr, Lidarr, Whisparr, Prowlarr, NeutArr      |
 | Exposes UI     | Yes (Web UI + WebDAV)                                    |
+
+<!-- dev:start -->
+Generation 2 also offers native FUSE as an explicit mount choice in its guarded wizard.
+<!-- dev:end -->
+
+</details>
+
 
 ---
 
 ## What InfiniDysk provides
+
+Use InfiniDysk's **Embedded UI** to manage providers, review its queue and check progress. DUMB connects the Arr applications you selected. For AIOStreams playback, use the [separate setup steps below](#aiostreams-playback).
+
+<details class="geek-details" markdown="1">
+<summary>Geek details: HTTP listeners, WebDAV transport and Arr compatibility</summary>
 
 | Endpoint | Purpose | Default |
 |----------|---------|---------|
@@ -114,6 +152,8 @@ InfiniDysk also exposes a **Usenet download client** path in Arr by emulating a 
     for clients. Keep existing external stream origins reachable.
 
 ---
+
+</details>
 
 !!! warning "WebDAV credentials"
 
@@ -156,13 +196,6 @@ InfiniDysk also exposes a **Usenet download client** path in Arr by emulating a 
     [upgrade guide](../../features/infinidysk-v2-migration.md) for eligibility,
     mount choices and current containment limitations.
 <!-- dev:end -->
-
-!!! tip "Support the maintainer"
-
-    If InfiniDysk is useful to your stack, you can support the maintainer
-    through [Buy Me a Coffee](https://buymeacoffee.com/hoivikaj). DUMB also
-    exposes this link through the frontend's InfiniDysk service page and
-    **Settings → About**.
 
 ```json
 {
@@ -316,6 +349,11 @@ back to a retained SQLite database when PostgreSQL is active.
 
 ## Integration with DUMB
 
+DUMB maintains the selected Arr connections and library folders. Review those connections in each Arr application after setup; provider accounts, indexers and a real import still need your checks.
+
+<details class="geek-details" markdown="1">
+<summary>Geek details: automatic Arr connections and database storage</summary>
+
 When InfiniDysk starts, DUMB performs several automation steps:
 
 - Syncs Arr instance details into the InfiniDysk database
@@ -332,6 +370,8 @@ opted-in installation), so DUMB can merge user edits with auto-detected instance
 
     If the InfiniDysk backend is not reachable yet, DUMB retries the download-client setup shortly after startup.
 
+</details>
+
 ### AIOStreams playback
 
 [AIOStreams](../optional/aiostreams.md) currently calls the canonical InfiniDysk integration **NzbDAV**. In AIOStreams, add **NzbDAV**, then provide:
@@ -345,6 +385,11 @@ Do not use `/ui/infinidysk` for either URL. It is dmbdb's embedded operator rout
 
 ### Database migration startup
 
+If the UI shows **Database maintenance in progress**, wait and watch its steps and elapsed time. Large databases can take time. After a successful migration the page reloads into InfiniDysk. If it reports failure, review **Service Logs** and the [migration troubleshooting guide](infinidysk-troubleshooting.md) before repeatedly restarting.
+
+<details class="geek-details" markdown="1">
+<summary>Geek details: startup ordering and migration failure behavior</summary>
+
 DUMB starts the InfiniDysk frontend before running the blocking database migration.
 This is the default launch behavior and lets the Web UI show InfiniDysk's live
 **Database maintenance in progress** page, including migration steps, progress,
@@ -355,6 +400,11 @@ into InfiniDysk when it becomes healthy. If migration fails, DUMB keeps the fron
 alive through InfiniDysk's brief failure-display window, then stops it and exits the
 InfiniDysk process with the migration's non-zero exit code. No separate setting is
 required.
+
+</details>
+
+<details class="geek-details" markdown="1">
+<summary>Geek details: manual workflow selection and rclone configuration</summary>
 
 ### Arr `core_service` setting
 
@@ -443,7 +493,16 @@ Default rclone mount path (if not overridden) is:
 /mnt/debrid/infinidysk
 ```
 
+</details>
+
 #### Streaming optimization
+
+If **Rclone Optimizer** is available on InfiniDysk's associated **rclone service page**, open it there to choose content, run measurements and review a report. Apply or roll back the suggested rclone settings from that same page. InfiniDysk can show a link to an active test.
+
+The test uses your Usenet account and real provider traffic. Read [Rclone Streaming Optimizer](../../features/rclone-optimizer.md), including its traffic and concurrency requirements, before starting.
+
+<details class="geek-details" markdown="1">
+<summary>Geek details: optimizer capability and measurement sources</summary>
 
 When the backend advertises `rclone_optimizer_infinidysk`, open the dedicated
 InfiniDysk-backed **rclone service page** and select **Rclone Optimizer**. The primary
@@ -456,6 +515,11 @@ configured Usenet providers. It also consumes InfiniDysk Overview and stream-tra
 data while rclone RC and DUMB host metrics describe the mount and system side.
 Review [Rclone Streaming Optimizer](../../features/rclone-optimizer.md) before
 testing, especially the provider traffic and concurrency limits.
+
+</details>
+
+<details class="geek-details" markdown="1">
+<summary>Geek details: manual Arr configuration and category mapping</summary>
 
 ### 2. Arr Integration (Sonarr/Radarr)
 
@@ -520,6 +584,8 @@ By default, DUMB maps Arr types to categories:
 Instance names are slugified into categories if present (for example, `Radarr 4K` becomes `radarr-4k`).
 
 ---
+
+</details>
 
 ## Accessing the UI
 

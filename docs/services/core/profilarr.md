@@ -114,6 +114,11 @@ After choosing an explicit release, branch, or commit, use **Install configured 
 
 ## Arr instance options
 
+Open the intended Sonarr/Radarr instance's **DUMB Config**, enable `use_profilarr` and **Save to File**. Choose a matching workflow filter in Profilarr's DUMB settings. Open Profilarr's **Embedded UI** to review the connection and choose the profiles, formats and sync behavior you actually want; a linked application is not a complete profile policy.
+
+<details class="geek-details" markdown="1">
+<summary>Geek details: per-instance JSON opt-in</summary>
+
 Profilarr linking is controlled per Arr instance:
 
 ```json
@@ -134,6 +139,8 @@ Key:
 - **`use_profilarr`**: Opt this Arr instance into Profilarr linking.
 
 ---
+
+</details>
 
 ## Auto-linking behavior
 

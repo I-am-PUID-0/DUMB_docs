@@ -259,9 +259,9 @@ def build_channel(
 ) -> list[str]:
     settings = metadata[channel]
     work = scratch / channel
-    snapshot_config = snapshot(settings.get("docs_ref", "WORKTREE"), work)
-    # Freeze prose/navigation while keeping dependency and theme configuration
-    # aligned with the current shared templates and assets.
+    snapshot(settings.get("docs_ref", "WORKTREE"), work)
+    # Freeze release prose, while sharing current navigation and shell settings.
+    # Navigation is filtered below against this channel's actual eligible pages.
     config = (ROOT / "mkdocs.yml").read_text()
     destination = output
     output = work / "site"
@@ -341,7 +341,7 @@ def build_channel(
             f"User-agent: *\nAllow: /\n\nSitemap: {site_url}sitemap.xml\n"
         )
 
-    raw_nav = yaml.load(snapshot_config, Loader=yaml.BaseLoader)["nav"]
+    raw_nav = yaml.load(config, Loader=yaml.BaseLoader)["nav"]
     available = {
         p.relative_to(docs).as_posix() for p in docs.rglob("*.md")
     } - unavailable

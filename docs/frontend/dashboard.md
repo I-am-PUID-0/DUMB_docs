@@ -187,7 +187,7 @@ From here you can:
 
 - Show disabled services
 - Jump to a service’s logs or config
-- Open the main DUMB config editor
+- Open a selected service's DUMB Config or Service Config editor
 
 ### Real-time logs
 
@@ -221,9 +221,15 @@ You can reorder dashboard service tiles with drag-and-drop.
 - Other tiles shift in real time while you drag
 - The same order is applied to the Services list in the sidebar
 
-Order is persisted in `dumb_config.json` under:
+The order is saved for the dashboard and sidebar.
 
-- `dumb.ui.sidebar.service_order`
+<details class="geek-details" markdown="1">
+<summary>Technical details: stored service order</summary>
+
+The order is persisted in `dumb_config.json` under `dumb.ui.sidebar.service_order`.
+</details>
+
+
 
 ### Mobile and touch behavior
 

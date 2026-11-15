@@ -88,7 +88,7 @@ Saved destination URLs and headers stay on the server. A blank secret field pres
 | Plex | Plex API access and selected integrations, such as Riven watchlists/scans |
 | GitHub | Higher API limits and authorized private/sponsored release downloads |
 
-A GitHub token should grant only the read access required by the selected source. Public release checks normally need no token. Enter tokens here or through a supported [configuration override](../features/configuration.md#configuration-precedence).
+A GitHub token should grant only the read access required by the selected source. Public release checks normally need no token. Enter the required token here, select **Save**, and wait for **Saved**. Retry the connection or update check that needed it. Technical deployments can also use a supported [configuration override](../features/configuration.md#configuration-precedence).
 
 ![Token settings](../assets/images/frontend/tokens_settings.png){ .shadow }
 
@@ -110,7 +110,9 @@ Available shortcuts include Media Protection, Symlinks, Database Health/Migratio
 
 ### Geek Mode
 
-Enable **Geek Mode** for extra diagnostic details:
+This is a preference in the **DUMB dashboard**, separate from the Geek mode switch in this documentation site's header. The dashboard preference adds diagnostic controls to the application; the docs switch reveals explanations and alternative methods in these guides.
+
+Open **Settings → Advanced → Geek Mode** and enable it for extra diagnostic details. Return to a service page to see the additional controls:
 
 | Location | Additional information |
 | --- | --- |
@@ -136,7 +138,7 @@ The provider editor supports managed/external Authelia and provider presets incl
 https://dumb.example.com/api/auth/oidc/callback
 ```
 
-Opening Settings through localhost or an IP address leaves the callback blank. Enter the real HTTPS FQDN and register the exact value at the provider. Use **Check discovery** before saving.
+Opening Settings through localhost or an IP address leaves the callback blank. Enter the real HTTPS FQDN and register the exact value at the provider. Select **Check discovery**, correct any reported error, then select **Save provider**. Keep Hybrid mode while testing provider sign-in in a separate private browser window.
 
 For bootstrapped DUMB-managed Authelia, **Link managed Authelia** creates/reuses a dedicated client and transfers its secret without displaying it. Use the [Authelia wizard](../services/optional/authelia.md) for bootstrap and route setup.
 

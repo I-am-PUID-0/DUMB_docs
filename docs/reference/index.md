@@ -4,7 +4,14 @@ description: Look up DUMB service ports, environment overrides, configuration sc
 icon: lucide/book-open
 ---
 
-# Reference
+# Geek reference { #reference }
+
+Use the [frontend guides](../frontend/index.md) for everyday tasks. This reference
+is for understanding the internals or using a different method: configuration
+files, environment variables, APIs, networking, and process dependencies.
+
+The frontend workflow remains the main path. These references explain the
+settings and behavior behind it; they do not add extra required setup steps.
 
 Use these pages to look up exact names and defaults. For a procedure, start with [Deployment](../deployment/index.md), [Features](../features/index.md), or the relevant [service guide](../services/index.md).
 

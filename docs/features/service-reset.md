@@ -8,6 +8,18 @@ icon: lucide/trash-2
 
 DUMB can reset one previously configured service or instance without requiring a full stack reset. When the backend advertises `service_reset`, open the service page and select **Reset / Remove**.
 
+## Reset or remove one service
+
+1. Open the service or instance page and choose **Tools → Reset / Remove**.
+2. Choose **Reset DUMB configuration** to keep application files and data, or **Remove service files** to delete only the managed paths in the preview.
+3. Read **Review warnings**, **Always retained**, and, for removal, **Managed paths to clear**. Cancel if any path or dependency is unexpected. Make an independent application backup before deleting files.
+4. Type the exact process name shown in the confirmation field.
+5. Select **Reset DUMB configuration** or **Remove selected service files**. Wait for the result; the selected service is stopped and disabled by this operation.
+6. Check the confirmation and service state. To use the service again, review its saved settings and application data before enabling and starting it. If the operation fails, follow [recovery guidance](#configuration-backup-and-recovery) before retrying.
+
+<details class="geek-details" markdown="1">
+<summary>Technical details: reset transaction and scheduled-job cleanup</summary>
+
 The workflow always:
 
 1. builds a read-only preview;
@@ -18,6 +30,9 @@ The workflow always:
 6. applies the selected reset or removal.
 
 You must type the exact process name before DUMB accepts either operation.
+
+
+</details>
 
 ## Choose an operation
 

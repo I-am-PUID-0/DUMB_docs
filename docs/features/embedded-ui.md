@@ -1,6 +1,6 @@
 ---
 title: Embedded Service UIs
-description: Access DUMB-managed service interfaces through Traefik iframe routes while preserving root APIs, WebSockets, navigation, and routing isolation.
+description: Enable embedded application interfaces in DUMB, sign in to each service, use split view, and fix missing tabs or failed application logins.
 icon: lucide/layout-panel-left
 ---
 
@@ -18,6 +18,9 @@ Open a managed application's own interface inside DUMB without publishing every 
 A matching enabled TPA public HTTPS route can supply an external link. AIOStreams' remote Stremio clients need its separately configured public base URL; the embedded operator route is not a replacement for that origin.
 
 ![Embedded UIs](../assets/images/features/embedded_ui.png){ .shadow }
+
+<details class="geek-details" markdown="1">
+<summary>Technical details: frontend proxy and direct Traefik routes</summary>
 
 ## How it works
 
@@ -37,6 +40,7 @@ http://<host>:18080/service/ui/<service_name>
 ```
 
 This listener has its own exposure and authentication requirements. Enabling DUMB login does not add authentication to raw Traefik or application ports.
+</details>
 
 ### Available services
 
@@ -74,6 +78,9 @@ These are default ports and example route keys. Enabled instances, current ports
 InfiniDysk 2 currently requires its own root URL. Use its direct local address or configured public origin; embedded subpath login/playback remain unavailable until the backend advertises a validated adapter. Preserve existing stream URL origins and signed paths. See [InfiniDysk 2 authentication](infinidysk-v2-migration.md#authentication-with-the-retained-backend-port).
 <!-- dev:end -->
 
+<details class="geek-details" markdown="1">
+<summary>Technical details: generated Traefik configuration and route ownership</summary>
+
 ## Traefik configuration
 
 DUMB generates its embedded routes in `/config/traefik/dynamic/services.yaml`. Traefik watches that directory. Optional TPA routes come through its separate HTTP provider.
@@ -81,6 +88,7 @@ DUMB generates its embedded routes in `/config/traefik/dynamic/services.yaml`. T
 Routes use service-specific prefix stripping, entry-path rewriting, and frame headers where appropriate. A media web client may need `/web/index.html`; another application may serve `/` directly. Do not copy one application's rewrite into another route or edit DUMB's generated file as a permanent configuration method.
 
 Use [Traefik Proxy Admin](../services/optional/traefik-proxy-admin.md) for deliberately published routes and [Traefik architecture](../architecture/traefik.md) for provider ownership and configuration.
+</details>
 
 ## iframe embedding
 
@@ -136,6 +144,9 @@ Use the Embedded UI tab, its direct-link action, or the deliberate Traefik route
 
 Turn off **Service UIs** in Settings. Native-port access then depends on your existing port publication and application authentication; disabling embedding does not publish those ports.
 
+<details class="geek-details" markdown="1">
+<summary>Technical alternative: toggle embedded UIs with the configuration API</summary>
+
 The configuration API can toggle the same setting:
 
 ```bash
@@ -145,3 +156,4 @@ curl -X POST http://localhost:3005/api/config/service-ui \
 ```
 
 Add an Authorization header when authentication is enabled. See [Configuration API](../api/config.md).
+</details>

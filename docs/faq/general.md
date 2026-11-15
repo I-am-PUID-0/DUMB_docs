@@ -11,6 +11,12 @@ Answers about storage, service choices, backups, and media paths.
 ---
 
 
+## Where do I configure services?
+
+Open the service card in DUMB. **DUMB Config** controls how DUMB starts and updates it; save those changes with **Save to File**. **Embedded UI** opens the application's own interface for accounts, libraries and everyday tasks. **Service Config**, when available, edits its underlying settings and uses **Save Service Config**.
+
+Start with the service guide's first-start steps. Enable **Geek mode** for API, shell and configuration alternatives or to understand how the connections work. Required setup, account requirements and support links remain available in the ordinary guide.
+
 ## Will DUMB use a lot of storage space?
 
 Budget for application runtimes, databases, logs, backups, and caches even when media is streamed remotely. rclone VFS caching and Usenet client caches can consume substantial disk space; local downloads and book libraries need their full file capacity. Size the data and cache filesystems for your chosen workflow.
@@ -42,7 +48,7 @@ for how bundled and runtime-installed versions differ.
 
 Alternatively, DUMB also includes **auto-update** functionality for most [services](../services/index.md). Depending on your configuration (`auto_update` and `auto_update_interval`), the system will check for new versions of services like Zurg, Riven, Zilean, etc.
 
-You can configure update frequency and behavior in each service’s section of `dumb_config.json`.
+Open the service card, select **DUMB Config**, review its update settings and choose **Save to File**. See [Service Updates](../features/auto-update.md) before enabling automatic installation or changing source channels.
 
 
 ## Is DUMB secure?
@@ -65,7 +71,7 @@ add them.
 
 ## Can I use my own custom version of a service?
 
-Yes — you can point most services to a custom branch or fork by editing the `repo_owner`, `repo_name`, `branch`, or `release_version` in its config section in `dumb_config.json`. This is especially useful if you are testing development builds or your own patches.
+Yes. Open the service's **DUMB Config** to review source and version settings, then **Save to File**. Read [source selection and update modes](../features/auto-update.md) before changing a working service. Custom source settings and manual JSON examples are available in the service guide's Geek sections.
 
 
 ## Can I back up my DUMB setup?
@@ -143,6 +149,11 @@ If your media server (such as Plex) runs **directly on the host** (not in Docker
 
 DUMB's generated media links commonly use absolute targets. If those paths don't exist or don't match outside the container, the symlinks will be broken or unusable by the media server.
 
+If the media server runs outside DUMB, the operator must make the same content reachable at the same absolute paths. Selecting a different folder in the media-server UI cannot repair a broken link target. Review the [deployment guides](../deployment/index.md) before moving a working library.
+
+<details class="geek-details" markdown="1">
+<summary>Geek details: host bind mounts and manual path configuration</summary>
+
 ### Example: Using Riven's Symlink Media Directory
 
 Suppose your media is mounted on the host at:
@@ -201,6 +212,7 @@ Using one shared absolute path reduces mapping errors. It still needs to exist a
 
 !!! tip "also review the [Default Mount Structure](../services/dependent/rclone.md#default-mount-structure) and [Mount Propagation](../services/dependent/rclone.md#mount-propagation) sections for additional details!"
 
+</details>
 
 ## Related Pages
 

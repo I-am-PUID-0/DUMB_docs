@@ -12,12 +12,14 @@ icon: lucide/film
 
 ## First start
 
-1. Select Radarr during onboarding and choose its download workflow.
-2. Open Radarr from its DUMB service page and review the download client and indexer connections.
-3. Choose the movie root folder and quality profile before adding a movie. The root must match your workflow's curated library path.
-4. Add one movie deliberately, then confirm the import appears in the intended media-server library.
+1. Select **Radarr** and its download workflow in DUMB onboarding. Reopen onboarding from **Settings → Launch Onboarding** if needed.
+2. Open the Radarr service card. On **DUMB Config**, use **Start** if stopped, then select **Embedded UI**. Complete the application's login setup if prompted.
+3. Open **Settings → Download Clients** and test the client DUMB created for your selected workflow. Under **Settings → Indexers**, test an indexer added directly or synced from Prowlarr. Both connections must work to find and acquire media.
+4. Review **Settings → Media Management → Root Folders**. Choose the curated movie library folder for your workflow and use that same folder in your media server. Review **Settings → Profiles** to choose the quality you want.
+5. Add one intended movie, select that root folder and quality profile, and choose what to monitor. Check **Activity → Queue** while it is acquired and imported; check **Activity → History** if it fails.
+6. Scan your media-server library and play the imported item. Finish this test before adding a large library or enabling broad automated searches.
 
-Keep the default SQLite database unless you are planning the separate migration described below.
+Keep the default SQLite database unless you are planning the separate migration below. The [Decypharr](decypharr.md), [InfiniDysk](infinidysk.md) and [AltMount](altmount.md) guides explain their different library folders.
 
 ## Service Relationships
 
@@ -94,6 +96,11 @@ Keep the default SQLite database unless you are planning the separate migration 
 
 ## PostgreSQL database mode
 
+SQLite is the default and needs no separate setup. If you want to move an existing Radarr instance to PostgreSQL, use **Database Migration** on its service page. Run a rehearsal, review the validation results, then use guarded cutover. Read the [migration guide](../../features/arr-postgres-migration.md) and back up the instance before proceeding.
+
+<details class="geek-details" markdown="1">
+<summary>Geek details: how PostgreSQL settings and startup are generated</summary>
+
 When `postgres_enabled` is `true`, DUMB:
 
 * enables the bundled PostgreSQL service if needed;
@@ -102,6 +109,8 @@ When `postgres_enabled` is `true`, DUMB:
 * writes the required `PostgresUser`, `PostgresPassword`, `PostgresHost`, `PostgresPort`, `PostgresMainDb`, and `PostgresLogDb` entries to Radarr's `config.xml`.
 
 During onboarding, enabling `postgres_enabled` for Radarr is enough; you do not need to separately select PostgreSQL as an optional service.
+
+</details>
 
 !!! danger "This does not migrate existing SQLite data"
     Setting `postgres_enabled: true` changes the database backend Radarr starts with. It does **not** copy `radarr.db` into PostgreSQL.

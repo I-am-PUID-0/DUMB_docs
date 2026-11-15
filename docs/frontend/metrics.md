@@ -216,6 +216,8 @@ The frontend automatically reconnects if the connection drops.
 
 ### Update interval
 
+Open **Metrics → Settings** to adjust collection and history settings. Change the intended value, select the displayed **Apply** action, and check that live values/history continue updating.
+
 Configure how frequently metrics are updated:
 
 | Setting | Default | Range |
@@ -245,7 +247,15 @@ Open **Metrics → Settings → History Storage** to see:
 - retained legacy JSONL files and import state;
 - the latest safe PostgreSQL connection error.
 
+SQLite is the default local history store. PostgreSQL is an optional alternative for history reads; DUMB keeps local history available if PostgreSQL is temporarily unavailable.
+
+<details class="geek-details" markdown="1">
+<summary>Technical details: PostgreSQL history and SQLite continuity</summary>
+
 PostgreSQL is not merely a backup. When selected, synchronized, and healthy, it is the active history query and retention backend. SQLite is written first as a bounded write-ahead continuity buffer so live charts remain available when PostgreSQL is stopped or restarting. Retained local samples are replayed when PostgreSQL reconnects.
+</details>
+
+
 
 On current backends, choosing PostgreSQL only changes the draft selection. The panel explicitly prompts the user to click **Apply & activate PostgreSQL**; nothing is provisioned until that button is used. Apply enables PostgreSQL if necessary, creates the dedicated database, starts or reuses the managed process, synchronizes retained samples, and switches history reads without restarting DUMB. During the operation the panel displays activation progress. Afterward, a persistent **PostgreSQL cutover complete** notice confirms that PostgreSQL is serving history reads while SQLite remains the continuity buffer.
 
@@ -275,6 +285,9 @@ These browser alerts are separate from [backend notifications](../features/notif
 
 ---
 
+<details class="geek-details" markdown="1">
+<summary>Technical alternative: query metrics through the API</summary>
+
 ## API access
 
 Metrics are also available via the REST API:
@@ -296,6 +309,7 @@ curl "http://localhost:3005/api/metrics/database-health?process_name=InfiniDysk&
 See the [WebSocket API](../api/websocket.md) documentation for real-time streaming.
 
 ---
+</details>
 
 ## Troubleshooting
 

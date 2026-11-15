@@ -12,10 +12,11 @@ NeutArr schedules missing-content and upgrade searches in selected Radarr, Sonar
 
 ## First start
 
-1. Enable NeutArr and opt only the intended Arr instances into its automation.
-2. Open NeutArr and review the discovered connections and quality profiles.
-3. Choose conservative search intervals and limits before activating a schedule.
-4. Observe one search cycle in the logs before widening the schedule or adding targets.
+1. Select **NeutArr** during onboarding and opt in only the Arr instances you want it to search. For an existing Arr instance, open its **DUMB Config**, enable `use_neutarr` and **Save to File**.
+2. Open the NeutArr service card. On **DUMB Config**, use **Start** if stopped, then select **Embedded UI**.
+3. Review the discovered Arr connections and quality profiles in NeutArr. Do not activate a schedule until the intended applications are connected and unexpected targets are excluded.
+4. Choose conservative search intervals and limits. These searches use your indexers and provider allowances; a running service does not mean you need to enable every search type.
+5. Observe one search cycle in NeutArr and the Arr queue before widening the schedule or adding targets.
 
 <!-- dev:start -->
 ## Setup checklist and remaining work
@@ -59,6 +60,13 @@ Additional NeutArr instances must use unique ports.
 ---
 
 ## Automation in DUMB
+
+Choose the target Arr instances in onboarding or through each Arr's **DUMB Config → `use_neutarr`**, then **Save to File**. DUMB maintains those selected connections; configure the search policy and schedule in NeutArr's **Embedded UI**.
+
+If you run multiple NeutArr instances, review each one's workflow filter so the same Arr is not searched unintentionally by several schedules.
+
+<details class="geek-details" markdown="1">
+<summary>Geek details: JSON opt-ins, workflow filters and connection storage</summary>
 
 DUMB auto-populates NeutArr with Arr instances that opt in.
 
@@ -107,6 +115,8 @@ For deeper behavior details, see [Core Service Routing](../../reference/core-ser
     DUMB writes NeutArr configuration into NeutArr's JSON config files under the instance `config_dir` (for example `general.json`, `sonarr.json`, `radarr.json`, and `users.json`). You can still tune settings in the NeutArr UI, but DUMB will keep the Arr instance list and related config in sync.
 
 ---
+
+</details>
 
 <details class="geek-details" markdown="1">
 <summary>Technical details: configuration reference</summary>

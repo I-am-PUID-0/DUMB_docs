@@ -23,11 +23,18 @@ The rclone instance consumes Decypharr's WebDAV endpoint, so starting rclone fir
 
 ## Where do provider API keys belong?
 
-DUMB persists onboarding keys under `decypharr.api_keys` for every mount mode. Setup reconciles those keys into Decypharr and uses them when an external-rclone instance must be created. Avoid putting secrets into screenshots or support logs.
+Enter Debrid keys in DUMB onboarding or Decypharr's **DUMB Config** provider fields, then **Save to File**. Add Usenet provider accounts in Decypharr's own **Embedded UI**. Avoid putting secrets into screenshots or support logs.
+
+<details class="geek-details" markdown="1">
+<summary>Geek details: provider-key storage and reconciliation</summary>
+
+DUMB persists onboarding keys under `decypharr.api_keys` for every mount mode. Setup reconciles those keys into Decypharr and uses them when an external-rclone instance must be created.
+
+</details>
 
 ## How is Usenet connected to an Arr app?
 
-When Decypharr has Usenet providers configured, DUMB adds a Sabnzbd-compatible download client named `decypharr-usenet` to linked Arr instances. Debrid downloads use Decypharr's qBittorrent-compatible client.
+After adding a Usenet account in Decypharr, open the linked Arr's **Embedded UI → Settings → Download Clients**. Test the generated `decypharr-usenet` connection. Debrid downloads use Decypharr's separate qBittorrent-compatible client; test that too if you use both. See the [first-start guide](../services/core/decypharr.md#first-start) for root folders and the final import/playback check.
 
 ## Why is DUMB waiting for the wrong old provider mount?
 

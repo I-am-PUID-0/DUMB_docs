@@ -14,12 +14,18 @@ trusted merely because it already exists.
 Service configuration, databases, media, symlinks, credentials, and active
 runtime directories are not cache entries.
 
+<details class="geek-details" markdown="1">
+<summary>Technical details: persistent-path exclusions during updates</summary>
+
 Destructive update clears are built from guarded exclusions rather than trusting
 only the saved `exclude_dirs` list. DUMB automatically preserves an in-tree
 service config file, explicit config/data/database paths, conventional persistent
 data/database directories, root-level SQLite files and their active sidecars,
 and symlinked data directories. The guarded paths are also excluded from archive
 merges, while replaceable source and runtime output can still be refreshed.
+
+
+</details>
 
 ## Use the cache controls
 
@@ -32,7 +38,7 @@ Open **Dashboard → Updates → Install cache** when supported by your backend.
 | Force a runtime rebuild next time | Clear build artifacts |
 | Change the managed size target | Save the limit, then prune separately if desired |
 
-These actions do not stop services or delete active runtimes. Removing warm caches can make the next install slower. If an update is already active, wait for it to finish.
+After an action finishes, check its result and refresh the displayed usage. These actions do not stop services or delete active runtimes. Removing warm caches can make the next install slower. If an update is already active, wait for it to finish.
 
 ## Installing a configured release
 
@@ -41,10 +47,15 @@ install applies the selected fixed release even when automatic updates are enabl
 or that release is already installed. Scheduled setup still respects release pins;
 saving a release selector alone does not request a reinstall.
 
+For the frontend task, open the service's **Tools → Updates**, review its saved target, and select **Install configured release** when offered. Wait for completion and check service health. See [Auto-update](auto-update.md#install-a-saved-release-branch-or-commit).
+
 Services with dedicated source installers retain their own installation behavior.
 Manual installs continue to use the existing snapshot and failure-recovery flow.
 A failed release download is reported as an installation failure, rather than a
 successful restart of the existing version.
+
+<details class="geek-details" markdown="1">
+<summary>Technical details: verified candidate activation and rollback</summary>
 
 ## Safety model
 
@@ -72,6 +83,7 @@ source-built services retain a rollback snapshot of replaceable runtime files
 while their persistent paths stay in place. Services whose package manager or
 database owns the upgrade transaction keep their existing service-specific
 recovery behavior.
+</details>
 
 !!! warning "Application database migrations"
 
@@ -86,6 +98,9 @@ the service's files have been recovered. Further archive installs and automatic
 directory clears stop while a recovery workspace remains, so a retry cannot
 erase that evidence. A failure to remove backups after a successful install is
 reported separately and does not undo the new runtime.
+
+<details class="geek-details" markdown="1">
+<summary>Technical details: publisher signatures, checksums, and trust roots</summary>
 
 ## Download verification
 
@@ -115,6 +130,7 @@ separate publisher signature. OCI digests and package-manager lockfile hashes
 also do not imply universal publisher-signature or provenance verification.
 Bundled signing keys need maintenance when their publishers announce rotations
 or revocations; verification does not fetch new trust roots at runtime.
+</details>
 
 <details class="geek-details" markdown="1">
 <summary>Technical details: cache paths, limits, and ownership</summary>

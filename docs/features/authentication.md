@@ -25,6 +25,9 @@ Hybrid mode keeps local password login as a break-glass path if DNS, TLS, the
 identity provider, or its database is unavailable. OIDC-only mode requires an
 explicit lockout-risk confirmation in Settings or the Authelia wizard.
 
+<details class="geek-details" markdown="1">
+<summary>Technical details: authentication and token-routing flow</summary>
+
 ## Authentication flow
 
 ```mermaid
@@ -43,6 +46,19 @@ flowchart TD
 ```
 
 ---
+</details>
+
+## Sign in and check access
+
+```mermaid
+flowchart LR
+    Open[Open DUMB] --> Account{First visit?}
+    Account -->|Yes| Create[Create first account]
+    Account -->|No| Signin[Sign in with your chosen method]
+    Create --> Dashboard[Dashboard opens]
+    Signin --> Dashboard
+    Dashboard --> Check[Check you can open a service]
+```
 
 ## First-time setup
 
@@ -55,14 +71,14 @@ When DUMB starts for the first time, the frontend detects that no users exist an
     1. Navigate to the DUMB frontend (default: `http://localhost:3005`)
     2. You will be redirected to `/setup`
     3. Enter a username and password
-    4. Click **Create Account**
+    4. Select **Create Account & Enable Authentication**
     5. Authentication is automatically enabled
     6. You are logged in and redirected to the dashboard
 
 === "Skip authentication"
 
     1. Navigate to the DUMB frontend
-    2. On the setup page, click **Skip Setup**
+    2. On the setup page, select **Skip - Continue Without Authentication**
     3. Authentication remains disabled
     4. All API endpoints are accessible without tokens
     5. You can enable authentication later in Settings
@@ -88,9 +104,18 @@ paths fall back to the dashboard home page.
 1. Navigate to the DUMB frontend
 2. Enter your username and password
 3. Optionally check **Remember Me** for persistent sessions
-4. Click **Login**
+4. Select **Sign in**.
+5. Check that the dashboard opens and you can open a service page.
 
 ### OIDC login
+
+1. Select **Continue with _provider_** on the login page.
+2. Sign in on your provider's page and complete any approval or second-factor prompt.
+3. Wait to return to DUMB. Check that the dashboard opens and you can open a service page.
+4. If sign-in fails, keep local access available in Hybrid mode and review the provider error before changing authentication settings.
+
+<details class="geek-details" markdown="1">
+<summary>Technical details: OIDC exchange and token validation</summary>
 
 1. Select **Continue with _provider_**.
 2. DUMB starts Authorization Code flow with PKCE and redirects to the provider.
@@ -102,6 +127,12 @@ paths fall back to the dashboard home page.
 
 Provider tokens are not placed in the browser URL. DUMB issues its own access
 and refresh tokens after successful OIDC validation.
+
+
+</details>
+
+<details class="geek-details" markdown="1">
+<summary>Technical details: session lifetimes and browser storage</summary>
 
 ### Token management
 
@@ -115,6 +146,7 @@ and refresh tokens after successful OIDC validation.
 - **Remember Me unchecked**: Tokens stored in `sessionStorage` (cleared when browser closes)
 
 ---
+</details>
 
 ## User management
 
@@ -138,7 +170,9 @@ create accounts for multiple people.
 ### Managing users via settings
 
 1. Open **Settings → Authentication**.
-2. Use its user list to add, disable, enable, or delete accounts.
+2. Select **Add User**, enter the new username and password, and confirm. Check that the account appears in the user list.
+3. Use the action beside the intended account to disable, enable, or delete it, and review any confirmation.
+4. Test a newly created account in a separate private browser window before relying on it for recovery.
 
 ---
 
@@ -157,8 +191,8 @@ Authentication can be toggled at any time through the Settings page.
 
 1. Go to **Settings**
 2. Find the **Authentication** section
-3. Click **Disable Authentication**
-4. All API endpoints become accessible without tokens
+3. Select **Disable Authentication** and review the warning.
+4. Confirm with **Yes, Disable Authentication**. The dashboard and API are then accessible without signing in.
 
 !!! danger "Security warning"
 
@@ -263,6 +297,15 @@ Keep `/config/users.json` private: it contains the OIDC client secret and JWT si
 
 ## Configure an OIDC provider
 
+1. Open **Settings → Authentication** and choose **Hybrid** so local sign-in remains available during setup.
+2. Choose your provider preset. Except for managed Authelia, create a web application at that provider and obtain its client ID/secret.
+3. Enter the provider's issuer and client details. Register the exact **Redirect URI** shown in DUMB at the provider; use your browser-facing HTTPS address.
+4. Select **Check discovery** and resolve any error. Select **Save provider** to persist the configuration, or **Link managed Authelia** for its managed preset.
+5. Test **Continue with** your provider in a separate private browser window. Confirm that you return to DUMB and can open a service.
+6. Keep a working local recovery account. Select **OIDC only** only after both provider sign-in and your recovery plan have been tested; review its lockout confirmation.
+
+
+
 Open **Settings → Authentication → Sign-in provider**. The **Provider preset**
 list includes:
 
@@ -305,7 +348,7 @@ For Google, standard OpenID Connect does not return Google Group membership in
 DUMB's `groups` claim. Leave **Allowed groups** blank unless an intermediary or
 custom provider mapping deliberately supplies that claim.
 
-Use **Check discovery** before saving. This fetches and validates provider
+Use **Check discovery**, then **Save provider**. Discovery fetches and validates provider
 metadata without changing the active login configuration.
 
 ### Provider connection safety

@@ -8,17 +8,12 @@ icon: lucide/git-pull-request
 
 You can help with code, documentation, reproducible bug reports, or testing a proposed fix. Start with the repository that owns the behavior.
 
-## Choose a repository and branch
+## Choose how to help
 
-| Change | Repository | Normal pull request target |
-|---|---|---|
-| Backend API, service installation, process lifecycle, container image | [DUMB](https://github.com/I-am-PUID-0/DUMB) | `dev` |
-| Dashboard, onboarding UI, embedded proxy, browser behavior | [dmbdb](https://github.com/nicocapalbo/dmbdb) | `dev` |
-| This documentation site | [DUMB_docs](https://github.com/I-am-PUID-0/DUMB_docs) | `master` |
-
-DUMB's release branch is `master`; dmbdb's release branch is `main`. Normal fixes and features go to `dev`. Release work and approved hotfixes may target the release branch.
-
-A change can span repositories. An API change may need a dashboard capability check and a docs update; a dashboard workflow change may need revised user instructions.
+- **Report a problem:** use the steps below to describe what happened and share relevant, redacted logs.
+- **Improve a guide:** report a confusing instruction or submit a documentation correction.
+- **Help another user:** join the [community discussion](https://discord.gg/8dqKUBtbp5).
+- **Support the DUMB maintainer:** use [GitHub Sponsors](https://github.com/sponsors/I-am-PUID-0). Integrated applications have their own maintainer links in the service guides.
 
 ## Report a problem
 
@@ -30,6 +25,21 @@ Use logs exported through DUMB where possible. Review logs, configuration, scree
 - [Dashboard issues](https://github.com/nicocapalbo/dmbdb/issues)
 - [Documentation issues](https://github.com/I-am-PUID-0/DUMB_docs/issues)
 - [Community discussion](https://discord.gg/8dqKUBtbp5)
+
+<details class="geek-details" markdown="1">
+<summary>Geek contribution guide: repositories, branches, development and validation</summary>
+
+## Choose a repository and branch
+
+| Change | Repository | Normal pull request target |
+|---|---|---|
+| Backend API, service installation, process lifecycle, container image | [DUMB](https://github.com/I-am-PUID-0/DUMB) | `dev` |
+| Dashboard, onboarding UI, embedded proxy, browser behavior | [dmbdb](https://github.com/nicocapalbo/dmbdb) | `dev` |
+| This documentation site | [DUMB_docs](https://github.com/I-am-PUID-0/DUMB_docs) | `master` |
+
+DUMB's release branch is `master`; dmbdb's release branch is `main`. Normal fixes and features go to `dev`. Release work and approved hotfixes may target the release branch.
+
+A change can span repositories. An API change may need a dashboard capability check and a docs update; a dashboard workflow change may need revised user instructions.
 
 ## Develop and validate
 
@@ -76,3 +86,5 @@ Use Conventional Commit titles, for example:
 Distinguish automated checks from any manual or operational testing that remains. For dependency updates, inspect the changed versions and the affected runtime path as well as the build result.
 
 For a larger feature, discuss the proposed behavior in an issue or the community before building it.
+
+</details>

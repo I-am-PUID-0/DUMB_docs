@@ -31,15 +31,22 @@ DUMB 2.23.0 still uses the standalone Battery dependency. If you deliberately in
 
 ## Why is CLI Battery on a separate port?
 
+A standalone Battery service is separate from the CLI Debrid interface. DUMB configures the connection automatically, so you should not need to edit its port just to use CLI Debrid.
+
+<details class="geek-details" markdown="1">
+<summary>Geek details: standalone Battery ports and embedded layouts</summary>
+
 In the standalone/stable integration, CLI Debrid's UI defaults to `5000` and CLI
 Battery defaults to `5001`. During setup DUMB writes
 `cli_debrid.env.CLI_DEBRID_BATTERY_PORT` from the actual `cli_battery.port`,
 including any dynamically reassigned port. The upstream v0.7.29 pre-release
 removes this separate network hop.
 
+</details>
+
 ## Why do I see HTTP 423 responses?
 
-CLI Battery uses `423 Locked` while a resource is deliberately unavailable or still being prepared. Confirm CLI Battery and Phalanx are healthy, then inspect both service logs before changing ports or deleting state.
+CLI Battery uses `423 Locked` while a resource is deliberately unavailable or still being prepared. For a standalone layout, confirm CLI Battery and Phalanx are running. Open their service cards and select **Service Logs**, where available; inspect CLI Debrid's logs too. Review the layout note above if Battery is integrated. Do not change ports or delete data merely because a request returns 423.
 
 ## Where are its persistent files and symlinks?
 

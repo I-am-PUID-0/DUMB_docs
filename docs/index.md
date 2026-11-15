@@ -25,8 +25,8 @@ do when something needs attention.
 
 <div class="home-actions" markdown>
 
-[Set up DUMB :lucide-arrow-right:](getting-started/installation.md){ .md-button .md-button--primary }
-[Explore the services](services/index.md){ .md-button }
+[Install DUMB :lucide-arrow-right:](deployment/index.md){ .md-button .md-button--primary }
+[Use the dashboard](frontend/index.md){ .md-button }
 
 </div>
 
@@ -79,6 +79,16 @@ Debrid · Usenet · Requests · Indexers
 </div>
 
 </section>
+
+## Deployment guides
+
+Choose the system or tool where you will install DUMB. Each link opens the full guide for that platform.
+
+- [Docker Compose](deployment/docker.md) · [Portainer](deployment/portainer.md) · [Dockge](deployment/dockge.md)
+- [Unraid](deployment/unraid.md) · [Synology](deployment/synology.md) · [QNAP](deployment/qnap.md) · [TrueNAS SCALE](deployment/truenas.md)
+- [Windows / WSL2](deployment/wsl.md) · [Proxmox LXC](deployment/proxmox.md)
+
+[Compare deployment options](deployment/index.md) · [Before you install](getting-started/installation.md)
 
 ## What do you want to do?
 
@@ -134,10 +144,17 @@ you still provide accounts, provider credentials, and your library choices.
 
 </div>
 
+<div class="home-next" markdown>
+
+### Get help or support the project
+
+[Ask the community](https://discord.gg/8dqKUBtbp5) for setup help, [report a problem](contributing.md#report-a-problem), or [support the DUMB maintainer](https://github.com/sponsors/I-am-PUID-0). Each integrated app also has its own maintainers; their support links belong in its service guide.
+
+</div>
+
 <div class="home-reference" markdown>
 
-**Looking for the technical detail?** Turn on Geek mode in the header to expand
-configuration examples and implementation notes, or go straight to the
+**Want to understand the internals or use another method?** Geek mode adds explanations, API and command-line alternatives, and manual configuration examples. The main guides use the dashboard. You can also go straight to the
 [API](api/index.md), [configuration reference](reference/index.md), or
 [architecture](architecture/index.md). [Text documentation for agents](llms.txt).
 

@@ -1,31 +1,63 @@
 ---
-title: Frontend Overview
-description: Use the DUMB Nuxt dashboard for guided onboarding, service controls, live logs, metrics, configuration, and embedded service interfaces.
+title: Use DUMB
+description: Use the DUMB dashboard to set up services, change settings, manage updates, read logs, and open your media applications with clear task guides.
 icon: lucide/layout-dashboard
 ---
 
-# Dashboard guide
+# Use DUMB { #dashboard-guide }
 
-The DUMB Frontend, also called **dmbdb**, is the browser interface for service controls, configuration, logs, and metrics. Open `http://localhost:3005` on the Docker host, or use the host's address from another device.
+The dashboard is where you set up and manage DUMB. Open `http://<host>:3005` in your browser, replacing `<host>` with the machine running DUMB. Sign in if authentication is enabled.
+
+You can follow the tasks below without editing files or running API commands.
 
 <figure class="docs-visual" markdown="1">
 
-![A navigation map showing Dashboard, Service pages, Metrics and Settings, with the purpose of each screen.](../assets/images/guides/dashboard-map.svg)
+![Dashboard navigation: service cards open one app's controls; Metrics and Settings contain installation-wide tools.](../assets/images/guides/dashboard-map.svg)
 
-<figcaption class="docs-visual-caption">A navigation map, not a screenshot. Open a service card for that app; use Metrics and Settings for installation-wide tasks. Available controls depend on the connected backend.</figcaption>
+<figcaption class="docs-visual-caption">Start on the dashboard, select a service card, then choose the task you need. This is a navigation guide rather than a screenshot.</figcaption>
 </figure>
 
-## Find a task
+## Choose a task
 
-| Task | Page |
+| I want to… | Open this guide |
 | --- | --- |
-| Set up a new installation | [Onboarding](onboarding.md) |
-| Check services or install available updates | [Dashboard](dashboard.md) |
-| Edit one service, read its logs, or open its application UI | [Service pages](service-pages.md) |
-| Change login, tokens, appearance, or UI preferences | [Settings](settings.md) |
-| Investigate resource usage and database pressure | [Metrics](metrics.md) |
+| Set up services for the first time | [Onboarding](onboarding.md) |
+| Start, stop, or check an app | [Dashboard](dashboard.md) and [service controls](service-pages.md#status-and-controls) |
+| Change a DUMB setting or an app's own setting | [Configuration](../features/configuration.md) |
+| Check for updates or install an update | [Auto-update](../features/auto-update.md) |
+| Restart an app automatically after a failure | [Auto-restart](../features/auto-restart.md) |
+| Sign in or manage DUMB accounts | [Authentication](../features/authentication.md) |
+| Read an error or download a log | [Service logs](service-pages.md#logs) |
+| Open Plex, Jellyfin, InfiniDysk, or another app | [Embedded UI](service-pages.md#embedded-ui) |
+| Back up or repair library links | [Symlink operations](../features/symlinks.md) |
+<!-- dev:start -->
+| Back up or restore the whole installation | [Installation backups](../features/installation-backups.md) |
+<!-- dev:end -->
+| Investigate resource use | [Metrics](metrics.md) |
+| Change appearance or dashboard preferences | [Settings](settings.md) |
 
-The API supplies the available services and tools. Controls that need a newer backend remain hidden when its capability is missing.
+Each task guide explains the controls to use, what to save, and how to check the result. Service-specific account and library setup is covered in the [service guides](../services/index.md).
+
+## DUMB and application accounts are separate
+
+A DUMB account gives operator access to its dashboard, including service and user management. Opening an app inside DUMB does not sign you into that app: Plex, Jellyfin, pgAdmin, and other services may ask for their own account.
+
+See [Authentication](../features/authentication.md) before sharing DUMB access with someone else.
+
+## If the instructions do not match your screen
+
+Check the DUMB and frontend versions in **Settings → About**, then choose **Latest release** or **Development** documentation in this site's header. An older installation may not show a newer tool.
+
+Use a current browser. If the dependency graph's Flow view cannot display, its **Details** view provides the connections as text.
+
+## What Geek mode adds
+
+The normal guides use frontend tools. Geek sections explain the underlying processes and connections, or show alternatives such as API calls, command-line tools, environment variables, and manual configuration.
+
+Geek mode changes these docs; it does not change DUMB's settings. [How the documentation modes work](../reference/doc-versions.md#use-geek-mode-when-you-want-more-detail).
+
+<details class="geek-details" markdown="1">
+<summary>Geek reference: how the dashboard connects and alternative deployment settings</summary>
 
 ## Ports and live connections
 
@@ -33,11 +65,6 @@ The maintained Compose example publishes the frontend on `3005`. Bundled Traefik
 
 The frontend proxies backend requests under `/api` and streams status, metrics, and logs over WebSockets. A reverse proxy in front of the dashboard must allow those WebSocket connections. If the connection indicator is disconnected, check proxy and network settings before relying on the displayed sample as current.
 
-## Login and application accounts
-
-DUMB can use local accounts, an OIDC provider, or both. Every enabled DUMB user has the same operator privileges, including service and user management. See [Authentication](../features/authentication.md) before sharing access.
-
-An embedded application's login remains separate from the DUMB login. Opening Plex, Jellyfin, pgAdmin, or another service inside the dashboard does not sign in to that application automatically.
 
 ## Frontend configuration
 
@@ -54,3 +81,5 @@ DUMB injects the current Traefik listener into its managed frontend, including w
 ## Browser support
 
 Use a current Chrome/Chromium, Firefox, Safari, or Edge release. The dependency panel's [Flow view](service-pages.md#dependency-graph-view) uses Mermaid 12 and requires Safari 17.4+ or another ES2024-capable browser. If that view cannot render, use **Details** to inspect dependencies. See the [Mermaid 12 release notes](https://github.com/mermaid-js/mermaid/releases/tag/mermaid@12.0.0) for its browser requirements.
+
+</details>

@@ -22,6 +22,15 @@ backup protocol `1`; older backends continue to expose their existing tools.
 
 Review coverage and storage before the first backup. Archives contain credentials and keys, and are not encrypted.
 
+```mermaid
+flowchart LR
+    Settings[Open Settings Backups and restore] --> Choose[Choose destination and archive format]
+    Choose --> Preview[Preview backup and review coverage]
+    Preview --> Confirm[Confirm downtime and backup]
+    Confirm --> Wait[Wait for verification and service resume]
+    Wait --> Check[Check saved archive and application access]
+```
+
 ## What an installation backup contains
 
 The preview inventories DUMB configuration, authentication and signing state,
@@ -49,6 +58,9 @@ and unrecognized regular payloads in those directories remain blockers; DUMB
 identifies the path instead of silently omitting it. DUMB refuses unsupported
 or ambiguous state instead of silently reporting a complete backup.
 
+<details class="geek-details" markdown="1">
+<summary>Technical details: aliases, archive metadata, and unsupported file types</summary>
+
 A managed file or selected service alias is archived as a literal entry, so a
 final symlink is preserved without copying its target. A sibling alias under
 `data_root` pointing to an already-covered managed directory is also preserved
@@ -63,6 +75,9 @@ as independent files. Extended attributes, ACLs, special permission bits and
 unresolved nested mounts are blockers. Nested controller-auth paths or an
 inventory that exceeds the restorable transaction budget also require review;
 the utility does not silently discard that state.
+
+
+</details>
 
 Archives contain credentials and private keys and are not encrypted.
 Restrict access to the destination, partial exports and downloaded copies;
@@ -125,7 +140,7 @@ Use direct frontend/API access before starting. Managed proxies and tunnels can 
 1. Select a destination and archive format in **Settings → Backups and restore**.
 2. Choose **Preview backup** to review roots, exclusions, estimated space, and blockers while applications remain running.
 3. Stop external writers, including another container sharing the same state.
-4. Review and confirm the downtime, credential-handling, and external-state acknowledgements and the displayed phrase.
+4. Review the downtime, credential-handling, and external-state acknowledgements, enter the displayed phrase, and select **Start reviewed backup**.
 5. Follow the admitted job through archive verification and service resume.
 6. Check both the saved archive receipt and application availability before leaving the operation.
 
@@ -151,6 +166,16 @@ DUMB resumes only applications that were running before the backup, in dependenc
 
 <details class="geek-details" markdown="1">
 <summary>Technical details: progress phases and consistency checks</summary>
+
+```mermaid
+flowchart LR
+    Admit[Validate operation and reserve persistence] --> Stop[Stop previously running writers]
+    Stop --> Inventory[Inventory stable source]
+    Inventory --> Archive[Stream archive to destination]
+    Archive --> Verify[Check source and read back archive]
+    Verify --> Publish[Publish archive and catalog receipt]
+    Publish --> Resume[Resume prior services in dependency order]
+```
 
 | Phase | What its counters measure |
 | --- | --- |
@@ -273,7 +298,7 @@ into an installation archive.
 ## Schedule backups
 
 Scheduling is off by default. Enable it deliberately, choose its destination,
-interval, archive format and retention, and save the schedule. The schedule
+interval, archive format and retention, then select **Save backup schedule**. Check the next scheduled run and use **Reload saved schedule** to verify the saved choices. The schedule
 keeps its own format choice; changing a manual backup does not change it.
 Each manual or scheduled run
 creates a full, standalone archive; incremental or deduplicated installation

@@ -12,10 +12,12 @@ icon: lucide/disc
 
 ## First start
 
-1. Select Emby in onboarding and open its embedded UI after startup.
-2. Complete the native administrator setup and choose the library folders visible inside DUMB.
-3. Review scanning and automatic removal settings before the first scan of a remote mount.
-4. Play and seek through a representative file. Configure remote access and hardware acceleration separately if needed.
+1. Select **Emby** during DUMB onboarding. Open its service card and, on **DUMB Config**, use **Start** if stopped. Select **Embedded UI** to open Emby.
+2. Complete Emby's setup wizard and create the administrator account, or sign in to your existing server. Keep the account credentials for future library and playback changes.
+3. Add a library for each media type and browse to the curated folder used by your download workflow. These are paths inside DUMB, usually below `/mnt/debrid`, rather than paths from your computer. Use the folder saved in Sonarr/Radarr or your collector's settings.
+4. Review scan and automatic removal settings before scanning a remote library. Confirm the provider mount is available, then run the first library scan.
+5. Open the library, play one item and seek to another point. If it is missing, compare the library folder with the workflow's saved folder; if playback fails, check the provider connection and whether Emby needs transcoding.
+6. Configure remote access, sharing and hardware acceleration after local playback works. Host GPU access and the application's transcoding settings are separate setup steps.
 
 <!-- dev:start -->
 ## Setup checklist and remaining work

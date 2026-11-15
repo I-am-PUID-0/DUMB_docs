@@ -8,11 +8,16 @@ icon: lucide/database
 
 ## Do I need both Riven Backend and Riven Frontend?
 
-Riven Backend is the orchestrator and database consumer. Riven Frontend is an optional UI that depends on the backend. Starting the frontend alone does not provide a working Riven stack.
+For browser-based setup, select both. **Riven Backend** performs acquisition and library work; **Riven Frontend → Embedded UI → Settings** lets you configure it. Starting the frontend alone does not provide a working Riven stack. The backend can also be managed without this frontend using its API, which is an advanced alternative.
 
 ## What changes in branch mode?
 
+<details class="geek-details" markdown="1">
+<summary>Geek details: branch-mode runtime and mount differences</summary>
+
 The current branch layout uses Python 3.13 and Riven's native filesystem/debrid-link settings. DUMB removes the legacy Zurg/rclone runtime dependencies for a branch-enabled backend and points both the filesystem mount and updater library path at `/mnt/debrid/riven`. Stable/release-mode Riven retains the legacy Zurg/rclone dependency model.
+
+</details>
 
 ## Is PostgreSQL required?
 

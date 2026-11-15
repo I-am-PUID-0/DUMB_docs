@@ -12,16 +12,18 @@ Plex organizes and streams media from local folders or mounted remote content. D
 
 ## How to Start
 
-1. Select Plex during onboarding. For a fresh server on the release backend, provide its short-lived claim token immediately before startup.
-2. Open Plex from the DUMB service page and confirm the intended Plex account owns the server.
-3. Add library folders using the paths visible inside DUMB. Keep automatic trash removal disabled while validating a remote mount.
-4. Test playback and seeking before setting up sharing, remote access, or transcoding.
+1. Select **Plex** during DUMB onboarding. For a fresh server on the release backend, provide its short-lived claim token immediately before startup.
+2. Open the Plex service card. On **DUMB Config**, use **Start** if stopped, then select **Embedded UI**. Sign in to Plex and confirm your intended account owns this server.
+3. In the Plex setup wizard or server library settings, create a library for each media type. Browse to the curated folder used by your workflow, using the path inside DUMB. For an Arr workflow, compare it with the saved Sonarr/Radarr root folder.
+4. Keep automatic trash removal disabled while validating a remote mount. Confirm that mount is available, then scan the new library.
+5. Open one imported item and test playback and seeking. If it does not appear, compare the saved library path with your workflow's folder; if playback fails, check the provider connection and Plex's stream status.
+6. Set up sharing, remote access or hardware transcoding after local playback works. Account authorization, library access and playback are separate checks.
 
 A Plex claim token authorizes a server claim. A Plex API token lets configured integrations call that server; neither token grants a Plex Pass subscription or its features.
 
 ### Utilize the onboarding process
 
-You can reopen onboarding from DUMB Settings. Review account authorization and selected library paths rather than recreating an existing server.
+You can reopen onboarding from **Settings → Launch Onboarding**. Review account authorization and selected library paths rather than recreating an existing server.
 
 ### Manually
 
@@ -148,6 +150,13 @@ Plex must have access to:
 If you're migrating an existing Plex Media Server into the DUMB container, the process involves preserving your current Plex data directory and ensuring it is placed correctly within the DUMB ecosystem.
 
 ---
+
+!!! warning "Preserve the existing server"
+
+    Back up the complete Plex application data and stop the source server before copying it. Keep the original data until the copied server's ownership, library paths and playback have been checked. Moving application data requires access to the Docker host; the procedure below is for that operator.
+
+<details class="geek-details" markdown="1">
+<summary>Geek details: copy an existing server, adjust paths and verify permissions</summary>
 
 ### Step 1: Locate your existing Plex data directory
 
@@ -295,7 +304,9 @@ This allows you to re-register the server cleanly if needed.
 
 Once complete, your DUMB-based Plex server should fully replicate your prior setup while gaining the integration benefits of the DUMB ecosystem.
 
---- 
+---
+
+</details>
 
 <!-- dev:start -->
 ## Claim authorization during setup
@@ -313,6 +324,9 @@ Hardware-accelerated streaming enables Plex to use the GPU or specialized hardwa
 
 !!! warning "Plex Pass Required"
     Hardware-accelerated transcoding is a **premium feature** and requires an active Plex Pass subscription. [Learn more](https://support.plex.tv/articles/115002178853-using-hardware-accelerated-streaming/)
+
+<details class="geek-details" markdown="1">
+<summary>Geek details: prepare Docker GPU access and a writable transcode directory</summary>
 
 ### Docker Setup for Hardware Transcoding
 
@@ -356,6 +370,8 @@ getent group render
 
 Make sure the Plex container runs with appropriate `PUID` and `PGID` values that also have access to `/dev/dri`.
 
+</details>
+
 ### Enabling in Plex Settings
 
 Once the container is running and hardware access is configured:
@@ -374,6 +390,9 @@ When a video is playing:
 3. Alternatively, open the **Server Dashboard** during playback and check the stream status for an `(hw)` label next to the transcoding type.
 
 ---
+
+<details class="geek-details" markdown="1">
+<summary>Geek details: inspect GPU use from the container shell</summary>
 
 ### Monitoring GPU Usage from Inside the Container
 
@@ -429,6 +448,8 @@ Look for the Plex process listed under the `Processes` section. When active tran
 !!! note "If `nvidia-smi` is not recognized, ensure the container is running with the `--gpus all` flag and NVIDIA Docker runtime is enabled on the host."
 
 ---
+
+</details>
 
 ### Troubleshooting GPU Access & Hardware Transcoding
 

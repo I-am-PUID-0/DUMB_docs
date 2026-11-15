@@ -6,7 +6,7 @@ icon: lucide/database-backup
 
 # SQLite to PostgreSQL Migration
 
-DUMB provides a guarded tool for moving an existing supported service from SQLite to DUMB-managed PostgreSQL. Open the service page and select **Database Migration**.
+DUMB provides a guarded tool for moving an existing supported service from SQLite to DUMB-managed PostgreSQL. Open the service page and select **Tools → Database Migration**.
 
 <!-- dev:start -->
 For InfiniDysk, this page describes the generation 1 adapter. Generation 2 uses
@@ -136,6 +136,11 @@ The panel shows the latest persisted job for the current service, including its 
 
 Preflight does not change the service configuration.
 
+If preflight reports a recovered or incompatible source database, stop here. Preserve the original, recovered copy, and independent backup; removing a reported table does not prove the application data is sound. Resolve the reported issue before rehearsal.
+
+<details class="geek-details" markdown="1">
+<summary>Technical details: source schema, search paths, and recovered SQLite databases</summary>
+
 #### Source schema and recovered databases
 
 DUMB imports columns by name, so differing column order is supported. The source must still be compatible with the installed application's PostgreSQL schema. Imports, table resets, and validation address the application tables explicitly in PostgreSQL's `public` schema. Before truncating those tables, DUMB checks that the source tables and importable columns exist in that schema. A missing-column error identifies the affected table and columns.
@@ -147,8 +152,11 @@ Preflight blocks the default SQLite recovery table `lost_and_found` in the main 
 [SQLite recovery](https://www.sqlite.org/recovery.html) can alter values and types or move content between tables. Its recovery-table name can also be customized, so the default-name check does not identify every recovery result. A successful `quick_check` does not prove that application values or types are correct. Reconcile recovered data on a separate copy, let the application complete its own SQLite upgrades, and validate its important objects before repeating the PostgreSQL rehearsal.
 
 For a schema or type failure, review the persisted job's error and detailed progress. Useful diagnostic information includes the affected table and column names, SQLite `PRAGMA table_info` column types, PostgreSQL `information_schema.columns` types and schema names, and `search_path`. Share schema metadata and the error message while keeping database rows and credentials private.
+</details>
 
 ### 2. Run a rehearsal
+
+Choose **Rehearsal**, review the acknowledgements and displayed confirmation, then select **Run rehearsal**. Wait for **Rehearsal passed — ready for PostgreSQL cutover** before continuing. If it fails, preserve its job/backups and inspect the reported error rather than enabling PostgreSQL directly.
 
 Rehearsal is required before dmbdb enables cutover. It:
 

@@ -48,7 +48,10 @@ After the dependency restarts and remains healthy, the recovery journal restores
 
 ## Media-server setup
 
-Open the Plex, Jellyfin, or Emby service page and select **Library Protection**.
+1. Open the Plex, Jellyfin, or Emby service page and select **Tools → Library Protection**.
+2. Review the policy for that exact server and its affected storage. For Jellyfin/Emby, enter the API key described below if setup is required.
+3. Select **Save protection** and wait for **Saved**.
+4. Reopen the panel and check its current protection/activity status. Resolve **Setup required** before relying on unattended maintenance.
 
 ### Plex
 
@@ -64,7 +67,7 @@ The panel also exposes live Plex library preferences:
 | **Update libraries periodically** | Off unless supervised | A scheduled scan can overlap an unattended outage. |
 | **Scan interval** | Deployment-specific | Used only when periodic updates remain enabled. |
 
-These controls write directly to Plex. The outage guard snapshots the current values and restores them after recovery; it does not permanently replace the choices saved in the panel.
+Select **Save Plex settings** after changing these controls, then check the saved values. These controls write directly to Plex. The outage guard snapshots the current values and restores them after recovery; it does not permanently replace the choices saved in the panel.
 
 ### Jellyfin and Emby
 
@@ -73,6 +76,9 @@ If the application account and key are not configured, finish the media server's
 The key is needed to inspect current sessions, identify and stop a running library scan, temporarily remove scheduled scan triggers, and disable/restore real-time monitoring for each virtual library.
 
 The key is stored in `dumb.media_protection.services`, redacted from DUMB config/API responses and logs, and never sent to the browser after saving. Without a key, DUMB reports **Setup required**, treats activity as unknown, and defers safe unattended maintenance. An operator can still choose an explicit manual override.
+
+<details class="geek-details" markdown="1">
+<summary>Technical alternative: media-protection configuration and mount mapping</summary>
 
 ## Configuration
 
@@ -99,6 +105,7 @@ The key is stored in `dumb.media_protection.services`, redacted from DUMB config
 ```
 
 `protected_mounts` is optional. Leave it empty to use DUMB's dependency and `wait_for_mounts` mapping. Use explicit roots when one media server consumes only a subset of several independent mounts.
+</details>
 
 ## Recovery and troubleshooting
 

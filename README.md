@@ -12,6 +12,7 @@ poetry install --no-root
 poetry run python scripts/build_docs.py
 poetry run python scripts/audit_seo.py site
 poetry run python scripts/audit_seo.py site/dev --development
+poetry run python scripts/audit_reader_paths.py site
 poetry run python -m unittest discover -s tests
 poetry run python -m http.server 8000 --directory site
 ```
@@ -30,10 +31,11 @@ for the user-facing explanation.
 `docs-versions.json` records the released backend version and immutable source
 commit, the documentation snapshot commit, and the backend/frontend commits
 covered by the development review. Keep these separate from this repository's
-own package version. The release build reads its frozen docs and navigation
+own package version. The release build reads its frozen docs
 directly from Git, without switching branches or changing the index.
-Theme configuration, templates, styles, and scripts stay shared and current;
-the snapshot freezes prose and navigation rather than obsolete build settings.
+Navigation, theme configuration, templates, styles, and scripts stay shared and
+current. Navigation is filtered to pages available in each channel, so a menu
+improvement reaches stable readers without advertising unshipped features.
 
 - Set `development_only: true` in front matter for a guide whose feature has not
   shipped. The release build substitutes a short availability page and omits it
@@ -102,6 +104,14 @@ exports `llms.txt` and `llms-full.txt` from its filtered content.
 
 Geek mode is a browser preference that opens native technical-detail sections.
 It never removes documentation from the page or changes which channel is read.
+The normal guide must stand alone as a complete frontend task: where to click,
+what to enter, how to save, and how to check the result. Geek sections add
+internals and alternative API, CLI, environment, or manual configuration methods.
+Do not hide normal dashboard actions, essential warnings, support links, or
+deployment choices merely because a page also contains technical reference.
+The reader-path audit checks platform discovery, visible frontend workflows,
+separate technical diagrams, and support links outside Geek sections in both
+channels. It complements source-based editorial review of each procedure.
 Enabled sections have green panels and a visible mode indicator. Amber channel
 labels and Dev badges identify additions beyond the frozen release docs;
 already promoted blocks do not retain an unreleased label. A new guide is

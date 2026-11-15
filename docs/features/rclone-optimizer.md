@@ -16,12 +16,15 @@ The optimizer is currently limited to InfiniDysk. It appears on the specific **r
 2. Stop media activity and wait for imports and unrelated provider reads to finish.
 3. Review one to eight representative files and choose a test depth.
 4. Set traffic, connection, cache, memory, free-space, and duration limits for your deployment.
-5. Run the job and review failed samples, startup/seek measurements, provider evidence, and cleanup results.
+5. Select **Start background optimization**. Wait for the final result, then review failed samples, startup/seek measurements, provider evidence, and cleanup results.
 6. Apply a recommendation only after review; apply and rollback both interrupt the production rclone mount.
 
 The limits and evidence below explain what this comparison can establish.
 
 ## What the test actually reads
+
+<details class="geek-details" markdown="1">
+<summary>Technical details: discovery paths and isolated read-only mounts</summary>
 
 Each candidate uses this path:
 
@@ -44,6 +47,7 @@ to a safe mount-relative read path and opened on every isolated shadow mount. Fo
 a regular entry this can be `content/radarr-infinidysk/example.mkv`; a symlink-backed
 entry can resolve to its mount-internal backing path while the UI retains the
 friendly category path.
+</details>
 
 These are **real provider reads**. They can consume provider traffic and are subject to provider connection, automation, and acceptable-use policies.
 
@@ -78,6 +82,9 @@ trace**. If InfiniDysk tracing cannot be enabled, rclone performance measurement
 still complete, but provider-level event correlation is explicitly marked
 unavailable instead of being presented as a path-matching result.
 
+<details class="geek-details" markdown="1">
+<summary>Technical details: provider evidence windows, traces, and measurements</summary>
+
 ### Reading InfiniDysk provider evidence
 
 The first four values in each expanded provider-evidence panel come from the
@@ -100,8 +107,14 @@ the media server and InfiniDysk should be idle during testing.
 | Bytes | Sum of bytes served recorded across all candidate-matched retained stream traces |
 | Provider wait | Cumulative retained-event time spent waiting on provider work across all matched traces |
 | Connection wait | Cumulative retained-event time spent acquiring a provider connection across all matched traces |
+</details>
 
 ## Content selection
+
+Choose one to eight files in **Rclone Optimizer**. The panel suggests recent, older, large, and typical files from the associated library so you can compare different playback conditions.
+
+<details class="geek-details" markdown="1">
+<summary>Technical details: category derivation and bounded content discovery</summary>
 
 Open the InfiniDysk-backed rclone service and select **Rclone Optimizer**. DUMB first
 reuses the same Arr-to-InfiniDysk category derivation used during integration setup.
@@ -118,6 +131,7 @@ panel, and suggests a small, stratified set:
 - older content, which is more likely to be cold;
 - a large/high-bitrate candidate; and
 - a typical file near the middle of the observed set.
+</details>
 
 These files are representative automatic suggestions, not mandatory choices.
 They are pinned to the top of the picker and labeled with the selection reason,
@@ -140,6 +154,11 @@ The optimizer does not try every possible rclone flag permutation. That would co
 | Quick | 2 | Current tuning with the cache ceiling enforced, and one balanced alternative |
 | Standard | 4 | Bounded current tuning, balanced, lower-memory, and fast-start profiles |
 | Thorough | 6 | Standard profiles plus high-throughput and large-chunk variants |
+
+A recommendation is a set of settings tested together. It does not prove that every individual setting is best for your server. Review the complete settings and any warnings before applying it.
+
+<details class="geek-details" markdown="1">
+<summary>Technical details: varied flags, fixed constraints, RC integration, and preserved arguments</summary>
 
 The report deliberately separates the settings into five roles:
 
@@ -187,6 +206,7 @@ repairs RC or chooses a shorter fallback `--dir-cache-time`.
 as a bundled prerequisite. The UI explains the expected streaming relevance of
 each displayed flag; these statements describe expected scope, not a guarantee
 that arbitrary custom combinations can never influence playback.
+</details>
 
 ## Safety limits
 
@@ -243,9 +263,8 @@ Finishing a test creates a report and recommendation. It does **not** change rcl
 1. Review every candidate's complete settings/roles, warm/cold samples, exclusions, resources, cleanup status, and InfiniDysk evidence.
 2. Select **Apply recommendation**.
 3. DUMB merges only the recommended optimizer flags into the saved rclone command.
-4. DUMB stops rclone, detaches and verifies removal of the previous production
-   FUSE mount, restarts the process, then requires the new mount to remain
-   accessible and stable before reporting success.
+4. Wait for the apply result. DUMB restarts the production mount, so playback may be interrupted.
+5. Check the rclone service health and play a representative file. If the result is worse, use **Roll back** and check playback again.
 
 The pre-apply command is stored privately in the job record. Select **Roll back**
 to restore it through the same stop, verified-unmount, restart, and mount-readiness

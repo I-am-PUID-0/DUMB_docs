@@ -8,6 +8,16 @@ icon: lucide/download
 
 Have a host, persistent storage, and credentials for the services you plan to use. DUMB creates its initial configuration at startup; you do not need to write a complete `dumb_config.json` first.
 
+## Choose your platform first
+
+These guides explain the installation steps for each platform. Use this page to prepare, then follow your selected guide.
+
+- [Docker Compose](../deployment/docker.md) · [Portainer](../deployment/portainer.md) · [Dockge](../deployment/dockge.md)
+- [Unraid](../deployment/unraid.md) · [Synology](../deployment/synology.md) · [QNAP](../deployment/qnap.md) · [TrueNAS SCALE](../deployment/truenas.md)
+- [Windows / WSL2](../deployment/wsl.md) · [Proxmox LXC](../deployment/proxmox.md)
+
+[Compare deployment options](../deployment/index.md).
+
 ## Host requirements
 
 | Requirement | Guidance |

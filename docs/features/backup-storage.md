@@ -146,6 +146,11 @@ through their independent backup/restore plans.
 
 ## Verification and recovery
 
+After a backup completes, check that it appears in the relevant archive or snapshot picker. Open its receipt and confirm that verification passed. If the destination is unavailable, restore the original mount and use **Check availability** before retrying.
+
+<details class="geek-details" markdown="1">
+<summary>Technical details: artifact identity, verification, and catalog publication</summary>
+
 DUMB records the selected root's identity and writes only its own managed
 artifacts. Exports use newly created temporary files, complete-byte
 checksum/readback verification and atomic publication. The selected permission
@@ -153,6 +158,9 @@ policy does not bypass file-type, owned-identity or checksum checks. The manifes
 browser lists registered artifacts rather than browsing arbitrary NAS files. Opening or downloading a
 managed artifact verifies its content again; the list's checksum records the
 completed export verification.
+</details>
+
+
 
 For registered destinations, a missing or replaced mount blocks use instead of
 writing into the local directory underneath an absent NAS mount. Legacy custom

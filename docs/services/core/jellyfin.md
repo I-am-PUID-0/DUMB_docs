@@ -12,10 +12,12 @@ icon: lucide/play
 
 ## First start
 
-1. Select Jellyfin in onboarding and open its embedded UI after startup.
-2. Complete administrator setup and choose the library folders visible inside DUMB.
-3. Review scanning settings before the first scan of a remote mount.
-4. Test playback and seeking. If you need transcoding, configure it in Jellyfin's playback settings after mapping the GPU into the container.
+1. Select **Jellyfin** during DUMB onboarding. Open its service card and, on **DUMB Config**, use **Start** if stopped. Select **Embedded UI** to open Jellyfin.
+2. Complete Jellyfin's setup wizard and create the administrator account, or sign in to your existing server. Keep the account credentials for future library and playback changes.
+3. Add a library for each media type and browse to the curated folder used by your download workflow. These are paths inside DUMB, usually below `/mnt/debrid`, rather than paths from your computer. Use the folder saved in Sonarr/Radarr or your collector's settings.
+4. Review scan and automatic removal settings before scanning a remote library. Confirm the provider mount is available, then run the first library scan.
+5. Open the library, play one item and seek to another point. If it is missing, compare the library folder with the workflow's saved folder; if playback fails, check the provider connection and whether Jellyfin needs transcoding.
+6. Configure remote access, sharing and hardware acceleration after local playback works. Host GPU access and the application's transcoding settings are separate setup steps.
 
 <!-- dev:start -->
 ## Setup checklist and remaining work
@@ -88,6 +90,13 @@ the minimized DUMB runtime image.
 
 ## Hardware acceleration
 
+For a supported GPU that has been made available to DUMB, open **Dashboard → Playback → Transcoding** in Jellyfin. Select the acceleration method and supported codecs, save, and test a short transcode. Passing a device into the container does not enable these settings automatically.
+
+Host device mapping requires deployment access. See [GPU setup for native Proxmox](../../deployment/proxmox.md#gpu-passthrough-and-jellyfin) and [Jellyfin's Intel GPU guide](https://jellyfin.org/docs/general/post-install/transcoding/hardware-acceleration/intel/) when preparing that access.
+
+<details class="geek-details" markdown="1">
+<summary>Geek details: GPU permissions, FFmpeg selection and driver defaults</summary>
+
 DUMB launches Jellyfin as its configured `puid`/`pgid`. With `/dev/dri` present,
 DUMB adds its service account to existing `render` and `video` groups at startup.
 Managed processes receive those supplementary groups, including after a restart;
@@ -109,7 +118,12 @@ not enable transcoding.
 See [native Proxmox GPU setup](../../deployment/proxmox.md#gpu-passthrough-and-jellyfin)
 and [Jellyfin's Intel GPU guide](https://jellyfin.org/docs/general/post-install/transcoding/hardware-acceleration/intel/).
 
+</details>
+
 <!-- dev:start -->
+<details class="geek-details" markdown="1">
+<summary>Geek details: Intel OpenCL runtime and device diagnostics</summary>
+
 ### Intel OpenCL tone mapping
 
 AMD64 DUMB images include the distribution's current and legacy Intel OpenCL
@@ -142,6 +156,9 @@ establish working GPU tone mapping. Configure OpenCL tone mapping in Jellyfin,
 then test a short HDR transcode and inspect Jellyfin's FFmpeg log before relying
 on it for playback. See [Jellyfin's Intel guide](https://jellyfin.org/docs/general/post-install/transcoding/hardware-acceleration/intel/)
 for the current hardware and codec requirements.
+
+</details>
+
 <!-- dev:end -->
 
 ## Media Library Protection

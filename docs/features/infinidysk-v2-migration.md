@@ -468,6 +468,11 @@ not DUMB's generation 1 SQLite-to-PostgreSQL adapter.
 
 ### Prepare a PostgreSQL destination
 
+The conversion needs a separate, empty PostgreSQL database with DUMB's supported `C` locale. Selecting managed PostgreSQL fills connection settings; it does not create that destination for you. Ask the person managing PostgreSQL to prepare it, then enter the same database name and role in the conversion form. Keep the existing v1 database and every other application's database intact.
+
+<details class="geek-details" markdown="1">
+<summary>Technical alternative: create the dedicated PostgreSQL destination with SQL</summary>
+
 The following PostgreSQL 16 example creates a **new** database with an explicit
 locale. Connect as a database administrator to a maintenance database such as
 `postgres`, and run the statement outside a transaction. Replace
@@ -497,6 +502,7 @@ guarded workflow requires `C` so its supported destination keeps the intended
 folder ordering and path-search behavior. See PostgreSQL's
 [CREATE DATABASE reference](https://www.postgresql.org/docs/16/sql-createdatabase.html)
 and the native [PostgreSQL preparation guide](https://www.infinidysk.com/v2/operate/postgresql/).
+</details>
 
 Successful playback after the major upgrade verifies the current SQLite-backed
 installation. It does not establish that this separate PostgreSQL destination
@@ -516,6 +522,9 @@ reported condition, then request and review a fresh preview:
 | The destination could not be verified | Check that the server is running and listening, the address/port and database name are correct, and the connection and TLS policies permit DUMB's selected connection. |
 | The database does not satisfy DUMB's `C`-collation or emptiness checks | Prepare a different dedicated destination with the supported locale. Keep the existing database intact. |
 
+<details class="geek-details" markdown="1">
+<summary>Technical alternative: grant a specifically denied identity-inspection function</summary>
+
 Ordinary PostgreSQL roles can normally execute the catalog identity function.
 If an administrator has revoked it and the preview explicitly reports that
 denial, the administrator can grant only the required function in the
@@ -531,6 +540,7 @@ login alone does not establish that DUMB can verify the destination's physical
 identity and safety requirements. PostgreSQL documents the
 [control data functions](https://www.postgresql.org/docs/16/functions-info.html#FUNCTIONS-CONTROLDATA)
 and [function privileges](https://www.postgresql.org/docs/16/ddl-priv.html).
+</details>
 
 ### Copy, cutover and recovery
 

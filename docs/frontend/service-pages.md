@@ -15,7 +15,7 @@ Select a service card to open its status, configuration, logs, and application i
 | Start, stop, or restart | Command bar |
 | Change DUMB-managed settings | DUMB Config |
 | Edit the application's configuration | Service Config, when available |
-| Read or download logs | Logs |
+| Read or download logs | Service Logs, when available; otherwise sidebar Realtime Logs |
 | Open the application's own UI | Embedded UI |
 | Check/install an update | Tools → Updates |
 | Inspect a missing dependency | Tools → Dependencies |
@@ -138,13 +138,23 @@ On Seerr pages, **Tools → Seerr Sync** configures the primary/subordinate role
 
 ### Edit DUMB Config
 
-The editor shows schema validation, inline error reasons, and an added/changed/removed-path preview. Invalid JSON or validation errors block saves. Risk-tagged changes, such as command, path, credential, or networking fields, require acknowledgement.
+1. Open **DUMB Config** for the selected service or instance.
+2. Change the intended fields in the editor. Keep the existing structure and correct any validation errors.
+3. Review the added, changed, and removed settings. Acknowledge highlighted sensitive changes only when intended.
+4. Select **Save to File** to keep the change after DUMB restarts. **Apply in Memory**, when offered, is temporary.
+5. Reopen the tab to confirm the saved value. Follow the service guide for any required restart/setup action, then check its health and logs.
+
+Invalid JSON or validation errors block saves. Command, path, credential, and networking changes can require acknowledgement.
 
 On the DUMB API page, **DUMB API Logging** can temporarily enable DEBUG without a restart when supported. It shows configured/effective levels and clears the override on container restart. It does not change application log levels. If DEBUG is configured persistently, edit the saved configuration to disable it.
 
 ### Edit Service Config
 
-Use this editor for a separate application configuration file where available, then **Save to File**. Application settings and DUMB-managed settings are separate; check the service guide for restart/setup requirements.
+1. Open **Service Config** when the application provides this tab.
+2. Change the intended application setting and select **Save Service Config**.
+3. Reopen the editor to confirm the saved value. Follow the application's restart/setup instructions and verify the result in its own interface.
+
+Application settings and DUMB-managed settings are separate. Use the [service guide](../services/index.md) to find the correct editor and restart requirements.
 
 ![Edit Service Config](../assets/images/frontend/edit_service_config.png){ .shadow }
 

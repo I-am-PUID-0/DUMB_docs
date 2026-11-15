@@ -29,22 +29,37 @@ the examples.
 
 ## Use Geek mode when you want more detail
 
-The guides begin with the steps most users need. **Geek mode** in the shared
-header opens their technical details: configuration examples, API commands,
-and notes about how the software works. Open technical sections have a light green
-background and a **Geek detail** label while the mode is on. The header shows
-**On** or **Off**, and your browser remembers the choice.
+The main guide is for people using the DUMB frontend. It explains where to go,
+what to click or enter, how to save the change, and how to check the result.
+You should be able to complete that frontend task with Geek mode off.
 
-Some overview pages have no hidden technical sections. They show that clearly
-when Geek mode is on; the mode does not add extra content to those pages.
+**Geek mode** adds two kinds of optional material:
 
-You can also open any technical section individually. Essential warnings,
-prerequisites, and recovery steps stay visible in either mode. Direct links to
-a heading inside a closed section open it for you.
+| If you want to… | Geek sections provide |
+| --- | --- |
+| Understand how the feature works | Internal processes, dependencies, request/data flow, and detailed workflow diagrams |
+| Use another method | API calls, command-line tools, environment variables, and manual configuration procedures |
 
-The [API](../api/index.md), [configuration reference](index.md), and
-[architecture](../architecture/index.md) remain directly available in either
-mode. Geek mode changes how details are displayed; it does not remove content.
+For example, the ordinary update guide explains the dashboard's **Check for
+updates**, install, and scheduling controls. Its Geek sections explain version
+selection and the installer lifecycle, with alternative configuration methods.
+
+The header shows **On** or **Off**. Enabled Geek sections have a light green
+background and **Geek detail** label. Your browser remembers the choice, and you
+can also open a single section without enabling the whole mode.
+
+Warnings, required frontend steps, deployment guides, community links, and
+maintainer support remain visible in both modes. A long frontend procedure is
+still a user procedure; it does not become Geek content because it has many steps.
+
+Some pages have no optional Geek sections. Direct links to a heading inside a
+closed section open that section so the linked explanation stays reachable.
+The [Geek reference](index.md) also provides API, configuration, and architecture
+references directly.
+
+This switch changes the documentation display. It does not change DUMB or its
+frontend settings. If you see **Geek Mode** inside the DUMB dashboard, that is a
+separate setting; see [dashboard Settings](../frontend/settings.md).
 
 ## Spot development additions
 

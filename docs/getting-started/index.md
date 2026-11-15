@@ -12,6 +12,16 @@ You choose the services. You do not need to enable the whole catalog.
 
 Use the documentation channel that matches your image: **Latest release** for stable images or **Development** for `dev`. [How documentation versions work](../reference/doc-versions.md).
 
+## Choose your deployment guide
+
+Start with the guide for your host or management tool:
+
+- [Docker Compose](../deployment/docker.md) · [Portainer](../deployment/portainer.md) · [Dockge](../deployment/dockge.md)
+- [Unraid](../deployment/unraid.md) · [Synology](../deployment/synology.md) · [QNAP](../deployment/qnap.md) · [TrueNAS SCALE](../deployment/truenas.md)
+- [Windows / WSL2](../deployment/wsl.md) · [Proxmox LXC](../deployment/proxmox.md)
+
+[Compare deployment options](../deployment/index.md). After deployment, continue below with the dashboard and your chosen workflow.
+
 ## Choose a workflow
 
 | What you want | Start with |

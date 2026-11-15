@@ -14,9 +14,19 @@ to check the result. Define unfamiliar terms where they first matter.
 - Use numbered lists for actions and narrow tables for comparable settings.
 - Keep essential prerequisites, data-loss warnings, and recovery instructions
   visible. Link to the full procedure rather than repeating it on several pages.
+- Ordinary users work in the frontend. A complete primary task names the page
+  and controls, describes what to enter or choose, says how to save/apply, and
+  explains the expected result and the next check if it fails.
 - Put optional configuration examples and internals inside native
   `<details class="geek-details" markdown="1">` blocks with descriptive
   `<summary>` labels. Geek mode expands these. Do not hide a required step.
+- Geek sections explain why/how the system works and offer alternative API,
+  command-line, environment or manual configuration methods. A long frontend
+  procedure remains a user procedure; split it into clear tasks instead of
+  putting it in Geek mode. Community and maintainer-support links stay visible.
+- Show a simple frontend workflow diagram before implementation diagrams where
+  the process is complex. Label the technical diagram as an explanation of
+  connections and data flow, not another required setup procedure.
 - Keep code examples valid and complete enough to adapt. Name the file being
   edited. Explain which values the reader must replace and how to apply changes.
 - Use reserved example names and addresses. Never add actual credentials,

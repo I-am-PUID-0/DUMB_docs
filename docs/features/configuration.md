@@ -1,21 +1,43 @@
 ---
 title: Configuration
-description: Configure DUMB services, ports, paths, credentials, logging, authentication, automation, and runtime settings in dumb_config.json.
+description: Change and save DUMB service settings through the dashboard, add integration tokens, and resolve settings that do not take effect.
 icon: lucide/settings
 ---
 
 # Configuration
 
-DUMB stores its runtime configuration at `/config/dumb_config.json`. The copy at `utils/dumb_config.json` is the default template. Edit the runtime file or use the dashboard; changing the template does not change an existing installation's saved configuration.
+Use the dashboard to change DUMB settings and the settings of individual applications. Each service has its own page; you do not need to edit files on the server for ordinary changes.
 
 ## Change a setting
 
-1. Open a service page and choose **DUMB Config** for DUMB-managed settings, or **Service Config** for the application's own configuration when available.
-2. Change the intended fields and select **Save to File**.
-3. Review any setup or restart action required by that application.
-4. If a saved value changes back, check for an environment or secret override before editing again.
+1. Open the [dashboard](../frontend/dashboard.md) and select the service you want to change.
+2. Choose **DUMB Config** for how DUMB manages that service, such as its port, enabled state, or update policy. Choose **Service Config** for the application's own settings when that tab is available.
+3. Find the existing setting in the editor and change only the intended value. The editor may show JSON; preserve the surrounding structure and any fields you are not changing.
+4. Review validation messages and the list of changed settings. Correct errors and acknowledge any highlighted sensitive change before saving.
+5. In **DUMB Config**, select **Save to File**. In **Service Config**, select **Save Service Config**.
+6. Reopen the same tab to check the saved value. Follow the application's guide if it needs a restart or another setup action, then check its status and logs.
 
-For file edits, keep a copy of the working runtime configuration and use valid JSON. DUMB validates and merges known settings with its defaults; unsupported keys can be pruned. The [config schema reference](../reference/config-schema.md) explains the structure.
+**Apply in Memory** is a temporary DUMB configuration option. Use **Save to File** when you want a setting to survive a container restart. Saving a setting does not prove that the application has applied it.
+
+!!! warning "Paths, ownership, and credentials"
+
+    Changing user/group IDs, data paths, or ports can prevent an existing service from starting. Follow the service's guide and keep a backup before changing these values. Configuration and backups may contain live credentials; keep them private and redact values before sharing them.
+
+## Add an integration token
+
+1. Open **Settings → Tokens**.
+2. Enter the **Plex Token** or **GitHub Token** you need. Public GitHub release checks normally work without a token; use only the read access required by your release source.
+3. Select **Save** and wait for **Saved**.
+4. Retry the affected connection or update check. Check its error message if it still fails.
+
+## A setting changes back or does not take effect
+
+First check that you saved in the correct tab and for the correct instance. A deployment-level override can take priority over a saved value. If one is present, update it in the tool used to deploy DUMB, or ask the person who manages that deployment to change it. The precedence reference below lists the available sources.
+
+<details class="geek-details" markdown="1">
+<summary>Technical details: runtime files, environment overrides, and configuration structure</summary>
+
+DUMB stores its runtime configuration at `/config/dumb_config.json`. The copy at `utils/dumb_config.json` is the default template. Changing the template does not change an existing installation's saved configuration. For direct file edits, retain a working copy and use valid JSON; unsupported keys can be pruned. See the [config schema reference](../reference/config-schema.md).
 
 ## Configuration precedence
 
@@ -125,8 +147,12 @@ This is a partial example. Use the existing instance's complete configuration or
 
 For example, set `"core_service": "infinidysk"` on an InfiniDysk-backed Radarr instance. Connections still require the chosen workflow's prerequisites and setup steps. See [Core service routing](../reference/core-service.md) for matching rules and migration considerations.
 
+</details>
+
 ## Related guides
 
+<!-- dev:start -->
 - [Setup checklist](setup-checklist.md) for connections and retained manual tasks.
+<!-- dev:end -->
 - [Everyday use](usage.md) for saving, starting, and updating services.
 - [Multi-instance setup](../reference/instances.md) for additional application instances.

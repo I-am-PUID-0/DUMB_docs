@@ -156,6 +156,11 @@ The AI request is made by the DUMB backend, not by your browser. That means:
 
 Use **Test provider** after entering the provider, model, API key, and a base URL when that provider exposes one. This sends a short connectivity prompt only. It does not include service logs, service config, dependency graph data, or your diagnostic question.
 
+Select **Load models** to refresh choices from the provider, then choose a text model suitable for diagnostics. If discovery is unavailable, enter a supported model name from your provider's documentation and use **Test provider** before analysis.
+
+<details class="geek-details" markdown="1">
+<summary>Technical details: usage reporting and model discovery endpoints</summary>
+
 When the provider reports usage, DUMB shows token counts with the provider test and analysis result. Gemini reports prompt, candidate, thought, and total token counts; DUMB maps prompt/candidate/total into the common display and preserves thought-token usage. OpenAI-compatible providers usually report prompt, completion, and total tokens. Ollama reports prompt/eval counts and timing data; DUMB maps those into the same display where possible. Some providers or proxy layers may not return usage.
 
 Use **Load models** to populate the model picker from providers that expose a simple model-list endpoint:
@@ -169,11 +174,18 @@ Use **Load models** to populate the model picker from providers that expose a si
 
 When Open WebUI returns model metadata, DUMB labels discovered models as local, external, or unknown in the picker. This is best-effort because Open WebUI model metadata can differ by version and connection type.
 
+
+</details>
+
 Providers can continue returning model IDs that are retired, scheduled for retirement, or unsuitable for DUMB's text-diagnostics request path. DUMB keeps those entries visible so existing profiles remain understandable, but marks known retired models, scheduled shutdown dates, and unsupported non-text/specialized models. **Test provider** and **Analyze** are disabled for retired or incompatible selections, and the backend rejects those requests with replacement or compatibility guidance before contacting the provider.
+
+<details class="geek-details" markdown="1">
+<summary>Technical details: maintained model compatibility and catalog checks</summary>
 
 The maintained catalog follows [Google's Gemini schedule](https://ai.google.dev/gemini-api/docs/deprecations), [OpenAI's deprecation schedule](https://developers.openai.com/api/docs/deprecations), and [Anthropic's model retirement schedule](https://platform.claude.com/docs/en/about-claude/model-deprecations). A weekly repository workflow compares the catalog with those official tables and fails when a supported text model is added or its date/replacement changes. Runtime model refresh still asks the configured provider every time; it is not a cached DUMB list.
 
 Gemini model discovery remains the preferred way to choose a model because free-tier eligibility and model availability can differ by project, region, and current Google policy, but appearing in a provider response alone does not prove the model can accept DUMB's request type. Native OpenAI text and Codex models use the Responses API. Embedding, moderation, image/video, audio/realtime, and specialized tool-only OpenAI entries are marked unsupported for AI Assist rather than being sent to an incompatible endpoint.
+</details>
 
 ### Gemini Free-Tier Setup
 
@@ -191,6 +203,11 @@ If Google returns `429` with a quota `limit: 0`, first check whether the selecte
 
 Use **Preview bundle** to inspect the context before judging a model response. Preview mode returns the redacted bundle without sending it to a provider.
 
+After a preview, check that the bundle covers the service, time window, and question you intended. If information is missing, adjust the selected evidence and preview again. Choose **Analyze** only when the included data is appropriate to share, and compare the response with the actual logs before making changes.
+
+<details class="geek-details" markdown="1">
+<summary>Technical details: context quality checks and deterministic product facts</summary>
+
 Good context checks:
 
 - Ask `What does DUMB stand for?` and confirm the bundle includes `dumb_product.expansion` as `Distributed Unlimited Media Bridge`.
@@ -204,6 +221,7 @@ Then use **Analyze** with the same prompt. This separates two different checks:
 - Analyze lets you assess how the selected model uses that context.
 
 Small local models may still lean on generic training data. To keep important answers stable, DUMB applies deterministic finalizers for selected product facts and workflow-planning traps. For example, DUMB pins the official acronym expansion and replaces generic Usenet advice that recommends SABnzbd, NZBGet, or NZBHydra as the primary DUMB path.
+</details>
 
 <details class="geek-details" markdown="1">
 <summary>Technical details: AI field reference</summary>
@@ -271,30 +289,34 @@ Product identity prompts are also guarded. If a provider invents a different acr
 Settings are stored under `dumb.ai` in `dumb_config.json`:
 
 ```json
-"ai": {
-  "enabled": false,
-  "provider": "ollama",
-  "base_url": "http://127.0.0.1:11434",
-  "model": "",
-  "api_key": "",
-  "active_profile_id": "",
-  "profiles": [],
-  "timeout_sec": 60,
-  "temperature": 0.2,
-  "max_log_chars": 20000,
-  "include_logs": true,
-  "include_service_config": true,
-  "include_dependency_graph": true,
-  "include_docs_context": true,
-  "include_process_list": false,
-  "max_docs_chars": 12000,
-  "diagnostic_window_hours": 24,
-  "comparison_mode": "previous_period",
-  "deep_log_scan": true,
-  "max_log_scan_mb": 128,
-  "include_metrics": true,
-  "include_change_history": true,
-  "include_native_diagnostics": true
+{
+  "dumb": {
+    "ai": {
+      "enabled": false,
+      "provider": "ollama",
+      "base_url": "http://127.0.0.1:11434",
+      "model": "",
+      "api_key": "",
+      "active_profile_id": "",
+      "profiles": [],
+      "timeout_sec": 60,
+      "temperature": 0.2,
+      "max_log_chars": 20000,
+      "include_logs": true,
+      "include_service_config": true,
+      "include_dependency_graph": true,
+      "include_docs_context": true,
+      "include_process_list": false,
+      "max_docs_chars": 12000,
+      "diagnostic_window_hours": 24,
+      "comparison_mode": "previous_period",
+      "deep_log_scan": true,
+      "max_log_scan_mb": 128,
+      "include_metrics": true,
+      "include_change_history": true,
+      "include_native_diagnostics": true
+    }
+  }
 }
 ```
 

@@ -22,6 +22,13 @@ Start with unnecessary analysis and automatic trash removal disabled. Add schedu
 
 Check the bottleneck before changing cache settings: provider errors, network throughput, disk pressure, transcoding load, and mount latency can all interrupt playback.
 
+Open Plex's stream details during playback and check whether it is Direct Playing or transcoding. Review the provider's error messages, DUMB service logs and available cache space. For a managed rclone mount, use its service page to review the saved configuration; change one setting at a time and retest the same item.
+
+If your backend offers the **Rclone Optimizer** for the selected mount, read its [test requirements](../features/rclone-optimizer.md) before starting a test. It uses real provider traffic.
+
+<details class="geek-details" markdown="1">
+<summary>Geek details: VFS cache behavior and environment-variable examples</summary>
+
 VFS `full` mode caches file ranges as they are read and can help with seeking. It does **not** download the entire file before playback begins. Example settings for a mount with suitable local cache space:
 
 ```env
@@ -33,6 +40,8 @@ RCLONE_VFS_CACHE_MAX_AGE=6h
 The size and age values are examples, not limits suited to every host. Open files can keep cache usage above the requested limit; leave free disk space and observe real usage.
 
 See [rclone VFS file caching](https://rclone.org/commands/rclone_mount/#vfs-file-caching) and [flags in DUMB](../services/dependent/rclone.md#rclone-flags-via-environment-variables). Global environment variables affect all rclone instances, while explicit command arguments can take precedence. Use per-instance settings when mounts need different policies.
+
+</details>
 
 ## Related pages
 

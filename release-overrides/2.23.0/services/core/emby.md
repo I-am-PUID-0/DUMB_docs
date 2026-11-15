@@ -1,0 +1,143 @@
+---
+title: Emby
+description: Run Emby inside DUMB with shared media-library paths, embedded dashboard access, hardware devices, and Debrid or Usenet automation workflows.
+icon: lucide/disc
+---
+
+# Emby (Core Service)
+
+**Emby** is a media server for organizing and streaming your media library. It is a commercial alternative to Plex and Jellyfin.
+
+---
+
+## First start
+
+1. Select **Emby** during DUMB onboarding. Open its service card and, on **DUMB Config**, use **Start** if stopped. Select **Embedded UI** to open Emby.
+2. Complete Emby's setup wizard and create the administrator account, or sign in to your existing server. Keep the account credentials for future library and playback changes.
+3. Add a library for each media type and browse to the curated folder used by your download workflow. These are paths inside DUMB, usually below `/mnt/debrid`, rather than paths from your computer. Use the folder saved in Sonarr/Radarr or your collector's settings.
+4. Review scan and automatic removal settings before scanning a remote library. Confirm the provider mount is available, then run the first library scan.
+5. Open the library, play one item and seek to another point. If it is missing, compare the library folder with the workflow's saved folder; if playback fails, check the provider connection and whether Emby needs transcoding.
+6. Configure remote access, sharing and hardware acceleration after local playback works. Host GPU access and the application's transcoding settings are separate setup steps.
+
+<!-- dev:start -->
+## Setup checklist and remaining work
+
+Complete first administrator setup where required and supply authorized credentials for supported library actions. Existing initialized servers and paths are preserved. Supported new-library forms offer an optional initial scan, off by default; this choice does not rescan an existing library. Configure Library Protection separately where required; review remote access, GPU mapping and actual playback.
+
+Requires the backend setup-arrangement capability. See [Setup checklist and automation](../../features/setup-checklist.md) for retained tasks, coverage and safe retries.
+<!-- dev:end -->
+
+## Service Relationships
+
+| Classification | Role                               |
+| -------------- | ---------------------------------- |
+| Core Service   | Media server                       |
+| Depends On     | Content in `/mnt/debrid`           |
+| Optional       | None                               |
+| Exposes UI     | Yes (Web UI)                       |
+
+---
+
+## What Emby provides
+
+| Endpoint | Purpose | Default |
+|----------|---------|---------|
+| Web UI | Emby browser UI | `http://<host>:8096/` |
+
+!!! info "Traefik access"
+
+    If Traefik is enabled, the Emby UI is proxied at `http://<host>:18080/service/ui/emby/`; DUMB preserves Emby's internal `/web` path handling.
+
+---
+
+!!! warning "Release pinning"
+
+    When `release_version_enabled` is set, DUMB treats the release as pinned and disables scheduled auto-updates for Emby.
+
+<details class="geek-details" markdown="1">
+<summary>Technical details: configuration reference</summary>
+
+## Configuration in `dumb_config.json`
+
+```json
+{
+"emby": {
+  "enabled": false,
+  "process_name": "Emby Media Server",
+  "repo_owner": "MediaBrowser",
+  "repo_name": "Emby.Releases",
+  "release_version_enabled": false,
+  "release_version": "4.8.11.0",
+  "use_system_ffmpeg": true,
+  "suppress_logging": false,
+  "log_level": "INFO",
+  "port": 8096,
+  "auto_update": false,
+  "auto_update_interval": 24,
+  "auto_update_start_time": "04:00",
+  "config_dir": "/emby",
+  "config_file": "/emby/config/system.xml",
+  "log_file": "/emby/log/embyserver.txt",
+  "command": [],
+  "env": {}
+}
+}
+```
+
+### Key configuration fields { #key-configuration-fields }
+
+* `port`: Web UI port (default `8096`).
+* `use_system_ffmpeg`: Use the system ffmpeg binary when available.
+* `release_version_enabled`, `release_version`: Pin to a specific Emby release.
+* `auto_update`: Enable scheduled update checks (disabled when pinning releases).
+* `config_dir`, `config_file`, `log_file`: Paths for config and logs.
+
+---
+
+</details>
+
+## Accessing the UI
+
+Open the service from DUMB's **Embedded UI** tab when available. The native URLs below require the corresponding Docker host port to be published; use the port saved in your running configuration.
+
+* Navigate to: `http://<host>:8096`
+* Traefik proxy: `http://<host>:18080/service/ui/emby/`
+* With service UIs enabled in DUMB, open **Embedded UI** on the Emby service page and sign in to Emby there.
+
+See [Jellyfin and Emby embedded libraries](../../frontend/service-pages.md#jellyfin-and-emby-libraries)
+for login and empty-library troubleshooting.
+
+## Media Library Protection
+
+Emby requires a dedicated API key before DUMB can inspect sessions and temporarily control scan tasks/library real-time monitoring. DUMB does not create this key during Emby's first-run administrator setup. Create it in Emby's dashboard, then save it under **Library Protection** on the Emby service page. Review the configured mount scope and enablement before using protection. Without usable credentials, unattended storage maintenance is deferred because activity is unknown.
+
+See [Media Library Protection](../../features/media-library-protection.md).
+
+---
+
+## Health monitoring
+
+DUMB checks Emby's `/emby/System/Ping` endpoint. HTTP `200` with the plain-text reply `Emby Server` is a successful application ping. When the process and port checks also pass, DUMB displays **Healthy**.
+
+Health details explain failed or unrecognized responses. The ping confirms server responsiveness; library access, media paths, and playback need their own checks. See [health states and application probes](../../features/auto-restart.md#health-states-and-application-probes).
+
+---
+
+## Logs and data paths
+
+- Config: `/emby/config/system.xml`
+- Logs: `/emby/log/embyserver.txt`
+
+---
+
+## Terms of Service
+
+By enabling Emby, you confirm that you have read and agree to the Emby Terms of Service:
+* [Emby Terms of Service](https://emby.media/terms.html)
+
+---
+
+## Resources
+
+* [Emby Website](https://emby.media/)
+* [Emby Releases](https://github.com/MediaBrowser/Emby.Releases)

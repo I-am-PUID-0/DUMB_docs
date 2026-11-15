@@ -1,4 +1,4 @@
-site_name: DUMB docs
+site_name: DUMB
 site_description: Documentation for DUMB, an all-in-one Docker media automation platform for Debrid, Usenet, Arr apps, Plex, Jellyfin, and Emby.
 site_author: DUMB Team
 site_url: "https://dumbarr.com/"
@@ -9,30 +9,28 @@ edit_uri: "https://github.com/I-am-PUID-0/DUMB_docs/edit/master/docs/"
 
 nav:
 - Home: index.md
-- Start here:
-  - Introduction: getting-started/index.md
-  - Installation: getting-started/installation.md
-  - Choose a platform:
-    - Overview: deployment/index.md
-    - Docker: deployment/docker.md
-    - Networking and Ports: deployment/networking.md
-    - Portainer: deployment/portainer.md
-    - Unraid: deployment/unraid.md
-    - WSL: deployment/wsl.md
-    - Proxmox: deployment/proxmox.md
-    - Synology: deployment/synology.md
-    - QNAP: deployment/qnap.md
-    - TrueNAS: deployment/truenas.md
-    - Dockge: deployment/dockge.md
-- Guides:
-  - Everyday dashboard:
-    - Overview: frontend/index.md
-    - Dashboard: frontend/dashboard.md
-    - Onboarding: frontend/onboarding.md
-    - Settings: frontend/settings.md
-    - Service Pages: frontend/service-pages.md
-    - Metrics: frontend/metrics.md
-  - Setup and maintenance:
+- Deployment:
+  - Overview: deployment/index.md
+  - Before you install: getting-started/installation.md
+  - First run: getting-started/index.md
+  - Docker: deployment/docker.md
+  - Networking and Ports: deployment/networking.md
+  - Portainer: deployment/portainer.md
+  - Unraid: deployment/unraid.md
+  - WSL: deployment/wsl.md
+  - Proxmox: deployment/proxmox.md
+  - Synology: deployment/synology.md
+  - QNAP: deployment/qnap.md
+  - TrueNAS: deployment/truenas.md
+  - Dockge: deployment/dockge.md
+- Use DUMB:
+  - Overview: frontend/index.md
+  - Onboarding: frontend/onboarding.md
+  - Dashboard: frontend/dashboard.md
+  - Service pages: frontend/service-pages.md
+  - Settings: frontend/settings.md
+  - Metrics: frontend/metrics.md
+  - Tasks:
     - Overview: features/index.md
     - Configuration: features/configuration.md
     - Backup Storage: features/backup-storage.md
@@ -56,6 +54,7 @@ nav:
     - Notifications: features/notifications.md
     - AI Assistant: features/ai-assistant.md
     - Embedded UIs: features/embedded-ui.md
+  - About these guides: reference/doc-versions.md
 - Services:
   - Overview: services/index.md
   - DUMB:
@@ -124,15 +123,14 @@ nav:
   - Tautulli: faq/tautulli.md
   - Zilean: faq/zilean.md
   - Zurg: faq/zurg.md
-- Reference:
+- Geek reference:
   - Overview: reference/index.md
-  - Service Ports: reference/ports.md
-  - Environment Variables: reference/environment-variables.md
-  - Config Schema: reference/config-schema.md
-  - Multi-instance Setup: reference/instances.md
-  - Core Service Routing: reference/core-service.md
-  - Documentation versions: reference/doc-versions.md
-- Developers:
+  - Configuration reference:
+    - Service Ports: reference/ports.md
+    - Environment Variables: reference/environment-variables.md
+    - Config Schema: reference/config-schema.md
+    - Multi-instance Setup: reference/instances.md
+    - Core Service Routing: reference/core-service.md
   - API:
     - Overview: api/index.md
     - Authentication: api/auth.md
@@ -162,10 +160,12 @@ nav:
     - Backend: architecture/backend.md
     - Frontend: architecture/frontend.md
     - Traefik: architecture/traefik.md
-- Project:
-  - Changelog: changelog.md
+- Community:
+  - About DUMB: about.md
+  - Get help: https://discord.gg/8dqKUBtbp5
+  - Support the DUMB maintainer: https://github.com/sponsors/I-am-PUID-0
   - Contributing: contributing.md
-  - About: about.md
+  - Changelog: changelog.md
 
 theme:
   name: material

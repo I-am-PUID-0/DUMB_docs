@@ -20,6 +20,25 @@ A symlink stores another path; it does not contain the media bytes. If a mount m
 
 Start with a dry run, inspect its scope, and keep a snapshot before applying changes. A symlink snapshot does not back up referenced media or application databases.
 
+## Repair links in the dashboard
+
+1. Open the service whose library needs repair and select **Tools → Symlinks**.
+2. Choose a repair **Playbook** for the change you intend. Use a prefix rewrite when only the target path changed; use root migration when the link files themselves must move or be copied.
+3. Review the selected roots and old/new paths. Use paths visible inside DUMB, and limit the first run to the affected library.
+4. Select **Dry run**. Review the proposed changes, skipped links, conflicts, and errors before applying anything.
+5. Keep automatic backup enabled. Accept the acknowledgement and select **Apply repair** only for the reviewed change. Wait for the job's final result.
+6. Check a few repaired files in the relevant application's library and test playback. If results are wrong, stop and use the recorded backup manifest to restore before making another change.
+
+```mermaid
+flowchart LR
+    Open[Open service Symlinks] --> Choose[Choose playbook and affected roots]
+    Choose --> Preview[Run dry run and review changes]
+    Preview --> Apply[Keep backup and confirm apply]
+    Apply --> Verify[Check sample links and playback]
+```
+
+A successful link repair does not automatically change Sonarr/Radarr root folders or download-client settings. [Review Arr paths](#do-arr-apps-need-updates-after-symlink-changes) when the library location changes.
+
 ## Why symlinks matter in DUMB
 
 In DUMB workflows, services like Decypharr, InfiniDysk, CLI Debrid, and Riven create curated symlink libraries that point to mounted content (for example rclone/DFS paths under `/mnt/debrid`).
@@ -35,6 +54,13 @@ Common failure mode:
 - A symlink exists, but its target path no longer exists after mount/path changes.
 
 ---
+
+!!! note "Keep existing library paths"
+
+    Existing NzbDAV paths remain active unless you deliberately complete the guarded namespace migration. Do not change a working mount or library path just to match an example below.
+
+<details class="geek-details" markdown="1">
+<summary>Technical details: container path model and retained legacy paths</summary>
 
 ## Path model (high level)
 
@@ -64,6 +90,10 @@ Important:
 - Symlink targets are path-sensitive. If the target path changes, links may break until repaired/migrated.
 
 ---
+</details>
+
+<details class="geek-details" markdown="1">
+<summary>Technical details: how each service produces its library</summary>
 
 ## Supported service workflows
 
@@ -90,9 +120,20 @@ Important:
 - Included in backend defaults when configured.
 
 ---
+</details>
 
 <details class="geek-details" markdown="1">
 <summary>Technical details: symlink API routes</summary>
+
+```mermaid
+flowchart LR
+    Preview[Read-only repair plan] --> Review[Review proposed path changes]
+    Review --> Apply[Submit async repair with backup]
+    Apply --> Manifest[Record original links and targets]
+    Manifest --> Rewrite[Rewrite or relocate selected links]
+    Rewrite --> Status[Poll job status and verify result]
+    Manifest --> Recovery[Restore manifest if recovery is needed]
+```
 
 ## DUMB symlink tools
 
@@ -235,6 +276,24 @@ changed mount reports an error instead of writing a local fallback.
 
 ### Standalone backup
 
+1. Open **Tools → Symlinks → Snapshot** on the affected service page.
+2. Under **Snapshot roots**, keep **Current service root** or choose the exact roots you want to record. Review **Manifest path** for the saved snapshot.
+3. Choose whether to include currently broken symlinks, then select **Backup snapshot now**.
+4. Wait for completion, review the recorded-entry/error counts, and check that the snapshot is available in the **Manifest path** picker.
+
+### Restore from snapshot
+
+1. Select the intended snapshot under **Manifest path**. Use **Refresh** if a newly created snapshot is missing.
+2. Leave **Restore dry run** enabled. Review the overwrite and missing-target options, then select **Preview changes** when available, or **Restore dry run**.
+3. Check the projected restores, skipped entries, errors, and sample changes. Stop if the paths or counts are unexpected.
+4. Clear **Restore dry run**, accept the relink acknowledgement, and select **Apply restore** only after reviewing the preview.
+5. Wait for the result and test a few restored items in your application and media player. A restored link still needs its target storage to be available.
+
+<details class="geek-details" markdown="1">
+<summary>Technical alternative: snapshot backup and restore payloads</summary>
+
+### Standalone backup
+
 Create snapshot manifest:
 
 ```json
@@ -263,6 +322,7 @@ Recommended flow:
 3. Apply with confirmation when expected
 
 ---
+</details>
 
 ## Which button should I use? {#eli5-which-button-should-i-use}
 
@@ -271,6 +331,14 @@ Use **Repair** for target-prefix changes or moving/copying link entries. Use **S
 Copy mode keeps the original link tree for a staged transition. Move mode removes entries from the source tree. Dry-run either choice and inspect the source, destination, target prefixes, and expected count before applying.
 
 ## Scheduled backup behavior
+
+1. Open **Tools → Symlinks → Schedule** for the service.
+2. Turn on **Enable scheduled symlink backup**. Set **Start time**, **Interval (hours)**, and **Retention (count)**; zero retention keeps all matching snapshots.
+3. Review the saved path template and root scope, then select **Save backup schedule**.
+4. Check **Next run**. After that time, check **Last run**, status, and the available manifest list.
+
+<details class="geek-details" markdown="1">
+<summary>Technical alternative: scheduled symlink backup configuration fields</summary>
 
 Enabled with service config keys:
 
@@ -284,6 +352,7 @@ Enabled with service config keys:
 <!-- dev:start -->
 - `backup_destination_id` (explicit registered destination; empty keeps the existing path)
 <!-- dev:end -->
+</details>
 
 ### Retention
 
@@ -570,6 +639,9 @@ Check:
 
 ---
 
+<details class="geek-details" markdown="1">
+<summary>Technical reference: symlink API routes</summary>
+
 ## API references
 
 - [Process Management API](../api/process.md)
@@ -591,3 +663,4 @@ Related service pages:
 - [CLI Debrid](../services/core/cli-debrid.md)
 - [InfiniDysk](../services/core/infinidysk.md)
 - [Riven Backend](../services/core/riven-backend.md)
+</details>

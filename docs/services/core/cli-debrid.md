@@ -44,12 +44,14 @@ For an upstream CLI Debrid layout with embedded Battery, DUMB 2.23.0 does not de
 
 ## First start
 
-1. Select CLI Debrid during onboarding, including its provider and library paths.
-2. Wait for the selected dependencies to become ready, then open CLI Debrid.
-3. Authorize the accounts you use and configure content sources, scrapers, and collection rules.
-4. Check the curated symlink path in your media server and test a small intended import/playback.
+1. Choose **CLI Debrid** in DUMB onboarding and select its provider, supporting services and library paths. Reopen onboarding with **Settings → Launch Onboarding** if needed.
+2. Open the CLI Debrid service card. Wait for its selected supporting services to start; on **DUMB Config**, choose **Start** if CLI Debrid is stopped. Select **Embedded UI** to open its setup interface.
+3. Authorize the accounts you use. Choose your content sources, which tell CLI Debrid what you want, and scrapers, which find matching sources. Review quality and collection rules before enabling large lists.
+4. Review **Original Files Path** and the collection mode in CLI Debrid. Use **Symlinked/Local** if it should create an organized linked library; use **Plex** if it should monitor the chosen Plex libraries. See [Mount Considerations](#mount-considerations) for screenshots and the path checks.
+5. Add the chosen organized library folder to your media server. If using Plex authorization, configure and start Plex first, then verify the saved Plex URL remains reachable.
+6. Add one intended item to your chosen source. Watch it progress through the queues, confirm it appears in the expected media library, and play it before importing large lists.
 
-Check the CLI Battery layout note above before selecting an upstream development release.
+Check the CLI Battery layout note above before selecting an upstream development release. A running CLI Debrid service does not prove that its sources, scrapers and library are ready.
 
 <!-- dev:start -->
 ## Setup checklist and remaining work
@@ -60,6 +62,16 @@ Requires the backend setup-arrangement capability. See [Setup checklist and auto
 <!-- dev:end -->
 
 ## Workflow diagram
+
+<figure class="docs-visual" markdown="1">
+
+![CLI Debrid setup from DUMB onboarding through account authorization, content and scraper choices, collection folders and playback](../../assets/images/guides/cli-debrid-user-workflow.svg)
+
+<figcaption class="docs-visual-caption">Content sources decide what to collect; scrapers find it. Finish both, then check collection paths and play one item.</figcaption>
+</figure>
+
+<details class="geek-details" markdown="1">
+<summary>Geek details: how requests, providers, mounts and libraries connect</summary>
 
 ```mermaid
 %%{ init: { "flowchart": { "curve": "basis" } } }%%
@@ -90,9 +102,18 @@ flowchart TD
 
 ```
 
+</details>
+
+
+
 ---
 
 ## Service Relationships
+
+CLI Debrid collects items from the sources you choose and organizes them for your media server. Its selected supporting services start through DUMB; Zilean is an optional scraper. Keep dependencies enabled for the installed CLI Debrid layout described above.
+
+<details class="geek-details" markdown="1">
+<summary>Geek details: service classification and runtime dependencies</summary>
 
 | Classification | Role                                                                                                       |
 | -------------- | ---------------------------------------------------------------------------------------------------------- |
@@ -100,6 +121,9 @@ flowchart TD
 | Depends On     | Stable/older releases: [CLI Battery](../dependent/cli-battery.md); provider path: [rclone](../dependent/rclone.md) and [Zurg](../dependent/zurg.md) |
 | Optional       | [Phalanx DB](../dependent/phalanx-db.md), [Zilean](../optional/zilean.md)                                  |
 | Exposes UI     | Yes (Flask app on port 5000)                                                                               |
+
+</details>
+
 
 ---
 
@@ -177,6 +201,11 @@ flowchart TD
 </details>
 
 <!-- dev:start -->
+If startup reports a runtime preparation error, open **Service Logs** and keep the reported path with your support request. DUMB leaves conflicting existing data in place for review.
+
+<details class="geek-details" markdown="1">
+<summary>Geek details: persistent-data aliases and runtime ownership checks</summary>
+
 ## Persistent data after installation
 
 When the configured paths use `<config_dir>/data`, DUMB checks that this alias
@@ -197,6 +226,9 @@ runtime preparation error, review the exact paths in the message before
 changing their contents or ownership.
 
 ---
+
+</details>
+
 <!-- dev:end -->
 
 ## What CLI Debrid Does
@@ -343,6 +375,11 @@ As such, it's important to ensure you select the appropriate option for your dep
 
 For the complete DUMB symlink guide (UI option behavior, root scope, backup/restore, schedule, retention, and migration playbooks), see [Symlink Operations](../../features/symlinks.md).
 
+Use [Symlink Operations](../../features/symlinks.md) for the frontend repair and backup controls. Preview changes to the selected CLI Debrid library, review the proposed targets and retain a manifest before applying repairs. You only need this when maintaining or moving an existing library.
+
+<details class="geek-details" markdown="1">
+<summary>Geek details: API repairs, root migration and scheduled manifests</summary>
+
 For CLI Debrid symlink libraries (commonly `/mnt/debrid/clid_symlinks`), DUMB exposes
 `POST /api/process/symlink-repair` to rewrite symlink targets after mount-path changes.
 
@@ -390,6 +427,8 @@ Use `symlink_backup_retention_count` to keep only the newest N scheduled manifes
 
 ---
 
+</details>
+
 ## Plex Media Server Built-in!
 
 With [Plex Media Server](plex-media-server.md) enabled in DUMB, you can also leverage it with CLI Debrid.
@@ -419,6 +458,15 @@ With [Zilean](../optional/zilean.md) enabled in DUMB, you can also leverage it w
 
 ![Add A Scraper](../../assets/images/cli_debrid/clid_add_a_scraper_zilean.png)
 
+
+## Check request progress
+
+Open CLI Debrid's queue views to follow your test item. **Wanted** and **Scraping** mean a source is still being found; **Adding** and **Checking** mean the item is being sent to the provider or checked for collection. Review the item's status when progress stops. An unreleased item may simply be waiting for its release, while an uncached item may need time or available account capacity.
+
+If the item is collected but missing from Plex, compare the saved collection folder with the Plex library folder and check the library scan. Avoid re-adding a large list while diagnosing one item.
+
+<details class="geek-details" markdown="1">
+<summary>Geek details: queue scheduling, state transitions and webhook integration</summary>
 
 ## Queues & Processing (Behind the Scenes)
 
@@ -451,6 +499,9 @@ CLI Debrid can listen for:
 * **Seerr Webhooks**: Add content when users request it
 * **Zurg Webhooks**: React to completed downloads (Symlink mode)
 
+<details class="geek-details" markdown="1">
+<summary>Geek details: configure a Zurg webhook script</summary>
+
 Example Zurg update hook:
 
 ```bash
@@ -463,6 +514,17 @@ do
 done
 echo "Webhook update complete."
 ```
+
+</details>
+
+</details>
+
+## Service updates
+
+Use the service's **DUMB Config** to review its update settings, then **Save to File**. Read [source selection and update modes](../../features/auto-update.md) before switching a working installation to a development release or pinning a revision.
+
+<details class="geek-details" markdown="1">
+<summary>Geek details: release, branch and exact commit configuration</summary>
 
 ## Commit / Branch / Version Targeting
 You can control which source revision is deployed by setting:
@@ -522,6 +584,8 @@ updates until the pin is changed or cleared.
     ```
 
 ---
+
+</details>
 
 ## Access
 

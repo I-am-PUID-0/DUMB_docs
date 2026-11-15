@@ -47,7 +47,7 @@ Review **Chosen by you**, **Required dependency**, and **Optional companion** se
 
 ### Step 2: Preflight checks
 
-The wizard checks backend health, capabilities, service catalogs, configuration, and embedded UI readiness through the frontend proxy.
+The wizard checks whether DUMB can continue setup and shows any problems it finds. Read each result, correct blocking errors, then run the check again before continuing.
 
 <!-- release:start -->
 Resolve blocking failures before continuing. A passed API response does not independently prove that a configured storage path is mounted or usable by another application.
@@ -119,11 +119,23 @@ Follow live setup logs and the reported startup result. If a service fails, insp
 
 ## Skipping onboarding
 
-If you configure services manually, set the appropriate `enabled` flags and required paths/credentials. Disabled applications will not start merely because their files already exist. Do not skip setup steps by guessing a generated API key or database selector.
+Use onboarding for the guided setup. If you leave before finishing, open **Settings → Onboarding → Launch Onboarding** to return. Keep track of unfinished provider, account, library, and connection steps; a running service may still need them.
+
+<details class="geek-details" markdown="1">
+<summary>Technical alternative: configure services without the wizard</summary>
+
+Set the appropriate `enabled` flags and required paths/credentials through the service configuration or runtime configuration. Disabled applications will not start merely because their files already exist. Do not skip setup steps by guessing a generated API key or database selector.
+</details>
+
+
+
+<details class="geek-details" markdown="1">
+<summary>Technical details: saved configuration and deployment overrides</summary>
 
 ## Configuration applied
 
 The wizard updates the runtime `dumb_config.json`, including enabled services, selected provider inputs, service options, and instances. Higher-priority environment or secret values still apply. See [configuration precedence](../features/configuration.md#configuration-precedence).
+</details>
 
 ## Multi-instance support
 

@@ -14,10 +14,11 @@ DUMB handles automatic installation and updates of the frontend, including versi
 
 ## First start
 
-1. Enable Riven Backend and its dependencies, then enable Riven Frontend.
-2. Open the frontend from its DUMB service page.
-3. Review the backend connection and Riven's source, scraper, provider, and library settings.
-4. Check that the backend can process a small intended request before enabling broad sources.
+1. Select **Riven Backend** and **Riven Frontend** in DUMB onboarding. The backend's supporting services must be running before the frontend can manage it.
+2. Open the Riven Frontend service card. On **DUMB Config**, choose **Start** if stopped, then select **Embedded UI**.
+3. Open **Settings** in Riven Frontend. Configure your provider account, at least one **Content** source, at least one suitable **Scraper**, and the library paths. Review **Ranking** before adding a large list.
+4. Review the **Media Server** connection and choose whether its updater should run. Saving server credentials alone does not enable that updater.
+5. Add one intended request through your chosen source, follow it in Riven, then scan the media-server library and play the result. The [Riven Backend setup guide](../core/riven-backend.md#initial-setup-riven-backend) includes the complete workflow and diagrams.
 
 !!! warning "Port conflicts and auto-shift"
 

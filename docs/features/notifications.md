@@ -28,7 +28,8 @@ Use **Settings → Notifications** to configure destinations, send a test or man
 5. Enter the destination URL.
 6. Select the minimum severity, cooldown, event types, and optional service filters.
 7. Select **Save & test**.
-8. Enable outbound notifications after the test succeeds.
+8. Enable the destination and outbound notifications after the test succeeds; save any remaining settings.
+9. Review **Delivery history** after an expected real event. A successful test checks the destination, while normal delivery also depends on the selected event, severity, and service filters.
 
 An empty event list matches every event. Leaving every service unchecked also matches all events. Selected services use exact process names from the currently enabled catalog.
 
@@ -153,6 +154,9 @@ Persistent conditions must remain active for `duration_sec` before DUMB sends th
 
 Database events require Database Health collection to be enabled for the relevant service. Notification monitoring does not silently enable Database Health.
 
+<details class="geek-details" markdown="1">
+<summary>Technical details: startup baselining and notification admission</summary>
+
 ### Startup baselining
 
 Automatic service, resource, database, and recovery events are paused while
@@ -163,6 +167,7 @@ normal duration timers. It does not send a recovery for a startup-only failure
 that was never alerted.
 
 See [Startup lifecycle](startup-lifecycle.md).
+</details>
 
 ## Severity and routing
 
@@ -205,6 +210,9 @@ Delivery history statuses are:
 
 History is stored in `/config/notifications/notifications.sqlite`. Completed records older than `history_retention_days` are removed automatically. Clearing history from the UI does not delete queued or retrying deliveries.
 
+<details class="geek-details" markdown="1">
+<summary>Technical details: locked notification storage and background retry</summary>
+
 Notification storage is optional to DUMB startup. If SQLite is temporarily
 locked while the container starts, DUMB retries schema initialization and then
 starts the API and frontend in a notification-degraded state instead of exiting.
@@ -214,6 +222,7 @@ history. Existing delivery attempts are not consumed while storage is
 unavailable. A new automatic event cannot be persisted while the queue remains
 locked, so DUMB logs the queue failure and allows the originating service or
 startup operation to continue.
+</details>
 
 ## What it cannot guarantee
 

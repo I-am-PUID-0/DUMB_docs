@@ -80,6 +80,11 @@ connection check or lost setup run. Previously loaded results and the remembered
 run remain available; the pause does not clear the open panel's input draft.
 Use **Open Backup and restore for status** to inspect the operation.
 
+Finish the offered recovery action, then return to setup and retry the affected task. Keep any previously entered choices; reopening onboarding does not release a backup/recovery hold.
+
+<details class="geek-details" markdown="1">
+<summary>Technical details: request handling during a persistence hold</summary>
+
 The checklist suppresses ordinary result requests and disables its configuration
 controls while a known hold is active, then refreshes when that hold ends.
 A hold reported by the backend before global status is available is checked
@@ -88,6 +93,7 @@ keep their normal error/retry behavior; they are not relabeled as a backup hold.
 The hold does not itself log you out: session verification and refresh remain
 available while the retained backup/recovery state is reviewed. Complete that
 recovery before retrying setup changes; rerunning onboarding does not release it.
+</details>
 
 ### If the checklist cannot load
 

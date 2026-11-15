@@ -6,7 +6,9 @@ icon: lucide/server
 
 # Deploy DUMB
 
-Most installations use the DUMB Docker image. Choose the guide for the host or management tool you already use.
+Choose the host or management tool where you want to install DUMB. Each link below opens the complete installation guide for that platform.
+
+After installation, you will use the [DUMB dashboard](../frontend/index.md) for everyday setup, service controls, updates and logs. The deployment guide covers the host setup needed to reach that dashboard.
 
 | Your environment | Guide | What it manages |
 |---|---|---|

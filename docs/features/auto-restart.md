@@ -11,13 +11,18 @@ Auto-restart monitors explicitly selected services and retries a restart after r
 ## Enable it for a service
 
 1. Open the service page and select **Tools → Auto-restart**.
-2. Enable the global policy and select the exact service to monitor.
-3. Review its failure threshold, grace period, restart window, and backoff delays.
-4. Save, then check the service's health reason and restart status.
+2. Turn on **Enable auto-restart** and **Restart on unhealthy checks**.
+3. Under **This Service**, turn on **Enable auto-restart for** the selected service.
+4. Start with the defaults. For a known slow application, use **Override defaults** to allow a longer **Grace period (sec)** before health failures count.
+5. Select **Save to File** and check the saved indicator. **Apply in Memory** is temporary and is lost when DUMB restarts.
+6. Check the service's health/restart indicator on the dashboard. If it repeatedly restarts, open **Service Logs** and investigate the underlying error.
 
 An empty service list monitors nothing, even when the global switch is enabled. A deliberate manual stop disables monitoring for that service until it is started again.
 
 ![Auto-restart indicators](../assets/images/features/auto_restart_indicators.png){ .shadow }
+
+<details class="geek-details" markdown="1">
+<summary>Technical details: monitoring and restart lifecycle</summary>
 
 ## How it works
 
@@ -33,6 +38,7 @@ flowchart LR
 ```
 
 DUMB checks the tracked process, configured ports, and an allowlisted read-only application endpoint where available. Monitoring pauses while the stack is starting. After a restart, DUMB records success only when health checks pass.
+</details>
 
 ## Health states and application probes
 
@@ -43,9 +49,17 @@ DUMB checks the tracked process, configured ports, and an allowlisted read-only 
 | Starting | Application reports initialization or migration | Wait without counting a failure |
 | Unhealthy | Process/port failure or a restart-relevant application failure | Count toward the threshold |
 
+Indexer/provider warnings, missing articles, and content-health failures are not restart signals. Check the provider, storage, or application error first; restarting a healthy application will not usually repair them.
+
+<details class="geek-details" markdown="1">
+<summary>Technical details: application probes</summary>
+
 Current application probes include InfiniDysk `/health`, Servarr `/ping`, Jellyfin `/health`, Emby ping, Plex `/identity`, Seerr status, TPA health, PostgreSQL `pg_isready`, pgAdmin ping, and rclone's local RC version endpoint when enabled. Unknown services retain process/port checks.
 
 Indexer/provider warnings, missing articles, and content-health failures are not restart signals. Restarting a healthy application does not usually repair those conditions. InfiniDysk's migration response, `503 {"status":"migrating"}`, is treated as Starting rather than a restart failure.
+
+
+</details>
 
 <details class="geek-details" markdown="1">
 <summary>Technical details: restart JSON and field reference</summary>
@@ -106,15 +120,24 @@ The default permits three attempts within a rolling five-minute window. Attempts
 
 A slow application can receive a longer per-service grace period without delaying other services. Choose it from observed startup time. The stack's readiness deadline is separate; see [Startup lifecycle](startup-lifecycle.md).
 
+<details class="geek-details" markdown="1">
+<summary>Technical details: process and port checks</summary>
+
 ## Health checks
 
 Checks reject missing/zombie PIDs and test the service's configured `port`, `frontend_port`, `backend_port`, and `webdav_port`, including corresponding environment values. Incorrect configured ports can therefore create false failures.
 
 A longer grace period helps a known slow startup. It does not fix a wrong port, failed database connection, or broken mount.
+</details>
 
 ## Monitoring restart status
 
-Hover the dashboard or service-page health/restart indicator for its current reason. For API access:
+Hover the dashboard or service-page health/restart indicator for its current reason. [Notifications](notifications.md) can send restart success/failure events when their severity and routing rules match.
+
+<details class="geek-details" markdown="1">
+<summary>Technical alternative: inspect restart state through the API</summary>
+
+For API access:
 
 ```bash
 curl 'http://localhost:3005/api/process/service-status?process_name=Riven%20Backend&include_health=true'
@@ -133,9 +156,19 @@ Add an Authorization header when DUMB authentication is enabled. The response in
 
 Live process updates arrive through [`/ws/status`](../api/websocket.md). [Notifications](notifications.md) can deliver success/failure events; the destination's severity filter still applies.
 
+</details>
+
 ## Disabling auto-restart
 
-Remove a service from `services`, or retain an entry with `"enabled": false`. Disable all monitoring with `dumb.auto_restart.enabled: false`; saved service entries can remain for later use.
+Open **Tools → Auto-restart** on the service page. Clear **Enable auto-restart for** that service and select **Save to File**. Reopen the panel to confirm the switch is off. To pause monitoring for every service, turn off the global **Enable auto-restart** switch and save.
+
+<details class="geek-details" markdown="1">
+<summary>Technical alternative: disable monitoring in configuration</summary>
+
+Remove the entry from `dumb.auto_restart.services` or set that entry to `"enabled": false`. Set `dumb.auto_restart.enabled` to `false` to disable all monitoring while retaining saved service entries.
+</details>
+
+
 
 ## Troubleshooting
 

@@ -10,6 +10,16 @@ Use Metrics to inspect CPU, memory, filesystems, networks, and managed processes
 
 ---
 
+## Check resource use in the dashboard
+
+1. Open **Metrics** from the sidebar. Check that its connection indicator is connected and current values are changing.
+2. Compare CPU and memory gauges with recent history. A brief peak is different from usage that remains high.
+3. Open **Settings → Monitored Filesystems** on the Metrics page and choose the storage paths you actually use inside DUMB. Choose network interfaces under **Monitored Network Interfaces**.
+4. Select **Apply** and check that the expected filesystem/interface names appear. A host path must be mounted into DUMB before it can be monitored.
+5. If a resource stays high, inspect the per-process table and open the relevant service's logs before changing limits or restarting it.
+
+Use [the Metrics page guide](../frontend/metrics.md) for chart controls, browser alerts, and optional Database Health. Backend [notifications](notifications.md) are configured separately and can work without an open browser.
+
 ## Overview
 
 The metrics system provides:
@@ -19,8 +29,6 @@ The metrics system provides:
 - **Per-process metrics** - Resource usage by individual service
 - **Optional database health** - Per-service SQL and persistent-store pressure indicators
 - **Optional Plex cloud status** - Cached public Plex service health, incidents, and maintenance
-- **WebSocket streaming** - Push updates to connected clients
-- **cgroup awareness** - Accurate reporting in containerized environments
 
 ![Metrics overview](../assets/images/features/metrics.png){ .shadow }
 
@@ -59,52 +67,54 @@ The metrics system provides:
 Metrics are configured in `dumb_config.json`:
 
 ```json
-"dumb": {
-  "metrics": {
-    "system_scope": "auto",
-    "filesystem_paths": [
-      "/data",
-      "/config"
-    ],
-    "network_interfaces": [
-      "all"
-    ],
-    "history_enabled": true,
-    "history_interval_sec": 5,
-    "history_retention_days": 7,
-    "history_max_file_mb": 50,
-    "history_max_total_mb": 100,
-    "history_dir": "/config/metrics",
-    "storage": {
-      "provider": "sqlite",
-      "sqlite_path": "/config/metrics/metrics.sqlite",
-      "migrate_jsonl": true,
-      "postgresql": {
-        "database": "dumb_metrics",
-        "schema": "public",
-        "local_retention_days": 7,
-        "retry_interval_sec": 60
-      }
-    },
-    "database_health": {
-      "enabled": false,
-      "interval_sec": 60,
-      "log_tail_bytes": 262144,
-      "services": {
-        "infinidysk": {
-          "enabled": true,
-          "mode": "standard",
-          "ignore_network_storage": false
-        },
-        "sonarr:Default": {
-          "enabled": true,
-          "mode": "enhanced"
+{
+  "dumb": {
+    "metrics": {
+      "system_scope": "auto",
+      "filesystem_paths": [
+        "/data",
+        "/config"
+      ],
+      "network_interfaces": [
+        "all"
+      ],
+      "history_enabled": true,
+      "history_interval_sec": 5,
+      "history_retention_days": 7,
+      "history_max_file_mb": 50,
+      "history_max_total_mb": 100,
+      "history_dir": "/config/metrics",
+      "storage": {
+        "provider": "sqlite",
+        "sqlite_path": "/config/metrics/metrics.sqlite",
+        "migrate_jsonl": true,
+        "postgresql": {
+          "database": "dumb_metrics",
+          "schema": "public",
+          "local_retention_days": 7,
+          "retry_interval_sec": 60
         }
+      },
+      "database_health": {
+        "enabled": false,
+        "interval_sec": 60,
+        "log_tail_bytes": 262144,
+        "services": {
+          "infinidysk": {
+            "enabled": true,
+            "mode": "standard",
+            "ignore_network_storage": false
+          },
+          "sonarr:Default": {
+            "enabled": true,
+            "mode": "enhanced"
+          }
+        }
+      },
+      "plex_status": {
+        "enabled": false,
+        "interval_sec": 300
       }
-    },
-    "plex_status": {
-      "enabled": false,
-      "interval_sec": 300
     }
   }
 }
@@ -255,7 +265,13 @@ DUMB stores each complete snapshot as a timestamp-indexed, compressed payload. M
 | **SQLite (default)** | Writes `/config/metrics/metrics.sqlite`. It is self-contained, survives container recreation through `/config`, and requires no managed service. |
 | **PostgreSQL (optional)** | Uses the configured DUMB PostgreSQL credentials and a dedicated `dumb_metrics` database by default. Applying the selection enables, provisions, and starts DUMB-managed PostgreSQL in place. |
 
+<details class="geek-details" markdown="1">
+<summary>Technical details: history writes, fallback, and reconciliation</summary>
+
 PostgreSQL is not a secondary backup in this design. When configured and healthy, it is the active history query and retention backend. DUMB first commits each sample to a bounded local SQLite continuity buffer, then copies missing samples to PostgreSQL in timestamp order. This write-ahead step prevents a PostgreSQL restart or outage from creating a gap. If PostgreSQL is stopped, starting, upgrading, or unreachable, history reads and writes continue through SQLite. After connectivity returns, DUMB performs an idempotent reconciliation of the retained SQLite window—including samples older than PostgreSQL's newest row—before PostgreSQL resumes serving history reads.
+</details>
+
+
 
 Selecting PostgreSQL from **Metrics → Settings** does not require a DUMB restart on backends that advertise `metrics_history_hot_activation`. Apply saves the Metrics configuration, enables PostgreSQL when no other service uses it, registers and creates the configured Metrics database, starts or reuses the managed PostgreSQL process, replays retained SQLite samples, and promotes PostgreSQL only after synchronization succeeds. The operation is idempotent, so Apply can safely retry a failed activation. If provisioning or synchronization fails, the API and frontend remain available and SQLite continues serving history.
 
@@ -264,6 +280,11 @@ Older DUMB backends without that capability retain the previous restart-based pr
 !!! important "Notifications do not depend on PostgreSQL"
 
     Notification delivery uses `/config/notifications/notifications.sqlite`. A PostgreSQL metrics outage therefore cannot prevent DUMB from queuing a PostgreSQL failure notification.
+
+For history created by an older DUMB installation, open **Metrics → Settings → Import JSONL now**. Wait for the import result and check its imported/skipped counts and displayed time range. Keep the original files until you have checked the result; a failed import can be retried without duplicating timestamps.
+
+<details class="geek-details" markdown="1">
+<summary>Technical details: legacy history import and storage allocation</summary>
 
 #### Existing JSONL history
 
@@ -282,6 +303,7 @@ The filesystem database size will not exactly equal compressed payload size:
 - Recently deleted rows/pages may remain allocated for reuse.
 
 For that reason, SQLite usually provides the clearest space reduction for a single DUMB container. PostgreSQL is primarily useful for longer retention, external queries, stronger concurrency, and centralized operations—not as a guaranteed compression improvement over SQLite.
+</details>
 
 <details class="geek-details" markdown="1">
 <summary>Technical details: stored samples and history queries</summary>
@@ -334,6 +356,9 @@ curl "http://localhost:3005/api/metrics/history/storage?probe_postgresql=true"
 
 </details>
 
+<details class="geek-details" markdown="1">
+<summary>Technical details: container resource scope and cgroup detection</summary>
+
 ## cgroup awareness
 
 DUMB automatically detects containerized environments and reports appropriate metrics:
@@ -357,6 +382,7 @@ When running without cgroup limits:
 !!! info "Detection"
 
     cgroup detection is automatic. DUMB checks for cgroup v1 and v2 interfaces.
+</details>
 
 ### Selecting the correct storage
 
@@ -375,6 +401,9 @@ The compatibility `system.net_io` object is the sum of the selected available in
 `system_scope` does not cross network namespaces. Selecting `host` or `cgroup` changes CPU/memory collection behavior, but it cannot expose host network interfaces to a bridge-networked container.
 
 ---
+
+<details class="geek-details" markdown="1">
+<summary>Technical alternative: retrieve metrics and history through the API</summary>
 
 ## API endpoints
 
@@ -417,6 +446,7 @@ Query parameters:
 `GET /api/metrics/history/storage` reports the configured and active providers, fallback state, compression/storage sizes, sample ranges, last PostgreSQL error, and legacy migration state. Pass `probe_postgresql=true` to bypass the reconnect backoff for an operator-requested test. `POST /api/metrics/history/migrate` reruns the idempotent JSONL import; pass `force=true` to rescan after a completed migration.
 
 ---
+</details>
 
 ## Frontend integration
 
@@ -448,6 +478,9 @@ Backend outbound notifications have independent persistent thresholds for CPU, m
 
 ---
 
+<details class="geek-details" markdown="1">
+<summary>Technical details: retention maintenance and manual history reset</summary>
+
 ## Data retention
 
 ### Automatic cleanup
@@ -469,6 +502,7 @@ rm /config/metrics/metrics-*.jsonl
 ```
 
 ---
+</details>
 
 ## Performance considerations
 
@@ -492,9 +526,9 @@ Storage depends on sample size and compression, not just the interval. Check **M
 
 ### High storage usage
 
-1. Reduce `history_retention_days`
-2. Increase `history_interval_sec`
-3. Lower `history_max_total_mb`
+1. Open **Metrics → Settings → History Storage** and check actual usage.
+2. Reduce the saved history retention or local size limit if you need less history.
+3. Increase the history sampling interval if you need fewer samples, then **Apply**.
 4. Compare compressed payload and database allocation in **Metrics → Settings → History Storage**
 5. If PostgreSQL is active, review its relation size and normal PostgreSQL maintenance behavior
 
