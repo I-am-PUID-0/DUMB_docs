@@ -1,6 +1,27 @@
 # Changelog
 
 
+## [1.25.0](https://github.com/I-am-PUID-0/DUMB_docs/compare/1.24.29...1.25.0) (2026-11-15)
+
+
+### ✨ Features
+
+* **docs:** automate versioned documentation releases ([01d36a9](https://github.com/I-am-PUID-0/DUMB_docs/commit/01d36a91d40f152b0cdfe737e72e6fa29d1d1ef0))
+* **docs:** rebuild guides with release channels and Geek mode ([f83ece2](https://github.com/I-am-PUID-0/DUMB_docs/commit/f83ece2dcec6d8f8f7d08b9d05b2799a2ab2ed93))
+
+
+### 🐛 Bug Fixes
+
+* **ci:** authorize release promotion under the branch rules ([d83b3a8](https://github.com/I-am-PUID-0/DUMB_docs/commit/d83b3a8e2c84f83f27512efcc02ad0075f443c26))
+* **docs:** clarify frontend guides and restore site navigation ([8aa48da](https://github.com/I-am-PUID-0/DUMB_docs/commit/8aa48da6d07554808836e05046dd3c799a5a54ce))
+* **docs:** keep search visible on narrow tablets ([8ed6107](https://github.com/I-am-PUID-0/DUMB_docs/commit/8ed6107f78e8fd0ae9eb8ddd87a83f304272710b))
+* **docs:** restore tables and distinguish technical and dev content ([ab3e0b5](https://github.com/I-am-PUID-0/DUMB_docs/commit/ab3e0b536a31e82a4345ce8a729bc5c918d65e9f))
+
+
+### 📖 Documentation
+
+* freeze the reviewed DUMB 2.23.0 documentation snapshot ([d192896](https://github.com/I-am-PUID-0/DUMB_docs/commit/d1928962224d289a1c55914ef340c60f10c86be7))
+
 ## [1.24.29](https://github.com/I-am-PUID-0/DUMB_docs/compare/1.24.28...1.24.29) (2026-11-15)
 
 
