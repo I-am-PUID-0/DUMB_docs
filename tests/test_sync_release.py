@@ -370,6 +370,57 @@ class PublicationTests(unittest.TestCase):
         self.assertNotIn("sensitive", str(result.exception))
         self.assertIn("403", str(result.exception))
 
+    def test_only_explicit_optional_get_accepts_a_missing_resource(self):
+        error = HTTPError("https://api.github.com/", 404, "missing", {}, None)
+        with patch.object(sync, "urlopen", side_effect=error):
+            api = sync.GitHub("test-token")
+            self.assertIsNone(
+                api.request(
+                    f"/repos/{sync.DOCS}/actions/variables/RECEIPT", missing_ok=True
+                )
+            )
+            with self.assertRaisesRegex(sync.SyncError, "404"):
+                api.request(f"/repos/{sync.DOCS}/actions/variables/RECEIPT")
+
+    def test_optional_get_does_not_hide_permission_errors(self):
+        error = HTTPError("https://api.github.com/", 403, "denied", {}, None)
+        with patch.object(sync, "urlopen", side_effect=error):
+            with self.assertRaisesRegex(sync.SyncError, "403"):
+                sync.GitHub("test-token").request(
+                    f"/repos/{sync.DOCS}/actions/variables/RECEIPT", missing_ok=True
+                )
+
+    def test_mutations_cannot_allow_missing_resources(self):
+        with patch.object(sync, "urlopen") as request:
+            with self.assertRaisesRegex(sync.SyncError, "Only read requests"):
+                sync.GitHub("test-token").request(
+                    f"/repos/{sync.DOCS}/actions/variables", {}, "POST", missing_ok=True
+                )
+        request.assert_not_called()
+
+    def test_successful_empty_mutation_responses_are_supported(self):
+        from unittest.mock import MagicMock
+
+        for method in ("POST", "PATCH"):
+            with self.subTest(method=method):
+                response = MagicMock()
+                response.__enter__.return_value.read.return_value = b""
+                with patch.object(sync, "urlopen", return_value=response):
+                    self.assertIsNone(
+                        sync.GitHub("test-token").request(
+                            f"/repos/{sync.DOCS}/actions/variables", {}, method
+                        )
+                    )
+
+    def test_successful_empty_get_is_not_a_valid_api_response(self):
+        from unittest.mock import MagicMock
+
+        response = MagicMock()
+        response.__enter__.return_value.read.return_value = b""
+        with patch.object(sync, "urlopen", return_value=response):
+            with self.assertRaisesRegex(sync.SyncError, "empty read response"):
+                sync.GitHub("test-token").request(f"/repos/{sync.DOCS}")
+
 
 class PublisherAuthorityTests(unittest.TestCase):
     def test_admin_actor_passes_a_read_only_authority_check(self):

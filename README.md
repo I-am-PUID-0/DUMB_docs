@@ -136,6 +136,23 @@ ancestry are refused. The existing release credential drives downstream events;
 default-token events alone are insufficient for this unattended chain.
 Documentation publishing does not publish a DUMB image.
 
+### Discord release announcements
+
+New stable docs releases request a Discord announcement after both Pages and
+the legacy mirror deploy successfully. The workflow uses the existing
+`DISCORD_WEBHOOK_URL` secret and the original release-role mention, stored in
+the `DISCORD_RELEASE_MENTION` repository secret. Release notes come from the
+verified GitHub release; long notes are shortened with a link to the full text.
+
+Scheduled rebuilds and ordinary manual publication do not post messages. For a
+delivery retry, run **Publish documentation release** with the exact latest tag
+and `announce_release` enabled. A confirmed delivery is skipped on repeat runs.
+The release actor keeps a pending/sent receipt in the
+`DOCS_DISCORD_ANNOUNCEMENT` repository variable. A pending receipt blocks blind
+retries after a timeout or failure to record delivery; inspect the workflow and
+Discord channel before resolving it. Webhook credentials and Discord response
+contents stay out of logs and Git.
+
 Release pages retain their public URLs. Development pages are `noindex, follow`
 with their own canonical URLs, and release-unavailable pages stay out of search
 and the release sitemap. The generated audit checks metadata, structured data,

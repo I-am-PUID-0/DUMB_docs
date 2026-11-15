@@ -37,9 +37,18 @@ class GitHub:
     def __init__(self, token: str | None = None):
         self.token = token
 
-    def request(self, path: str, data: dict | None = None, method: str = "GET"):
+    def request(
+        self,
+        path: str,
+        data: dict | None = None,
+        method: str = "GET",
+        *,
+        missing_ok: bool = False,
+    ):
         if not path.startswith("/repos/"):
             raise SyncError("Only repository API paths are supported.")
+        if missing_ok and method != "GET":
+            raise SyncError("Only read requests may allow an absent resource.")
         headers = {
             "Accept": "application/vnd.github+json",
             "X-GitHub-Api-Version": "2026-03-10",
@@ -59,8 +68,14 @@ class GitHub:
         )
         try:
             with urlopen(request, timeout=30) as response:
-                return json.load(response)
+                body = response.read()
+                if not body and method == "GET":
+                    raise SyncError("GitHub API returned an empty read response.")
+                return json.loads(body) if body else None
         except HTTPError as error:
+            error.close()
+            if missing_ok and error.code == 404:
+                return None
             # Never echo response bodies, headers, or credentials into CI logs.
             raise SyncError(
                 f"GitHub API returned HTTP {error.code}; check repository access "

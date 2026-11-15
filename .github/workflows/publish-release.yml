@@ -9,6 +9,11 @@ on:
         description: 'Published docs tag to deploy (blank selects the latest release)'
         required: false
         type: string
+      announce_release:
+        description: 'Announce this deployed release to Discord (deduplicated)'
+        required: false
+        type: boolean
+        default: false
   schedule:
     - cron: '47 */6 * * *'
 
@@ -20,6 +25,7 @@ permissions:
 concurrency:
   group: docs-release-pages
   cancel-in-progress: false
+  queue: max
 
 jobs:
   dispatch:
@@ -35,7 +41,7 @@ jobs:
           GH_TOKEN: ${{ secrets.RELEASE_PLEASE_TOKEN }}
           GH_REPO: ${{ github.repository }}
           DOCS_RELEASE_TAG: ${{ github.event.release.tag_name }}
-        run: gh workflow run publish-release.yml --ref master -f release_tag="$DOCS_RELEASE_TAG"
+        run: gh workflow run publish-release.yml --ref master -f release_tag="$DOCS_RELEASE_TAG" -f announce_release=true
 
   resolve:
     name: Select the latest published docs release
@@ -159,3 +165,29 @@ jobs:
           personal_token: ${{ secrets.DMB_MIRROR_TOKEN }}
           publish_dir: /tmp/docs-mirror
           publish_branch: gh-pages
+
+  announce:
+    name: Announce the deployed documentation release
+    needs: [resolve, deploy]
+    if: github.event_name == 'workflow_dispatch' && inputs.announce_release && needs.deploy.result == 'success'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v6
+        with:
+          python-version: '3.11'
+      - name: Post the release announcement to Discord
+        env:
+          # The existing release actor records a delivery claim/receipt in a
+          # repository variable. No webhook credential or Discord ID is logged.
+          GITHUB_TOKEN: ${{ secrets.RELEASE_PLEASE_TOKEN }}
+          DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
+          DISCORD_RELEASE_MENTION: ${{ secrets.DISCORD_RELEASE_MENTION }}
+          DOCS_ANNOUNCE_RELEASE: 'true'
+          DOCS_RELEASE_TAG: ${{ needs.resolve.outputs.tag }}
+          DOCS_RELEASE_SHA: ${{ needs.resolve.outputs.commit_sha }}
+        run: python scripts/announce_docs_release.py --tag "$DOCS_RELEASE_TAG" --expected-head "$DOCS_RELEASE_SHA"
