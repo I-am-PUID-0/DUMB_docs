@@ -142,3 +142,26 @@
 {% endblock %}
 
 {% block announce %}{% endblock %}
+
+{% block content %}
+  {% if page and page.canonical_url and config.extra.docs_channel %}
+    <aside class="docs-channel-context" data-channel="{{ config.extra.docs_channel }}" aria-label="Documentation channel">
+      <span class="docs-channel-badge" data-channel="{{ config.extra.docs_channel }}">
+        {% if config.extra.docs_channel == 'dev' %}Development docs{% else %}Released docs{% endif %}
+      </span>
+      <strong>DUMB {{ config.extra.docs_version }}</strong>
+      {% if page.meta.release_unavailable or (page.meta.development_only and page.url not in config.extra.docs_release_available_pages) %}
+        <span class="docs-channel-badge" data-channel="dev">Development-only feature</span>
+        <span>Not included in released DUMB {{ config.extra.docs_release_version }}.</span>
+      {% elif page.url not in config.extra.docs_release_available_pages %}
+        <span class="docs-channel-badge" data-channel="dev">New guide</span>
+        <span>Added after the released documentation snapshot.</span>
+      {% elif config.extra.docs_channel == 'dev' %}
+        <span>Dev labels mark additions beyond the released {{ config.extra.docs_release_version }} docs.</span>
+      {% else %}
+        <span>For the latest stable release.</span>
+      {% endif %}
+    </aside>
+  {% endif %}
+  {{ super() }}
+{% endblock %}

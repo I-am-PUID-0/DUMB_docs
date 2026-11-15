@@ -13,10 +13,67 @@ from scripts.build_docs import (
     frontmatter,
     markdown_url,
     validate_output,
+    block_signature,
+    mark_development_block,
 )
 
 
 class ChannelContentTests(unittest.TestCase):
+    def test_development_notes_are_labelled_with_the_release_boundary(self):
+        source = "Common\n<!-- dev:start -->\n## New capability\n\nUse the new tool.\n<!-- dev:end -->"
+        result = filter_content(
+            source, True, mark_development=True, release_version="2.23.0"
+        )
+        self.assertIn('class="docs-dev-section"', result)
+        self.assertIn("not in the released 2.23.0 docs", result)
+        self.assertIn("## New capability", result)
+
+    def test_table_row_badges_preserve_table_structure(self):
+        source = "\n| New app | `left \\| right` |\n"
+        result = mark_development_block(source, "2.23.0")
+        self.assertIn('data-channel="dev"', result)
+        self.assertIn(">Dev</span> New app", result)
+        self.assertNotIn("<div", result)
+        self.assertEqual(result.count("|"), source.count("|"))
+        self.assertIn("`left \\| right`", result)
+
+    def test_list_item_badges_keep_numbering(self):
+        result = mark_development_block("\n5. Complete setup\n", "2.23.0")
+        self.assertIn('5. <span class="docs-channel-badge"', result)
+        self.assertNotIn("<div", result)
+
+    def test_promoted_blocks_are_not_labelled_development_only(self):
+        body = "\nA feature that shipped.\n"
+        source = "<!-- dev:start -->" + body + "<!-- dev:end -->"
+        result = filter_content(
+            source,
+            True,
+            mark_development=True,
+            release_version="2.24.0",
+            released_blocks={block_signature(body)},
+        )
+        self.assertEqual(result, body)
+        self.assertNotIn("docs-dev-section", result)
+
+    def test_new_notes_after_a_promoted_snapshot_are_labelled(self):
+        source = "<!-- dev:start -->A newer capability.<!-- dev:end -->"
+        result = filter_content(
+            source,
+            True,
+            mark_development=True,
+            release_version="2.24.0",
+            released_blocks={block_signature("A feature that shipped.")},
+        )
+        self.assertIn("not in the released 2.24.0 docs", result)
+
+    def test_channel_markers_do_not_change_released_copy(self):
+        source = "Shared\n<!-- dev:start -->New feature<!-- dev:end -->"
+        result = filter_content(
+            source, False, mark_development=True, release_version="2.23.0"
+        )
+        self.assertNotIn("New feature", result)
+        self.assertNotIn("docs-channel-badge", result)
+
     def test_release_and_development_choose_complete_blocks(self):
         source = "Common\n<!-- dev:start -->\nNew feature\n<!-- dev:end -->\n<!-- release:start -->\nStable instructions\n<!-- release:end -->"
         stable = filter_content(source, False)

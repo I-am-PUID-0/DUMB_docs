@@ -102,3 +102,11 @@ exports `llms.txt` and `llms-full.txt` from its filtered content.
 
 Geek mode is a browser preference that opens native technical-detail sections.
 It never removes documentation from the page or changes which channel is read.
+Enabled sections have green panels and a visible mode indicator. Amber channel
+labels and Dev badges identify additions beyond the frozen release docs;
+already promoted blocks do not retain an unreleased label. A new guide is
+distinguished from an explicitly development-only feature.
+
+Channel filtering repairs only table row continuations split by removed markers.
+The generated audit rejects raw Markdown table rows outside tables/code. Shared
+CSS and JavaScript receive content-hashed URLs so browser caches pick up UI fixes.

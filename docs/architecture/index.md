@@ -10,7 +10,17 @@ This section explains how DUMB is structured, how services are orchestrated, and
 
 ## System overview
 
+<figure class="docs-visual" markdown="1">
+
+![Library workflow roles: optional requests or searches, workflow apps, files and library paths, and the media server.](../assets/images/guides/library-workflow.svg)
+
+<figcaption class="docs-visual-caption">For a library workflow, these are roles rather than four required services. Your chosen integration determines which apps and connections you need.</figcaption>
+</figure>
+
 DUMB bundles a FastAPI backend, a Nuxt 4 frontend, a Traefik access layer, and a set of managed services (core, dependent, and optional). The backend owns configuration, process lifecycle, setup hooks, dependency ordering, health checks, update automation, and Traefik route generation. The frontend surfaces onboarding, status, logs, metrics, configuration controls, and embedded service UIs.
+
+<details class="geek-details" markdown="1">
+<summary>Technical details: API, process and proxy layers</summary>
 
 ```mermaid
 flowchart TD
@@ -38,6 +48,8 @@ flowchart TD
 
 ```
 
+</details>
+
 ## Core building blocks
 
 | Component | Responsibility |
@@ -53,6 +65,13 @@ flowchart TD
 | Cloudflared | Optional Cloudflare Tunnel connector that forwards public traffic to Traefik |
 
 ## Storage and mounts
+
+<figure class="docs-visual" markdown="1">
+
+![Host folders map to config, data, log and media paths inside DUMB. External apps need separate access to library paths and symlink targets.](../assets/images/guides/storage-boundaries.svg)
+
+<figcaption class="docs-visual-caption">Bind mounts preserve local files when the container is recreated. Provider-backed media can remain remote; its mount must be available again. External apps need their own path and mount setup. A bind mount is not a backup.</figcaption>
+</figure>
 
 The maintained deployment persists four container paths: `/config`, `/log`, `/data`, and `/mnt/debrid`. Services still use their native internal paths (for example `/riven/backend/data`, `/decypharr`, `/postgres_data`, or `/altmount`), but DUMB maps those paths into service-specific subdirectories below the mounted `/data` root. Media access is provided through `/mnt/debrid`, including mounts and curated symlink libraries.
 

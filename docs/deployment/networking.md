@@ -36,6 +36,13 @@ services:
       - "3005:3005"
 ```
 
+<figure class="docs-visual" markdown="1">
+
+![The browser reaches host port 3005, which maps to the DUMB dashboard. The dashboard forwards API requests to the internal port 8000.](../assets/images/guides/published-ports.svg)
+
+<figcaption class="docs-visual-caption">This shows the maintained bridge-mode example. The dashboard is the front door for API requests; publish additional service ports only when direct access is needed.</figcaption>
+</figure>
+
 Open the dashboard at:
 
 ```text

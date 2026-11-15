@@ -27,6 +27,13 @@ These are starting points, not interchangeable backends. Each service has its ow
 
 ## From install to first playback
 
+<figure class="docs-visual" markdown="1">
+
+![Five stages: prepare, install DUMB, choose services, connect the apps, then import and play a test item.](../assets/images/guides/first-playback.svg)
+
+<figcaption class="docs-visual-caption">Start with one workflow and test a real item from import to playback. The steps below link to the instructions for each stage.</figcaption>
+</figure>
+
 1. **Prepare storage and credentials.** Read [Before you install](installation.md).
 2. **Deploy DUMB.** Choose your host in [Deployment](../deployment/index.md).
 3. **Open the dashboard.** The default address is `http://<host>:3005`.
@@ -41,6 +48,9 @@ These are starting points, not interchangeable backends. Each service has its ow
 
 ## What runs where
 
+<details class="geek-details" markdown="1">
+<summary>Technical details: control and media paths</summary>
+
 ```mermaid
 flowchart LR
     USER([You]) --> FE[Dashboard :3005]
@@ -53,6 +63,8 @@ flowchart LR
     FE -. embedded UI .-> ARR
     FE -. embedded UI .-> FLOW
 ```
+
+</details>
 
 DUMB installs and coordinates services. Each upstream application still owns its accounts, provider behavior, database, and content decisions. The [architecture guide](../architecture/index.md) explains the boundaries.
 

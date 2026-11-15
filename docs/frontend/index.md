@@ -8,6 +8,13 @@ icon: lucide/layout-dashboard
 
 The DUMB Frontend, also called **dmbdb**, is the browser interface for service controls, configuration, logs, and metrics. Open `http://localhost:3005` on the Docker host, or use the host's address from another device.
 
+<figure class="docs-visual" markdown="1">
+
+![A navigation map showing Dashboard, Service pages, Metrics and Settings, with the purpose of each screen.](../assets/images/guides/dashboard-map.svg)
+
+<figcaption class="docs-visual-caption">A navigation map, not a screenshot. Open a service card for that app; use Metrics and Settings for installation-wide tasks. Available controls depend on the connected backend.</figcaption>
+</figure>
+
 ## Find a task
 
 | Task | Page |

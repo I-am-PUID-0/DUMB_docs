@@ -20,6 +20,13 @@ Choose a task to find its controls, configuration, and recovery steps. For a lis
 
 ## Keep the stack running
 
+<figure class="docs-visual" markdown="1">
+
+![Review the impact, keep a recovery copy, apply one change, then verify readiness, import and playback.](../assets/images/guides/change-checklist.svg)
+
+<figcaption class="docs-visual-caption">For changes that affect data, keep an independent backup first. Choose a recovery method that fits the service and operation; not every action has an automatic undo.</figcaption>
+</figure>
+
 | Task | Guide |
 | --- | --- |
 | Understand startup order and readiness | [Startup lifecycle](startup-lifecycle.md) |

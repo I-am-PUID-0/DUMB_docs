@@ -31,7 +31,12 @@ the examples.
 
 The guides begin with the steps most users need. **Geek mode** in the shared
 header opens their technical details: configuration examples, API commands,
-and notes about how the software works. Your browser remembers the choice.
+and notes about how the software works. Open technical sections have a light green
+background and a **Geek detail** label while the mode is on. The header shows
+**On** or **Off**, and your browser remembers the choice.
+
+Some overview pages have no hidden technical sections. They show that clearly
+when Geek mode is on; the mode does not add extra content to those pages.
 
 You can also open any technical section individually. Essential warnings,
 prerequisites, and recovery steps stay visible in either mode. Direct links to
@@ -40,6 +45,17 @@ a heading inside a closed section open it for you.
 The [API](../api/index.md), [configuration reference](index.md), and
 [architecture](../architecture/index.md) remain directly available in either
 mode. Geek mode changes how details are displayed; it does not remove content.
+
+## Spot development additions
+
+Each page identifies its documentation channel and DUMB version. **Released
+docs** use a blue-green label; **Development docs** use amber. Words accompany
+the colors so you can tell them apart without relying on color alone.
+
+In development guides, amber panels and small **Dev** badges identify additions
+beyond the released documentation snapshot. A development-only feature page
+also states which stable DUMB release does not include that feature. A newly
+written guide for an existing feature is labelled **New guide** instead.
 
 ## How release docs stay current
 

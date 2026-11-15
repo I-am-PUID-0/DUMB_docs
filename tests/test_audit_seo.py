@@ -327,6 +327,39 @@ class AuditSiteTests(unittest.TestCase):
         self.assertIn("Missing noindex 404 page", errors)
         self.assertTrue(any("Cannot read sitemap.xml" in error for error in errors))
 
+    def test_literal_table_continuations_are_reported(self):
+        self.write_page(
+            self.root,
+            "guide/index.html",
+            "Guide",
+            body=(
+                "<table><tr><th>Service</th><th>Role</th></tr>"
+                "<tr><td>Plex</td><td>Video</td></tr></table>"
+                '<p>| <a href="#configuration">Seerr</a> | Requests |\n'
+                "| <code>Audiobookshelf</code> | Books |</p>"
+            ),
+        )
+        self.assertTrue(
+            any("unrendered Markdown table rows" in error for error in self.audit())
+        )
+
+    def test_rendered_tables_and_code_examples_are_not_raw_table_errors(self):
+        self.write_page(
+            self.root,
+            "guide/index.html",
+            "Guide",
+            body=(
+                "<table><tr><th>Service</th><th>Role</th></tr>"
+                "<tr><td>Plex</td><td>Video | audio</td></tr></table>"
+                "<pre><code>| Example | Value |\n|---|---|</code></pre>"
+                "<p><code>| Literal | row |</code></p>"
+                "<p>Choose <code>fresh | migrate</code> or <code>rclone | fuse</code>.</p>"
+            ),
+        )
+        self.assertFalse(
+            any("unrendered Markdown table rows" in error for error in self.audit())
+        )
+
 
 if __name__ == "__main__":
     unittest.main()

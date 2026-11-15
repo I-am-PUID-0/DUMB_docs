@@ -4,6 +4,7 @@
 from __future__ import annotations
 
 import argparse
+import hashlib
 import json
 import re
 import shutil
@@ -11,14 +12,68 @@ import subprocess
 import sys
 import xml.etree.ElementTree as ET
 from pathlib import Path
+from html import escape
 
 import yaml
 
+if __package__:
+    from .asset_fingerprints import fingerprint_assets
+    from .markdown_fixes import repair_table_continuations
+else:
+    from asset_fingerprints import fingerprint_assets
+    from markdown_fixes import repair_table_continuations
+
 ROOT = Path(__file__).resolve().parents[1]
 MARKER = re.compile(r"<!-- (dev|release):(start|end) -->")
+DEV_BLOCK = re.compile(r"<!-- dev:start -->(.*?)<!-- dev:end -->", re.S)
 
 
-def filter_content(text: str, include_development: bool) -> str:
+def block_signature(text: str) -> str:
+    return hashlib.sha256(text.strip().encode()).hexdigest()
+
+
+def mark_development_block(text: str, release_version: str) -> str:
+    """Label unreleased content without breaking table rows or list items."""
+    badge = (
+        '<span class="docs-channel-badge" data-channel="dev" '
+        f'title="Added after the released DUMB {escape(release_version, quote=True)} documentation snapshot">Dev</span> '
+    )
+    lines = text.splitlines(keepends=True)
+    content = [line for line in lines if line.strip()]
+    if content and all(re.match(r"^\s*\|.*\|\s*$", line) for line in content):
+        return "".join(
+            (
+                line
+                if re.fullmatch(r"\s*\|[\s:|\-]+\|\s*", line)
+                else re.sub(
+                    r"^([ \t]*\|[ \t]*)", lambda match: match[1] + badge, line, count=1
+                )
+            )
+            for line in lines
+        )
+    list_prefix = r"^([ \t]*(?:[-*+]|\d+[.)])\s+)"
+    if content and all(re.match(list_prefix, line) for line in content):
+        return "".join(
+            re.sub(list_prefix, lambda match: match[1] + badge, line, count=1)
+            for line in lines
+        )
+    return (
+        '\n\n<div class="docs-dev-section" markdown="1">\n\n'
+        '<p class="docs-dev-section-label">'
+        f"Development update · not in the released {escape(release_version)} docs</p>\n\n"
+        + text.strip("\n")
+        + "\n\n</div>\n\n"
+    )
+
+
+def filter_content(
+    text: str,
+    include_development: bool,
+    *,
+    mark_development: bool = False,
+    release_version: str = "",
+    released_blocks: set[str] | None = None,
+) -> str:
     """Select complete channel blocks; reject nested or incomplete blocks."""
     parts: list[str] = []
     cursor = 0
@@ -34,7 +89,14 @@ def filter_content(text: str, include_development: bool) -> str:
             if active != channel:
                 raise ValueError(f"Unmatched {channel}:end marker")
             if (channel == "dev") == include_development:
-                parts.append(text[cursor : marker.start()])
+                body = text[cursor : marker.start()]
+                if (
+                    channel == "dev"
+                    and mark_development
+                    and block_signature(body) not in (released_blocks or set())
+                ):
+                    body = mark_development_block(body, release_version)
+                parts.append(body)
             active = None
         cursor = marker.end()
     if active:
@@ -207,6 +269,8 @@ def build_channel(
     docs = work / "docs"
     apply_release_overrides(channel, settings["version"], docs)
     include_dev = channel == "dev" or settings.get("include_development", False)
+    if channel == "release":
+        metadata["_released_dev_blocks"] = {}
     unavailable: set[str] = set()
     pages = []
     text_pages: list[tuple[str, str, str]] = []
@@ -214,7 +278,23 @@ def build_channel(
         relative = path.relative_to(docs)
         text = path.read_text()
         meta = frontmatter(text)
-        text = filter_content(text, include_dev)
+        if channel == "release" and include_dev:
+            metadata["_released_dev_blocks"][relative.as_posix()] = {
+                block_signature(match[1]) for match in DEV_BLOCK.finditer(text)
+            }
+        shared_released_page = markdown_url(relative) in metadata.get(
+            "_release_available_pages", []
+        )
+        text = filter_content(
+            text,
+            include_dev,
+            mark_development=channel == "dev" and shared_released_page,
+            release_version=metadata["release"]["version"],
+            released_blocks=metadata.get("_released_dev_blocks", {}).get(
+                relative.as_posix(), set()
+            ),
+        )
+        text = repair_table_continuations(text)
         if meta.get("development_only") and not include_dev:
             unavailable.add(relative.as_posix())
             title = meta.get("title", relative.stem.replace("-", " ").title())
@@ -245,10 +325,11 @@ def build_channel(
             )
 
     # Shared UI fixes apply to both channels, independently of frozen prose.
-    for directory in ("assets/css", "assets/js"):
+    for directory in ("assets/css", "assets/js", "assets/images/guides"):
         target = docs / directory
         shutil.rmtree(target, ignore_errors=True)
-        shutil.copytree(ROOT / "docs" / directory, target)
+        if (ROOT / "docs" / directory).is_dir():
+            shutil.copytree(ROOT / "docs" / directory, target)
     for image in ("logo.png", "favicon.ico", "DUMB.png", "DUMB.webp"):
         shutil.copy2(
             ROOT / "docs" / "assets/images" / image, docs / "assets/images" / image
@@ -278,6 +359,9 @@ def build_channel(
         "docs_dev_version": metadata["dev"]["version"],
         "docs_root": base_path,
         "docs_release_pages": metadata.get("_release_pages", pages),
+        "docs_release_available_pages": metadata.get(
+            "_release_available_pages", [markdown_url(Path(p)) for p in available]
+        ),
         "docs_dev_pages": metadata["_dev_pages"],
     }
     # Preserve extension Python tags as authored; don't evaluate YAML constructors here.
@@ -290,6 +374,7 @@ def build_channel(
     )
     config = re.sub(r"^  custom_dir:.*$", "  custom_dir: overrides", config, flags=re.M)
     config += "\ndocs_dir: docs\nsite_dir: site\n"
+    config = fingerprint_assets(config, docs)
     config_path = work / "mkdocs.yml"
     config_path.write_text(config)
     subprocess.run(
@@ -342,7 +427,16 @@ def build_channel(
     )
     (output / "channel.json").write_text(
         json.dumps(
-            {"channel": channel, "version": settings["version"], "pages": pages},
+            {
+                "channel": channel,
+                "version": settings["version"],
+                "pages": pages,
+                "available_pages": [
+                    page
+                    for page in pages
+                    if page not in {markdown_url(Path(p)) for p in unavailable}
+                ],
+            },
             indent=2,
         )
         + "\n"
@@ -373,6 +467,9 @@ def main() -> None:
         metadata["_release_pages"] = build_channel(
             "release", metadata, scratch, output, args.site_url.rstrip("/") + "/"
         )
+        metadata["_release_available_pages"] = json.loads(
+            (output / "channel.json").read_text()
+        )["available_pages"]
         build_channel(
             "dev", metadata, scratch, output / "dev", args.site_url.rstrip("/") + "/"
         )

@@ -5,6 +5,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import re
 import xml.etree.ElementTree as ET
 from collections import Counter
 from html import unescape
@@ -38,9 +39,19 @@ class PageParser(HTMLParser):
         self.json_ld: list[str] = []
         self.in_json_ld = False
         self.json_parts: list[str] = []
+        self.raw_table_rows: list[str] = []
+        self._paragraph_parts: list[str] | None = None
+        self._table_depth = 0
+        self._code_depth = 0
 
     def handle_starttag(self, tag: str, attrs: list[tuple[str, str | None]]) -> None:
         values = dict(attrs)
+        if tag == "table":
+            self._table_depth += 1
+        elif tag in {"pre", "code"}:
+            self._code_depth += 1
+        elif tag == "p" and not self._table_depth and not self._code_depth:
+            self._paragraph_parts = []
         if values.get("id"):
             self.ids.add(str(values["id"]))
         if tag == "a" and values.get("name"):
@@ -73,8 +84,23 @@ class PageParser(HTMLParser):
 
     def handle_startendtag(self, tag: str, attrs: list[tuple[str, str | None]]) -> None:
         self.handle_starttag(tag, attrs)
+        self.handle_endtag(tag)
 
     def handle_endtag(self, tag: str) -> None:
+        if tag == "table":
+            self._table_depth = max(0, self._table_depth - 1)
+        elif tag in {"pre", "code"}:
+            self._code_depth = max(0, self._code_depth - 1)
+        elif tag == "p" and self._paragraph_parts is not None:
+            for line in "".join(self._paragraph_parts).splitlines():
+                candidate = line.strip()
+                if (
+                    candidate.startswith("|")
+                    and candidate.endswith("|")
+                    and len(re.findall(r"(?<!\\)\|", candidate)) >= 3
+                ):
+                    self.raw_table_rows.append(candidate)
+            self._paragraph_parts = None
         if tag == "title":
             self.in_title = False
         elif tag == "script" and self.in_json_ld:
@@ -82,6 +108,8 @@ class PageParser(HTMLParser):
             self.json_ld.append("".join(self.json_parts).strip())
 
     def handle_data(self, data: str) -> None:
+        if self._paragraph_parts is not None and not self._code_depth:
+            self._paragraph_parts.append(data)
         if self.in_title:
             self.title_parts.append(data)
         if self.in_json_ld:
@@ -242,6 +270,11 @@ def audit_site(
 
         if parser.h1_count != 1:
             errors.append(f"{relative}: expected one H1, found {parser.h1_count}")
+        if parser.raw_table_rows:
+            errors.append(
+                f"{relative}: unrendered Markdown table rows in page text "
+                f"({len(parser.raw_table_rows)} rows; first: {parser.raw_table_rows[0]!r})"
+            )
         for href in parser.hrefs:
             if not resolves(current_url, href):
                 errors.append(f"{relative}: unresolved href {href}")
