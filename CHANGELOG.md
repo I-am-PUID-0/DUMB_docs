@@ -1,6 +1,13 @@
 # Changelog
 
 
+## [1.25.1](https://github.com/I-am-PUID-0/DUMB_docs/compare/1.25.0...1.25.1) (2026-11-15)
+
+
+### 🐛 Bug Fixes
+
+* **ci:** restore Discord announcements for docs releases ([7788d5e](https://github.com/I-am-PUID-0/DUMB_docs/commit/7788d5ee205a567312bcc2a9e30da30d301df585))
+
 ## [1.25.0](https://github.com/I-am-PUID-0/DUMB_docs/compare/1.24.29...1.25.0) (2026-11-15)
 
 
