@@ -200,6 +200,23 @@ def proposal(metadata: dict, docs_head: str, api: GitHub) -> dict:
     return select_release(metadata, latest, source, docs_head, api)
 
 
+def assert_publisher(api: GitHub) -> None:
+    """Verify the configured actor satisfies the repository's admin bypass policy.
+
+    This is a read-only capability check. It intentionally runs for no-op
+    publication checks too, so normal deployments exercise the configured token
+    without waiting for the next backend release to require a metadata commit.
+    """
+    repository = api.request(f"/repos/{DOCS}")
+    permissions = repository.get("permissions")
+    if not isinstance(permissions, dict) or permissions.get("admin") is not True:
+        raise SyncError(
+            "The configured publishing token does not have repository admin "
+            "authority required by the docs branch policy. Configure the "
+            "existing release automation credential; no branch write was attempted."
+        )
+
+
 def assert_current(api: GitHub, expected_head: str) -> None:
     expected_head = checked_sha(expected_head, "Validated documentation head")
     actual = (
@@ -307,8 +324,9 @@ def main(argv: list[str] | None = None) -> int:
         if args.publish:
             if os.environ.get("GITHUB_REPOSITORY") != DOCS or not api.token:
                 raise SyncError(
-                    "Publication requires the canonical docs workflow and its installation token."
+                    "Publication requires the canonical docs workflow and its configured publishing token."
                 )
+            assert_publisher(api)
             raw = subprocess.check_output(
                 ["git", "show", f"{head}:{METADATA_PATH}"], cwd=ROOT, text=True
             )

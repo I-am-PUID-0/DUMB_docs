@@ -371,9 +371,32 @@ class PublicationTests(unittest.TestCase):
         self.assertIn("403", str(result.exception))
 
 
+class PublisherAuthorityTests(unittest.TestCase):
+    def test_admin_actor_passes_a_read_only_authority_check(self):
+        api = FakeGitHub([{"permissions": {"admin": True}}])
+        sync.assert_publisher(api)
+        self.assertEqual(api.calls, [(f"/repos/{sync.DOCS}", None, "GET")])
+
+    def test_missing_or_nonadmin_authority_is_rejected(self):
+        for repository in [
+            {},
+            {"permissions": None},
+            {"permissions": {}},
+            {"permissions": {"admin": False}},
+            {"permissions": {"admin": "true"}},
+        ]:
+            with self.subTest(repository=repository):
+                api = FakeGitHub([repository])
+                with self.assertRaisesRegex(
+                    sync.SyncError, "repository admin authority"
+                ):
+                    sync.assert_publisher(api)
+                self.assertEqual(api.calls, [(f"/repos/{sync.DOCS}", None, "GET")])
+
+
 class PublicationCLITests(unittest.TestCase):
     def invoke(self, api, validated):
-        api.token = "installation-token-fixture"
+        api.token = "publishing-token-fixture"
         environment = {
             "GITHUB_REPOSITORY": sync.DOCS,
             "GITHUB_TOKEN": api.token,
@@ -385,16 +408,40 @@ class PublicationCLITests(unittest.TestCase):
             patch.object(sync, "GitHub", return_value=api),
             patch.object(
                 sync.subprocess, "check_output", return_value=json.dumps(metadata())
-            ),
+            ) as source_reader,
             contextlib.redirect_stderr(errors),
             contextlib.redirect_stdout(io.StringIO()),
         ):
             status = sync.main(["--publish", "--expected-head", DOCS_HEAD])
+            self.source_reads = list(source_reader.mock_calls)
         return status, errors.getvalue()
+
+    def test_nonadmin_publisher_fails_before_source_reads_or_any_write(self):
+        api = FakeGitHub([{"permissions": {"admin": False}}])
+        status, error = self.invoke(api, metadata())
+        self.assertEqual(status, 1)
+        self.assertIn("repository admin authority", error)
+        self.assertEqual(self.source_reads, [])
+        self.assertEqual(api.calls, [(f"/repos/{sync.DOCS}", None, "GET")])
+
+    def test_noop_publication_still_checks_admin_without_branch_mutation(self):
+        api = FakeGitHub(
+            [
+                {"permissions": {"admin": True}},
+                {"tag_name": "2.23.0"},
+                {"ref": "refs/tags/2.23.0", "object": {"type": "commit", "sha": OLD}},
+                {"object": {"sha": DOCS_HEAD}},
+            ]
+        )
+        status, error = self.invoke(api, metadata())
+        self.assertEqual(status, 0, error)
+        self.assertEqual(api.calls[0], (f"/repos/{sync.DOCS}", None, "GET"))
+        self.assertTrue(all(method == "GET" for _, _, method in api.calls))
 
     def test_modified_validated_metadata_cannot_be_published(self):
         api = FakeGitHub(
             [
+                {"permissions": {"admin": True}},
                 {"tag_name": "2.24.0"},
                 {
                     "ref": "refs/tags/2.24.0",
@@ -419,6 +466,7 @@ class PublicationCLITests(unittest.TestCase):
     def test_upstream_advancement_between_jobs_requires_a_new_build(self):
         api = FakeGitHub(
             [
+                {"permissions": {"admin": True}},
                 {"tag_name": "2.25.0"},
                 {
                     "ref": "refs/tags/2.25.0",

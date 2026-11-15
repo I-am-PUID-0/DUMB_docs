@@ -60,8 +60,12 @@ bundled frontends until they are updated.
 The workflow
 promotes the candidate's development sections, builds and audits both channels,
 then records only the verified version metadata and publishes the artifact.
-GitHub supplies the automation commit identity; local author settings are not
-changed. A non-forced ref update and head checks reject concurrent changes.
+The publication step uses the existing `RELEASE_PLEASE_TOKEN` credential because
+the default branch requires pull requests and permits administrator bypass.
+It verifies the publisher's repository permission even when no promotion is
+needed. Build jobs keep their read-only Actions token. GitHub supplies the
+authenticated actor's commit identity; local author settings are not changed.
+A non-forced ref update and head checks reject concurrent changes.
 
 An unexpected release version, moved tag, incompatible ancestry, or failed build
 stops promotion. Review the changed source and candidate, then run the workflow
