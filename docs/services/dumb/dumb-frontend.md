@@ -1,11 +1,18 @@
 ---
 title: DUMB Frontend
+description: Open the DUMB dashboard, find user guides, and review frontend build requirements, update settings, source selections, and development image choices.
 icon: lucide/layout-dashboard
 ---
+
+# DUMB Frontend
 
 The **DUMB Frontend** is the web UI for managing and monitoring the DUMB ecosystem.
 It provides service controls, real-time logs, embedded UIs, onboarding, settings,
 and metrics in a single interface.
+
+## Open the dashboard
+
+Open `http://<host>:3005` using your DUMB host address and published frontend port. Finish the initial account/onboarding prompts, then use the dashboard to open service pages, logs, and settings. If the page does not load, check the container's frontend log and [networking guide](../../deployment/networking.md).
 
 !!! tip "Frontend documentation"
 
@@ -19,6 +26,9 @@ and metrics in a single interface.
 
 ---
 
+<details class="geek-details" markdown="1">
+<summary>Technical details: frontend build requirements</summary>
+
 ## Build and update requirements
 
 Installing or rebuilding the current frontend requires **Node.js `>=24.15.0 <25`** and **pnpm 10**. This matches the [Nuxt 4.6 toolchain requirements](https://github.com/nuxt/nuxt/releases/tag/v4.6.0). An older frontend pin follows the engine requirement declared by that selected source.
@@ -28,6 +38,12 @@ New DUMB image builds and release validation enforce the current Node range. Fro
 The frontend source includes a dependency-free Node check in its install and build commands, so those commands can detect an incompatible runtime even on an older DUMB backend. The check reads that source's own `package.json`; with strict engine validation, pnpm may reject the requirement first with an expected/actual version error. Neither check upgrades Node.
 
 Production starts the compiled Nitro server with `node .output/server/index.mjs`, which does not run the source check. The version floor above applies to dependency installation and source builds; it does not establish the minimum runtime for every previously compiled frontend.
+
+</details>
+
+<!-- dev:start -->
+<details class="geek-details" markdown="1">
+<summary>Technical details: frontend version synchronization</summary>
 
 ## Frontend development versions
 
@@ -62,6 +78,14 @@ In **Settings → About**, the frontend row shows the candidate package version
 with its **Dev build** badge and branch/SHA when the installed source metadata
 matches that package and compiled output. Backend and frontend build identities
 remain separate.
+
+</details>
+
+<!-- dev:end -->
+
+<!-- dev:start -->
+<details class="geek-details" markdown="1">
+<summary>Technical details: development image builds</summary>
 
 ## Build a development image with a chosen frontend
 
@@ -127,11 +151,19 @@ SHA and install that configured target using the
 the frontend using the image's existing Node runtime and leaves the backend
 image unchanged.
 
+</details>
+
+<!-- dev:end -->
+
+<details class="geek-details" markdown="1">
+<summary>Technical details: configuration reference</summary>
+
 ## Configuration Settings in `dumb_config.json`
 
 This block is nested at `dumb.frontend` in `/config/dumb_config.json`:
 
 ```json
+{
 "frontend": {
     "enabled": true,
     "process_name": "DUMB Frontend",
@@ -160,6 +192,7 @@ This block is nested at `dumb.frontend` in `/config/dumb_config.json`:
     "config_dir": "/dumb/frontend",
     "env": {}            
 }
+}
 ```
 
 ### Configuration Key Descriptions
@@ -170,11 +203,11 @@ This block is nested at `dumb.frontend` in `/config/dumb_config.json`:
 - **`release_version_enabled`** / **`release_version`**: Indicates if a specific release version should be used.
 - **`commit_sha`**: Builds an exact GitHub revision. Use the complete 40-character hexadecimal SHA.
 - **`branch_enabled`** / **`branch`**: Specifies the branch to use if enabled.
-- **`suppress_logging`**: If `true`, disables log output for this service.
+- **`suppress_logging`**: Suppresses service messages in the main DUMB output.
 - **`log_level`**: Logging verbosity level (e.g., `DEBUG`, `INFO`).
 - **`host`**: IP address the frontend should bind to.
 - **`port`**: Port the frontend is served on.
-- **`auto_update`**: Enables automatic self-updates.
+- **`auto_update`**: Enables DUMB's scheduled update checks; `auto_update_mode` determines whether a detected update is installed.
 - **`auto_update_interval`**: How often (in hours) to check for updates.
 - **`clear_on_update`**: Clears build artifacts or cache during updates.
 - **`exclude_dirs`**: Prevents specific directories from being affected by updates when using `clear_on_update`
@@ -185,7 +218,9 @@ This block is nested at `dumb.frontend` in `/config/dumb_config.json`:
 
 ---
 
-## Commit / Branch / Version Targeting
+</details>
+
+## Commit / Branch / Version Targeting { #commit--branch--version-targeting }
 You can control which source revision of the frontend is deployed by setting:
 
 - `commit_sha` to a full 40-character SHA for an immutable source pin

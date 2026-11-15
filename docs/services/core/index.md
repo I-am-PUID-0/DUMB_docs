@@ -1,33 +1,22 @@
 ---
 title: Core Services Overview
+description: Find DUMB's acquisition, Arr automation, request, and media-server services, with their dependencies and links to setup guides.
 icon: lucide/cpu
 ---
 
-# Core Services
+# Core services
 
-Core services in DUMB are essential building blocks that handle media automation, storage, metadata processing, and orchestration. These services often rely on **dependent services** to operate fully and may optionally integrate with additional utilities for enhanced functionality.
+Choose core services around the library workflow you want. A media server can use files you already own; a download workflow usually also needs provider accounts, library paths, and one or more dependencies.
 
----
-
-## What Are Core Services?
-
-Core services are the services that:
-
-* Drive a major part of the media pipeline (e.g., indexing, downloading, symlinking, organization, hosting, playback, etc. )
-* May require one or more **dependent services** to function
-
-!!! note "You can use as many core services simultaneously as you like"
-
-    Core services can run side-by-side. DUMB will start dependencies in the correct order.
----
+Several core services can run together. Check shared paths, provider connection limits, and assigned ports before adding a second workflow.
 
 ## Core Service Index
 
 | Service                             | Description                                          | Depends On                        | Optional Integrations        |
 | ----------------------------------- | ---------------------------------------------------- | --------------------------------- | ---------------------------- |
-| [CLI Debrid](cli-debrid.md)         | Debrid media scraper, automation engine, and upgrade engine              | CLI Battery for stable/older releases; Phalanx DB, rclone, Zurg | Zilean |
+| [CLI Debrid](cli-debrid.md)         | Debrid media scraper, automation engine, and upgrade engine              | CLI Battery for standalone upstream layouts; Phalanx DB, rclone, Zurg | Zilean |
 | [Decypharr](decypharr.md)           | Debrid and native Usenet workflow service for Arrs, symlinks, and WebDAV access | rclone when external mount mode is used | Zilean, Sonarr, Radarr, Lidarr, Whisparr |
-| [InfiniDysk](infinidysk.md)                 | WebDAV service for NZB access and Arr download client integration         | rclone                            | Sonarr, Radarr, Lidarr, Whisparr |
+| [InfiniDysk](infinidysk.md) | Usenet WebDAV and Arr download-client workflow | rclone for the default 1.x integration | Sonarr, Radarr, Lidarr, Whisparr |
 | [AltMount](altmount.md)             | Usenet streaming, WebDAV, and SABnzbd-compatible Arr workflow             | NNTP provider account             | Sonarr, Radarr, Lidarr, Whisparr |
 | [Plex](plex-media-server.md)        | Hosts media collected by core services               |                                   |                              |
 | [Jellyfin](jellyfin.md)             | Media server for hosting and playing content         |                                   |                              |
@@ -44,99 +33,29 @@ Core services are the services that:
 
 ---
 
-## Dependency Guidelines
+## Dependency guidelines
 
-If you enable a core service, be sure to also:
+- Enable dependencies required by the installed service layout. DUMB orders managed dependencies during startup.
+- Keep raw provider mounts separate from curated library roots. Media servers must resolve the paths used by symlinks.
+- Use each Arr instance's `core_service` setting to select its workflow. Review [routing rules](../../reference/core-service.md) before combining clients.
+<!-- dev:start -->
+- Finish account and library choices in the [setup checklist](../../features/setup-checklist.md).
+<!-- dev:end -->
 
-* Review optional integrations to maximize capabilities
-* Use the onboarding flow in the DUMB Frontend for auto-detection and guided setup 
+A running process does not confirm a working import or playback path.
 
----
+## Example workflows
 
-## Example Workflows
+| Workflow | Typical components |
+|---|---|
+| Debrid automation | CLI Debrid or Riven, the dependencies required by its installed layout, and a media server |
+| Arr with Debrid or Usenet | Sonarr/Radarr, Decypharr, indexers, and a media server |
+| Usenet streaming | Sonarr/Radarr, InfiniDysk or AltMount, NNTP providers, and indexers |
+| Requests | Seerr or Pulsarr connected to selected media-server and Arr instances |
+| Existing local media | Plex, Jellyfin, or Emby with readable local media folders |
 
-### [CLI Debrid](cli-debrid.md) 
+## Related pages
 
-* **Requires:** [CLI Battery](../dependent/cli-battery.md) for stable/older releases (disable it for the v0.7.29+ in-process pre-release layout), [Phalanx DB](../dependent/phalanx-db.md), [rclone](../dependent/rclone.md), and [Zurg](../dependent/zurg.md)
-* **Optionally Uses:** [Zilean](../optional/zilean.md) (as a scraper)
-* **Outputs:** Clean symlinks for Plex/Emby/Jellyfin and/or monitors Plex library for collected media
-
-### [Decypharr](decypharr.md)
-
-* **Requires:** No external mount dependency for native DFS, embedded rclone, or no-mount mode; `external_rclone` uses a DUMB-managed [rclone](../dependent/rclone.md) after Decypharr starts
-* **Optionally Uses:** [Zilean](../optional/zilean.md) (as a scraper via the arrs)
-* **Outputs:** Symlinks automatically managed and organized by the arrs (Sonarr/Radarr)
-
-### [Plex](plex-media-server.md)
-
-* **Requires:** Content to already exist in `/mnt/debrid`
-* **Does Not Scrape** or collect — serves media fetched by others
-
-### [Jellyfin](jellyfin.md)
-
-* **Requires:** Content to already exist in `/mnt/debrid`
-* **Does Not Scrape** or collect — serves media fetched by others
-
-### [Emby](emby.md)
-
-* **Requires:** Content to already exist in `/mnt/debrid`
-* **Does Not Scrape** or collect — serves media fetched by others
-
-### [InfiniDysk](infinidysk.md)
-
-* **Requires:** [rclone](../dependent/rclone.md)
-* **Optionally Uses:** Sonarr, Radarr, Lidarr, and Whisparr for NZB client integration
-* **Outputs:** WebDAV mount at `/mnt/debrid/infinidysk` plus symlink roots for Arrs
-
-### [AltMount](altmount.md)
-
-* **Requires:** At least one NNTP provider configured in AltMount; linked Arr instances are optional
-* **DUMB Integration:** `core_service: altmount` adds matching Arr instances to AltMount and creates their AltMount download clients
-* **Operator Configuration:** Choose the AltMount import strategy, validate Arr root/import paths, and configure media-server libraries
-* **Outputs:** WebDAV plus the selected FUSE/rclone mount and `NONE`, `SYMLINK`, or `STRM` import flow
-
-### [Riven Backend](riven-backend.md)
-
-* **Requires:** [PostgreSQL](../dependent/postgres.md). Stable/release mode also uses [rclone](../dependent/rclone.md) and [Zurg](../dependent/zurg.md); current branch mode uses Riven's native filesystem/debrid-link path instead.
-* **Optionally Uses:** [Zilean](../optional/zilean.md) (as a scraper)
-* **Outputs:** Clean symlinks for Plex/Emby/Jellyfin
-
-### [Seerr](seerr.md)
-
-* **Requires:** Plex, Jellyfin, or Emby for discovery (optional but recommended)
-* **Optionally Uses:** [Sonarr](sonarr.md) and [Radarr](radarr.md) for request fulfillment
-* **Outputs:** Approved requests that flow into Arr queues
-
-### [NeutArr](neutarr.md)
-
-* **Requires:** Arr instances with `use_neutarr: true`
-* **Optionally Filters:** Arr instances by `core_service`
-* **Outputs:** Periodic backlog searches for missing or upgrade content
-
-### [Profilarr](profilarr.md)
-
-* **Requires:** Sonarr and/or Radarr instances with `use_profilarr: true`
-* **Optionally Filters:** Arr instances by `core_service`
-* **Outputs:** Synced profiles, custom formats, regex patterns, and media management settings
-
-### Arrs (Sonarr/Radarr/Lidarr/Whisparr)
-
-* **Requires:** A download client such as [Decypharr](decypharr.md), [InfiniDysk](infinidysk.md), or [AltMount](altmount.md)
-* **Optionally Uses:** [Prowlarr](prowlarr.md) to manage and sync indexers
-* **Outputs:** Organized media libraries and renamed files for your media servers
-
----
-
-## Tips
-
-* Use `process_name` in `dumb_config.json` to identify each service clearly in logs and the UI
-* Onboarding will automatically add required dependencies for the Core services selected
-* Dependent services will start automatically when their core service is launched
-
----
-
-## Related Pages
-
-* [Dependent Services](../dependent/index.md)
-* [Optional Services](../optional/index.md)
-* [How Services Work Together](../index.md#how-the-services-work-together)
+- [All services](../index.md)
+- [Dependent services](../dependent/index.md)
+- [Optional services](../optional/index.md)

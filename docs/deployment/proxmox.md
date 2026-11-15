@@ -6,8 +6,7 @@ icon: simple/proxmox
 
 # Deploying DUMB on Proxmox
 
-The recommended Proxmox layout runs DUMB and its managed services directly in
-one LXC. It does **not** install Docker inside the LXC.
+The native helper runs DUMB and its managed services directly in one LXC, without a Docker layer. The helper currently uses the maintainer validation branch described below.
 
 This keeps the normal DUMB topology simple:
 
@@ -26,8 +25,7 @@ required.
 
 ## Install the validation build
 
-Until the script has completed LXC validation and been accepted upstream, run
-the maintainer-fork build from the **Proxmox VE host shell**:
+While the helper is awaiting upstream acceptance, run the maintainer-fork build from the **Proxmox VE host shell**:
 
 ```bash
 COMMUNITY_SCRIPTS_URL="https://raw.githubusercontent.com/I-am-PUID-0/ProxmoxVED/feat/dumb" \
@@ -80,9 +78,9 @@ The default installation creates an unprivileged Debian 13 LXC with:
 
 Use **Advanced Settings** when a large stack, source builds, the install cache,
 or a media server needs more resources. Both amd64 and arm64 have completed the
-native acceptance tests with DUMB 2.21.0: clean Proxmox VE installation,
+recorded native acceptance tests with DUMB 2.21.0: clean Proxmox VE installation,
 controller update and rollback, reboot, FUSE namespace isolation, and stopped
-backup/restore.
+backup/restore. That qualification applies to the tested versions; it does not establish every later application update or GPU path.
 
 When installation finishes, open:
 
@@ -140,7 +138,7 @@ native and container-image deployments.
 The helper also configures `systemd-logind` to retain IPC owned by DUMB's
 managed-service UID. This is required for PostgreSQL POSIX shared memory after
 temporary setup sessions end. Package-provided PostgreSQL, Plex, and Jellyfin
-systemd units are masked because DUMB, not the distribution unit, supervises
+systemd units are kept inactive because DUMB, not the distribution unit, supervises
 those processes inside this dedicated LXC.
 
 ## GPU passthrough and Jellyfin

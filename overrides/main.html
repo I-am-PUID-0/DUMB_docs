@@ -51,7 +51,11 @@
     {% set seo_title = page.meta.title if page.meta and page.meta.title else page.title | striptags %}
     {% set seo_description = page.meta.description if page.meta and page.meta.description else "Learn about " ~ page.title ~ " in DUMB, the Distributed Unlimited Media Bridge platform for Debrid, Usenet, Arr apps, and media server automation." %}
     {% set seo_url = page.canonical_url %}
-    <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1">
+    {% if config.extra.docs_channel == 'dev' or page.meta.release_unavailable %}
+      <meta name="robots" content="noindex, follow">
+    {% else %}
+      <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1">
+    {% endif %}
     <meta property="og:type" content="website">
     <meta property="og:locale" content="en_US">
     <meta property="og:site_name" content="DUMB — Distributed Unlimited Media Bridge">
@@ -70,7 +74,6 @@
     <meta name="twitter:image" content="https://dumbarr.com/assets/images/DUMB.png">
     <meta name="twitter:image:alt" content="Distributed Unlimited Media Bridge ecosystem and architecture overview">
     {% if seo_url == config.site_url %}
-      <link rel="preload" as="image" href="https://dumbarr.com/assets/images/DUMB.webp" type="image/webp" fetchpriority="high">
       <script type="application/ld+json">
       {
         "@context": "https://schema.org",
@@ -138,7 +141,4 @@
   {% endif %}
 {% endblock %}
 
-{% block announce %}
-⚠️ Documentation is currently based on the Dev branch of DUMB, so some pages might not reflect the latest behavior.
-
-{% endblock %}
+{% block announce %}{% endblock %}

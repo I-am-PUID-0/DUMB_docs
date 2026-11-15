@@ -1,5 +1,6 @@
 ---
 title: Bazarr
+description: Enable Bazarr in DUMB, connect Sonarr and Radarr, choose subtitle providers and languages, and check that subtitles can reach your media files.
 icon: lucide/captions
 ---
 
@@ -7,12 +8,33 @@ icon: lucide/captions
 
 [Bazarr](https://www.bazarr.media/) is an optional subtitle manager for movies and TV shows. It reads library information from Sonarr and Radarr, searches configured subtitle providers, and writes downloaded subtitles beside the media files.
 
+## First-time Bazarr setup
+
+Open Bazarr from its service page or browse to:
+
+```text
+http://<dumb-host>:18080/service/ui/bazarr
+```
+
+Then complete these steps in Bazarr:
+
+1. Under **Settings -> Sonarr**, enable Sonarr if you manage TV shows.
+2. Use `localhost` as the address, the assigned Sonarr port (default `8989`), and the API key from Sonarr's **Settings -> General** page.
+3. Under **Settings -> Radarr**, enable Radarr if you manage movies.
+4. Use `localhost` as the address, the assigned Radarr port (default `7878`), and the API key from Radarr's **Settings -> General** page.
+5. Test each connection, select subtitle languages and profiles, then configure at least one subtitle provider.
+
+If your Arr instances use non-default ports, use the actual ports shown on their DUMB service pages.
+
+DUMB treats `bazarr.port` as authoritative. If DUMB assigns a different port to avoid a conflict, Bazarr's persisted **Settings -> General -> Port** value is synchronized to the same port during setup. Restart Bazarr after manually changing `bazarr.port` so both the managed launch command and Bazarr's saved setting are updated.
+
+<!-- dev:start -->
 ## Setup checklist and remaining work
 
 Compatible checklists populate selected Sonarr/Radarr connections, guide discovered languages/profiles, and expose supported subtitle-provider credential fields. Preview the exact settings, then explicitly approve saving credentials or activating a provider. Existing providers remain preserved. Configuration readback does not verify a third-party provider login or subtitle search; test those with your account in Bazarr. Activating integrations can activate existing schedules: enable them deliberately after review. Manual instructions below remain useful for older backends or unsupported interfaces.
 
 Requires the backend setup-arrangement capability. See [Setup checklist and automation](../../features/setup-checklist.md) for retained tasks, coverage and safe retries.
-
+<!-- dev:end -->
 
 ## How DUMB runs Bazarr
 
@@ -36,7 +58,11 @@ Select **Bazarr** in the **Optional Services** step. DUMB starts it in the post-
 
 Open the Bazarr service page in the DUMB frontend, enable the service in **DUMB Config**, save, and start it. The default configuration is:
 
+<details class="geek-details" markdown="1">
+<summary>Technical details: configuration example</summary>
+
 ```json
+{
 "bazarr": {
   "enabled": false,
   "postgres_enabled": false,
@@ -74,27 +100,10 @@ Open the Bazarr service page in the DUMB frontend, enable the service in **DUMB 
     "NO_UPDATE": "true"
   }
 }
+}
 ```
 
-## First-time Bazarr setup
-
-Open Bazarr from its service page or browse to:
-
-```text
-http://<dumb-host>:18080/service/ui/bazarr
-```
-
-Then complete these steps in Bazarr:
-
-1. Under **Settings -> Sonarr**, enable Sonarr if you manage TV shows.
-2. Use `localhost` as the address, the assigned Sonarr port (default `8989`), and the API key from Sonarr's **Settings -> General** page.
-3. Under **Settings -> Radarr**, enable Radarr if you manage movies.
-4. Use `localhost` as the address, the assigned Radarr port (default `7878`), and the API key from Radarr's **Settings -> General** page.
-5. Test each connection, select subtitle languages and profiles, then configure at least one subtitle provider.
-
-If your Arr instances use non-default ports, use the actual ports shown on their DUMB service pages.
-
-DUMB treats `bazarr.port` as authoritative. If DUMB assigns a different port to avoid a conflict, Bazarr's persisted **Settings -> General -> Port** value is synchronized to the same port during setup. Restart Bazarr after manually changing `bazarr.port` so both the managed launch command and Bazarr's saved setting are updated.
+</details>
 
 ## Media paths
 

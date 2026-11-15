@@ -6,7 +6,11 @@ icon: lucide/terminal
 
 # CLI Debrid (Core Service)
 
-**CLI Debrid** is a core content orchestrator in the DUMB ecosystem. It automates media collection and upgrading through Debrid services (e.g. Real-Debrid), working alongside Trakt, Plex, Seerr, and various scrapers. CLI Debrid can either monitor your Plex libraries or generate symlinks for organized media delivery to Plex or similar servers.
+CLI Debrid acquires and upgrades media through Debrid providers. Configure content sources, scrapers, provider credentials, and library paths in CLI Debrid after DUMB installs its runtime and selected dependencies.
+
+<!-- dev:start -->
+<details class="geek-details" markdown="1">
+<summary>Technical details: installed CLI Battery layout</summary>
 
 !!! info "CLI Battery follows the installed layout"
 
@@ -30,12 +34,30 @@ icon: lucide/terminal
 
 ---
 
+</details>
+
+<!-- dev:end -->
+<!-- release:start -->
+For an upstream CLI Debrid layout with embedded Battery, DUMB 2.23.0 does not detect the replacement automatically. Review the [CLI Debrid FAQ](../../faq/cli-debrid.md#does-cli-debrid-v0729-still-need-a-separate-cli-battery-process) before enabling that layout.
+<!-- release:end -->
+
+
+## First start
+
+1. Select CLI Debrid during onboarding, including its provider and library paths.
+2. Wait for the selected dependencies to become ready, then open CLI Debrid.
+3. Authorize the accounts you use and configure content sources, scrapers, and collection rules.
+4. Check the curated symlink path in your media server and test a small intended import/playback.
+
+Check the CLI Battery layout note above before selecting an upstream development release.
+
+<!-- dev:start -->
 ## Setup checklist and remaining work
 
 Review the selected source's standalone/integrated Battery layout and PhalanxDB choice. Dependencies and installation are separate from native content, collection, scraper and library choices. Finish those tasks and validate a real import/playback.
 
 Requires the backend setup-arrangement capability. See [Setup checklist and automation](../../features/setup-checklist.md) for retained tasks, coverage and safe retries.
-
+<!-- dev:end -->
 
 ## Workflow diagram
 
@@ -81,9 +103,13 @@ flowchart TD
 
 ---
 
+<details class="geek-details" markdown="1">
+<summary>Technical details: configuration reference</summary>
+
 ## Configuration in `dumb_config.json`
 
 ```json
+{
 "cli_debrid": {
     "enabled": false,
     "process_name": "CLI Debrid",
@@ -129,10 +155,11 @@ flowchart TD
         "USER_DB_CONTENT": "/cli_debrid/data/db_content/",
         "CLI_DEBRID_PORT": "{port}"
     }
-},
+}
+}
 ```
 
-### Key Configuration Fields
+### Key configuration fields { #key-configuration-fields }
 
 * `enabled`: Toggle to run CLI Debrid via DUMB.
 * `process_name`: Used for display and logs.
@@ -147,6 +174,9 @@ flowchart TD
 
 ---
 
+</details>
+
+<!-- dev:start -->
 ## Persistent data after installation
 
 When the configured paths use `<config_dir>/data`, DUMB checks that this alias
@@ -167,6 +197,7 @@ runtime preparation error, review the exact paths in the message before
 changing their contents or ownership.
 
 ---
+<!-- dev:end -->
 
 ## What CLI Debrid Does
 
@@ -194,10 +225,14 @@ changing their contents or ownership.
 !!! warning "Required only by layouts that still use the standalone service"
 
     Keep CLI Battery enabled for installed CLI Debrid layouts that call its
-    API on port `5001`. DUMB skips this separate process when it recognizes
-    the embedded layout. See the transition note near the top of this page.
+    API on port `5001`. See the layout guidance near the top of this page before
+    selecting an upstream version that embeds Battery.
+
+<details class="geek-details" markdown="1">
+<summary>Technical details: configuration example</summary>
 
 ```json
+{
 "cli_battery": {
     "enabled": false,
     "process_name": "CLI Battery",
@@ -221,8 +256,11 @@ changing their contents or ownership.
         "USER_DB_CONTENT": "/cli_debrid/data/db_content/",
         "CLI_DEBRID_BATTERY_PORT": "{port}"
     }
-},
+}
+}
 ```
+
+</details>
 
 CLI Battery provides local metadata storage and Trakt integration, acting as the "memory" of CLI Debrid.
 
@@ -231,7 +269,11 @@ CLI Battery provides local metadata storage and Trakt integration, acting as the
 
 ## Optional Utility: Phalanx DB
 
+<details class="geek-details" markdown="1">
+<summary>Technical details: configuration example</summary>
+
 ```json
+{
 "phalanx_db": {
     "enabled": false,
     "process_name": "Phalanx DB",
@@ -261,10 +303,13 @@ CLI Battery provides local metadata storage and Trakt integration, acting as the
     "config_dir": "/phalanx_db",
     "log_file": "/log/phalanx_db.log",
     "env": {}
-},
+}
+}
 ```
-!!! note "While listed as optional, the onboarding process will treat it as a dependent service and enable it by default. You can disable it from the [DUMB Frontend](../dumb/dumb-frontend.md) if desired"
 
+</details>
+
+!!! note "While listed as optional, the onboarding process will treat it as a dependent service and enable it by default. You can disable it from the [DUMB Frontend](../dumb/dumb-frontend.md) if desired"
 
 
 Phalanx DB provides distributed metadata storage via Hyperswarm. It is optional but can enhance metadata resilience and syncing.
@@ -479,6 +524,8 @@ updates until the pin is changed or cleared.
 ---
 
 ## Access
+
+Open the service from DUMB's **Embedded UI** tab when available. The native URLs below require the corresponding Docker host port to be published; use the port saved in your running configuration.
 
 - Navigate to: `http://<host>:<port>` 
 

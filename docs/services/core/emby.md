@@ -10,12 +10,20 @@ icon: lucide/disc
 
 ---
 
+## First start
+
+1. Select Emby in onboarding and open its embedded UI after startup.
+2. Complete the native administrator setup and choose the library folders visible inside DUMB.
+3. Review scanning and automatic removal settings before the first scan of a remote mount.
+4. Play and seek through a representative file. Configure remote access and hardware acceleration separately if needed.
+
+<!-- dev:start -->
 ## Setup checklist and remaining work
 
 Complete first administrator setup where required and supply authorized credentials for supported library actions. Existing initialized servers and paths are preserved. Supported new-library forms offer an optional initial scan, off by default; this choice does not rescan an existing library. Configure Library Protection separately where required; review remote access, GPU mapping and actual playback.
 
 Requires the backend setup-arrangement capability. See [Setup checklist and automation](../../features/setup-checklist.md) for retained tasks, coverage and safe retries.
-
+<!-- dev:end -->
 
 ## Service Relationships
 
@@ -40,9 +48,17 @@ Requires the backend setup-arrangement capability. See [Setup checklist and auto
 
 ---
 
+!!! warning "Release pinning"
+
+    When `release_version_enabled` is set, DUMB treats the release as pinned and disables scheduled auto-updates for Emby.
+
+<details class="geek-details" markdown="1">
+<summary>Technical details: configuration reference</summary>
+
 ## Configuration in `dumb_config.json`
 
 ```json
+{
 "emby": {
   "enabled": false,
   "process_name": "Emby Media Server",
@@ -63,9 +79,10 @@ Requires the backend setup-arrangement capability. See [Setup checklist and auto
   "command": [],
   "env": {}
 }
+}
 ```
 
-### Key Configuration Fields
+### Key configuration fields { #key-configuration-fields }
 
 * `port`: Web UI port (default `8096`).
 * `use_system_ffmpeg`: Use the system ffmpeg binary when available.
@@ -73,13 +90,13 @@ Requires the backend setup-arrangement capability. See [Setup checklist and auto
 * `auto_update`: Enable scheduled update checks (disabled when pinning releases).
 * `config_dir`, `config_file`, `log_file`: Paths for config and logs.
 
-!!! warning "Release pinning"
-
-    When `release_version_enabled` is set, DUMB treats the release as pinned and disables scheduled auto-updates for Emby.
-
 ---
 
+</details>
+
 ## Accessing the UI
+
+Open the service from DUMB's **Embedded UI** tab when available. The native URLs below require the corresponding Docker host port to be published; use the port saved in your running configuration.
 
 * Navigate to: `http://<host>:8096`
 * Traefik proxy: `http://<host>:18080/service/ui/emby/`
@@ -90,7 +107,7 @@ for login and empty-library troubleshooting.
 
 ## Media Library Protection
 
-Emby requires a dedicated API key before DUMB can inspect sessions and temporarily control scan tasks/library real-time monitoring. DUMB does not create this key during Emby's first-run administrator setup. Create it in Emby's dashboard, then save it under **Library Protection** on the Emby service page. New setup-created protection policies remain disabled until you review their mount scope and enable them; existing policy settings are preserved. Without usable credentials, unattended storage maintenance is deferred because activity is unknown.
+Emby requires a dedicated API key before DUMB can inspect sessions and temporarily control scan tasks/library real-time monitoring. DUMB does not create this key during Emby's first-run administrator setup. Create it in Emby's dashboard, then save it under **Library Protection** on the Emby service page. Review the configured mount scope and enablement before using protection. Without usable credentials, unattended storage maintenance is deferred because activity is unknown.
 
 See [Media Library Protection](../../features/media-library-protection.md).
 

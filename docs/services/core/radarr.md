@@ -10,6 +10,15 @@ icon: lucide/film
 
 ---
 
+## First start
+
+1. Select Radarr during onboarding and choose its download workflow.
+2. Open Radarr from its DUMB service page and review the download client and indexer connections.
+3. Choose the movie root folder and quality profile before adding a movie. The root must match your workflow's curated library path.
+4. Add one movie deliberately, then confirm the import appears in the intended media-server library.
+
+Keep the default SQLite database unless you are planning the separate migration described below.
+
 ## Service Relationships
 
 | Classification | Role                               |
@@ -21,9 +30,13 @@ icon: lucide/film
 
 ---
 
+<details class="geek-details" markdown="1">
+<summary>Technical details: configuration reference</summary>
+
 ## Configuration in `dumb_config.json`
 
 ```json
+{
 "radarr": {
   "instances": {
     "Default": {
@@ -56,13 +69,14 @@ icon: lucide/film
     }
   }
 }
+}
 ```
 
-### Key Configuration Fields
+### Key configuration fields { #key-configuration-fields }
 
 * `core_service`: Set to `decypharr`, `infinidysk`, `altmount`, or a list of workflow keys to enable DUMB integration.
 * `use_neutarr`: Opt this instance into NeutArr automation.
-* `use_profilarr`: Opt this instance into Profilarr auto‑linking.
+* `use_profilarr`: Opt this instance into Profilarr linking.
 * `postgres_enabled`: Opt this instance into DUMB-managed PostgreSQL config. SQLite is the default; set this to `true` only when you want Radarr to use PostgreSQL.
 * `postgres_main_db` / `postgres_log_db`: Optional database-name overrides. When blank, DUMB uses `radarr-main` and `radarr-log` for the default instance, or unique instance-scoped names for additional instances.
 * `port`: Web UI port (default `7878`).
@@ -71,10 +85,12 @@ icon: lucide/film
 * `release_version_enabled` / `release_version`: Use GitHub releases (e.g., `latest`, `nightly`, `prerelease`, or a tag).
 * `clear_on_update`: Clear the install directory before updating.
 * `exclude_dirs`: Directories to preserve when clearing.
-* `platforms`: Build platforms (auto‑defaults to `["dotnet"]` when using branches).
+* `platforms`: Build platforms (defaults to `["dotnet"]` when using branches).
 * `config_dir`, `config_file`, `log_file`: Paths for config and logs.
 
 ---
+
+</details>
 
 ## PostgreSQL database mode
 
@@ -105,7 +121,7 @@ Radarr's upstream documentation still classifies existing SQLite migration as un
 
 ## Repo-based installs and updates
 
-Radarr now supports the same repo‑based controls as other DUMB services.
+Radarr now supports the same repository-based controls as other DUMB services.
 
 - **GitHub releases**: Set `release_version_enabled: true` with a valid `repo_owner`/`repo_name`.
 - **Default updater**: Leave `release_version_enabled: false` to use the standard Arr updater.
@@ -127,6 +143,8 @@ GitHub sources take priority when enabled and are **not** a fallback. `pinned_ve
 ---
 
 ## Accessing the UI
+
+Open the service from DUMB's **Embedded UI** tab when available. The native URLs below require the corresponding Docker host port to be published; use the port saved in your running configuration.
 
 * Navigate to: `http://<host>:7878`
 

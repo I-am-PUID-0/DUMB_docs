@@ -6,23 +6,18 @@ icon: lucide/bell-ring
 
 # Notifications
 
-DUMB includes an optional backend notification utility for sending health and operational events even when no browser is open. It is separate from the browser-local alert banners on the Metrics page.
-
-Notifications are disabled by default.
+Notifications send health and operation events from the backend, including when no browser is open. Delivery is disabled by default. Browser-local Metrics banners have separate settings.
 
 ## What it provides
 
-- Multiple named notification destinations
-- [Apprise](https://appriseit.com/) URLs for Discord, ntfy, Gotify, Telegram, email, Slack, Home Assistant, and other supported services
-- Generic JSON webhooks
-- Per-destination event, severity, and service routing
-- Persistent queued delivery and history under `/config/notifications`
-- Exponential retry with a configurable attempt limit
-- Per-event cooldown suppression
-- Recovery notifications when monitored pressure clears
-- Manual messages and destination tests from **Settings → Notifications**
-- Startup-aware baselining that avoids transient failure/recovery noise
-- Redacted API responses and logs for destination URLs and request headers
+| Need | Control |
+| --- | --- |
+| Send to a provider | Apprise URL or generic JSON webhook destination |
+| Choose which events arrive | Minimum severity, event selection, and exact service filters |
+| Reduce repeated messages | Cooldown and recovery options |
+| Inspect a failed delivery | Delivery history and retry status |
+
+Use **Settings → Notifications** to configure destinations, send a test or manual message, and review history.
 
 ## Configure a destination
 
@@ -35,7 +30,9 @@ Notifications are disabled by default.
 7. Select **Save & test**.
 8. Enable outbound notifications after the test succeeds.
 
-An empty event list matches every event. The service-filter dropdown is populated only from services currently enabled in DUMB and supports selecting more than one service. Disabled template services are not offered, and names that are not currently enabled are removed from the editable filter instead of being retained as hidden routing values. If enabled-service discovery is temporarily unavailable, destination saving and testing are paused until Settings is refreshed. Leaving every service unchecked matches all events, including events for any enabled service; selected entries use the exact process names shown by DUMB.
+An empty event list matches every event. Leaving every service unchecked also matches all events. Selected services use exact process names from the currently enabled catalog.
+
+Disabled templates are not offered, and removed/disabled names do not remain hidden filters. If service discovery is unavailable, refresh Settings before saving or testing.
 
 !!! important "Minimum severity is evaluated first"
 
@@ -68,6 +65,9 @@ Use the official [Apprise URL Builder](https://appriseit.com/url-builder/) or [n
 
 Apprise's provider cache is kept in `/config/notifications/apprise`.
 
+<details class="geek-details" markdown="1">
+<summary>Technical details: generic webhook payload and headers</summary>
+
 ## Generic webhook payload
 
 Generic webhooks receive an HTTP `POST` with JSON shaped like:
@@ -88,6 +88,8 @@ Generic webhooks receive an HTTP `POST` with JSON shaped like:
 Optional request headers can be entered as a JSON object. Leave the headers field blank after saving to preserve existing secret headers.
 
 TLS certificate verification is enabled by default. Disable it only for a deliberately trusted private endpoint using a self-signed certificate.
+
+</details>
 
 ## Event sources
 

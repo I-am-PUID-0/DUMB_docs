@@ -10,12 +10,26 @@ Seerr (Overseerr/Jellyseerr) is a media request and discovery platform that inte
 
 ---
 
+## Initial setup
+
+After enabling Seerr and starting the service:
+
+1. Access the Seerr UI at `http://<host>:5055`
+2. Complete the setup wizard:
+   - Sign in with your Plex account (or configure Jellyfin)
+   - Connect to your Plex/Jellyfin server
+   - Configure Radarr and Sonarr connections
+   - Set up user permissions
+
+---
+
+<!-- dev:start -->
 ## Setup checklist and remaining work
 
 Choose exact media-server and Sonarr/Radarr targets, then actual discovered profiles, roots and default/4K routes. External servers and no server are different choices. Complete administrator authorization, library access and approval policy in Seerr. Review adoption of existing connections.
 
 Requires the backend setup-arrangement capability. See [Setup checklist and automation](../../features/setup-checklist.md) for retained tasks, coverage and safe retries.
-
+<!-- dev:end -->
 
 ## Overview
 
@@ -37,11 +51,15 @@ Seerr provides:
 
 ---
 
+<details class="geek-details" markdown="1">
+<summary>Technical details: configuration reference</summary>
+
 ## Configuration settings in `dumb_config.json`
 
 ### Seerr instance configuration
 
 ```json
+{
 "seerr": {
   "instances": {
     "Default": {
@@ -82,6 +100,7 @@ Seerr provides:
     }
   }
 }
+}
 ```
 
 #### Seerr instance keys
@@ -93,17 +112,17 @@ Seerr provides:
 
 !!! note "No core_service routing for Seerr"
 
-    Seerr request routing can be selected through the setup checklist on compatible backends or configured in Seerr. Seerr Sync is controlled by `sync_role` plus the top-level `seerr_sync` block. The low-level `core_service` field is not used for Decypharr/InfiniDysk/AltMount workflow routing on Seerr and is intentionally hidden from onboarding options.
+    Configure Seerr request routing by selecting the intended Sonarr/Radarr connections, profiles, and roots in Seerr. Seerr Sync is controlled by `sync_role` plus the top-level `seerr_sync` block. The low-level `core_service` field is not used for Decypharr/InfiniDysk/AltMount workflow routing on Seerr and is intentionally hidden from onboarding options.
 
 - **`process_name`**: Display name used in logs and the frontend.
 - **`repo_owner`** / **`repo_name`**: GitHub repository to pull from.
 - **`release_version_enabled`** / **`release_version`**: Use a tagged release if enabled.
 - **`commit_sha`**: Build this Seerr instance from an exact full 40-character GitHub SHA. It overrides release/branch selection and disables automatic updates for that instance until cleared.
 - **`branch_enabled`** / **`branch`**: Use a specific branch if enabled.
-- **`suppress_logging`**: If `true`, disables log output for this service.
+- **`suppress_logging`**: Suppresses service messages in the main DUMB output.
 - **`log_level`**: Logging verbosity (e.g., `debug`, `info`, `warn`).
 - **`port`**: Port the Seerr web UI is exposed on.
-- **`auto_update`**: Enables automatic self-updates from GitHub.
+- **`auto_update`**: Enables DUMB's scheduled update checks; `auto_update_mode` determines whether a detected update is installed.
 - **`auto_update_interval`**: How often (in hours) to check for updates.
 - **`clear_on_update`**: Clears build artifacts or cache during updates.
 - **`exclude_dirs`**: Prevents specific directories from being affected by updates.
@@ -112,6 +131,8 @@ Seerr provides:
 - **`config_dir`** / **`config_file`**: Where configuration files are stored.
 - **`log_file`**: Path to the Seerr log file.
 - **`env`**: Environment variables passed at runtime.
+
+</details>
 
 ## PostgreSQL migration
 
@@ -145,7 +166,11 @@ Multiple Seerr instances (for example, one per household) can share the same req
 
 ### Top-level `seerr_sync` settings
 
+<details class="geek-details" markdown="1">
+<summary>Technical details: configuration example</summary>
+
 ```json
+{
 "seerr_sync": {
   "enabled": false,
   "poll_interval_seconds": 60,
@@ -166,7 +191,10 @@ Multiple Seerr instances (for example, one per household) can share the same req
     "user_mapping": "admin"
   }
 }
+}
 ```
+
+</details>
 
 #### Seerr Sync keys
 
@@ -196,6 +224,7 @@ Key fields:
 Each Seerr instance has a sync role:
 
 ```json
+{
 "seerr": {
   "instances": {
     "Default": {
@@ -203,6 +232,7 @@ Each Seerr instance has a sync role:
       "sync_role": "disabled"
     }
   }
+}
 }
 ```
 
@@ -230,19 +260,6 @@ The Seerr service page includes a **Seerr Sync** panel with:
 - Sync options toggles and user mapping
 - Per-instance sync role selector
 - Status + failed request reporting (with clear actions and scrollable list)
-
----
-
-## Initial setup
-
-After enabling Seerr and starting the service:
-
-1. Access the Seerr UI at `http://<host>:5055`
-2. Complete the setup wizard:
-   - Sign in with your Plex account (or configure Jellyfin)
-   - Connect to your Plex/Jellyfin server
-   - Configure Radarr and Sonarr connections
-   - Set up user permissions
 
 ---
 

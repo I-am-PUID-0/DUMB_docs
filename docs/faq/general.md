@@ -6,38 +6,34 @@ icon: lucide/help-circle
 
 # General FAQ
 
-Below are some common questions and solutions related to **DUMB** that apply across multiple services or the platform as a whole.
+Answers about storage, service choices, backups, and media paths.
 
 ---
 
-## Frequently Asked Questions (FAQ)
 
-### Will DUMB use a lot of storage space?
+## Will DUMB use a lot of storage space?
 
-That depends on how you configure it. Most services (like Zurg and Rclone) operate by streaming content from the debrid service, so **very little is permanently stored** on your local system — unless you're using `rclone` with VFS caching enabled.
+Budget for application runtimes, databases, logs, backups, and caches even when media is streamed remotely. rclone VFS caching and Usenet client caches can consume substantial disk space; local downloads and book libraries need their full file capacity. Size the data and cache filesystems for your chosen workflow.
 
 !!! tip "VFS Cache Management"
     If you're using VFS cache (recommended for Plex), ensure that the cache size is managed appropriately. See the [rclone configuration](../services/dependent/rclone.md) for more.
 
----
 
-### Do I need to install every service?
+## Do I need to install every service?
 
-No — DUMB is modular. You can enable or disable services in `dumb_config.json` under each service section.
+No. Select the services you need during onboarding, or enable them from their DUMB service pages. Check each workflow's dependencies before disabling a supporting service.
 
 !!! info "Service Types"
     Some [core services](../services/core/index.md) (like `riven_backend`, `cli_debrid`, etc.) provide core functionality and have required [dependent services](../services/dependent/index.md) (like `zurg`, `rclone`, `postgres`, etc.), but others (like `pgadmin`) are [optional service](../services/optional/index.md) tools to help you manage your setup.
 
----
 
-### Can I run DUMB offline?
+## Can I run DUMB offline?
 
 !!! warning "Internet Required"
     Most DUMB services interact with external APIs (e.g., Real-Debrid, Plex, Trakt, TMDB, etc.), so **internet access is required** for normal operation. However, local database tools (e.g., pgAdmin) and UIs may still function offline for inspection.
 
----
 
-### What happens when I update DUMB?
+## What happens when I update DUMB?
 
 Published DUMB images include a tested snapshot of many service runtimes, but
 image publication does not guarantee an immediate rebuild for every upstream
@@ -48,9 +44,8 @@ Alternatively, DUMB also includes **auto-update** functionality for most [servic
 
 You can configure update frequency and behavior in each service’s section of `dumb_config.json`.
 
----
 
-### Is DUMB secure?
+## Is DUMB secure?
 
 DUMB is intended to run on a **local or deliberately protected server**. The
 maintained Compose file publishes only the frontend on port `3005`; the backend
@@ -67,17 +62,15 @@ add them.
     with upstream auth, TPA/SSO, Cloudflare Access, or another verified layer,
     use HTTPS, and restrict unnecessary ports with a firewall.
 
----
 
-### Can I use my own custom version of a service?
+## Can I use my own custom version of a service?
 
 Yes — you can point most services to a custom branch or fork by editing the `repo_owner`, `repo_name`, `branch`, or `release_version` in its config section in `dumb_config.json`. This is especially useful if you are testing development builds or your own patches.
 
----
 
-### Can I back up my DUMB setup?
+## Can I back up my DUMB setup?
 
-Absolutely. The most important files to back up are:
+Yes. Protect at least:
 
 - `/config` (including `dumb_config.json`, users, feature state, and jobs)
 - `/data` (the current consolidated persistence root for managed service data)
@@ -94,17 +87,13 @@ Absolutely. The most important files to back up are:
     provider and use a backup tool that does not follow symlink targets or cross
     filesystem boundaries.
 
-    Don't believe me? Just ask Mr. Krabs.
 
----
-
-### Can I monitor the system?
+## Can I monitor the system?
 
 Yes — the DUMB Frontend shows real-time logs, service logs, service status, and allows interactive config management. You can also access logs from the filesystem or via the DUMB API (see [API docs](../api/index.md)).
 
----
 
-### What's the difference between using rclone/Zurg mounts vs. symlinks (Riven, CLI Debrid, Decypharr, etc.) in my media server?
+## What's the difference between using rclone/Zurg mounts vs. symlinks (Riven, CLI Debrid, Decypharr, etc.) in my media server?
 
 DUMB supports **two methods of exposing content to your media server**, each with its own use case:
 
@@ -144,18 +133,17 @@ DUMB supports **two methods of exposing content to your media server**, each wit
     - Only includes what has been processed — not your full debrid library
     - Requires the service to stay running and correctly configured
     - If settings are misconfigured, some content may not appear
-    - If the database is lost or reset, all content must be scraped and added again
+    - Losing the application database can lose library ownership and acquisition history; symlinks alone may not reconstruct it
     - Symlinks add complexity by requiring your media server to share the same exact container paths as defined in DUMB's `dumb_config.json` — e.g., `/mnt/debrid` must exist **exactly** the same inside your media server container or on the host when the media server is not containerized  
 
----
 
-### Host-Based Media Server: Mount Path Consistency
+## Host-Based Media Server: Mount Path Consistency
 
 If your media server (such as Plex) runs **directly on the host** (not in Docker), it will access media files using the host's file system. In this setup, any symlinks created inside the DUMB container must resolve correctly **on the host**. This means the media paths inside the container must exactly match the paths used by the host.
 
-Symlink resolution is based on absolute paths. If those paths don't exist or don't match outside the container, the symlinks will be broken or unusable by the media server.
+DUMB's generated media links commonly use absolute targets. If those paths don't exist or don't match outside the container, the symlinks will be broken or unusable by the media server.
 
-#### Example: Using Riven's Symlink Media Directory
+### Example: Using Riven's Symlink Media Directory
 
 Suppose your media is mounted on the host at:
 
@@ -175,8 +163,10 @@ Since Plex (or another media server) and the DUMB container need to both access 
 Then, inside the `dumb_config.json`, you would also need to make sure you define the updated internal path for symlinks:
 
 ```json
+{
 "riven_backend": {
   "symlink_library_path": "/docker/DUMB/mnt/debrid/riven_symlinks"
+}
 }
 ```
 
@@ -184,7 +174,7 @@ Then, inside the `dumb_config.json`, you would also need to make sure you define
 This ensures that any symlinks Riven creates will remain valid on the host.
 
 
-#### Simplified Approach Using Standard Paths
+### Simplified Approach Using Standard Paths
 
 To simplify configuration and reduce the need to hardcode deep paths, you can instead use standard directory mounts like `/mnt`.
 
@@ -199,17 +189,18 @@ And then update the configuration:
 !!! note "The below is the default path used in the container when configured through the onboarding process"
 
 ```json
+{
 "riven_backend": {
   "symlink_library_path": "/mnt/debrid/riven_symlinks"
 }
+}
 ```
 
-Using standardized top-level paths makes your setup more portable and ensures symlinks will resolve correctly regardless of the underlying directory structure.
+Using one shared absolute path reduces mapping errors. It still needs to exist and contain the same mounted content in every consumer.
 
 
 !!! tip "also review the [Default Mount Structure](../services/dependent/rclone.md#default-mount-structure) and [Mount Propagation](../services/dependent/rclone.md#mount-propagation) sections for additional details!"
 
----
 
 ## Related Pages
 

@@ -10,6 +10,33 @@ AIOStreams combines Stremio addons, search sources, Debrid services, and Usenet 
 
 ---
 
+## Before you enable it
+
+Prepare the pieces that match your intended workflow:
+
+- A stable public DNS name and trusted HTTPS route for remote Stremio clients, such as `https://aiostreams.example.com`.
+- Enough persistent space for `/aiostreams/data`. AIOStreams can cache Usenet segments, grabbed NZBs, and torrent metadata there.
+- API keys or login details for the search and playback services you intend to use.
+- Outbound access from DUMB to GHCR for the first install and later updates.
+
+You do **not** need every related DUMB service. For example, a Debrid-only setup can use AIOStreams without InfiniDysk or AltMount, while a Usenet setup can use either AIOStreams' native engine or one of those external playback services.
+
+---
+
+## First start
+
+1. Enable AIOStreams during onboarding or from its service configuration.
+2. Set the dashboard administrator username and a strong password.
+3. Set `base_url` to the final public HTTPS base URL when remote Stremio clients will use the addon.
+4. Start AIOStreams. The first install extracts and validates the official OCI runtime before launch.
+5. Open the embedded service tab, select **Dashboard**, and sign in with the administrator credentials from step 2.
+6. Configure the search addons and playback services you need.
+7. Use **Save & Install** in AIOStreams and install the generated addon in Stremio.
+
+Always use the port saved in DUMB's current service configuration. DUMB may move `3006` to another free port if an enabled service or host listener already uses it.
+
+---
+
 ## What DUMB manages
 
 | Property | DUMB default |
@@ -34,19 +61,6 @@ DUMB can follow the latest stable image or install an exact stable tag. AIOStrea
 
 ---
 
-## Before you enable it
-
-Prepare the pieces that match your intended workflow:
-
-- A stable public DNS name and trusted HTTPS route for remote Stremio clients, such as `https://aiostreams.example.com`.
-- Enough persistent space for `/aiostreams/data`. AIOStreams can cache Usenet segments, grabbed NZBs, and torrent metadata there.
-- API keys or login details for the search and playback services you intend to use.
-- Outbound access from DUMB to GHCR for the first install and later updates.
-
-You do **not** need every related DUMB service. For example, a Debrid-only setup can use AIOStreams without InfiniDysk or AltMount, while a Usenet setup can use either AIOStreams' native engine or one of those external playback services.
-
----
-
 ## Bootstrap settings versus dashboard settings
 
 AIOStreams separates its configuration into two groups:
@@ -54,11 +68,15 @@ AIOStreams separates its configuration into two groups:
 1. **Bootstrap settings** must exist before AIOStreams can open its database. DUMB supplies the port, database URI, base URL, dashboard administrator credentials, data paths, and encryption secret.
 2. **Runtime settings** are stored in the AIOStreams database and should normally be edited from the AIOStreams dashboard.
 
-DUMB intentionally avoids setting ordinary runtime options through environment variables. Upstream treats an environment-provided runtime value as operator-locked, which makes the corresponding dashboard field read-only.
+Change ordinary preferences in the AIOStreams dashboard. Advanced environment overrides can lock a field and make it read-only there.
 
 The default DUMB service block is:
 
+<details class="geek-details" markdown="1">
+<summary>Technical details: configuration example</summary>
+
 ```json
+{
 "aiostreams": {
   "enabled": false,
   "process_name": "AIOStreams",
@@ -91,7 +109,10 @@ The default DUMB service block is:
     "SYSTEM_LIFECYCLE_ENABLED": "false"
   }
 }
+}
 ```
+
+</details>
 
 DUMB fills and persists `secret_key` when it is blank. The template `http://localhost:3006` base URL is local-only bootstrap behavior; setup keeps its port synchronized while the value remains default-like. Onboarding exposes `base_url`, `auth_username`, and `auth_password`; use the service configuration editor for the advanced `database_uri` override.
 
@@ -142,20 +163,6 @@ See [PostgreSQL](../dependent/postgres.md) for database backup and restore guida
 
 ---
 
-## First start
-
-1. Enable AIOStreams during onboarding or from its service configuration.
-2. Set the dashboard administrator username and a strong password.
-3. Set `base_url` to the final public HTTPS base URL when remote Stremio clients will use the addon.
-4. Start AIOStreams. The first install extracts and validates the official OCI runtime before launch.
-5. Open the embedded service tab, select **Dashboard**, and sign in with the administrator credentials from step 2.
-6. Configure the search addons and playback services you need.
-7. Use **Save & Install** in AIOStreams and install the generated addon in Stremio.
-
-Always use the port saved in DUMB's current service configuration. DUMB may move `3006` to another free port if an enabled service or host listener already uses it.
-
----
-
 ## Publish AIOStreams for Stremio
 
 The embedded service tab is an operator convenience. A remote Stremio client must be able to reach the manifest and stream URLs generated from `BASE_URL` directly.
@@ -180,9 +187,11 @@ When Cloudflare Tunnel terminates public TLS, leave TPA's **Certificate Resolver
 
 ## Connect DUMB services
 
+<!-- dev:start -->
 On setup-arrangement backends, the retained checklist can add explicitly selected managed Prowlarr/Zilean presets and InfiniDysk/AltMount playback settings to one encrypted AIOStreams profile. Supply the existing profile UUID/password or deliberately authorize a new profile. Its password is separate from the dashboard login and stays protected for readback/retries. Select compatible Debrid credentials when a new Zilean profile requires them. Existing presets and unrelated preferences remain preserved; DUMB does not change shared templates or install an addon in your player.
 
 The guided playback-engine task requires the selected engine's WebDAV credentials and an explicitly chosen public HTTPS origin. Review public-origin TLS/private-endpoint permissions. The manual alternatives below, including AIOStreams' authenticated proxy, remain available in its native interface. See [Setup checklist and automation](../../features/setup-checklist.md) for preview, retained tasks and verification scope.
+<!-- dev:end -->
 
 Use direct loopback URLs for services in the same DUMB container. Do not enter a DUMB embedded `/ui/<service>` URL. Because DUMB can resolve port conflicts dynamically, verify each service's saved port before copying the example.
 

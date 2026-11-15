@@ -10,12 +10,13 @@ Profilarr is a profile and custom format manager for **Sonarr** and **Radarr**. 
 
 ---
 
+<!-- dev:start -->
 ## Setup checklist and remaining work
 
 Arr connections and profile installation are separate tasks. On supported installed contracts, the retained task can authorize a profile-database repository, discover available profiles for exact Arr targets, and apply explicitly selected synchronization. Supply administrator/API authorization when requested; private repository authorization stays protected. Preview existing/proposed fields and approve the exact proposal before adopting user-managed settings. Connected Arrs do not establish that profiles were applied or their effects reviewed. Review profiles, custom formats and synchronization effects deliberately.
 
 Requires the backend setup-arrangement capability. See [Setup checklist and automation](../../features/setup-checklist.md) for retained tasks, coverage and safe retries.
-
+<!-- dev:end -->
 
 ## Overview
 
@@ -37,11 +38,15 @@ Profilarr provides:
 
 ---
 
+<details class="geek-details" markdown="1">
+<summary>Technical details: configuration reference</summary>
+
 ## Configuration in `dumb_config.json`
 
 ### Profilarr instance configuration
 
 ```json
+{
 "profilarr": {
   "instances": {
     "Default": {
@@ -68,6 +73,7 @@ Profilarr provides:
     }
   }
 }
+}
 ```
 
 #### Profilarr instance keys
@@ -83,6 +89,8 @@ Profilarr provides:
 - **`config_dir` / `log_file`**: Profilarr installation/config root and log path.
 
 `command`, build platforms, and generation-specific environment variables are runtime-managed. DUMB detects the downloaded source layout and writes the correct v1 Gunicorn or v2 standalone command automatically.
+
+</details>
 
 ## Choosing v1 or v2
 
@@ -106,9 +114,10 @@ After choosing an explicit release, branch, or commit, use **Install configured 
 
 ## Arr instance options
 
-Profilarr auto‑linking is controlled per Arr instance:
+Profilarr linking is controlled per Arr instance:
 
 ```json
+{
 "sonarr": {
   "instances": {
     "Default": {
@@ -117,11 +126,12 @@ Profilarr auto‑linking is controlled per Arr instance:
     }
   }
 }
+}
 ```
 
 Key:
 
-- **`use_profilarr`**: Opt this Arr instance into Profilarr auto‑linking.
+- **`use_profilarr`**: Opt this Arr instance into Profilarr linking.
 
 ---
 

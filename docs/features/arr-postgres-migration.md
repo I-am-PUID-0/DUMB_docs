@@ -8,10 +8,13 @@ icon: lucide/database-backup
 
 DUMB provides a guarded tool for moving an existing supported service from SQLite to DUMB-managed PostgreSQL. Open the service page and select **Database Migration**.
 
+<!-- dev:start -->
 For InfiniDysk, this page describes the generation 1 adapter. Generation 2 uses
 its separate [native PostgreSQL conversion workflow](infinidysk-v2-migration.md#native-postgresql-conversion)
 after a validated fresh installation or major upgrade; the frontend selects the
 tool for the active generation.
+
+<!-- dev:end -->
 
 This tool is deliberately separate from `postgres_enabled`. For most services,
 enabling PostgreSQL directly changes the database used at the next start; it
@@ -34,6 +37,9 @@ provider switch when an existing main SQLite database is present.
 | InfiniDysk | Configured main `db.sqlite` | `infinidysk` by default | Migration requires an official stable v1.2.0-or-newer runtime whose source SQLite and staged PostgreSQL schemas exactly match DUMB's supported contract; after cutover, official releases, branches, and exact commits are allowed only at or after the recorded cutover commit; only the main store moves and auxiliary stores remain SQLite |
 
 Services that use PostgreSQL only, such as mediastorm, Riven Backend, Zilean, and Traefik Proxy Admin, do not have a SQLite source to migrate. Services without a confirmed PostgreSQL backend are not offered the tool.
+
+<details class="geek-details" markdown="1">
+<summary>Technical details: InfiniDysk 1 schema and provenance contract</summary>
 
 !!! info "InfiniDysk migration is DUMB-managed"
 
@@ -72,6 +78,8 @@ Services that use PostgreSQL only, such as mediastorm, Riven Backend, Zilean, an
     recorded cutover commit or one of its descendants. Older, diverged, and
     unverifiable targets fail before DUMB saves the source change or launches
     InfiniDysk.
+
+</details>
 
 !!! warning "The cutover commit becomes the minimum InfiniDysk revision"
 
@@ -117,6 +125,8 @@ Existing Sonarr/Radarr job history and rollback backups therefore remain visible
     its complete configuration directory before rehearsal or cutover.
 
 ## Recommended flow
+
+Plan downtime for cutover and keep a tested independent backup. Rehearsal verifies a staged conversion; it does not switch the application. After cutover, validate real application behavior before accepting PostgreSQL as the working provider.
 
 ### 1. Run preflight
 

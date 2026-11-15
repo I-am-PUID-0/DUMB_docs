@@ -1,5 +1,6 @@
 ---
 title: Authentication FAQ
+description: Resolve DUMB login and account issues, understand local and OIDC sessions, and recover access while preserving authentication configuration.
 icon: lucide/key
 ---
 
@@ -7,19 +8,12 @@ icon: lucide/key
 
 Common questions and troubleshooting for DUMB's authentication system.
 
----
 
 ## Setup and configuration
 
 ### Do I need to enable authentication?
 
-Authentication is optional. It's recommended if:
-
-- DUMB is accessible from outside your local network
-- Multiple users access the system
-- You want to control who can start/stop services
-
-You can skip authentication for local/trusted environments.
+Enable authentication whenever other people or networks can reach DUMB. Every enabled account currently has operator permissions; an extra account is not a read-only role. Only leave authentication disabled in an intentionally trusted, isolated environment.
 
 ### How do I create the first user account?
 
@@ -40,17 +34,12 @@ Currently, password changes require:
 4. Recreating the original username with the new password
 5. Signing in as the recreated user and deleting the temporary account
 
-!!! note "Future feature"
-
-    Password change functionality may be added in future updates.
-
 ### How many users can I create?
 
 There's no hard limit on the number of user accounts. Create as many as needed for your use case.
 
 All enabled users currently have the same DUMB permissions. Creating another account does not create a read-only role.
 
----
 
 ## Login issues
 
@@ -68,7 +57,7 @@ Management.
 
 ### Session expires too quickly
 
-Access tokens expire after 60 minutes by default. If you're experiencing frequent logouts:
+Access tokens expire after 60 minutes by default. Local refresh tokens default to 30 days; OIDC-backed DUMB refresh tokens last one day. If you're experiencing frequent logouts:
 
 - Check if **Remember Me** was selected during login
 - Without Remember Me, tokens are stored in session storage and cleared when the browser closes
@@ -81,7 +70,6 @@ Access tokens expire after 60 minutes by default. If you're experiencing frequen
 - If it persists, clear browser storage and log in again
 - Check if authentication was recently disabled/re-enabled
 
----
 
 ## Account management
 
@@ -111,22 +99,24 @@ DUMB prevents disabling or deleting the last non-disabled user to avoid lockouts
 
     Deleted users cannot be recovered. Create a new account if needed.
 
----
 
 ## Lockout recovery
 
 ### I forgot my password - how do I reset it?
 
-DUMB doesn't have a password reset feature. To recover access:
+DUMB has no self-service password reset. First try another enabled operator account or the identity provider's recovery tools. If local-account recovery is necessary:
 
-1. Stop the DUMB container
-2. Edit `/config/users.json`
-3. Set `"enabled": false`
-4. Start the container
-5. Access DUMB and create a temporary user with a different username
-6. Re-enable authentication and sign in as the temporary user
-7. Delete the forgotten account and recreate it with a new password
-8. Sign in as the recreated account and delete the temporary user
+1. Restrict access to DUMB and stop its container.
+2. Back up the host-mounted `/config/users.json` privately, preserving the original users, signing secret, and OIDC settings.
+3. In that file, set `"enabled": false`. If the mode is OIDC-only, temporarily set `"mode": "hybrid"` so the temporary local account can sign in later; keep the `oidc` settings intact.
+4. Start the container. Authentication is temporarily disabled for anyone who can reach it.
+5. In **Settings → User Management**, create a temporary local user with a different username.
+6. Re-enable authentication and sign in as that temporary user.
+7. Delete the forgotten local account and recreate it with the desired username and a new password.
+8. Sign in as the recreated user, remove the temporary user, and restore the intended sign-in mode.
+9. Verify login before restoring wider network access. Retain or dispose of the private recovery copy according to your backup policy.
+
+Disabling authentication alone does not change a password or remove existing accounts. Do not clear the user list or signing secret as a shortcut.
 
 ### I deleted all users and can't log in
 
@@ -134,20 +124,7 @@ Follow the lockout recovery steps above to disable authentication, then create a
 
 ### The users.json file is corrupted
 
-Replace it with a minimal valid file:
-
-```json
-{
-  "enabled": false,
-  "users": [],
-  "jwt_secret": "",
-  "setup_skipped": false
-}
-```
-
-Then restart DUMB and go through setup again. A new JWT secret will be generated automatically.
-
----
+Stop DUMB and preserve the damaged file privately before attempting repair. Prefer restoring a known-good backup that retains users, the signing secret, and any OIDC configuration. If no usable backup exists, creating a fresh authentication configuration resets those identities and sessions; plan that recovery explicitly rather than overwriting the file blindly.
 
 ## API and tokens
 
@@ -156,7 +133,8 @@ Then restart DUMB and go through setup again. A new JWT secret will be generated
 | Token Type | Lifetime |
 |------------|----------|
 | Access Token | 60 minutes |
-| Refresh Token | 30 days |
+| Local refresh token | 30 days by default |
+| OIDC-backed DUMB refresh token | 1 day |
 
 ### How do I authenticate API requests?
 
@@ -181,7 +159,6 @@ ws://localhost:3005/ws/status?token=<your_token>
 - Ensure the format is `Bearer <token>` (with space)
 - Try getting a new token via login
 
----
 
 ## Security
 
@@ -191,7 +168,7 @@ Passwords are hashed using bcrypt and stored in `/config/users.json`. The origin
 
 ### Is the JWT secret secure?
 
-The JWT secret is auto-generated when the first user is created. It's stored in `/config/users.json` and should be kept confidential.
+DUMB generates a signing secret when needed and stores it in `/config/users.json`. Keep the complete file private; it also contains password hashes and may contain OIDC client credentials.
 
 ### Can I use DUMB without HTTPS?
 
@@ -204,7 +181,6 @@ Yes, but authentication tokens will be transmitted in plain text. For production
 
 For truly local/isolated environments (e.g., home lab with no internet exposure), disabling authentication simplifies access. However, if anyone on your network can reach DUMB, consider keeping authentication enabled.
 
----
 
 ## Related pages
 

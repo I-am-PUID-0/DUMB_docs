@@ -14,6 +14,10 @@ The feature covers DUMB-managed storage dependencies such as rclone, InfiniDysk,
 
     This feature reduces outage risk but cannot reverse an application database change that already occurred. Keep media-server database/config backups, and avoid exposing the media server directly to mount paths that can disappear without warning.
 
+<!-- dev:start -->
+New policies created by arrangement setup stay disabled until you review their mount scope and enable them deliberately. Existing policies retain their settings.
+<!-- dev:end -->
+
 ## Planned stop, restart, or update
 
 Before DUMB changes a storage dependency it:
@@ -64,7 +68,7 @@ These controls write directly to Plex. The outage guard snapshots the current va
 
 ### Jellyfin and Emby
 
-DUMB installs and starts Jellyfin/Emby, but it does not create an administrator account or application API key during first-run setup. Create a dedicated API key in the media server's own dashboard, then paste it into **Library Protection**.
+If the application account and key are not configured, finish the media server's native first-run setup, create a dedicated API key, and paste it into **Library Protection**. Do not assume that a running process means this API authorization is ready.
 
 The key is needed to inspect current sessions, identify and stop a running library scan, temporarily remove scheduled scan triggers, and disable/restore real-time monitoring for each virtual library.
 

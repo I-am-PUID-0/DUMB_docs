@@ -8,8 +8,6 @@ icon: lucide/network
 
 This section explains how DUMB is structured, how services are orchestrated, and how the frontend, backend, and proxy layers interact.
 
----
-
 ## System overview
 
 DUMB bundles a FastAPI backend, a Nuxt 4 frontend, a Traefik access layer, and a set of managed services (core, dependent, and optional). The backend owns configuration, process lifecycle, setup hooks, dependency ordering, health checks, update automation, and Traefik route generation. The frontend surfaces onboarding, status, logs, metrics, configuration controls, and embedded service UIs.
@@ -40,8 +38,6 @@ flowchart TD
 
 ```
 
----
-
 ## Core building blocks
 
 | Component | Responsibility |
@@ -56,17 +52,13 @@ flowchart TD
 | Traefik Proxy Admin | Optional owner of user-managed LAN/public routes through Traefik |
 | Cloudflared | Optional Cloudflare Tunnel connector that forwards public traffic to Traefik |
 
----
-
 ## Storage and mounts
 
 The maintained deployment persists four container paths: `/config`, `/log`, `/data`, and `/mnt/debrid`. Services still use their native internal paths (for example `/riven/backend/data`, `/decypharr`, `/postgres_data`, or `/altmount`), but DUMB maps those paths into service-specific subdirectories below the mounted `/data` root. Media access is provided through `/mnt/debrid`, including mounts and curated symlink libraries.
 
 !!! tip "Mount propagation"
 
-    When Arr services or media servers run outside the DUMB container, ensure mount propagation (`rshared`/`rslave`) is configured so symlinks and rclone mounts stay consistent.
-
----
+    External consumers of DUMB-created FUSE/rclone submounts need a prepared shared host mount and matching propagation (`rshared`/`rslave`). Ordinary directories and symlinks do not require propagation by themselves; the consumer must still see their target paths.
 
 ## Networking and proxying
 
@@ -76,16 +68,12 @@ DUMB publishes the frontend on port `3005`; the frontend proxies REST calls unde
 
     You can access service UIs directly on their ports, or enable Traefik to route embedded UIs under a single endpoint. TPA and Cloudflared are optional additions for user-managed hostnames and tunnel ingress.
 
----
-
 ## Configuration lifecycle
 
 1. DUMB loads `dumb_config.json` on startup.
 2. The API and process handler apply config changes.
 3. Service-specific setup hooks patch configs and directories.
 4. The frontend reflects status and logs in real time.
-
----
 
 ## Related pages
 

@@ -6,18 +6,19 @@ icon: lucide/link
 
 # Symlink Operations
 
-This page is the canonical reference for how DUMB uses, repairs, migrates, snapshots, and restores symlink libraries.
+A symlink stores another path; it does not contain the media bytes. If a mount moves, the link can remain present while its target becomes unavailable.
 
-It covers:
+## Choose an operation
 
-- Path model and service-specific symlink roots
-- Repair modes and when to use each one
-- Snapshot backup/restore and scheduled backups
-- Safe migration playbooks (including Decypharr provider path consolidation and individual -> combined roots)
-- Frontend option behavior and backend API behavior
-- Troubleshooting and recovery
+| Need | Tool |
+| --- | --- |
+| Keep links in place but change target prefixes | [Prefix or preset rewrite](#repair-modes-what-each-one-does) |
+| Move/copy the link files to another library tree | [Root migration](#3-root-migration-mode) |
+| Record or restore link paths and targets | [Snapshot backup / restore](#snapshot-backup-restore) |
+| Keep recurring link snapshots | [Scheduled backups](#scheduled-backup-behavior) |
+| Follow a known workflow transition | [Migration playbooks](#migration-playbooks) |
 
----
+Start with a dry run, inspect its scope, and keep a snapshot before applying changes. A symlink snapshot does not back up referenced media or application databases.
 
 ## Why symlinks matter in DUMB
 
@@ -56,8 +57,7 @@ Typical roots inside the container:
     The paths above show the defaults for new InfiniDysk installations. The
     opt-in compatibility cutover does not move an existing `/mnt/debrid/nzbdav`
     mount or `/mnt/debrid/nzbdav-symlinks` library. Those paths remain active
-    until the guarded full namespace migration is implemented and explicitly
-    selected.
+    unless you explicitly select and complete the guarded full namespace migration.
 
 Important:
 
@@ -91,6 +91,9 @@ Important:
 
 ---
 
+<details class="geek-details" markdown="1">
+<summary>Technical details: symlink API routes</summary>
+
 ## DUMB symlink tools
 
 DUMB provides three categories of symlink operations:
@@ -112,6 +115,8 @@ DUMB provides three categories of symlink operations:
 See API details: [Process Management API](../api/process.md).
 
 ---
+
+</details>
 
 ## Repair modes (what each one does)
 
@@ -209,6 +214,7 @@ Snapshot tab behavior:
     - A specific known root
     - Custom roots (textarea)
 
+<!-- dev:start -->
 ### Registered backup destinations
 
 Use the **Backup destination** selection in Snapshot backup or the schedule
@@ -224,6 +230,8 @@ recorded checksum and, when a service context is supplied, its process identity.
 Select an older registered destination explicitly when restoring one of its
 retained snapshots after changing the schedule's destination. A missing or
 changed mount reports an error instead of writing a local fallback.
+
+<!-- dev:end -->
 
 ### Standalone backup
 
@@ -256,37 +264,11 @@ Recommended flow:
 
 ---
 
-## ELI5: which button should I use?
+## Which button should I use? {#eli5-which-button-should-i-use}
 
-Think of symlinks like shortcut files.
+Use **Repair** for target-prefix changes or moving/copying link entries. Use **Snapshot backup** before a change and **Restore** to review a retained manifest. Use **Schedule** for recurring snapshots.
 
-- If the shortcut is in the right folder, but points to the wrong place:
-    - use **Repair** with **prefix rewrite** (or preset)
-- If you want shortcuts to live in a different folder:
-    - use **Repair** with **Move symlink entries between roots**
-- If you want shortcuts copied into a new folder, but keep originals:
-    - use **Move symlink entries between roots** with **copy mode**
-- If you are nervous about changes:
-    - take a **Snapshot backup** first
-- If you want automatic safety backups:
-    - use **Schedule** and set interval + retention
-
-Simple examples:
-
-- "My CLI Debrid links should also exist for Decypharr/Arr":
-    - move/copy from `/mnt/debrid/clid_symlinks` to `/mnt/debrid/decypharr_symlinks`
-- "My CLI links still live in `clid_symlinks`, but target path changed":
-    - rewrite target prefix from old mount path to new mount path
-- "I just want to test before touching anything":
-    - click **Dry run** first
-
-Golden rule:
-
-- Dry run first
-- Then apply
-- Keep backup manifest enabled
-
----
+Copy mode keeps the original link tree for a staged transition. Move mode removes entries from the source tree. Dry-run either choice and inspect the source, destination, target prefixes, and expected count before applying.
 
 ## Scheduled backup behavior
 
@@ -299,14 +281,18 @@ Enabled with service config keys:
 - `symlink_backup_include_broken`
 - `symlink_backup_roots` (optional override)
 - `symlink_backup_retention_count`
+<!-- dev:start -->
 - `backup_destination_id` (explicit registered destination; empty keeps the existing path)
+<!-- dev:end -->
 
 ### Retention
 
 - `symlink_backup_retention_count = 1` is the default when unset
 - `0` disables pruning (keep all matching manifests)
 - Values `> 0` keep newest `N`, pruning older files matching the service template
+<!-- dev:start -->
 - With registered storage, pruning applies only to that process's scheduled snapshots. Manual managed snapshots remain retained.
+<!-- dev:end -->
 
 ### Default cadence
 
@@ -317,6 +303,9 @@ Enabled with service config keys:
 Use the Schedule tab dropdown to pick an available manifest discovered from the configured template.
 
 ---
+
+<details class="geek-details" markdown="1">
+<summary>Technical details: migration playbook payloads and steps</summary>
 
 ## Migration playbooks
 
@@ -442,6 +431,8 @@ If an apply run produced unwanted results:
 4. Re-run targeted repair only if needed.
 
 ---
+
+</details>
 
 ## Safe operating checklist
 

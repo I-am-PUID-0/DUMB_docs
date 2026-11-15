@@ -1,5 +1,6 @@
 ---
 title: Riven FAQ
+description: Understand Riven backend and frontend dependencies, branch-mode mounts, PostgreSQL persistence, connection failures, and safe symlink moves.
 icon: lucide/database
 ---
 

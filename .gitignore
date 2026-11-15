@@ -7,6 +7,8 @@ __pycache__/
 
 # Ignore local Zensical server files
 /site
+/.cache
+/.docs-build
 
 # MacOS Ignore
 .DS_Store

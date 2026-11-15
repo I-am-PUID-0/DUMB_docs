@@ -87,6 +87,10 @@ explicitly the workflow you designed.
 
 ### Mount propagation
 
+Prepare the producer host path as a shared Linux mount before relying on
+`rshared`/`rslave`. Compose propagation flags alone do not change the host
+mount. Check both the producer and consumer mount namespaces.
+
 When DUMB creates a nested FUSE/rclone mount that another container must see:
 
 - DUMB's host bind must be `rshared`.
@@ -100,15 +104,18 @@ consumer runs inside DUMB.
 
 ## Permissions
 
-If Unraid created the DUMB directory with the wrong owner, stop the container
-and correct the exact appdata tree:
+Check the selected IDs and the exact directory before changing ownership:
 
 ```bash
-chown -R <PUID>:<PGID> /mnt/user/appdata/DUMB
+id <user>
+ls -ld /mnt/user/appdata/DUMB /mnt/user/appdata/DUMB/{config,data,log}
 ```
 
-Avoid recursive ownership changes over a mounted media library unless you have
-verified the intended scope.
+DUMB's controller prepares service ownership at startup. Do not recursively
+`chown` the entire DUMB tree: private controller state under `/config` can
+intentionally have a different owner from managed applications, and a nested
+media mount can expose a much larger tree than expected. Fix only the specific
+incorrect host directory after stopping its writers and checking its mounts.
 
 ## Troubleshooting
 

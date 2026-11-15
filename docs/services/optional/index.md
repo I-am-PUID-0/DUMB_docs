@@ -1,23 +1,12 @@
 ---
 title: Optional Services Overview
+description: Choose optional DUMB tools for subtitles, requests, monitoring, streaming, database administration, identity, and application routing.
 icon: lucide/puzzle
 ---
 
-# Optional Services
+# Optional services
 
-Optional services enhance the DUMB ecosystem by adding scraping capabilities, database tools, request automation, audiobook libraries, or controlled access paths. These are not required by every core service to function, but they can improve performance, visibility, automation, and how you expose selected services.
-
----
-
-## What Are Optional Services?
-
-Optional services are:
-
-* Not essential for startup or core functionality
-* Dynamically linked during runtime if available
-* Frequently used to improve performance, metadata accuracy, or user experience
-
----
+Add these tools when you need their specific function. They are not required by every DUMB installation, but other applications or users may depend on them once configured.
 
 ## Optional Service Index
 
@@ -26,7 +15,9 @@ Optional services are:
 | [pgAdmin](../optional/pgadmin.md) | Web-based PostgreSQL administration UI                      | PostgreSQL                     |
 | [Riven Frontend](../optional/riven-frontend.md) | Web-based UI for management of the [Riven Backend](../core/riven-backend.md) | Riven |
 | [Tautulli](../optional/tautulli.md) | Plex monitoring and statistics                            | Plex Media Server              |
+<!-- dev:start -->
 | [Audiobookshelf](audiobookshelf.md) | Audiobook and podcast libraries with basic ebook reading | Standalone media libraries |
+<!-- dev:end -->
 | [Bazarr](../optional/bazarr.md) | Subtitle search and management                              | Sonarr, Radarr                 |
 | [Pulsarr](../optional/pulsarr.md) | Plex watchlist request automation                         | Plex, Sonarr, Radarr           |
 | [Maintainerr](../optional/maintainerr.md) | Rule-based library cleanup and leaving-soon collections | Plex/Jellyfin/Emby, Sonarr, Radarr, Seerr, Tautulli |
@@ -39,40 +30,32 @@ Optional services are:
 
 ---
 
-## How They Work
+## Before enabling a tool
 
-Optional services attach to the DUMB ecosystem dynamically:
+- Check its service guide for required databases, upstream accounts, and first-run setup.
+- Confirm library paths are visible inside the DUMB container before configuring a media consumer.
+- Review schedules before enabling a tool that searches, downloads, or removes content.
+- Configure access protection before publishing an application route.
 
-* **[pgAdmin](../optional/pgadmin.md)** provides a GUI for exploring and managing DUMB's shared PostgreSQL cluster and its registered service databases.
-* **[Riven Frontend](../optional/riven-frontend.md)** provides a GUI for exploring and managing content requests that are facilitated by the [Riven Backend](../core/riven-backend.md).
-* **[Tautulli](../optional/tautulli.md)** monitors your Plex server, tracking playback history, user activity, and providing detailed statistics.
-* **[Audiobookshelf](audiobookshelf.md)** serves your mounted book and podcast libraries, with its own accounts, listening progress, and library settings.
-* **[Bazarr](../optional/bazarr.md)** connects to Sonarr and Radarr and manages subtitles for their movie and TV libraries using the same DUMB media paths.
-* **[Pulsarr](../optional/pulsarr.md)** monitors Plex watchlists and routes approved requests into Sonarr and Radarr.
-* **[Maintainerr](../optional/maintainerr.md)** builds review collections from media-server and automation data, then applies delayed cleanup actions you explicitly configure.
-* **[mediastorm](../optional/mediastorm.md)** provides its own accounts and clients for streaming from configured Debrid, torrent, and Usenet sources.
-* **[AIOStreams](../optional/aiostreams.md)** combines Stremio addons and connects to local search and playback services, including Prowlarr, Zilean, InfiniDysk, and AltMount.
-* **[Traefik Proxy Admin](../optional/traefik-proxy-admin.md)** lets operators create Traefik reverse proxy routes for services inside or outside the DUMB container. It owns user-managed host routes while DUMB continues to own embedded UI routes.
-* **[Authelia](../optional/authelia.md)** provides a DUMB-managed identity portal, native OIDC sign-in for DUMB and TPA, and an optional ForwardAuth middleware for selected Traefik routes.
-* **[Cloudflared](../optional/cloudflared.md)** runs a Cloudflare Tunnel connector inside DUMB so public traffic can reach the built-in Traefik entrypoint without direct port forwarding. Cloudflared carries traffic to Traefik; Traefik and TPA still decide which service receives it.
-* **[Zilean](../optional/zilean.md)** improves scraping efficiency by caching previous results from [Debrid Media Manager](https://debridmediamanager.com/) hash lists shared by users and reducing redundant queries. Core services like Riven and CLI Debrid can use it as a scraping backend.
+## Common choices
 
-These services can be disabled at any time without affecting the startup of core or dependent services.
+| Need | Tool |
+|---|---|
+| Inspect PostgreSQL or schedule database jobs | [pgAdmin](pgadmin.md) |
+| See Plex activity and playback history | [Tautulli](tautulli.md) |
+| Add subtitles to Sonarr/Radarr libraries | [Bazarr](bazarr.md) |
+| Route Plex watchlist requests | [Pulsarr](pulsarr.md) |
+| Review library retention rules | [Maintainerr](maintainerr.md) |
+<!-- dev:start -->
+| Serve books and podcasts | [Audiobookshelf](audiobookshelf.md) |
+<!-- dev:end -->
+| Aggregate Stremio addons | [AIOStreams](aiostreams.md) |
+| Add identity and protected application routes | [Authelia](authelia.md), [Traefik Proxy Admin](traefik-proxy-admin.md), and optionally [Cloudflared](cloudflared.md) |
 
----
+AIOStreams needs a dedicated trusted HTTPS `BASE_URL` for remote Stremio clients. Its embedded DUMB UI is an administration view; it is not the addon installation address.
 
-## Tips
+## Related pages
 
-* If not using Zilean, make sure other scrapers are configured in Riven and CLI Debrid.
-* pgAdmin is useful during debugging, migrations, or manual SQL work — but not required for normal operation.
-* Use Traefik Proxy Admin and Cloudflared together when you want public hostnames without opening router ports. Configure protection before publishing sensitive services.
-* AIOStreams needs a stable trusted HTTPS `BASE_URL` for remote Stremio clients; its embedded DUMB UI route is for local administration, not addon installation.
-* You can start optional services manually from the DUMB Frontend or include them in onboarding.
-
----
-
-## Related Pages
-
-* [Core Services](../core/index.md)
-* [Dependent Services](../dependent/index.md)
-* [How Services Work Together](../index.md#how-the-services-work-together)
+- [All services](../index.md)
+- [Core services](../core/index.md)
+- [Dependent services](../dependent/index.md)

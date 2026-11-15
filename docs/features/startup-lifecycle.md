@@ -16,6 +16,7 @@ in steady state. The lifecycle is:
 5. `ready` or `degraded`
 6. `shutting_down`
 
+<!-- dev:start -->
 An interrupted installation restore uses a separate **`recovery_required`**
 phase. DUMB starts only the configured API and already-installed frontend for
 recovery; normal application setup, services and background workers remain
@@ -23,6 +24,8 @@ paused. Use direct frontend/API access, finish the offered recovery action, then
 restart the container. Docker health checks the required recovery control plane
 instead of treating intentionally paused applications as failed startup.
 An unavailable API or missing installed frontend remains a real health failure.
+
+<!-- dev:end -->
 
 The DUMB API starts before enabled-service preinstall. An already-installed
 frontend can also start early, so the dashboard can show startup progress while
@@ -51,11 +54,14 @@ becomes `ready`.
 | `readiness_poll_interval_seconds` | `5` | Delay between readiness checks |
 | `stabilization_seconds` | `15` | Continuous healthy period required before `ready` |
 
+<!-- dev:start -->
 The readiness deadline starts after the dependency-aware service-launch phase
 returns; it is not a maximum duration measured from container creation. Green
 process tiles show running processes while this phase also checks their configured
 endpoints. The startup banner exposes pending readiness checks and their reasons
 so a launch delay, an unopened port and the stabilization window can be distinguished.
+
+<!-- dev:end -->
 
 If the deadline expires, DUMB enters `degraded` instead of shutting down the
 API/frontend. The dashboard identifies services that missed readiness, and one

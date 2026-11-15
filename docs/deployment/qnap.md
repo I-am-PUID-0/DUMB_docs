@@ -63,6 +63,10 @@ The maintained Compose file publishes the DUMB frontend on `3005`. Open
 
 ## FUSE and external consumers
 
+Prepare the producer host path as a shared Linux mount before relying on
+`rshared`/`rslave`. Compose propagation flags alone do not change the host
+mount. Check both the producer and consumer mount namespaces.
+
 The maintained Compose file requests `/dev/fuse`, `SYS_ADMIN`, and an unconfined
 AppArmor profile. Keep those entries for workflows that mount with rclone/FUSE.
 Availability depends on the QNAP kernel and Container Station version; if the

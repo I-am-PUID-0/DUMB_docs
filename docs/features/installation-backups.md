@@ -1,4 +1,5 @@
 ---
+development_only: true
 title: Installation Backup and Restore
 description: Back up DUMB configuration, managed application state and databases, schedule verified archives, and restore an installation from mounted storage.
 icon: lucide/archive-restore
@@ -9,6 +10,17 @@ icon: lucide/archive-restore
 Open **Settings → Backups and restore** to manage installation archives and
 shared backup destinations. This requires a backend advertising installation
 backup protocol `1`; older backends continue to expose their existing tools.
+
+## Choose a task
+
+| Task | Start here |
+| --- | --- |
+| Make an archive | [Create a backup](#create-a-backup) |
+| Keep a recurring archive | [Schedule backups](#schedule-backups) |
+| Recover an installation | [Restore an existing or fresh installation](#restore-an-existing-or-fresh-installation) |
+| Resolve a held startup | [Startup and private recovery state](#startup-and-private-recovery-state) |
+
+Review coverage and storage before the first backup. Archives contain credentials and keys, and are not encrypted.
 
 ## What an installation backup contains
 
@@ -106,164 +118,66 @@ not its filename; existing uncompressed archives remain supported.
 
 ## Create a backup
 
-**Plan for application downtime, including scheduled backups.** Once DUMB stops
-the managed applications, playback, library imports, scans and their service UIs
-are unavailable until archive creation, source checks, readback verification and
-service resume finish. The DUMB API and frontend remain available through their
-direct ports. Large installations or slow network storage can take hours; there
-is no promised finish time. A schedule starts the same complete operation and
-does not limit how long applications stay stopped.
+Plan for application downtime. Once DUMB stops managed applications, playback, imports, scans, and service UIs remain unavailable until archive checks and service resume finish. The API and frontend stay available through their direct ports. Large data sets or slow storage can take hours; there is no promised finish time.
 
-Optional preview does not stop applications. On backends advertising
-`installation_backup_direct_start`, both reviewed and direct starts promptly
-return a durable job instead of running a second live census in the request.
-After the actual backup begins, leave the container and host running until the job reports
-completion, completed cancellation, or recovery instructions. A failed service
-resume can require recovery before applications become available again.
+Use direct frontend/API access before starting. Managed proxies and tunnels can stop with the applications, making their public routes unavailable.
 
-Use the container's direct frontend/API access before starting. Managed reverse
-proxies and tunnels can be stopped with the applications, so their public or
-embedded ingress path may be unavailable during the operation.
+1. Select a destination and archive format in **Settings → Backups and restore**.
+2. Choose **Preview backup** to review roots, exclusions, estimated space, and blockers while applications remain running.
+3. Stop external writers, including another container sharing the same state.
+4. Review and confirm the downtime, credential-handling, and external-state acknowledgements and the displayed phrase.
+5. Follow the admitted job through archive verification and service resume.
+6. Check both the saved archive receipt and application availability before leaving the operation.
 
-When supported, choose **Back up without preview** to skip the live size and
-file inventory. Select the destination and archive format, then confirm the
-downtime, credential handling and external-state acknowledgements and the exact
-displayed phrase. This option provides no advance size estimate. DUMB checks
-managed-root coverage, stops the retained running applications, and uses one
-cold inventory for both space checks and archive creation. Insufficient space
-fails before archive payload is written; DUMB resumes applications or reports
-the exact service recovery needed. Scheduled backups use this same path.
-When available, the job shows measured free, required and missing space for
-each filesystem. An admitted scheduled failure waits for its normal interval
-rather than repeatedly stopping applications every five minutes. Transient
-blockers before job admission can still retry after five minutes.
+On backends advertising `installation_backup_direct_start`, **Back up without preview** skips the live file/size census. It still requires the acknowledgements. DUMB checks coverage, stops the previously running applications, and uses one cold inventory for capacity and archiving. A reviewed start also uses this cold inventory rather than repeating a full live census. Scheduled backups use the same direct path.
 
-The optional preview remains useful for reviewing paths and estimated space
-while applications are available. Starting a reviewed backup does not repeat
-that full live scan: its cold inventory supplies the authoritative size. The
-source-content consistency pass and closed-archive readback are separate checks
-and still run before the archive is accepted.
+If capacity is insufficient, the operation fails before archive payload is written and attempts to resume applications. Measured capacity, required space, and missing space are shown when supported. An admitted scheduled failure waits for its normal interval; transient admission blockers can retry after five minutes.
 
-1. To review first, select a destination and request a backup preview.
-2. Review included paths, exclusions, space estimates and any blockers.
-3. Stop external writers to the included data. Confirm the displayed downtime
-   acknowledgement before starting.
-4. Follow the job until its archive has passed complete readback verification.
+### Follow progress and confirm the result
 
-If a request times out, refresh backup status before submitting another
-operation. A proxy timeout does not prove the job failed. The UI reconnects to
-the admitted job; a consumed preview cannot be reused to create a second job.
-Direct-start retries use the same request identity to recover that job.
+The application-wide notice survives navigation and refresh. **Preparing installation backup** describes the admission recheck before an archive job is accepted; it does not mean applications have already stopped. After admission, the job reports its current stage and elapsed time.
 
-Manual and scheduled installation backups show an application-wide status
-notice from preparation through queued and running archive work, with the
-current stage and elapsed time. **Preparing installation backup** means that
-DUMB is rechecking coverage and capacity before accepting the archive job;
-applications have not been stopped for that check. The notice stays available
-when you leave Settings, move to another frontend page or refresh the browser.
-**Do not stop the DUMB container or shut down its host until the backup
-finishes.** If the interface loses contact, the backup may still be running;
-reconnect and confirm its terminal status rather than assuming it stopped.
-A **Recovery required** notice needs separate operator attention: open the job's
-retained recovery details and follow the offered action.
+Do not stop DUMB or its host while the operation is active. A lost connection or proxy timeout does not prove failure or cancellation. Reconnect through the direct frontend/API and refresh status before submitting another operation. Direct-start retries retain their request identity, and a consumed preview cannot start a second job.
 
-The worker reports separate phases. **Inventorying** measures entries and
-logical source sizes; it is not an archive transfer. **Archiving** streams the
-archive, **Checking source** re-reads and hashes source files to detect changes,
-and **Verifying** reads back the archive. When supported, entry, logical-size and
-processed-byte counters describe the current counted phase and reset between
-those phases. Archive-stream counters measure bytes actually written or read on archive
-storage, including the stream containing headers, padding and manifest data.
-For Zstandard they count compressed stored bytes. Logical-size and source-hash
-bytes describe uncompressed source file data. They are not interchangeable totals
-or an overall completion percentage.
+| Result | Meaning and next action |
+| --- | --- |
+| Archive verified and saved | Source consistency, logical archive checks, stored-byte readback, and catalog publication passed; service resume may still be running |
+| Completed | Review the receipt and verify resumed application health |
+| Archive saved, recovery required | Keep the receipt; use **Finish backup recovery** to resume services rather than repeating the backup |
+| Failed before publication | Partial output is not a verified backup; follow the recovery guidance |
+| Publication interrupted / unconfirmed | Inspect the catalog and recovery details before assuming an archive exists or is absent |
 
-On backends with measured phase progress, the interface shows a percentage only
-when that phase has a known total, such as the expected entries or archive bytes
-to verify. The label names the phase; it is not a percentage for the whole
-backup. A phase can reach its total while later checks and service resume still
-remain. Phases without a complete denominator show activity and counters rather
-than a guessed percentage. Compression output size and elapsed time do not
-predict a reliable overall percentage or finish time.
+DUMB resumes only applications that were running before the backup, in dependency order, with storage mounts ready before their consumers. Previously stopped services remain stopped. A failed resume does not invalidate an already verified and catalogued archive.
 
-Last-update times reflect actual worker reports, including fractional-second
-backend timestamps. Refreshing status alone does not establish new inventory or
-transfer progress. Older backends can show stage and elapsed time without these
-optional counters.
+<details class="geek-details" markdown="1">
+<summary>Technical details: progress phases and consistency checks</summary>
 
-DUMB records which managed services are running and quiesces them for a
-consistent filesystem snapshot, including managed SQLite and PostgreSQL state.
-The API and frontend remain available through their direct ports for progress.
-Previously running services
-are resumed in dependency order after a backup when it is safe, including the
-managed mount before its consumers; previously stopped services are not
-started just because a backup ran. Resuming services is a separate stage. A
-failed or blocked resume retains its recovery guidance without discarding an
-already verified and saved archive.
+| Phase | What its counters measure |
+| --- | --- |
+| Inventorying | Entries and logical source sizes; no archive transfer |
+| Archiving | Stored archive stream, including headers, padding, and manifest |
+| Checking source | A second source read/hash pass to detect changed data |
+| Verifying | Readback of the stored archive |
 
-Archive completion and application availability are separate results. **Archive
-verified and saved** means that source-consistency checks, logical archive
-verification, stored-byte readback and catalogue publication completed. The job
-keeps that archive receipt while services resume. If resume fails, DUMB reports
-that the archive was saved but services need recovery. **Finish backup recovery**
-preserves the receipt and does not require repeating the backup just to restart
-applications. Future configured retention can still retire older scheduled
-archives; save independent copies according to your backup policy.
+For Zstandard, archive-stream bytes are compressed stored bytes. Source-size and hash counters are uncompressed file data. Counters reset between phases; a percentage describes only a phase with a known total. It is not an overall percentage or a reliable finish-time estimate. A phase reaching its total can still leave later checks and service resume outstanding.
 
-A finished copying pass or a phase reaching its total does not establish those
-checks. If source consistency or archive verification fails before publication,
-DUMB does not advertise the partial output as a valid backup. If publication
-was interrupted before the job could record a receipt, its outcome is unconfirmed:
-review the archive catalogue and recovery details rather than assuming either
-that it was saved or that no archive exists. A saved receipt describes the
-verification performed when the backup was made; restore preview still checks
-the actual archive before using it.
+Worker timestamps report actual work updates. Polling status does not itself advance inventory or transfer progress. Older backends can show only stage and elapsed time.
 
-Seerr request synchronization reserves installation persistence for its entire
-cycle. It skips synchronization and checkpoint writes while a backup, restore
-or retained recovery owns that persistence, then resumes on its next normal
-interval after the hold ends. If a sync cycle is already running, backup
-admission reports busy until that cycle finishes; wait, then retry the operation
-and follow any renewed preview requirement. This prevents the controller's
-`seerr_sync_state.json` updates from continuing after managed services stop.
+Seerr Sync and Metrics storage operations reserve installation persistence for their complete operations, including SQLite connection cleanup. A busy cycle can delay admission. During the backup hold, those controller writes pause and resume through their normal schedules after the hold ends.
 
-Metrics history also reserves installation persistence for its complete storage
-operations. SQLite connections are closed before that reservation is released,
-so delayed garbage collection cannot checkpoint or remove WAL/SHM files during
-the cold archive. Read and status operations use the same admission boundary
-because opening a SQLite connection can change its journal files.
+There is no fixed overall file-count or payload-size ceiling. Individual path, nesting, record, metadata, and restorable-transaction checks still apply. Local space is needed for verification ledgers and later restore staging in addition to archive capacity. A large NAS destination does not remove those requirements.
 
-PostgreSQL's configured `{postgres_config_dir}` and `{postgres_config_file}`
-launch placeholders are expanded on every managed start, including backup resume
-and recovery. A missing path containing a literal placeholder on an older build
-is a problem with launch arguments, separate from a change to the archive's
-source files. Expanding the command leaves saved settings and existing PostgreSQL
-data intact; it does not run initial database setup. Follow the job's service
-resume or recovery instructions before retrying a backup.
+Database consistency requires a stopped [PostgreSQL cluster](https://www.postgresql.org/docs/current/backup-file.html) and quiescent [SQLite databases and journals](https://sqlite.org/howtocorrupt.html#_backup_or_restore_while_a_transaction_is_active).
 
-pgAdmin's automatic PostgreSQL connection registration is separate from starting
-its web service. A registration warning, for example when the configured setup
-email differs from an existing pgAdmin account, preserves the running web service
-and existing definitions instead of blocking the remaining services' resume.
-The setup checklist can still report that the requested connection registration
-needs attention; DUMB does not replace accounts or connections to clear it.
+</details>
 
-Database consistency follows the requirements for a stopped
-[PostgreSQL cluster](https://www.postgresql.org/docs/current/backup-file.html)
-and a quiescent [SQLite database and its journals](https://sqlite.org/howtocorrupt.html#_backup_or_restore_while_a_transaction_is_active).
+### If service resume needs attention
 
-Capacity is checked for the archive destination and local working storage.
-There is no fixed overall file-count or archive-payload-size ceiling.
-Preview measures the inventory and its verification metadata, then checks
-whether the available local space can support the verification ledgers.
-Archive overhead and restore staging also count toward the estimates. A large
-backup destination does not replace the need for local working space.
+Follow the job's exact recovery action and verify the affected service's logs before retrying a backup. For PostgreSQL, a literal `{postgres_config_dir}` in a launch error indicates an older launcher that failed to expand its configured placeholders; it is separate from archive consistency. Update through the normal image path and preserve existing database state.
 
-Large artwork, blob and application-data trees can require a lengthy metadata
-scan before a preview is ready. This phase inventories entries rather than
-copying the complete file contents, and it does not stop applications.
-Individual path, nesting, record and supported-metadata checks still apply;
-available disk space does not make an unsafe archive restorable.
+A pgAdmin connection-registration warning can require account or connection review even when its web service is running. DUMB preserves existing accounts/definitions; it does not replace them to clear the warning.
+
+A successful archive checksum describes recorded bytes. Keep an independent copy and rehearse restore before relying on the archive for disaster recovery.
 
 ### Follow or cancel a backup preview
 
@@ -291,12 +205,7 @@ After a DUMB restart, request a new preview explicitly. A completed review's
 15-minute confirmation window begins after the scan finishes, not when scanning
 starts. There is no fixed scan-duration limit.
 
-Starting the confirmed backup repeats the coverage and capacity check before
-stopping managed writers, so this step can take as long as the preview. The
-application-wide preparation notice shows elapsed time, without per-entry
-preview counters, and reconnects after a browser refresh. Archive-job progress
-begins after admission; a pending recheck is not evidence that applications
-have already stopped or an archive is being written.
+Starting the confirmed backup rechecks the reviewed coverage. With direct-start support, DUMB does not repeat the complete live file census; its later cold inventory supplies the authoritative size. Older backends can repeat a longer live recheck. The preparation notice reconnects after refresh, and archive-job progress starts after admission.
 
 Older backends keep the synchronous preview flow. Its spinner and elapsed time
 indicate a pending request, but cannot provide scan counters, reconnection or

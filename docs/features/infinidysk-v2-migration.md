@@ -1,4 +1,5 @@
 ---
+development_only: true
 title: InfiniDysk 2 Installation and Upgrade
 description: Review InfiniDysk 2 installation, guarded major upgrades, rclone or native FUSE mounts, library paths, recovery, and native PostgreSQL conversion in DUMB.
 icon: lucide/arrow-up-circle
@@ -8,7 +9,7 @@ icon: lucide/arrow-up-circle
 
 DUMB keeps InfiniDysk 1.x as the default. InfiniDysk 2 uses a different native
 runtime, configuration and data layout. Install it or move existing data through
-**Service tools → InfiniDysk 2 migration** on the InfiniDysk service page.
+**Tools → InfiniDysk 2 migration** on the InfiniDysk service page.
 When the backend identifies an eligible empty installation, a dashboard notice
 opens the same wizard in fresh-install mode.
 
@@ -17,6 +18,17 @@ and migration protocol **1**. An older, unknown or temporarily unavailable
 backend cannot start a migration. Previously discovered job identities and
 recovery information remain visible. The supported native artifact is currently
 **`v2.0.0-beta.6`**; selecting 2.x through a 1.x release or source field is refused.
+
+## Choose your path
+
+| Starting point | Workflow |
+| --- | --- |
+| Empty eligible installation | Open the same wizard in fresh-install mode |
+| Existing InfiniDysk 1.x data | Back up independently, review storage, rehearse, then validate before cutover |
+| Running InfiniDysk 2 with SQLite | Use the separate [native PostgreSQL conversion](#native-postgresql-conversion) only if wanted |
+| Interrupted or failed work | Open [recovery guidance](#progress-cancellation-and-recovery) before changing settings |
+
+Keep this page open for the complete procedure. Migration can interrupt storage and downstream applications; choosing a generation in setup does not convert existing data.
 
 ## Separate the choices
 
@@ -435,7 +447,7 @@ filesystem requirements.
 
 ## Native PostgreSQL conversion
 
-After generation 2 is validated, open **Service tools → InfiniDysk 2 database
+After generation 2 is validated, open **Tools → InfiniDysk 2 database
 conversion**. This uses the native copy, synchronization and cutover engine,
 not DUMB's generation 1 SQLite-to-PostgreSQL adapter.
 

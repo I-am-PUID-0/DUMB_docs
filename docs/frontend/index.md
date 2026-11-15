@@ -4,164 +4,46 @@ description: Use the DUMB Nuxt dashboard for guided onboarding, service controls
 icon: lucide/layout-dashboard
 ---
 
-# DUMB Frontend
+# Dashboard guide
 
-The DUMB Frontend is a modern web application built with Nuxt 4 (Vue 3) that provides a unified interface for managing and monitoring all DUMB services. It communicates with the DUMB API to control services, view logs, and monitor system health.
+The DUMB Frontend, also called **dmbdb**, is the browser interface for service controls, configuration, logs, and metrics. Open `http://localhost:3005` on the Docker host, or use the host's address from another device.
 
----
+## Find a task
 
-## Overview
+| Task | Page |
+| --- | --- |
+| Set up a new installation | [Onboarding](onboarding.md) |
+| Check services or install available updates | [Dashboard](dashboard.md) |
+| Edit one service, read its logs, or open its application UI | [Service pages](service-pages.md) |
+| Change login, tokens, appearance, or UI preferences | [Settings](settings.md) |
+| Investigate resource usage and database pressure | [Metrics](metrics.md) |
 
-The frontend provides:
+The API supplies the available services and tools. Controls that need a newer backend remain hidden when its capability is missing.
 
-- **Service dashboard** - View and control all services from a single page
-- **Real-time monitoring** - Live status updates and system metrics
-- **Onboarding wizard** - Guided setup for first-time configuration
-- **Log viewer** - Real-time and historical log access with filtering
-- **Settings management** - Configure services, users, and preferences
-- **Embedded service UIs** - Access service interfaces without leaving DUMB
+## Ports and live connections
 
----
+The maintained Compose example publishes the frontend on `3005`. Bundled Traefik uses `18080` for service UI routes; it does not replace the frontend listener.
 
-## Default port
+The frontend proxies backend requests under `/api` and streams status, metrics, and logs over WebSockets. A reverse proxy in front of the dashboard must allow those WebSocket connections. If the connection indicator is disconnected, check proxy and network settings before relying on the displayed sample as current.
 
-| Service | Port |
-|---------|------|
-| DUMB Frontend | 3005 |
+## Login and application accounts
 
-The maintained Compose file publishes the frontend directly on `3005`. Built-in
-Traefik on `18080` routes managed service UIs; it does not replace the normal
-DUMB frontend listener.
+DUMB can use local accounts, an OIDC provider, or both. Every enabled DUMB user has the same operator privileges, including service and user management. See [Authentication](../features/authentication.md) before sharing access.
 
----
+An embedded application's login remains separate from the DUMB login. Opening Plex, Jellyfin, pgAdmin, or another service inside the dashboard does not sign in to that application automatically.
 
-## Key pages
+## Frontend configuration
 
-| Page | Path | Purpose |
-|------|------|---------|
-| [Dashboard](dashboard.md) | `/` | Service overview and control |
-| [Onboarding](onboarding.md) | `/onboarding` | Initial setup wizard |
-| [Settings](settings.md) | `/settings` | Configuration and user management |
-| [Service pages](service-pages.md) | `/services/[serviceId]` | Status, logs, embedded UI, updates, and config editors |
-| [Metrics](metrics.md) | `/metrics` | System resource monitoring |
-| Service Detail | `/services/[id]` | Individual service management |
-| Login | `/login` | User authentication |
-| Setup | `/setup` | First-time user creation |
+Managed installations receive these values from DUMB. A separately deployed frontend must use addresses reachable from its own container:
 
----
-
-## Features
-
-### Real-time updates
-
-The frontend maintains WebSocket connections to receive live updates:
-
-- **Service status** - Running/stopped state, health checks
-- **System metrics** - CPU, memory, disk usage
-- **Log streaming** - New log entries as they occur
-
-!!! warning "Reverse proxy must allow WebSockets"
-
-    If you proxy the DUMB Frontend through Nginx or another reverse proxy, make sure WebSockets are enabled.
-    WebSocket traffic powers real-time logs, metrics, and service status.
-    Traefik enables WebSockets by default, but Nginx requires explicit configuration.
-
-### Service control
-
-Start, stop, and restart services directly from the dashboard or service detail pages. The frontend shows:
-
-- Current status (running, stopped, unknown)
-- Health check results
-- Auto-restart count and status
-- Last restart timestamp
-
-### Embedded service UIs
-
-When enabled, access service web interfaces directly within DUMB:
-
-- AltMount
-- Riven Frontend
-- pgAdmin
-- Seerr
-- Tautulli
-- Pulsarr
-- Maintainerr
-- mediastorm
-- Traefik Proxy Admin
-- Arr services (Radarr, Sonarr, etc.)
-- And more
-
-This provides a unified experience without exposing individual service ports. Root-route applications such as Pulsarr, Maintainerr, mediastorm, AltMount, Traefik Proxy Admin, and the Traefik dashboard are kept in iframe context by the frontend proxy so their root-relative assets, APIs, and navigations do not collide with DUMB's own routes.
-
-### Split view mode
-
-Compare two pages side-by-side with the resizable split view:
-
-- Monitor logs while viewing dashboard
-- Compare service configurations
-- View metrics alongside service details
-
-### Service detail pages
-
-Each service has a dedicated detail page with:
-
-- Live status and health
-- Embedded UI tab when available
-- Config and log shortcuts
-- Auto-restart controls
-
----
-
-## Authentication
-
-The frontend supports optional JWT-based authentication:
-
-- **First-time setup** - Create the first local account or skip authentication
-- **Login** - Secure access with username/password
-- **Remember me** - Persistent sessions across browser restarts
-- **User management** - Create, disable, and delete users
-
-All enabled DUMB users currently have the same control-plane permissions; there
-is no viewer/operator/admin role split.
-
-See the [Authentication](../features/authentication.md) guide for details.
-
----
-
-## Configuration
-
-The frontend reads its configuration from environment variables:
-
-| Variable | Default | Description |
-|----------|---------|-------------|
-| `DUMB_API_URL` | `http://127.0.0.1:8000` | Backend API endpoint |
-| `DUMB_TRAEFIK_URL` | API host on port `18080` | Traefik web endpoint used for embedded service HTTP and WebSocket proxying |
+| Variable | Default | Purpose |
+| --- | --- | --- |
+| `DUMB_API_URL` | `http://127.0.0.1:8000` | Backend API |
+| `DUMB_TRAEFIK_URL` | API host on port `18080` | Embedded HTTP and WebSocket proxy target |
 | `NUXT_TELEMETRY_DISABLED` | `1` | Disable Nuxt telemetry |
 
-DUMB automatically injects the current Traefik listener into a managed DUMB
-Frontend process, including when startup port reservation moves Traefik away
-from `18080`. A separately deployed frontend must set `DUMB_TRAEFIK_URL` to an
-address reachable from that frontend container whenever Traefik uses another
-host or port.
-
----
+DUMB injects the current Traefik listener into its managed frontend, including when port reservation moves Traefik away from `18080`.
 
 ## Browser support
 
-Use an up-to-date version of these browsers:
-
-- Chrome/Chromium (recommended)
-- Firefox
-- Safari
-- Edge
-
-The dependency panel's [**Flow** view](service-pages.md#dependency-graph-view) uses Mermaid 12, which targets **Safari 17.4+** and ES2024-capable browsers. See the [Mermaid 12 release notes](https://github.com/mermaid-js/mermaid/releases/tag/mermaid@12.0.0) for its browser requirements. Mermaid loads only when this view is opened. If the graph cannot render on an older browser, use **Details** to inspect dependencies; this graph requirement does not define the browser floor for the rest of the dashboard.
-
----
-
-## Next steps
-
-- [Dashboard](dashboard.md) - Learn about the main service view
-- [Onboarding](onboarding.md) - Set up DUMB for the first time
-- [Settings](settings.md) - Configure preferences and users
-- [Metrics](metrics.md) - Monitor system resources
+Use a current Chrome/Chromium, Firefox, Safari, or Edge release. The dependency panel's [Flow view](service-pages.md#dependency-graph-view) uses Mermaid 12 and requires Safari 17.4+ or another ES2024-capable browser. If that view cannot render, use **Details** to inspect dependencies. See the [Mermaid 12 release notes](https://github.com/mermaid-js/mermaid/releases/tag/mermaid@12.0.0) for its browser requirements.

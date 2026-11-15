@@ -1,11 +1,12 @@
 ---
 title: Metrics
+description: Read live and historical dashboard metrics, choose monitored storage and network interfaces, and configure browser alerts and optional Database Health.
 icon: lucide/activity
 ---
 
 # Metrics
 
-The Metrics page provides real-time and historical system monitoring, displaying CPU, memory, disk, and network usage for the DUMB container.
+Open **Metrics** to inspect current resource usage, compare history, and find services consuming CPU, memory, or storage. Choose the filesystems and interfaces visible inside DUMB before interpreting the charts.
 
 ---
 
@@ -184,8 +185,8 @@ Open **How to read Database Health** for an in-product explanation of observed s
 
 | Info | Description |
 |------|-------------|
-| **Boot Time** | When the container started |
-| **Uptime** | Time since boot |
+| **Boot Time** | System boot time reported by the backend; not necessarily container creation time |
+| **Uptime** | Time since that system boot |
 | **Platform** | Operating system |
 
 ### cgroup awareness
@@ -262,9 +263,9 @@ Configure when alerts appear on the dashboard:
 
 | Resource | Default | Setting Location |
 |----------|---------|-----------------|
-| CPU | 85% | Settings :material-arrow-right: Preferences |
-| Memory | 85% | Settings :material-arrow-right: Preferences |
-| Disk | 90% | Settings :material-arrow-right: Preferences |
+| CPU | 85% | Metrics header warning controls |
+| Memory | 85% | Metrics header warning controls |
+| Disk | 90% | Metrics header warning controls |
 | Inodes | 90% | Metrics header warning controls |
 | Database Health | Off; selectable Moderate/High/Critical minimum | Metrics header or Metrics Settings :material-arrow-right: Database Health Monitoring |
 
@@ -322,4 +323,4 @@ See the [WebSocket API](../api/websocket.md) documentation for real-time streami
 
 - [Dashboard](dashboard.md) - Service monitoring
 - [WebSocket API](../api/websocket.md) - Real-time data streaming
-- [Settings](settings.md) - Alert configuration
+- [Notifications](../features/notifications.md) - Outbound alert delivery

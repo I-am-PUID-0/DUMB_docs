@@ -1,0 +1,15 @@
+{
+  "release": {
+    "version": "2.23.0",
+    "source": "ebfdf2dec74bf451b03d81fa0659badbc53b9e14",
+    "label": "Latest release",
+    "docs_ref": "WORKTREE",
+    "include_development": false
+  },
+  "dev": {
+    "version": "2.24.0",
+    "label": "Development",
+    "source": "7ee7d8b1c3d2a3dfcf85fa8352f8bdbcee075249",
+    "frontend_source": "f485c56344425cf2d45bf5f92a309f6532c2ce26"
+  }
+}

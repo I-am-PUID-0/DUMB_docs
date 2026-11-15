@@ -1,5 +1,6 @@
 ---
 title: Zurg
+description: Connect Zurg to a Debrid provider in DUMB, review its rclone mount, configure release choices, and find persistent settings and logs.
 icon: lucide/zap
 ---
 
@@ -11,6 +12,13 @@ Zurg is the debrid content fetcher that powers file discovery and caching for DU
     As of this posting, **Zurg only supports Real-Debrid**. Additional debrid services may be supported in future updates.
 
 ---
+
+## First start
+
+1. Choose the Zurg-backed provider path in onboarding and supply the provider credentials.
+2. Wait for Zurg, then its associated rclone mount, to become ready.
+3. Review provider/account errors in the Zurg log before changing rclone settings.
+4. Test a representative media file through the intended library path.
 
 ## Zurg Repositories
 
@@ -24,11 +32,15 @@ There are **two official Zurg repositories**:
 
 ---
 
+<details class="geek-details" markdown="1">
+<summary>Technical details: configuration reference</summary>
+
 ## Configuration in `dumb_config.json`
 
 Zurg is configured using the `instances` model to support multiple debrid services (e.g., RealDebrid, AllDebrid, Premiumize).
 
 ```json
+{
 "zurg": {
   "instances": {
     "RealDebrid": {
@@ -58,6 +70,7 @@ Zurg is configured using the `instances` model to support multiple debrid servic
     }
   }
 }
+}
 ```
 
 ### Configuration Key Descriptions
@@ -66,10 +79,10 @@ Zurg is configured using the `instances` model to support multiple debrid servic
 - **`process_name`**: Label used for log files and process display.
 - **`repo_owner`** / **`repo_name`**: GitHub repo to pull Zurg from.
 - **`release_version_enabled`** / **`release_version`**: Use a specific release tag if enabled.
-- **`suppress_logging`**: If `true`, disables log output for this service.
+- **`suppress_logging`**: Suppresses service messages in the main DUMB output.
 - **`log_level`**: Logging verbosity level (e.g., `DEBUG`, `INFO`).
 - **`host`** / **`port`**: IP/Port to serve the WebDAV interface.
-- **`auto_update`**: Enables automatic self-updates.
+- **`auto_update`**: Enables DUMB's scheduled update checks; `auto_update_mode` determines whether a detected update is installed.
 - **`auto_update_interval`**: How often (in hours) to check for updates.
 - **`clear_on_update`**: Clears build artifacts or cache during updates.
 - **`exclude_dirs`**: Prevents specific directories from being affected by updates when using `clear_on_update`
@@ -80,6 +93,8 @@ Zurg is configured using the `instances` model to support multiple debrid servic
 - **`api_key`**: Debrid API key (used by Zurg for account authentication).
 
 ---
+
+</details>
 
 ## YAML configuration
 
@@ -112,7 +127,11 @@ You can define additional instances in the same `zurg.instances` block by copyin
 - The `key_type` must match the type of Debrid service used - Limited to `RealDebrid` until Zurg adds support for others
 
 Example:
+<details class="geek-details" markdown="1">
+<summary>Technical details: configuration example</summary>
+
 ```json
+{
 "zurg": {
     "instances": {
         "RealDebrid": {
@@ -166,8 +185,11 @@ Example:
             "api_key": ""
         }            
     }
-}    
+}
+}
 ```
+
+</details>
 
 ---
 

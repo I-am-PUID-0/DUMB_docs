@@ -74,6 +74,9 @@ The API response includes the exact backup path. The backup can recover DUMB con
 
 If an operation reports failure, the selected process remains stopped. Check the DUMB log and the backup directory before retrying. Restore configuration only while DUMB is stopped, then restart the container so configuration is reloaded consistently.
 
+<details class="geek-details" markdown="1">
+<summary>Technical details: reset/removal API</summary>
+
 ## API
 
 The frontend uses two capability-gated endpoints:
@@ -96,6 +99,8 @@ Content-Type: application/json
 Supported actions are `reset` and `remove`. Use the preview returned immediately before the POST; DUMB recalculates and validates the plan again when applying it.
 
 The DUMB API and DUMB Frontend control-plane services cannot be reset through this workflow.
+
+</details>
 
 ## Related pages
 

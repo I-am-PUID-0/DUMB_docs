@@ -1,549 +1,122 @@
 ---
 title: Service ports
+description: Look up default DUMB listener ports, identify collisions, and choose which ports to publish for dashboards, media clients, and external integrations.
 icon: lucide/network
 ---
 
 # Service ports
 
-This reference documents all ports used by DUMB services. Use this guide to configure firewall rules, reverse proxies, and understand network requirements.
+These are **fresh-configuration defaults**, not a report of your running stack. Check the port saved in the dashboard or `/config/dumb_config.json` before adding a Docker mapping or configuring another application.
 
----
+The maintained Compose file publishes **3005 only**. It serves the dashboard, REST gateway (`/api/*`), and WebSockets (`/ws/*`). Embedded UIs use this address too; individual service ports are needed for direct clients and external integrations.
 
-!!! info "Service UI access"
+## DUMB listeners
 
-    Most service UIs require the port to be exposed in your compose file before you
-    can access them directly. The exceptions are when you route traffic through a
-    reverse proxy or use DUMB’s embedded UIs via Traefik.
+| Service | Default port | Access |
+|---|---:|---|
+| DUMB Frontend and API gateway | 3005 | `http://<host>:3005`; normal entry point |
+| DUMB API | 8000 | Container loopback `127.0.0.1`; not published by default |
+| Traefik embedded UI proxy | 18080 | Internal frontend proxy target; direct access requires a mapping |
+| Traefik dashboard/API | 18081 | Entry point plus one; normally consumed internally |
 
-## Quick reference
+Use `http://<host>:3005/api/process/processes` for REST requests. WebSocket requests use `ws://<host>:3005/ws/status` without `/api`. See the [API guide](../api/index.md).
 
-| Port | Service | Type |
-|------|---------|------|
-| 3000 | Riven Frontend | Web UI |
-| 3000 | InfiniDysk Frontend | Web UI |
-| 3003 | Pulsarr | Web UI |
-| 3004 | Traefik Proxy Admin | Web UI/API |
-| 3005 | DUMB Frontend and API gateway | Web UI/API |
-| 3006 | AIOStreams | Web UI/API and Stremio addon |
-| 5000 | CLI Debrid | Web UI |
-| 5001 | CLI Battery | API |
-| 5050 | pgAdmin | Web UI |
-| 5055 | Seerr | Web UI |
-| 5432 | PostgreSQL | Database |
-| 6246 | Maintainerr | Web UI/API |
-| 6767 | Bazarr | Web UI/API |
-| 6969 | Whisparr | Web UI |
-| 7777 | mediastorm | Web UI/API |
-| 7878 | Radarr (first/default instance) | Web UI |
-| 7879 | Radarr (typical second instance) | Web UI |
-| 8000 | DUMB API (container loopback by default) | API |
-| 8080 | Riven Backend | API |
-| 8080 | InfiniDysk Backend | API |
-| 8088 | AltMount | Web UI/API |
-| 8096 | Jellyfin | Web UI |
-| 8096 | Emby | Web UI |
-| 8181 | Tautulli | Web UI |
-| 8182 | Zilean | Web UI/API |
-| 8282 | Decypharr | Web UI |
-| 8686 | Lidarr | Web UI |
-| 8888 | Phalanx DB | API |
-| 8989 | Sonarr (first/default instance) | Web UI |
-| 8990 | Sonarr (typical second instance) | Web UI |
-| 9091 | Authelia | Identity portal/API |
-| 9090 | Zurg (first/default instance) | API |
-| 9091 | Zurg (typical second instance; dynamically reassigned on conflict) | API |
-| 9696 | Prowlarr | Web UI |
-| 9705 | NeutArr | Web UI |
-| 13378 | Audiobookshelf | Web UI / API |
-| 18080 | Traefik | Proxy |
-| 18081 | Traefik Dashboard/API | Web UI/API |
-| 32400 | Plex Media Server | Web UI |
+## Workflow and media services
 
-!!! warning "Dynamic port reassignment"
-
-    On startup, DUMB checks enabled-service ports for conflicts and availability.
-    If a port is already in use, DUMB automatically shifts that service to the next free port and saves the updated value to `dumb_config.json`.
-    This applies to single-port services and InfiniDysk's `frontend_port`/`backend_port`.
-
----
-
-## DUMB core services
-
-### DUMB API
-
-| Property | Value |
-|----------|-------|
-| **Port** | 8000 |
-| **Type** | REST API |
-| **Protocol** | HTTP |
-
-The backend API that powers service management, configuration, and monitoring. It listens on `127.0.0.1` inside the container and is not host-published by the maintained Compose file.
-
-```
-http://localhost:8000/process/processes  # backend-native, from inside the container
-http://localhost:3005/api/process/processes  # normal frontend proxy
-```
-
-### DUMB Frontend
-
-| Property | Value |
-|----------|-------|
-| **Port** | 3005 |
-| **Type** | Web UI / REST and WebSocket gateway |
-| **Protocol** | HTTP |
-
-The main dashboard for managing DUMB services.
-
-The same listener exposes backend REST routes under `/api/*` and WebSocket
-routes under `/ws/*`. REST requests have `/api` removed before they are sent to
-the loopback-only backend on port `8000`.
-
-```
-http://localhost:3005
-```
-
-### Traefik proxy
-
-| Property | Value |
-|----------|-------|
-| **Port** | 18080 |
-| **Type** | Reverse Proxy |
-| **Protocol** | HTTP |
-
-Provides unified access to embedded service UIs when enabled.
-
-```
-http://localhost:18080/service/ui/<service_name>
-```
-
-### Traefik dashboard/API
-
-| Property | Value |
-|----------|-------|
-| **Port** | 18081 |
-| **Type** | Dashboard / API |
-| **Protocol** | HTTP |
-
-Traefik exposes its dashboard/API on the Traefik entrypoint plus one port. TPA uses this internally through `TRAEFIK_API_URL=http://127.0.0.1:18081`.
-
----
-
-## Media servers
-
-### Plex Media Server
-
-| Property | Value |
-|----------|-------|
-| **Port** | 32400 |
-| **Type** | Web UI / API |
-| **Protocol** | HTTP/HTTPS |
-
-```
-http://localhost:32400/web
-```
-
-### Jellyfin
-
-| Property | Value |
-|----------|-------|
-| **Port** | 8096 |
-| **Type** | Web UI / API |
-| **Protocol** | HTTP |
-
-```
-http://localhost:8096
-```
-
-### Emby
-
-| Property | Value |
-|----------|-------|
-| **Port** | 8096 |
-| **Type** | Web UI / API |
-| **Protocol** | HTTP |
-
-```
-http://localhost:8096
-```
-
----
-
-## Content management
-
-### Riven
-
-| Component | Port | Type |
-|-----------|------|------|
-| Backend | 8080 | API |
-| Frontend | 3000 | Web UI |
-
-```
-http://localhost:3000  # Frontend
-http://localhost:8080  # API
-```
-
-### CLI Debrid
-
-| Component | Port | Type |
-|-----------|------|------|
+| Service | Default port | Purpose / direct path |
+|---|---:|---|
+| Riven Frontend | 3000 | Web UI |
+| Riven Backend | 8080 | API |
 | CLI Debrid | 5000 | Web UI |
-| CLI Battery | 5001 | API |
+| CLI Battery | 5001 | API; separate listener only for versions using the external service |
+| Decypharr | 8282 | Web UI/API |
+| InfiniDysk frontend | 3000 | Web UI |
+| InfiniDysk backend | 8080 | API/WebDAV |
+| AltMount | 8088 | Web UI/API; `/live` readiness endpoint |
+| Plex Media Server | 32400 | `/web` |
+| Jellyfin | 8096 | Web UI/API |
+| Emby | 8096 | Web UI/API |
 
-```
-http://localhost:5000
-```
+<!-- dev:start -->
+Native InfiniDysk 2 uses its backend listener for the native application UI as well. Read the [InfiniDysk guide](../services/core/infinidysk.md) for the selected generation rather than assuming the generation 1 split applies.
+<!-- dev:end -->
 
-### Decypharr
+## Arr applications and library tools
 
-| Property | Value |
-|----------|-------|
-| **Port** | 8282 |
-| **Type** | Web UI |
-| **Protocol** | HTTP |
+| Service | Default port | Purpose |
+|---|---:|---|
+| Sonarr | 8989 | TV |
+| Radarr | 7878 | Movies |
+| Lidarr | 8686 | Music |
+| Whisparr | 6969 | Adult media |
+| Prowlarr | 9696 | Indexers |
+| NeutArr | 9705 | Search automation |
+| Profilarr | 6868 | Profiles and custom formats |
+| Seerr | 5055 | Requests |
+| Bazarr | 6767 | Subtitles |
+| Tautulli | 8181 | Plex monitoring |
+| Pulsarr | 3003 | Watchlist automation |
+| Maintainerr | 6246 | Library rules |
+| Zilean | 8182 | Lookup API |
 
-```
-http://localhost:8282
-```
+These defaults refer to the first configured instance. A second Sonarr or Radarr often receives `8990` or `7879`, but those values are not reserved for a particular instance. See [multi-instance configuration](instances.md).
 
-### InfiniDysk
+## Optional access and streaming services
 
-| Component | Port | Type |
-|-----------|------|------|
-| Frontend | 3000 | Web UI |
-| Backend | 8080 | API |
+| Service | Default port | Notes |
+|---|---:|---|
+| AIOStreams | 3006 | `/stremio/configure`; addon clients need a stable trusted HTTPS `base_url` |
+| mediastorm | 7777 | `/admin` |
+<!-- dev:start -->
+| Audiobookshelf | 13378 | `/audiobookshelf/`; reverse proxies must support WebSockets |
+<!-- dev:end -->
+| Traefik Proxy Admin | 3004 | Web UI/API |
+| Authelia | 9091 | Identity portal/API |
+| Cloudflared | None | Outbound tunnel connector; no local web UI listener |
 
-```
-http://localhost:3000  # Frontend
-```
+Use the [AIOStreams publishing guide](../services/optional/aiostreams.md#publish-aiostreams-for-stremio) for its public addon address. The embedded `/ui/aiostreams` address is not its public `base_url`.
 
-!!! note "InfiniDysk and Riven desired defaults overlap"
+## Storage and database services
 
-    The default InfiniDysk ports (`3000` and `8080`) overlap with Riven defaults.
-    DUMB's startup port allocator normally moves a conflicting enabled service to the next free port and persists the result. Use the runtime configuration/UI—not this default table—as the authority for a running stack.
+| Service | Default port | Protocol |
+|---|---:|---|
+| Zurg | 9090 | HTTP/WebDAV |
+| Phalanx DB | 8888 | HTTP API |
+| PostgreSQL | 5432 | PostgreSQL, not HTTP |
+| pgAdmin | 5050 | Web UI |
 
-### AltMount
+A second Zurg instance often receives `9091`, which also overlaps Authelia's default. Use the assigned port, not an assumed sequence.
 
-| Setting | Default |
-|---------|---------|
-| `port` | `8088` |
-| `config_file` | `/altmount/config.yaml` |
-| `metadata_dir` | `/altmount/metadata` |
-| `mount_path` | `/mnt/debrid/altmount` |
-| `log_file` | `/altmount/logs/altmount.log` |
+## Port collisions
 
-AltMount also exposes `/live`; DUMB probes it while completing the post-start
-Arr integration pass.
+DUMB checks enabled-service ports and can move a conflicting listener to the next available port, then save the result. This includes InfiniDysk frontend/backend ports. Traefik reserves its entry point and dashboard together.
 
----
+Common default overlaps are:
 
-## Arr suite
+- Riven and InfiniDysk: `3000` and `8080`.
+- Jellyfin and Emby: `8096`.
+- A second Zurg instance and Authelia: `9091`.
 
-The Arr applications support multiple instances for different workflows (for example Decypharr, InfiniDysk, or AltMount). The first instance starts from the application's base default; additional/conflicting instances are assigned the next free port and saved to `/config/dumb_config.json`.
+Docker mappings do not update themselves when an internal listener changes. If a service moves from `8096` to `8097`, update its mapping and any direct consumers. Embedded routing uses DUMB's generated service configuration.
 
-### Sonarr (TV shows)
+## Publish only the listeners you use
 
-| Instance | Typical port |
-|----------|--------------|
-| First/default | 8989 |
-| Second | 8990 |
+For example, a stack with direct Plex access can publish:
 
-```
-http://localhost:8989  # typical first instance
-http://localhost:8990  # typical second instance
-```
-
-### Radarr (Movies)
-
-| Instance | Typical port |
-|----------|--------------|
-| First/default | 7878 |
-| Second | 7879 |
-
-```
-http://localhost:7878  # typical first instance
-http://localhost:7879  # typical second instance
-```
-
-### Lidarr (Music)
-
-| Property | Value |
-|----------|-------|
-| **Port** | 8686 |
-| **Type** | Web UI |
-
-```
-http://localhost:8686
+```yaml
+ports:
+  - "3005:3005"   # DUMB dashboard, API gateway, embedded UIs
+  - "32400:32400" # Plex clients
 ```
 
-### Whisparr (Adult)
+Add a service mapping when another application or device needs it. A web UI being available through the dashboard does not expose its native protocol to external clients.
 
-| Property | Value |
-|----------|-------|
-| **Port** | 6969 |
-| **Type** | Web UI |
+The backend's default `127.0.0.1:8000` listener cannot be exposed by adding `8000:8000` alone. Direct backend access also requires changing `dumb.api_service.host`. Prefer the existing gateway and follow [networking guidance](../deployment/networking.md) when changing exposure.
 
-```
-http://localhost:6969
-```
-
-### Prowlarr (Indexers)
-
-| Property | Value |
-|----------|-------|
-| **Port** | 9696 |
-| **Type** | Web UI |
-
-```
-http://localhost:9696
-```
-
-### NeutArr
-
-| Instance | Port |
-|----------|------|
-| Default | 9705 |
-
-```
-http://localhost:9705  # Default instance
-```
-
-### Seerr
-
-| Property | Value |
-|----------|-------|
-| **Port** | 5055 |
-| **Type** | Web UI |
-
-```
-http://localhost:5055
-```
-
----
-
-## Optional services
-
-### Pulsarr
-
-| Property | Value |
-|----------|-------|
-| **Port** | 3003 |
-| **Type** | Web UI |
-
-```
-http://localhost:3003
-```
-
-### AIOStreams
-
-| Property | Value |
-|----------|-------|
-| **Port** | 3006 |
-| **Type** | Web UI / API / Stremio addon |
-
-The local configure page is:
-
-```text
-http://localhost:3006/stremio/configure
-```
-
-Remote Stremio clients require the AIOStreams `base_url` to use a stable trusted HTTPS origin. Do not use DUMB's embedded `/ui/aiostreams` route as that public base URL. See the [AIOStreams deployment guide](../services/optional/aiostreams.md#publish-aiostreams-for-stremio).
-
-### Maintainerr
-
-| Property | Value |
-|----------|-------|
-| **Port** | 6246 |
-| **Type** | Web UI/API |
-
-```
-http://localhost:6246
-```
-
-### mediastorm
-
-| Property | Value |
-|----------|-------|
-| **Port** | 7777 |
-| **Type** | Web UI / API |
-
-The embedded UI opens at `/admin`.
-
-```text
-http://localhost:7777/admin
-```
-
-### Bazarr
-
-| Property | Value |
-|----------|-------|
-| **Port** | 6767 |
-| **Type** | Web UI / API |
-
-```text
-http://localhost:6767
-```
-
-### Tautulli
-
-| Property | Value |
-|----------|-------|
-| **Port** | 8181 |
-| **Type** | Web UI |
-
-```
-http://localhost:8181
-```
-
-### Zilean
-
-| Property | Value |
-|----------|-------|
-| **Port** | 8182 |
-| **Type** | Web UI / API |
-
-```
-http://localhost:8182
-```
-
-### Traefik Proxy Admin
-
-| Property | Value |
-|----------|-------|
-| **Port** | 3004 |
-| **Type** | Web UI / API |
-
-```
-http://localhost:3004
-```
-
-### Audiobookshelf
-
-| Property | Value |
-|----------|-------|
-| **Port** | 13378 |
-| **Type** | Web UI / API |
-| **Application path** | `/audiobookshelf/` |
-
-```text
-http://localhost:13378/audiobookshelf/
-```
-
-Publish the assigned port for direct access, or open Audiobookshelf from its DUMB service page. Reverse proxies must support WebSocket connections. See the [Audiobookshelf guide](../services/optional/audiobookshelf.md).
-
-### Cloudflared
-
-Cloudflared does not expose a local web UI port. It opens an outbound tunnel connection to Cloudflare and forwards public hostname traffic to DUMB Traefik.
-
----
-
-## Dependent services
-
-### Zurg
-
-| Instance | Port | Use Case |
-|----------|------|----------|
-| First/default | 9090 | Any linked workflow |
-| Typical second | 9091 | Any additional linked workflow |
-
-```
-http://localhost:9090  # typical first instance
-http://localhost:9091  # typical second instance
-```
-
-### Phalanx DB
-
-| Property | Value |
-|----------|-------|
-| **Port** | 8888 |
-| **Type** | API |
-
-```
-http://localhost:8888
-```
-
----
-
-## Database services
-
-### PostgreSQL
-
-| Property | Value |
-|----------|-------|
-| **Port** | 5432 |
-| **Type** | Database |
-| **Protocol** | PostgreSQL |
-
-```
-postgresql://<user>:<password>@localhost:5432/<configured_database>
-```
-
-### pgAdmin
-
-| Property | Value |
-|----------|-------|
-| **Port** | 5050 |
-| **Type** | Web UI |
-
-```
-http://localhost:5050
-```
-
----
-
-## Port ranges by category
-
-### Web UIs (browser access)
-
-```
-3000-3005, 5000, 5050, 5055, 6969, 7878-7879, 8088, 8096,
-8181-8182, 8282, 8686, 8989-8990, 9696, 9705, 18081, 32400
-```
-
-### APIs (service communication)
-
-```
-5001, 5432, 8000, 8080, 8888, 9090-9091
-```
-
-### Proxy
-
-```
-18080
-```
-
----
-
-## Firewall configuration
-
-### Minimum required ports
-
-For basic DUMB operation, publish only:
-
-| Port | Required For |
-|------|--------------|
-| 3005 | DUMB Frontend and its `/api`/`/ws` proxy |
-
-### Full access
-
-For complete functionality including all service UIs:
-
-```bash
-# Example UFW configuration
-sudo ufw allow 3005/tcp  # DUMB Frontend
-sudo ufw allow 18080/tcp # Traefik (embedded UIs)
-sudo ufw allow 32400/tcp # Plex
-```
-
-The backend port `8000` is loopback-only and unpublished by default. Expose it only when a direct API consumer requires it, after changing `dumb.api_service.host` to `0.0.0.0`, enabling authentication, and restricting network access.
-
-!!! tip "Use Traefik for consolidated access"
-
-    Instead of exposing all service ports, enable embedded UIs and access services through Traefik on port 18080. See [Embedded UIs](../features/embedded-ui.md).
-
----
+DUMB authentication protects its own API and dashboard flows. Direct upstream application ports and published Traefik routes need their own access controls. Docker's published-port firewall behavior also depends on the host; see [Docker packet filtering](https://docs.docker.com/engine/network/packet-filtering-firewalls/).
 
 ## Related pages
 
+- [Networking and ports](../deployment/networking.md)
 - [Embedded UIs](../features/embedded-ui.md)
-- [Configuration](../features/configuration.md)
-- [Services Overview](../services/index.md)
+- [Service catalog](../services/index.md)

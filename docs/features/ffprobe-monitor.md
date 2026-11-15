@@ -6,7 +6,7 @@ icon: lucide/activity
 
 # FFprobe monitor
 
-The ffprobe monitor watches for stuck `ffprobe` processes spawned by Sonarr or Radarr and nudges them back to life. This prevents long-running media scans from hanging indefinitely.
+The monitor finds eligible `ffprobe` processes beneath DUMB-managed Sonarr or Radarr and runs a bounded probe of the same input. This can release a stalled media read, but it does not repair an unavailable mount or provider.
 
 ---
 
@@ -20,8 +20,8 @@ The monitor activates only when at least one Sonarr or Radarr instance is enable
 
 1. Collects running Sonarr/Radarr process IDs.
 2. Finds descendant `ffprobe` processes.
-3. Detects processes stuck in an uninterruptible sleep state (`D`) for longer than a configured age.
-4. Re-runs `ffprobe` on the same input file to release the stuck probe.
+3. Selects processes in uninterruptible sleep (`D`) whose total process age exceeds the configured minimum.
+4. Runs `ffprobe` on the same input within the configured timeout and per-cycle limits.
 
 ---
 

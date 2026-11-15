@@ -1,4 +1,5 @@
 ---
+development_only: true
 title: Backup Storage
 description: Register local or mounted NAS storage for installation backups, InfiniDysk upgrades and symlink snapshots while keeping active databases and recovery state local.
 icon: lucide/archive
@@ -11,6 +12,16 @@ major-migration archives** or **standalone and scheduled symlink snapshots**.
 Open **Settings → Backups and restore** for the central controls. These appear when the
 backend advertises the corresponding storage capabilities. Existing backup
 paths remain the default until you explicitly select a registered destination.
+
+## Storage at a glance
+
+| Storage | Suitable for |
+| --- | --- |
+| Local, private storage | Active databases, controller recovery state, inventory/restore scratch |
+| Registered local or already-mounted NAS directory | Closed installation/migration archives and symlink snapshots |
+| Host directory not mounted into DUMB | Unavailable until exposed through the deployment |
+
+Registering a destination does not make it the default or move an existing backup. Choose it explicitly in the operation or save it in the relevant schedule.
 
 ## Register an existing destination
 

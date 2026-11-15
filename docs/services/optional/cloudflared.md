@@ -23,12 +23,13 @@ Cloudflared gets traffic to Traefik. Traefik still decides which local service r
 
 ---
 
+<!-- dev:start -->
 ## Setup checklist and remaining work
 
 Starting a connector and publishing a usable application are separate tasks. Supply an authorized token, create the matching tunnel/DNS/application route and check the final HTTPS origin. Connector readiness does not provision DNS or verify the external route.
 
 Requires the backend setup-arrangement capability. See [Setup checklist and automation](../../features/setup-checklist.md) for retained tasks, coverage and safe retries.
-
+<!-- dev:end -->
 
 ## Before you start
 
@@ -197,9 +198,13 @@ For a quick smoke test, use a deliberately harmless test target or a temporary s
 
 ---
 
+<details class="geek-details" markdown="1">
+<summary>Technical details: configuration reference</summary>
+
 ## Configuration reference
 
 ```json
+{
 "cloudflared": {
   "enabled": false,
   "process_name": "Cloudflared",
@@ -221,6 +226,7 @@ For a quick smoke test, use a deliberately harmless test target or a temporary s
     "HOME": "/cloudflared"
   }
 }
+}
 ```
 
 ### Configuration key descriptions
@@ -232,6 +238,8 @@ For a quick smoke test, use a deliberately harmless test target or a temporary s
 - **`log_file`**: DUMB-managed log path for cloudflared output.
 
 ---
+
+</details>
 
 ## Related links
 

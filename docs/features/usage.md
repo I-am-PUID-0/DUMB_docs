@@ -4,86 +4,62 @@ description: Operate DUMB through its dashboard and API, manage individual servi
 icon: lucide/play-circle
 ---
 
-# Usage
+# Everyday use
 
-## Running DUMB
+Open the dashboard at `http://localhost:3005` on the Docker host, or replace `localhost` with the host's address. DUMB starts enabled services in dependency order when the container starts.
 
-DUMB automatically starts the services defined in `dumb_config.json` in dependency-aware order. Each service can also be managed independently using the [DUMB Frontend](../services/dumb/dumb-frontend.md) or by directly modifying the configuration.
+On a fresh installation, managed applications are disabled until you choose them in [onboarding](../frontend/onboarding.md). The API and frontend provide the setup interface.
 
-!!! important "Onboarding"
-    DUMB is preset to disable all services, other than the API and Frontend on the first startup. 
+## Start, stop, or inspect a service
 
-    On first launch of the [DUMB Frontend](../services/dumb/dumb-frontend.md), you will be directed to the Onboarding process.  
+1. Select the service on the [dashboard](../frontend/dashboard.md).
+2. Check its status and health reason before taking action.
+3. Use **Start**, **Stop**, or **Restart**. If a downstream media server uses the affected storage, review the playback and library-protection prompt.
+4. Open **Logs** if startup fails, or **Tools → Dependencies** to inspect missing prerequisites.
 
+Saving a service's configuration and starting it are separate actions. **Save to File** persists the change; **Apply in Memory**, where offered, changes only the controller's current configuration. An application may still need a restart or an explicit setup action to use new settings.
 
-### Automatic Service Start
-All services with `"enabled": true` in the config will be started on container launch.
+## Review updates
 
-If a service fails to start, check its log file in the `/log` directory (or wherever `log_dir` is set).
+Use **Updates** on the dashboard to check enabled services and install selected available updates. For a saved release, branch, commit, or version pin, open that service's Updates panel and review its configured target.
 
----
+| Action | Effect |
+| --- | --- |
+| Check for updates | Refresh version information without restarting the service |
+| Install update | Install the available target and restart the affected service |
+| Install configured release/branch/commit | Apply the source selection saved for that service |
+| Override + latest | Explicitly bypass the saved selection for one install |
 
-## Managing Updates
+For scheduled checks, configure each service separately:
 
-### Manual Updates
-Each service can be updated by modifying the configuration file or using the [DUMB Frontend](../services/dumb/dumb-frontend.md). 
-
-Updates include:
-
-- Branch switching
-- Version pinning
-- Auto-update toggling
-
-### Auto-Update
-
-Most managed services support automatic update checks through the same scheduling fields. This includes top-level services and instance-based services such as Arrs, Seerr, NeutArr, Profilarr, rclone, and Zurg.
-
-Enable by setting:
 ```json
-"auto_update": true,
-"auto_update_start_time": "04:00",
-"auto_update_interval": 24
+{
+  "auto_update": true,
+  "auto_update_mode": "check_only",
+  "auto_update_start_time": "04:00",
+  "auto_update_interval": 24
+}
 ```
-!!! note "`auto_update_interval` is measured in hours."
-!!! note "`auto_update_start_time` uses 24-hour `HH:MM` format."
 
-Services use one of these update modes depending on how upstream ships them:
+This fragment checks daily and reports available updates without installing them. The interval is in hours and the start time uses `HH:MM`. Settings belong inside the selected service or instance; source pins can disable scheduling. See [Auto-update](auto-update.md) for supported strategies and automatic installation.
 
-- **GitHub source/release services** use `release_version_enabled`, `release_version`, exact `commit_sha` pins, `branch_enabled`, and `branch`.
-- **Pinned binary services** use `pinned_version`.
-- **Instance-based services** store the same update fields inside each instance.
+The DUMB container itself is updated through your Docker deployment. An available API update notice does not replace the container automatically.
 
-Use the service page's **Updates** panel to see whether an update is available,
-whether a version, exact commit, or branch blocks automatic installation, and
-when the next scheduled check will run.
+## Stop the container
 
----
+Use your deployment tool's normal stop action. DUMB stops managed processes and unmounts rclone during shutdown. The maintained Compose example allows 30 seconds:
 
-## Shutdown Handling
-DUMB handles graceful shutdown of all services. 
-
-This includes:
-
-- Stopping running processes
-- Unmounting rclone mounts
-- Syncing configuration states
-
-The maintained Compose file currently allows 30 seconds for clean shutdown:
 ```yaml
 services:
   DUMB:
     stop_grace_period: 30s
 ```
 
----
+Allow active backups, migrations, and restore jobs to finish before stopping DUMB. Closing their browser panels does not stop the backend work.
 
-## Tips
-- Always monitor `/log/*.log` files for troubleshooting or monitor the logs from the **DUMB Frontend**.
-- Logs can be colored if `color_log` is enabled in the config.
+## Find the next step
 
----
-
-## Related Docs
-- [Configuration](configuration.md)
-- [Services Overview](../services/index.md)
-- [API](../api/index.md)
+- [Configuration](configuration.md) explains saved settings and environment overrides.
+- [Service pages](../frontend/service-pages.md) maps the dashboard controls.
+- [Startup lifecycle](startup-lifecycle.md) explains a stack that remains starting or degraded.
+- [API](../api/index.md) documents scripted controls.

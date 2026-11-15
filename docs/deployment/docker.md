@@ -1,311 +1,149 @@
 ---
 title: Deploy with Docker
-description: Install DUMB with Docker Compose on Linux using persistent storage, required mounts, ports, credentials, and guided first-run setup.
+description: Install DUMB with Docker Compose on Linux, prepare persistent directories, set user IDs, and verify the dashboard and first-run setup.
 icon: fontawesome/brands/docker
 ---
 
 # Deploy with Docker
 
-This guide assumes you have never used Docker before. It walks through what Docker
-is, how Docker Compose works, how to install Docker on Ubuntu, and how to deploy
-DUMB cleanly with persistent storage.
+Use Docker Compose to run DUMB on a Linux host. If you already manage containers with [Portainer](portainer.md) or [Dockge](dockge.md), use that guide instead. Windows users should prepare [WSL2](wsl.md) first.
 
-!!! tip "Want a graphical Docker experience?"
+## 1. Check Docker Engine and Compose
 
-    [Portainer](portainer.md) is a great option if you want a web UI for managing
-    containers, logs, and volumes. If you want to deploy DUMB with Portainer
-    Stacks, follow the [Portainer deployment guide](portainer.md) instead.
+You need Docker Engine, the Compose plugin, a supported 64-bit host (`amd64` or `arm64`), and a non-root account with permission to use Docker. Commands below use `sudo` for Docker operations.
 
----
-
-## Prerequisites
-
-Before you begin, confirm you have:
-
-- A system running **Ubuntu 20.04 or later**
-- A **non-root user** with `sudo` privileges
-- An active internet connection
-- Access to a terminal
-
-!!! warning "Avoid the Snap package"
-
-    Do not install Docker via Snap. The Snap build often breaks networking,
-    volume mounts, and socket permissions required by DUMB. Use the official
-    Docker install method in this guide instead.
-
-!!! tip "Windows users"
-
-    If you're on Windows, use the [Windows Setup Guide (Docker/WSL)](wsl.md).
-
----
-
-## What Docker and Docker Compose do
-
-Docker runs applications inside **containers**, which are isolated environments
-that package the app and its dependencies. Docker Compose is a helper tool that
-starts one or more containers using a `docker-compose.yml` file.
-
-For DUMB, Compose:
-
-- Pulls the DUMB image from a registry
-- Creates a container with your settings
-- Mounts your local folders so configs and logs persist
-- Exposes the frontend, which also proxies the API and embedded service UIs
-
----
-
-## Install Docker (official method)
-
-1. Download the official installer:
-
-    ```bash
-    curl -fsSL https://get.docker.com -o get-docker.sh
-    ```
-
-2. Run it and follow any prompts:
-
-    ```bash
-    sh get-docker.sh
-    ```
-
-!!! note "WSL detected"
-
-    If the installer reports WSL, follow the [Windows Setup Guide (Docker/WSL)](wsl.md).
-
----
-
-## Install Docker on other Linux distributions
-
-If you are not on Ubuntu, use the official Docker Engine instructions for your OS:
-
-- **Debian**: https://docs.docker.com/engine/install/debian/
-- **Fedora**: https://docs.docker.com/engine/install/fedora/
-- **RHEL/CentOS**: https://docs.docker.com/engine/install/centos/
-- **Arch**: https://docs.docker.com/engine/install/archlinux/
-
-Use the Docker Engine package (not Snap). Once installed, return to this guide
-and continue from **Confirm Docker and Compose are installed**.
-
----
-
-## Confirm Docker and Compose are installed
-
-1. Check the Docker version:
-
-    ```bash
-    docker --version
-    ```
-
-2. Check Docker Compose version:
-
-    ```bash
-    docker compose version
-    ```
-
-Example output:
+Install Docker using its official package instructions for [Ubuntu](https://docs.docker.com/engine/install/ubuntu/), [Debian](https://docs.docker.com/engine/install/debian/), or your distribution. Use a currently supported OS release. Docker's convenience script is intended for testing and development, so use the package repository for an ongoing installation.
 
 ```bash
-Docker version 26.1.4, build 5650f9b
-Docker Compose version v2.24.2
+docker --version
+docker compose version
+sudo docker run --rm hello-world
 ```
 
----
+Avoid the Snap build for DUMB; its confinement can interfere with the mount and device access used by FUSE workflows. If you prefer Docker without `sudo`, follow [Docker's Linux post-installation guide](https://docs.docker.com/engine/install/linux-postinstall/). Membership in the `docker` group grants control equivalent to host root.
 
-## Optional: allow non-root Docker usage
+## 2. Prepare persistent storage
 
-By default, Docker commands require `sudo`. If you want to run Docker without
-`sudo`, add your user to the `docker` group.
+Create a directory as the non-root account that will own DUMB's application data:
 
 ```bash
-sudo usermod -aG docker $USER
+mkdir -p "$HOME/docker/DUMB"/{config,log,data,mnt/debrid}
+cd "$HOME/docker/DUMB"
+id -u
+id -g
 ```
 
-Log out and back in (or reboot) so group membership refreshes.
+Keep the numeric UID and GID for the next step. `PUID` and `PGID` must be greater than zero.
 
-If you skip this step, keep using `sudo` for Docker commands.
+| Host subdirectory | Path inside DUMB | Contents |
+|---|---|---|
+| `config` | `/config` | DUMB settings, authentication, and feature state |
+| `log` | `/log` | DUMB and collected application logs |
+| `data` | `/data` | Persistent application data |
+| `mnt/debrid` | `/mnt/debrid` | Mounts, generated links, and library paths |
 
----
+DUMB maps internal application paths such as `/plex` and `/postgres_data` into `/data`. Do not add a separate bind mount for every service on a new installation.
 
-## Define the directory structure
-
-These folders store configs, logs, and data **outside** the container, so they
-survive upgrades and restarts.
-
-1. Create a workspace:
-
-    ```bash
-    cd ~
-    mkdir -p docker
-    cd docker
-    ```
-
-2. Create DUMB directories:
-
-    ```bash
-    mkdir -p DUMB/config DUMB/log DUMB/data DUMB/mnt/debrid
-    ```
-
----
-
-!!! info "Stopping here for Portainer"
-
-    If you plan to deploy DUMB via Portainer **Stacks**, stop after creating the
-    directory structure. You will paste the `docker-compose.yml` into Portainer
-    and deploy it from there instead of running `docker compose` on the host.
-
-## Download and edit `docker-compose.yml`
-
-1. Download the latest Compose file:
-
-    ```bash
-    curl -O https://raw.githubusercontent.com/I-am-PUID-0/DUMB/master/docker-compose.yml
-    ```
-
-2. Replace the default path with your home directory:
-
-    ```bash
-    sed -i "s|/home/username/docker/DUMB|$HOME/docker/DUMB|g" docker-compose.yml
-    ```
-
-3. Fill in `TZ`, `PUID`, and `PGID`:
-
-    ```bash
-    read -p "Enter your timezone [UTC]: " TZ && TZ=${TZ:-UTC} && \
-    sed -i \
-      -e "s|TZ=|TZ=$TZ|" \
-      -e "s|PUID=|PUID=$(id -u)|" \
-      -e "s|PGID=|PGID=$(id -g)|" \
-      docker-compose.yml
-    ```
-
-!!! tip "Timezone format"
-
-    Use a region format like `America/New_York` or `Europe/London`.
-
----
-
-## Start DUMB with Docker Compose
-
-Run the container in detached mode:
+## 3. Download and edit the Compose file
 
 ```bash
+curl --fail --show-error --location \
+  https://raw.githubusercontent.com/I-am-PUID-0/DUMB/master/docker-compose.yml \
+  --output docker-compose.yml
+```
+
+Open `docker-compose.yml` and review:
+
+| Setting | What to enter |
+|---|---|
+| Host volume paths | Replace `/home/username/docker/DUMB` with the absolute directory created above |
+| `PUID`, `PGID` | The nonzero values returned by `id -u` and `id -g` |
+| `TZ` | A time zone such as `Etc/UTC` |
+| Image | `iampuid0/dumb:latest` for the stable channel; see [documentation versions](../reference/doc-versions.md) for development |
+| Ports | Keep `3005:3005` for normal dashboard/API access |
+| `/dev/dri` | Keep for supported GPU acceleration; remove this device mapping if the host has no such device |
+| `/dev/fuse`, `SYS_ADMIN`, AppArmor option | Required by workflows that create FUSE/rclone mounts |
+
+For example, the environment section can use:
+
+```yaml
+environment:
+  - TZ=Etc/UTC
+  - PUID=1000
+  - PGID=1000
+```
+
+Use your actual user IDs. Do not leave the template's ID fields blank.
+
+!!! note "External consumers of FUSE mounts"
+
+    A private `/mnt/debrid` bind is sufficient if all consumers run inside DUMB. If an external Arr or media-server container needs DUMB-created submounts, prepare a shared Linux host mount before adding `:rshared`. See [Before you install](../getting-started/installation.md#decide-who-reads-the-library). Docker Desktop does not support this propagation.
+
+## 4. Start DUMB
+
+From the directory containing the Compose file:
+
+```bash
+sudo docker compose config --quiet
 sudo docker compose up -d
+sudo docker compose logs --follow --tail=100
 ```
 
-Example output:
+The first start may take longer while services are installed. Leave the process running and inspect the logs for the actual failure if startup stalls. Press `Ctrl+C` to leave the log viewer; this does not stop the detached container.
+
+## 5. Open the dashboard
+
+Open `http://<host>:3005`, then complete [onboarding](../frontend/onboarding.md). The same listener forwards REST requests under `/api` and WebSockets under `/ws`.
+
+The backend-native API binds to `127.0.0.1:8000` inside DUMB and is not published by the maintained Compose file.
+
+If the page is unavailable, check:
 
 ```bash
-[+] Running 2/2
- Container DUMB  Started
- Network docker_default  Created
+sudo docker compose ps
+sudo docker compose logs --tail=200
 ```
 
-The container now runs in the background.
+Confirm the published port, host firewall, and address. A service that starts successfully still needs its accounts, providers, root folders, and media libraries configured before an import/playback test.
 
----
+## Direct service access
 
-## Access the UI
+Embedded UIs can use the dashboard address. When another client needs a native service port, add it alongside `3005`, using the assigned runtime port:
 
-By default:
+```yaml
+ports:
+  - "3005:3005"
+  - "7878:7878"   # Radarr, if its configured port is 7878
+  - "32400:32400" # Plex
+```
 
-- **DUMB Frontend**: `http://<host>:3005`
-- **DUMB API through the frontend**: `http://<host>:3005/api`
+Apply changes with `sudo docker compose up -d`. Compare bridge and host networking in [Networking and ports](networking.md).
 
-The backend-native API listens on container loopback `127.0.0.1:8000` and is not published by the maintained Compose file.
+Do not publish `8000` for normal use. A mapping alone cannot expose its loopback listener; direct backend access also requires an intentional bind-address change and appropriate access controls.
 
-If you do not see the UI:
-
-- Confirm the container is running: `sudo docker ps`
-- Check logs: `sudo docker logs -f DUMB`
-- Ensure ports are exposed in your `docker-compose.yml`
-- See [Service ports](../reference/ports.md)
-
----
-
+<!-- dev:start -->
 ## Optional Audiobookshelf storage
 
-When Audiobookshelf is enabled, its default database and metadata live under `/data/audiobookshelf/config` and `/data/audiobookshelf/metadata`. The normal `/data` volume preserves them across container replacement. Add separate media mounts for your books and podcasts.
+The normal `/data` mount preserves `/data/audiobookshelf/config` and `/data/audiobookshelf/metadata`. Add separate media mounts for books and podcasts. The SQLite configuration directory must be on local storage; if `/data` is network-backed, use a separate local bind and set `audiobookshelf.config_dir` to that container path. See [Audiobookshelf](../services/optional/audiobookshelf.md).
+<!-- dev:end -->
 
-Audiobookshelf's SQLite configuration directory needs local storage. If `/data` is network-backed, use a separate local bind and set `audiobookshelf.config_dir` to that container path. See the [Audiobookshelf guide](../services/optional/audiobookshelf.md) for mounts and first-time setup.
+## Update or stop
 
----
-
-## Expose ports for direct UI access
-
-Docker only exposes ports you explicitly map in your `docker-compose.yml`.
-If a UI is not reachable, it usually means the port is not mapped.
-
-See [Docker Networking and Ports](networking.md) for a complete comparison of
-selected port publishing and `network_mode: host`.
-
-The maintained Compose file publishes only the DUMB Frontend:
-
-```yaml
-services:
-  DUMB:
-    ports:
-      - "3005:3005"
-```
-
-!!! danger "Direct backend API exposure"
-
-    Adding `8000:8000` alone is not sufficient because the API binds to `127.0.0.1` inside the container. If you intentionally need the backend directly, set `DUMB_API_SERVICE_HOST=0.0.0.0`, publish `8000:8000`, enable DUMB authentication, and restrict the port with a firewall or trusted network. Native backend routes do not include `/api`; for example, `/process/processes`.
-
-Example: expose an Arr service UI (Radarr).
-
-```yaml
-services:
-  DUMB:
-    ports:
-      - "7878:7878"
-```
-
-!!! info "Reverse proxy or embedded UIs"
-
-    If you use a reverse proxy (Traefik, Nginx, Caddy) or DUMB’s embedded UIs,
-    you can avoid exposing every service port directly.
-
-After updating ports, restart the stack:
+To adopt a new DUMB image while preserving bind-mounted data:
 
 ```bash
-sudo docker compose down
+sudo docker compose pull
 sudo docker compose up -d
 ```
 
----
+DUMB's application auto-updates are separate from replacing the container image. Review [Auto-update](../features/auto-update.md).
 
-## Common Docker commands
+To stop without removing the container, use `sudo docker compose stop`. `sudo docker compose down` removes the container and Compose network while leaving the bind-mounted directories in place. Keep a backup before upgrades or storage changes.
 
-### Attach to the running container
-
-```bash
-sudo docker attach DUMB
-```
-
-### Detach without stopping
-
-Press `Ctrl + P` then `Ctrl + Q` to detach and leave it running.
-
-!!! important "Avoid Ctrl+C"
-
-    `Ctrl+C` stops the container if it is attached to your terminal.
-
-### View logs
+For a shell when diagnosing a problem:
 
 ```bash
-sudo docker logs -f DUMB
+sudo docker compose exec DUMB bash
 ```
 
-### Stop and remove the container
-
-```bash
-sudo docker compose down
-```
-
----
-
-## Next steps
-
-- Continue setup in the [DUMB Frontend](../services/dumb/dumb-frontend.md)
-- Review [Configuration](../features/configuration.md)
-- Use [Service ports](../reference/ports.md) to expose UIs as needed
+Use `exit` to leave the shell. If you attach to the container's main process instead, Docker's default detach sequence is `Ctrl+P`, then `Ctrl+Q`.

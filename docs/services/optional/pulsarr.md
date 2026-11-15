@@ -10,12 +10,25 @@ Pulsarr monitors Plex watchlists and routes requested movies and shows to Sonarr
 
 ---
 
+## Initial setup
+
+After enabling and starting Pulsarr:
+
+1. Open Pulsarr from the DUMB service page or at `http://<host>:3003`.
+2. Create the Pulsarr admin account.
+3. Add your Plex token.
+4. Configure Sonarr and Radarr connections with their DUMB internal URLs and API keys.
+5. Start the main workflow from Pulsarr's dashboard and enable auto-start if desired.
+
+---
+
+<!-- dev:start -->
 ## Setup checklist and remaining work
 
 Select exact Sonarr/Radarr and media-server connections with discovered profiles, roots and default routes where supported. Authorize the administrator, provide required metadata credentials, then choose watchlists, approvals, quotas, notifications and activation. A connection does not establish active watchlist processing.
 
 Requires the backend setup-arrangement capability. See [Setup checklist and automation](../../features/setup-checklist.md) for retained tasks, coverage and safe retries.
-
+<!-- dev:end -->
 
 ## Overview
 
@@ -37,9 +50,13 @@ Pulsarr provides:
 
 ---
 
+<details class="geek-details" markdown="1">
+<summary>Technical details: configuration reference</summary>
+
 ## Configuration settings in `dumb_config.json`
 
 ```json
+{
 "pulsarr": {
   "enabled": false,
   "postgres_enabled": false,
@@ -80,6 +97,7 @@ Pulsarr provides:
     "allowIframes": "true"
   }
 }
+}
 ```
 
 ### Configuration key descriptions
@@ -101,17 +119,7 @@ Pulsarr provides:
 
 ---
 
-## Initial setup
-
-After enabling and starting Pulsarr:
-
-1. Open Pulsarr from the DUMB service page or at `http://<host>:3003`.
-2. Create the Pulsarr admin account.
-3. Add your Plex token.
-4. Configure Sonarr and Radarr connections with their DUMB internal URLs and API keys.
-5. Start the main workflow from Pulsarr's dashboard and enable auto-start if desired.
-
----
+</details>
 
 ## Notes
 

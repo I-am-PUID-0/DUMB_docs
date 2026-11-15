@@ -1,13 +1,12 @@
 ---
 title: WebSocket API
+description: Connect to DUMB status, metrics, and log WebSockets, authenticate clients, interpret payloads, and reconnect after transport or token failures.
 icon: lucide/radio
 ---
 
 # WebSocket API
 
 DUMB provides three WebSocket endpoints for real-time streaming of logs, service status, and system metrics.
-
----
 
 ## Overview
 
@@ -19,8 +18,6 @@ DUMB provides three WebSocket endpoints for real-time streaming of logs, service
 
 All WebSocket endpoints support authentication via query parameter when auth is enabled.
 
----
-
 ## Authentication
 
 When authentication is enabled, include the access token as a query parameter:
@@ -30,8 +27,6 @@ ws://localhost:3005/ws/status?token=eyJhbGciOiJIUzI1NiIs...
 ```
 
 If the token is missing or invalid, the connection will be rejected with a close code.
-
----
 
 ## Status WebSocket
 
@@ -125,8 +120,6 @@ With `health=true`, the payload uses `processes`:
 | `health_details` | object | Bounded probe type, endpoint path, response status, latency, and component states when available |
 | `restart` | object | Current auto-restart counters, pending/disabled state, timestamps, and health threshold |
 
----
-
 ## Metrics WebSocket
 
 ### Endpoint
@@ -150,6 +143,8 @@ Streams real-time system metrics including CPU, memory, selected filesystem, and
 | `history_bucket` | integer | automatic | Requested history bucket size in seconds |
 | `history_points` | integer | `600` | Maximum prepared series points in a bootstrap payload |
 | `token` | string | - | JWT access token (required if auth enabled) |
+
+The metrics publisher is shared between clients and uses the shortest requested active interval. Treat `interval` as a requested cadence rather than a guarantee of an independent per-client timer.
 
 ### Connection example
 
@@ -258,78 +253,37 @@ When `bootstrap=true`, the initial message has `type: "bootstrap"` and includes
 | **Processes** | `dumb_managed` / `external` | Managed and bounded external process metrics |
 | **Database** | `database_health` | Opt-in database/store health snapshot |
 
----
-
 ## Logs WebSocket
 
-### Endpoint
-
-```
-/ws/logs
-```
-
-Streams real-time log output from all DUMB-managed services.
-
-### Query parameters
-
-| Parameter | Type | Default | Description |
-|-----------|------|---------|-------------|
-| `token` | string | - | JWT access token (required if auth enabled) |
-
-### Connection example
-
-```javascript
-const ws = new WebSocket('ws://localhost:3005/ws/logs?token=...');
-
-ws.onmessage = (event) => {
-  // Each message is a log line
-  appendToLogViewer(event.data);
-};
-```
-
-### Message format
-
-Log messages are sent as plain text lines:
-
-```
-Apr 12, 2025 10:04:01 - INFO - Riven Backend started
-Apr 12, 2025 10:04:02 - DEBUG - Processing request...
-Apr 12, 2025 10:04:03 - ERROR - Connection failed: timeout
-```
-
-!!! info "Client-side filtering"
-
-    The server broadcasts all logs to connected clients. Filtering by process name, log level, or search term should be implemented client-side.
+Connect to `/ws/logs` for text log lines from the shared DUMB stream. Filter
+process names, levels, and search text in the client. The server does not replay
+missed messages after reconnection; recover retained history through [GET /logs](logs.md).
 
 ### Ping/pong heartbeat
 
-Send a ping message to keep the connection alive:
+Send plain text `ping` or `{"type":"ping"}`; the response is plain text `pong`.
+Do not parse every log-stream message as JSON.
 
-```json
-{"type": "ping"}
-```
-
-Response (the plain-text `ping` input is also accepted):
-
-```
-pong
-```
-
----
+See [WebSocket Logs API](websocket_logs.md) for a complete client example.
 
 ## Connection management
 
 ### Reconnection strategy
 
-WebSocket connections may drop due to network issues. Implement automatic reconnection:
+Use `wss://` with HTTPS deployments. Reconnect after transient failures with bounded backoff. Handle authentication failure separately so an invalid token does not cause an endless retry loop. This example assumes the token is valid:
 
 ```javascript
+let reconnectDelay = 500;
+const socketURL = 'ws://localhost:3005/ws/status?token=...';
+
 function connectWebSocket() {
-  const ws = new WebSocket('ws://localhost:3005/ws/status?token=...');
+  const ws = new WebSocket(socketURL);
+  ws.onopen = () => { reconnectDelay = 500; };
 
   ws.onclose = () => {
     // Reconnect after delay with exponential backoff
-    setTimeout(connectWebSocket, Math.min(reconnectDelay * 2, 10000));
+    setTimeout(connectWebSocket, reconnectDelay);
+    reconnectDelay = Math.min(reconnectDelay * 2, 10000);
   };
 
   ws.onerror = (error) => {
@@ -337,6 +291,8 @@ function connectWebSocket() {
     ws.close();
   };
 }
+
+connectWebSocket();
 ```
 
 ### Multiple connections
@@ -346,8 +302,6 @@ The frontend typically maintains separate connections for each WebSocket endpoin
 - One connection for `/ws/status` (service monitoring)
 - One connection for `/ws/metrics` (system charts)
 - One connection for `/ws/logs` (log viewer, when active)
-
----
 
 ## Error handling
 
@@ -371,17 +325,18 @@ ws.onclose = (event) => {
 };
 ```
 
----
-
 ## Python client example
 
 ```python
 import asyncio
 import websockets
 import json
+import os
+from urllib.parse import urlencode
 
 async def monitor_status():
-    uri = "ws://localhost:3005/ws/status?interval=2&health=true"
+    query = urlencode({"interval": 2, "health": "true", "token": os.environ["DUMB_ACCESS_TOKEN"]})
+    uri = f"ws://localhost:3005/ws/status?{query}"
 
     async with websockets.connect(uri) as websocket:
         async for message in websocket:
@@ -391,8 +346,6 @@ async def monitor_status():
 
 asyncio.run(monitor_status())
 ```
-
----
 
 ## Related pages
 

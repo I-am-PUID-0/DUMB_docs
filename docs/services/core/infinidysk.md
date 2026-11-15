@@ -8,10 +8,22 @@ icon: lucide/cloud
 
 **InfiniDysk** is a combined backend + frontend WebDAV service for **Usenet** workflows. In DUMB it runs as a single service that exposes a Web UI, a WebDAV endpoint for browsing/serving content, and a backend API used for automation.
 
+<!-- dev:start -->
 DUMB keeps InfiniDysk 1.x as the default. DUMB API 2.24.0 or newer can offer the
 separate [InfiniDysk 2 installation and upgrade wizard](../../features/infinidysk-v2-migration.md).
 The workflow below describes the default 1.x integration unless a section says otherwise.
+<!-- dev:end -->
 
+## First start
+
+1. Choose InfiniDysk as your Usenet workflow in onboarding.
+2. Open InfiniDysk and add/test your NNTP provider accounts. Allocate connections within each provider's account limit.
+3. Review the selected Arr clients, categories, and library paths. Add and test indexers in Prowlarr or the Arr application.
+4. Verify that the mount is readable, then test an intended import and playback through your media server.
+
+Existing NzbDAV installations should read [Migration from NzbDAV](infinidysk-migration.md) before changing names or paths.
+
+<!-- dev:start -->
 ## Setup checklist and remaining work
 
 Choose intended Arr instances and provider accounts in the setup checklist. Other selected Usenet clients can reference InfiniDysk's accounts with separate connection allocations. Review the shared limit, add/test indexers, verify mount access and test a real import. Runtime readiness and Arr connections are separate results.
@@ -24,8 +36,7 @@ mount selection. Refresh the setup plan afterward; native account/provider,
 Arr-link and import-strategy work remains manual where no generation 2 adapter
 is advertised. Native FUSE excludes the associated rclone dependency while
 preserving the existing consumer path.
-
-
+<!-- dev:end -->
 
 ## Workflow diagram
 
@@ -75,7 +86,13 @@ flowchart TD
 | Classification | Role                                                     |
 | -------------- | -------------------------------------------------------- |
 | Core Service   | NZB WebDAV gateway                                       |
+<!-- dev:start -->
 | Mount          | [rclone](../dependent/rclone.md) by default; optional native FUSE with generation 2 |
+<!-- dev:end -->
+<!-- release:start -->
+| Mount | [rclone](../dependent/rclone.md) |
+<!-- release:end -->
+
 | Optional       | Sonarr, Radarr, Lidarr, Whisparr, Prowlarr, NeutArr      |
 | Exposes UI     | Yes (Web UI + WebDAV)                                    |
 
@@ -92,13 +109,23 @@ InfiniDysk also exposes a **Usenet download client** path in Arr by emulating a 
 
 !!! info "WebDAV endpoint"
 
-    Generation 1 has separate frontend and backend listeners. DUMB's managed
-    rclone uses the internal backend WebDAV endpoint; the frontend can proxy
-    WebDAV for clients. Generation 2 serves its UI, API and WebDAV from one
-    HTTP listener on `frontend_port` and uses its native login for WebDAV Basic
-    authentication. Keep existing external stream origins reachable.
+    InfiniDysk 1.x has separate frontend and backend listeners. Managed rclone
+    uses the internal backend WebDAV endpoint; the frontend can proxy WebDAV
+    for clients. Keep existing external stream origins reachable.
 
 ---
+
+!!! warning "WebDAV credentials"
+
+    If `webdav_password` is blank, DUMB generates one at startup and stores it in the config.
+    Change the password before exposing InfiniDysk outside your trusted network.
+
+!!! danger "Protect API keys"
+
+    `FRONTEND_BACKEND_API_KEY` grants backend access. Treat it like a secret and avoid committing it to source control.
+
+<details class="geek-details" markdown="1">
+<summary>Technical details: configuration reference</summary>
 
 ## Configuration in `dumb_config.json`
 
@@ -112,6 +139,7 @@ InfiniDysk also exposes a **Usenet download client** path in Arr by emulating a 
     follow the maintained repository automatically; intentional custom forks
     remain unchanged. User-visible identity changes remain opt-in.
 
+<!-- dev:start -->
 !!! important "Supported InfiniDysk versions"
 
     `runtime_generation: "1"` remains the default. Its `latest` and `prerelease`
@@ -127,6 +155,7 @@ InfiniDysk also exposes a **Usenet download client** path in Arr by emulating a 
     field does not convert a database. See the
     [upgrade guide](../../features/infinidysk-v2-migration.md) for eligibility,
     mount choices and current containment limitations.
+<!-- dev:end -->
 
 !!! tip "Support the maintainer"
 
@@ -136,6 +165,7 @@ InfiniDysk also exposes a **Usenet download client** path in Arr by emulating a 
     **Settings → About**.
 
 ```json
+{
 "infinidysk": {
     "enabled": false,
     "process_name": "InfiniDysk",
@@ -175,10 +205,11 @@ InfiniDysk also exposes a **Usenet download client** path in Arr by emulating a 
     "log_file": "/log/infinidysk.log",
     "webdav_password": "",
     "env": {}
-},
+}
+}
 ```
 
-### Key Configuration Fields
+### Key configuration fields { #key-configuration-fields }
 
 * `enabled`: Toggle to run InfiniDysk via DUMB.
 * `frontend_port`: Port for the Web UI and WebDAV endpoint.
@@ -202,6 +233,7 @@ InfiniDysk also exposes a **Usenet download client** path in Arr by emulating a 
 * `log_file`: Path for the consolidated InfiniDysk log.
 * `env`: Optional environment variables (see below).
 
+<!-- dev:start -->
 ### Generation 2 configuration
 
 The wizard prepares these fields after reviewing an eligible fresh installation
@@ -231,281 +263,33 @@ runtime lock, preserving the saved native setting and rejecting conflicting
 mode overrides. See the [compatibility authentication policy](../../features/infinidysk-v2-migration.md#authentication-with-the-retained-backend-port)
 before changing listener ports or native authentication.
 
-!!! warning "WebDAV credentials"
-
-    If `webdav_password` is blank, DUMB generates one at startup and stores it in the config.
-    Change the password before exposing InfiniDysk outside your trusted network.
+<!-- dev:end -->
 
 ### PostgreSQL in InfiniDysk v1.2.0+
 
-InfiniDysk v1.2.0 added optional PostgreSQL support for its **main operational
-database**. SQLite remains the DUMB default. On a fresh installation, setting
-`postgres_enabled: true` makes DUMB enable/start its managed PostgreSQL service,
-create the configured `postgres_database`, and supply InfiniDysk's upstream
-`DATABASE_PROVIDER=postgres` and `DATABASE_CONNECTION_STRING` values from
-DUMB's PostgreSQL settings.
+SQLite remains the default. Fresh compatible 1.x installs can select PostgreSQL for the main database; existing SQLite installs must use **Database Migration** and pass rehearsal before cutover. The helper stores stay local and still need filesystem backups.
 
-!!! danger "Do not toggle an existing SQLite installation directly"
-
-    Upstream InfiniDysk currently supports choosing PostgreSQL for a fresh
-    installation; it does not provide an in-place `db.sqlite` migration. On an
-    existing SQLite installation, leave `postgres_enabled: false` and open
-    **Database Migration** from the InfiniDysk service page after the backend
-    advertises `postgres_migration` with `infinidysk` in
-    `postgres_migration_service_keys`. DUMB fails closed if an existing main
-    SQLite store is pointed directly at PostgreSQL; the guided tool is required.
-
-    DUMB's migration is a separate guarded workflow: preflight is non-mutating
-    and a successful rehearsal is required. Official v1.2.0 commit
-    [`8c960ffc39fc85fdf9166aafd6cb2846878ec3c2`](https://github.com/infinidysk/infinidysk/commit/8c960ffc39fc85fdf9166aafd6cb2846878ec3c2)
-    is the audited schema baseline rather than a runtime pin. Official stable
-    v1.2.0-or-newer runtimes are allowed only if both the source SQLite database
-    and migration-only staged PostgreSQL database exactly match DUMB's supported
-    contract. The newest audited database contract is InfiniDysk v1.2.5.
-    Missing, extra, or changed schema objects or migration-history
-    entries block the operation until DUMB is updated. Cutover takes a fresh
-    cold backup, resets the named target, imports and validates the main store,
-    and changes the provider only after validation succeeds. A failed cutover
-    restores the saved SQLite configuration automatically.
-
-    InfiniDysk v1.2.6 and newer write a machine-readable
-    [`db-contract.json`](https://www.infinidysk.com/operations/postgresql/#database-contract-file-since-126)
-    after every successful migration pass. DUMB verifies that the source file
-    describes the live SQLite provider and exact applied migration history, then
-    requires the isolated staging run to write a matching PostgreSQL contract.
-    A present but malformed, stale, unsafe, or mismatched contract blocks the
-    operation. A missing file warns and falls back to DUMB's exact audited checks
-    so v1.2.0-v1.2.5 remain supported. The file does not make an unknown schema
-    automatically safe; DUMB must still carry an audited schema/catalog contract
-    for that history.
-
-    After a guarded cutover, DUMB blocks directly toggling PostgreSQL off. Use
-    the migration job's explicit rollback action promptly when validation
-    fails; it validates the preserved source before restart. PostgreSQL writes
-    are not merged back into SQLite.
-
-    Cutover also stores the exact full commit of the runtime that performed the
-    migration. PostgreSQL does not permanently pin InfiniDysk to stable release
-    mode: official release tags, branches, and full commit pins remain usable
-    when GitHub proves that the selected commit is the cutover commit or a
-    descendant. DUMB rejects older, diverged, or unverifiable targets before
-    saving the source selection or starting the service.
-
-    Treat that recorded commit as a permanent minimum version notice for the
-    PostgreSQL deployment. Installing anything older requires a guarded rollback
-    to SQLite first, and rollback does not merge later PostgreSQL writes into the
-    preserved SQLite database.
-
-    Complete any NzbDAV-to-InfiniDysk identity or full namespace migration
-    before making any PostgreSQL selection or starting Database Migration. The
-    full workflow rewrites and validates the SQLite main store, while an
-    identity rename would disconnect guarded rollback job lookup. DUMB
-    therefore blocks every namespace mode once PostgreSQL is selected.
-
-PostgreSQL replaces only `db.sqlite`. These stores remain local beneath the
-InfiniDysk configuration directory and still need filesystem backups:
-
-- `metrics.sqlite`
-- `warden.db`
-- `usenet-migration.db`
-- `blobs/`, `session.key`, and the rest of the application configuration
-
-InfiniDysk's application backup does not include the PostgreSQL main database.
-A complete backup therefore needs both:
-
-1. a tested logical `pg_dump`/`pg_restore` workflow for the configured
-   PostgreSQL database; and
-2. a filesystem backup of the InfiniDysk configuration/data directory,
-   including the local SQLite helper stores, blobs, and `session.key`.
-
-DUMB keeps job-specific SQLite and configuration backups under
-`/config/arr-postgres-migration`, but that recovery bundle is not a substitute
-for a verified independent backup stored outside the paths DUMB manages.
+Read the [InfiniDysk 1 PostgreSQL procedure](infinidysk-postgres.md) for supported schema contracts, source-version safeguards, backups, and rollback limits. Complete any NzbDAV identity or namespace migration first.
 
 #### Guarded migration checklist
 
-1. Verify an independent filesystem backup of the complete InfiniDysk
-   configuration directory before rehearsal or cutover.
-2. Open **Database Migration**, run preflight, and resolve every blocker.
-3. Run the required rehearsal. InfiniDysk remains on SQLite while DUMB runs only
-   the migration maintenance command and imports and validates the isolated
-   PostgreSQL staging database; the normal application is never booted against
-   staging.
-4. Review the safeguards and start guarded cutover. DUMB takes a fresh cold
-   snapshot, imports it, validates it, and only then enables PostgreSQL. Cutover
-   requires the SQLite service to be running and healthy and does not complete
-   until the PostgreSQL service reports healthy through both `/health` and
-   `/ready`.
-5. Verify the InfiniDysk UI, provider/queue/history state, WebDAV or rclone
-   access, Arr categories and download client, plus representative playback
-   and seeking. Confirm the three auxiliary SQLite stores are still healthy.
-
-!!! warning "Validate before accepting PostgreSQL writes"
-
-    Roll back from the migration panel promptly if validation fails. Rollback
-    restores the preserved main SQLite state; it cannot copy later PostgreSQL
-    writes back into SQLite. The auxiliary SQLite stores never move.
-
-See [SQLite to PostgreSQL Migration](../../features/arr-postgres-migration.md)
-for the complete rehearsal, cutover, validation, backup, and rollback flow.
-
-See [PostgreSQL](../dependent/postgres.md) for DUMB-managed database details and
-the [pgAdmin/pgAgent backup example](../../faq/pgadmin.md#example-scheduled-backups-with-pgagent)
-for scheduled logical backups. Upstream references include the
-[official PostgreSQL guide](https://github.com/infinidysk/infinidysk/blob/main/docs/operations/postgresql.md),
-[InfiniDysk v1.2.0](https://github.com/infinidysk/infinidysk/releases/tag/v1.2.0),
-[native migration issue #1012](https://github.com/infinidysk/infinidysk/issues/1012),
-and [InfiniDysk PR #1013](https://github.com/infinidysk/infinidysk/pull/1013).
+Back up independently, run preflight and rehearsal, review cutover, then validate the UI, queues, WebDAV, Arr connections, and playback. Follow the [full checklist](infinidysk-postgres.md#guarded-migration-checklist); a provider toggle does not migrate data.
 
 ### Tracking a moving InfiniDysk release tag
 
-InfiniDysk tags do not need a matching GitHub Release. To track a tag such as
-`dev`, enable the release selector and use the tag name:
-
-```json
-"infinidysk": {
-    "release_version_enabled": true,
-    "release_version": "dev",
-    "commit_sha": "",
-    "branch_enabled": false,
-    "auto_update": true
-}
-```
-
-DUMB treats any digit-free InfiniDysk tag, such as `dev`, `lts`, or `edge`, as a
-moving release channel. With `auto_update: true`, DUMB checks it at the normal
-configured interval and installs it when the underlying commit changes. Manual
-**Check for updates** and **Install update** remain available.
-
-With `auto_update: false`, startup validates and keeps an already installed
-runtime even when the moving tag now points at another commit. DUMB does not
-turn a container restart into an implicit channel update. Use the Updates panel
-to install the newly resolved commit deliberately. If the installed backend or
-frontend runtime is incomplete, startup still attempts the configured channel
-so a broken or missing installation can recover.
-
-The installed marker is recorded as `dev-<short-sha>`. The source archive is
-downloaded by the resolved full SHA, so the installed source and recorded
-marker remain consistent even if the tag moves during the update.
+A moving tag resolves to an immutable source commit for installation. With automatic updates disabled, a healthy installed runtime stays in place at restart. See [release-tag selection](infinidysk-installation.md#tracking-a-moving-infinidysk-release-tag).
 
 ### Prebuilt archives and automatic source fallback
 
-For InfiniDysk release selectors, DUMB first looks for the official
-architecture-specific `linux-x64` or `linux-arm64` release archive. It requires
-GitHub's published SHA-256 digest, resolves the selected tag to its full commit,
-requires the release asset's target commit to still match that tag, validates
-the complete backend and frontend runtime, and activates them as one
-rollback-safe unit. DUMB selects the exact channel asset deterministically and
-accepts only InfiniDysk or legacy NzbDAV archive roots for the selected CPU architecture.
-This handles renamed rolling assets such as `rc`, whose downloaded archive can
-keep the concrete RC version in its internal root directory.
-
-If a selected tag has no GitHub Release object, has no compatible archive, or
-has release assets that lag behind a moved channel tag, DUMB automatically
-downloads the current resolved commit and uses its source-build path. The same
-fallback applies when archive verification fails. This keeps the service
-installable while making the fallback reproducible. Open the service page's
-**Updates** panel to see **Installed using**, the resolved release, the selected
-archive when applicable, and the prebuilt fallback reason.
-
-The practical channel behavior is:
-
-| Selector | DUMB behavior |
-| --- | --- |
-| `latest` | Resolve the current stable GitHub Release, then use its verified archive or source fallback |
-| `prerelease` | For the official InfiniDysk repository, follow the `rc` channel so a newer `dev` snapshot cannot be mistaken for an RC; then use its verified archive or source fallback |
-| `dev`, `rc`, `lts`, `edge` | Track the exact digit-free tag when it exists; use a matching verified release archive when published, otherwise build that tag's resolved commit |
-| Versioned/dated tag | Treat it as a fixed configured release; use its verified archive when published, otherwise build its resolved commit |
-| Full `commit_sha` or branch | Source build by design |
-
-!!! note "Why DUMB does not unpack the Docker image"
-
-    The official InfiniDysk container is Alpine/musl-based, while DUMB's
-    runtime and managed packages are Ubuntu/glibc-based. Extracting application
-    files from that image would also pull a runtime layout and native libraries
-    built for a different libc boundary. The official Ubuntu-built release
-    archives are the compatible prebuilt format for DUMB; source fallback is
-    the compatibility path when no usable archive exists.
-
-After a prebuilt install, DUMB starts the archive's framework-dependent native
-apphost against DUMB's compatible .NET runtime, even if a local .NET SDK remains
-from an older source build. Source installs continue to launch through the
-managed local SDK and application DLL.
-
-The same revision suffix remains visible for the rolling **prerelease** channel
-and for branch, exact-commit, or other moving-tag installs. Ordinary stable
-release versions are shown in the frontend as their clean release tag (for
-example, `v0.10.0`); DUMB retains the resolved commit internally for download,
-cache, and source-integrity checks rather than presenting it as part of the
-stable version.
-
-When the selected tag also has an architecture-specific InfiniDysk release archive,
-DUMB tries that archive first. The rolling `rc` GitHub Release is therefore a
-valid moving channel: DUMB resolves its current commit and asset digest before
-installing it. Branch and exact-commit selections remain source builds.
-
-DUMB accepts the current `infinidysk-<version>-linux-<arch>.tar.gz` release
-artifact and the former `nzbdav-<version>-linux-<arch>.tar.gz` name. The selected
-asset must include a published SHA-256 digest, and its archive root must match
-the asset name. When both names are published for one release, DUMB prefers the
-name matching the configured repository. A renamed official artifact therefore
-uses the verified prebuilt path instead of silently falling back to a source
-build.
-
-Existing installations whose marker is only `dev` perform one update to adopt
-the commit-aware marker. Tags containing any digit, such as `v0.9.5`,
-`2026.08.03`, or `dev2`, remain pinned configured releases and do not enable
-scheduled automatic updates. Use **Install configured release** to apply those
-tags intentionally.
+DUMB tries a verified matching prebuilt archive before source fallback. See [archive verification and source selection](infinidysk-installation.md#prebuilt-archives-and-automatic-source-fallback).
 
 ### Pinning an exact InfiniDysk commit
 
-Set `commit_sha` to the complete SHA from the configured `repo_owner` and
-`repo_name`:
-
-```json
-"infinidysk": {
-    "repo_owner": "infinidysk",
-    "repo_name": "infinidysk",
-    "commit_sha": "0123456789abcdef0123456789abcdef01234567"
-}
-```
-
-The commit pin overrides `release_version_enabled` and `branch_enabled`.
-Automatic updates stay disabled while the pin is present. Change the SHA to
-move deliberately to another revision, or clear it to return to the configured
-release/branch strategy.
-
-After saving a new SHA, open **Updates** and select **Install configured
-commit**. This installs and restarts InfiniDysk on the saved commit. Do not use
-**Override + latest** for this operation; that action intentionally installs the
-latest moving release while leaving the saved pin in place for a later restart.
+An exact source pin uses a full commit SHA. Review [pinning and its update behavior](infinidysk-installation.md#pinning-an-exact-infinidysk-commit) before changing a running service.
 
 ### Source-build update safety
 
-Branch and exact-commit updates publish the .NET backend into a clean candidate
-directory, validate the complete runtime, and then replace the installed backend
-as one unit. This prevents assemblies removed or upgraded upstream from remaining
-in `/infinidysk/app` and being loaded alongside the new build.
-
-After upgrading from an older DUMB version, an existing branch or commit install
-may rebuild once even when its Git revision has not changed. That one-time rebuild
-records the current source-build format and replaces any legacy overlaid output.
-Do not manually delete `/infinidysk/app` or enable `clear_on_update` for this recovery;
-use **Install configured release/branch/commit** and let DUMB preserve the previous
-backend until the replacement candidate passes validation.
-
-`clear_on_update` applies only to replaceable source and runtime files. Before
-any clear or archive merge, DUMB automatically carries forward configured
-exclusions, an in-tree `config_file`, explicit config/data/database path fields,
-conventional `data`/`db` directories, root-level SQLite databases and active
-WAL/SHM/journal sidecars, and symlinked persistent data directories. This guard
-also applies when an older saved configuration omitted those paths from
-`exclude_dirs`.
-
-Keep normal backups of application databases and configuration. The update guard
-prevents DUMB's installer from intentionally clearing those files; it is not a
-replacement for backups or application-native database recovery.
+Candidate builds and data preservation are documented in the [source-build update guide](infinidysk-installation.md#source-build-update-safety).
 
 ### Environment Variables
 
@@ -526,11 +310,9 @@ key with HTTP 401, DUMB can retry once using the API key from that instance's
 active database. This does not rotate the saved frontend/backend key or fall
 back to a retained SQLite database when PostgreSQL is active.
 
-!!! danger "Protect API keys"
-
-    `FRONTEND_BACKEND_API_KEY` grants backend access. Treat it like a secret and avoid committing it to source control.
-
 ---
+
+</details>
 
 ## Integration with DUMB
 
@@ -580,11 +362,15 @@ For Sonarr/Radarr/Lidarr/Whisparr instances you want wired to InfiniDysk, set
 `core_service` to `infinidysk` or include it in a list:
 
 ```json
+{
 "core_service": "infinidysk"
+}
 ```
 
 ```json
+{
 "core_service": ["decypharr", "infinidysk", "altmount"]
+}
 ```
 
 This tells DUMB to auto-configure Arr integration around InfiniDysk’s WebDAV and download-client workflows.
@@ -594,7 +380,11 @@ See [Core Service Routing](../../reference/core-service.md) for how `core_servic
 
 Create a dedicated rclone instance for InfiniDysk and point it at the WebDAV endpoint:
 
+<details class="geek-details" markdown="1">
+<summary>Technical details: configuration example</summary>
+
 ```json
+{
 "rclone": {
   "instances": {
     "InfiniDysk": {
@@ -618,7 +408,10 @@ Create a dedicated rclone instance for InfiniDysk and point it at the WebDAV end
     }
   }
 }
+}
 ```
+
+</details>
 
 When `key_type` is set to `InfiniDysk`, DUMB configures rclone to use:
 
@@ -634,6 +427,7 @@ Later InfiniDysk UI changes to the RC enablement, host, username, or password ar
 preserved. A saved `--rc-addr` and `--dir-cache-time` in the rclone command are
 also retained when they remain valid.
 
+<!-- dev:start -->
 For generation 2, the WebDAV transport uses its consolidated HTTP listener and
 native Basic login. Its mount can remain rclone or explicitly use native FUSE.
 Generation 2 does not send the 1.x rclone RC directory-refresh notifications, so
@@ -641,6 +435,7 @@ its rclone setup uses a shorter directory-cache policy and retains `--links` for
 `.rclonelink` handling. Native FUSE does not use rclone flags or the optimizer.
 The optimizer described below currently supports generation 1; generation 2
 needs a separately advertised and validated native adapter, even when it keeps rclone.
+<!-- dev:end -->
 
 Default rclone mount path (if not overridden) is:
 
@@ -668,6 +463,7 @@ Set `core_service` to `infinidysk` (or include `infinidysk` in a list) for the S
 Radarr instances you want wired to InfiniDysk:
 
 ```json
+{
 "sonarr": {
   "instances": {
     "Default": {
@@ -685,6 +481,7 @@ Radarr instances you want wired to InfiniDysk:
       "port": 7878
     }
   }
+}
 }
 ```
 
@@ -726,6 +523,8 @@ Instance names are slugified into categories if present (for example, `Radarr 4K
 
 ## Accessing the UI
 
+Open the service from DUMB's **Embedded UI** tab when available. The native URLs below require the corresponding Docker host port to be published; use the port saved in your running configuration.
+
 * Navigate to: `http://<host>:<frontend_port>` (default port `3000`)
 * WebDAV endpoint: `http://<host>:<frontend_port>/`
 
@@ -741,472 +540,36 @@ Instance names are slugified into categories if present (for example, `Radarr 4K
 
 ## Troubleshooting Tips
 
+| Symptom | Start here |
+|---|---|
+| Port opens but DUMB still shows Starting | [Migration readiness](infinidysk-troubleshooting.md#infinidysk-starts-but-its-port-is-already-open) |
+| Throughput or startup latency changes | [Performance evidence](infinidysk-troubleshooting.md#compare-infinidysk-performance) |
+| Lock errors, growing WAL, or slow database probes | [SQLite pressure](infinidysk-troubleshooting.md#assess-sqlite-pressure) |
+| Authentication or install/update failure | [Troubleshooting guide](infinidysk-troubleshooting.md) |
+
 ### InfiniDysk starts but its port is already open
 
-The maintained InfiniDysk fork serves a controlled migration status responder while
-blocking database migrations run. During that phase the backend port can accept
-connections, but `/health` returns HTTP `503` with
-`{"status":"migrating"}`. DUMB's service health shows **Starting** and keeps
-stack readiness open until InfiniDysk's real backend returns `Healthy`.
-
-This is not an Auto-restart failure. Do not repeatedly restart or interrupt a
-legitimate migration. Open InfiniDysk's embedded UI to view its migration progress.
-If the state never advances, inspect InfiniDysk logs and available storage before
-deciding whether recovery is required.
+A migration status responder can accept connections before the native backend is ready. Check [health and migration progress](infinidysk-troubleshooting.md#infinidysk-starts-but-its-port-is-already-open) before restarting.
 
 ### Compare InfiniDysk performance
 
-Open the InfiniDysk service page's **AI Assist** tab and choose **Performance** to compare a selected window with the previous matching period or with the period before the latest DUMB-saved setting change.
-
-In addition to generic logs and process metrics, DUMB can read the maintained fork's `metrics.sqlite` and `db.sqlite` in read-only mode. The evidence includes queue worker settings, segment success/missing/error/retry rates, provider latency, read-session activity, queue completion/failure timing, long-running queue processors, and busy-period throughput.
-
-Use **Preview bundle** first to confirm native telemetry is available and check the exact coverage. These metrics do not measure Plex click-to-first-frame latency, so playback-start conclusions should remain qualified unless Plex-side timing is correlated separately.
-
-See [AI Assistant](../../features/ai-assistant.md#infinidysk-native-evidence) for the full evidence and safety model.
+Use [AI Assist performance evidence](infinidysk-troubleshooting.md#compare-infinidysk-performance) and correlate playback timing separately.
 
 ### Assess SQLite pressure
 
-By default, InfiniDysk stores its main operational database and local metrics/helper stores in SQLite. A fresh v1.2.0+ installation or successful guarded DUMB cutover can move only the main database to PostgreSQL; the DUMB migration adapter accepts official stable v1.2.0-or-newer runtimes only while the source and staged target exactly match its supported database contract. `metrics.sqlite`, `warden.db`, and `usenet-migration.db` remain local SQLite files. DUMB can monitor the detected database surfaces from **Metrics → Settings → Database Health Monitoring** or the InfiniDysk service page's **Database Health** panel.
-
-Start with **Standard / passive** mode and collect through normal imports, health checks, and playback. Use **Enhanced / read-only probes** when you also want bounded metadata latency. Repeated lock/busy/timeout errors, sustained WAL growth, slow probes, or network-filesystem placement are stronger signals than database size alone. Moving the main database does not resolve pressure in a separate local helper store, so check which file/provider owns the signal before changing the main database provider. See [Metrics Collection](../../features/metrics.md#database-health-monitoring) for the safety boundary and interpretation guidance.
-
-!!! warning "Permission changes"
-
-    DUMB updates Arr media-management permissions to enable chmod operations (folder `777`, file `666`).
-    If you manage permissions manually, review these settings after integration.
-
-* If rclone fails to authenticate, verify `WEBDAV_USER`/`WEBDAV_PASSWORD` and restart the container.
-* If Arr download clients are not created, confirm each Arr instance is enabled and has a readable `config.xml` for API key discovery.
-* If Arr root folders are missing, verify `core_service` includes `infinidysk` and the Arr API is reachable.
-* Every release install automatically tries InfiniDysk's matching verified Linux
-  x64/ARM64 prebuilt archive first. If the archive is absent, has no published
-  SHA-256 digest, fails validation, or is not available for the current
-  architecture, DUMB keeps the live runtime untouched and automatically falls
-  back to the source build. This behavior is inherent and has no user-facing
-  toggle. The moving `prerelease` selector resolves and tracks the newest GitHub
-  prerelease through the same GitHub prerelease-list flow used by CLI Debrid.
-  Its installed marker is `<tag>-<short-sha>`; update checks resolve the current
-  tag commit before comparing, so an unchanged prerelease is reported as current
-  while a tag moved to a different commit remains detectable.
-  Source fallback resolves the selected tag to its immutable commit before
-  downloading; branch/commit installs use an on-demand managed .NET SDK.
-  DUMB merges the InfiniDysk-specific build variables with the container environment so system tools
-  remain available, and invokes `/bin/bash` explicitly when installing the SDK.
-  An error such as `No such file or directory: 'bash'` indicates an image that
-  predates this fix and should be retested after pulling a fixed tag and
-  recreating the container.
-* If a production v1.2.0 update fails with a permission error for
-  `session.key`, update/restart DUMB so its bounded writable-state preflight
-  repairs that file to the configured PUID/PGID. DUMB also protects
-  `session.key` from release archive clear/merge replacement. Do not delete
-  the key unless you intentionally want to invalidate existing InfiniDysk
-  sessions.
-* Check `/log` for InfiniDysk startup errors, and ensure `frontend_port`/`backend_port` are not already in use.
-
----
+Identify the affected main or helper store before changing database providers. See [database-health checks](infinidysk-troubleshooting.md#assess-sqlite-pressure).
 
 ## Migration from NzbDAV
 
-Fresh DUMB installations use the canonical `infinidysk` service key,
-**InfiniDysk** process name, `INFINIDYSK_*` configuration prefix,
-`/infinidysk` runtime root, `/mnt/debrid/infinidysk` mount, and
-`/mnt/debrid/infinidysk-symlinks` library root.
-
-Because that namespace is already canonical, a fresh installation is not
-migration-eligible and the dashboard does not show **Review migration**. The
-migration job API returns `null` until an actual guarded namespace job exists.
-
-Existing installations are not silently moved. DUMB accepts the legacy
-`nzbdav` key, dependency tokens, paths, and `NZBDAV_*` variables, normalizes
-them in memory, and continues writing the legacy identity back to disk until
-the user opts in. If both top-level service keys are present, DUMB refuses to
-guess which entry owns the existing data.
-
-The automatic migration reminder appears only while InfiniDysk/NzbDAV is enabled.
-Disabled legacy configuration defaults alone do not trigger it. Disabling the
-service preserves migration eligibility, job history, and rollback information;
-re-enabling it restores any otherwise-due reminder.
-
-The dashboard presents enabled existing installations with **Review migration** and
-**Remind me later**. The reminder is stored by the backend, so it applies across
-browsers and reappears after seven days.
-
-!!! danger "Create and verify an independent backup first"
-
-    Before accepting either migration path, back up the DUMB configuration,
-    InfiniDysk/NzbDAV state, Arr and Prowlarr databases, affected media-server
-    configuration, and the symlink library to storage outside the paths DUMB
-    will migrate. Confirm that the backup is readable and restorable. DUMB
-    creates a private rollback bundle during migration, but that bundle is a
-    recovery aid—not a replacement for an independent backup. The dashboard
-    requires an explicit acknowledgement of this backup before it enables
-    **Migrate now**.
-
-The available compatibility cutover changes the persisted service identity and
-managed process name to InfiniDysk. It can also rename DUMB-generated attached
-instance/process labels such as `Radarr NzbDAV` to `Radarr InfiniDysk`. Before
-writing those changes, DUMB saves a private copy of the complete configuration
-under `/config/migrations/infinidysk-backups`. Saved dashboard ordering,
-keyboard shortcuts, and notification service filters follow any renamed
-process labels. It does not change:
-
-- `/nzbdav` or another existing runtime path
-- `/mnt/debrid/nzbdav` or `/mnt/debrid/nzbdav-symlinks`
-- Arr categories, root folders, item paths, tags, or tag IDs
-- Arr import-list or Radarr collection root paths
-- media-server library paths
-- existing symlink targets
-
-The exact former DUMB repository defaults are updated to
-[`infinidysk/infinidysk`](https://github.com/infinidysk/infinidysk) so installs
-and updates continue to resolve; intentional custom forks remain untouched.
-Restart DUMB after accepting the compatibility cutover when the service is
-enabled.
-
-!!! warning "Run namespace migration before selecting PostgreSQL"
-
-    Both compatibility-only identity migration and the complete path require
-    InfiniDysk's active main provider to be SQLite. DUMB blocks them once
-    PostgreSQL is selected because the complete workflow mutates the SQLite
-    main store and a compatibility rename would disconnect guarded database
-    rollback lookup. Do not toggle providers merely to bypass this check.
-
-The optional **Migrate the complete InfiniDysk namespace** path performs the
-remaining cutover as one guarded operation. It is not enabled until its
-preflight passes. The preflight makes no changes and checks:
-
-- InfiniDysk active reads can be measured;
-- InfiniDysk's effective `repair.enable` scheduler state can be inspected and
-  changed through its authenticated API when necessary. An enabled value owned
-  by an `NZBDAV_CONFIG__...` environment variable is a
-  blocker: set that value to `false`, restart InfiniDysk, and rerun preflight so
-  DUMB is not fighting an authoritative environment override;
-- every enabled Arr API can be inventoried. DUMB includes an Arr when its
-  `core_service` metadata links it to InfiniDysk **or** live API inventory finds
-  a legacy root/item path, import-list root, Radarr collection root,
-  download-client/category reference, or `nzbdav` tag.
-  This catches Prowlarr-managed Arrs whose metadata intentionally omits the
-  InfiniDysk linkage. The preflight lists included and excluded Arr instances
-  with the reason for each decision. Large Arr catalogs use a
-  migration-specific 120-second API timeout; current queue entries are reported
-  as pending quiescence rather than forcing the operator to empty every queue at
-  the same instant;
-- every enabled InfiniDysk-linked rclone, Radarr, Sonarr, Lidarr, Whisparr,
-  NeutArr, Profilarr, and Seerr instance is inventoried, including singular,
-  list, and combined `core_service`/`core_services` values;
-- enabled Prowlarr instances are reachable so their Arr application
-  connections and the shared legacy `nzbdav` tag can be inventoried. While an
-  installation still uses the legacy namespace, normal DUMB setup reuses the
-  existing `nzbdav` tag ID for InfiniDysk-linked applications instead of
-  creating a competing `infinidysk` tag. Preflight blocks when both labels (or
-  both legacy and canonical application names) already exist and would collide
-  during rename. This can happen after an older failed migration attempt;
-  reconcile the duplicate in Prowlarr, preserving the tag assignments you need,
-  and run preflight again;
-- affected Plex, Jellyfin, and Emby activity and library APIs can be inspected.
-  If no DUMB-managed media server is enabled and both `dumb.plex_address` and
-  `dumb.plex_token` are configured, DUMB infers that Plex is external, verifies
-  its server identity, and inventories its libraries through the Plex API;
-- destination paths do not contain conflicting data;
-- active mounts can be detached and every filesystem move is an atomic,
-  rollback-safe rename; and
-- every detected legacy path is under a supported DUMB-managed root. This
-  includes generated attached-service config and log paths such as
-  `/radarr/nzbdav` and `/log/rclone_w_nzbdav.log`; paths outside managed roots
-  remain blocked for manual review.
-
-Before downtime begins, DUMB stores the complete DUMB configuration, relevant
-application configuration/database files, Arr, Prowlarr, and media-library API
-snapshots, scan-guard state, and a symlink manifest in a private mode-`0700`
-bundle under `/config/migrations/infinidysk-backups`. The symlink snapshot
-catalogs link paths and target strings without checking target existence, so
-backup cannot trigger reads or metadata waits through the active rclone/FUSE
-mount.
-
-These internal snapshots are designed to reverse this specific cutover. They
-cannot protect against pre-existing corruption, failure of the storage holding
-both the live data and rollback bundle, or unrelated application writes made
-during the migration.
-
-When applied, DUMB first enters an automatic quiescence stage. It stops linked
-NeutArr, Seerr, Profilarr, and Prowlarr processes so they cannot add new Arr
-work. It also captures InfiniDysk's exact effective `repair.enable` value in the
-private rollback bundle, temporarily disables the internal scheduled health
-checks through InfiniDysk's API, and reads the value back before waiting on
-active reads. Health probes already in progress are allowed to finish, but the
-scheduler cannot continuously replace them. Each Arr remains available while its current queue drains; DUMB reports
-the remaining count in job progress and stops that Arr immediately after its
-queue reaches zero. If a failed, held, or otherwise stuck download prevents the
-queue from draining, use the still-running Arr UI to remove, retry, or resolve
-that entry while its producers remain stopped. DUMB never deletes or ignores
-queue items automatically. Affected media servers are handled independently.
-DUMB waits for playback to become idle and guards automatic scans. DUMB-managed
-servers are stopped as soon as they are safe. An inferred external Plex remains
-running because DUMB does not own its process; DUMB cancels/guards Plex scans
-through the API and requires it to remain idle. Pause Autoscan and any other
-external scan or request producer before cutover because the Plex token cannot
-stop those separate processes. DUMB then waits for InfiniDysk reads to drain
-and holds every managed stopped service through mutation and validation.
-
-While the persisted job is waiting on verified active playback from a
-DUMB-managed media server, **Open
-progress** offers **Stop active playback and continue**. The action requires
-typing `STOP ACTIVE PLAYBACK`, immediately stops the listed media server, and
-therefore terminates its active streams. DUMB then waits for InfiniDysk active
-reads to reach zero before continuing. This override applies only to verified
-media playback: it cannot bypass Arr queues, unknown media/API state, active
-InfiniDysk reads, path conflicts, or any other safety check. Operators may
-instead leave the job waiting for playback to finish normally.
-
-The playback-stop action is never offered for inferred external Plex. Stop its
-playback from Plex or the owning container/platform, pause Autoscan, and let the
-persisted job continue polling. The progress message distinguishes Arr queues,
-managed playback, external Plex activity, and remaining InfiniDysk reads so an
-active read alone is not mislabeled as a failed Arr queue.
-
-Automatic quiescence waits up to one hour. A transient Arr API or database
-failure remains a visible pending condition and is retried during that window;
-it does not immediately trigger rollback. If activity remains, an Arr API stays
-unavailable through the deadline, or another non-retryable quiescence step
-fails, the job aborts before moving namespace paths, restores scan guards, and
-restarts only the processes DUMB stopped. This removes the requirement for the
-operator to pause every queue, automation producer, and playback session at
-exactly the same moment.
-
-After a successful cutover DUMB restores and verifies the captured
-`repair.enable` value before restarting request/search producers. If any later
-stage fails, rollback restores the captured InfiniDysk database and verifies the
-same scheduler value before the job becomes terminal. The scheduler guard is
-recorded as `infinidysk-health-check-guard.json` in the private migration bundle.
-
-After quiescence, DUMB detaches
-the old rclone mount, moves the runtime/mount/symlink/log paths plus discovered
-DUMB-managed attached-service paths, rewrites symlink targets and InfiniDysk
-configuration records, saves the canonical DUMB paths, and restarts the stack
-in provider-first order. Parent namespace moves and nested generated roots are
-planned separately: for example, after moving `nzbdav-symlinks`, DUMB still
-renames children such as `radarr-nzbdav` and `sonarr-nzbdav` inside the new
-parent. It then verifies that every planned legacy source is absent, every
-canonical destination has the expected type, and no raw symlink target retains
-the legacy namespace. Every linked service that was running before the
-cutover is restarted, and DUMB reruns setup for rclone, Arr, NeutArr, Profilarr,
-and Seerr so their generated integration state sees the canonical linkage.
-Services that were stopped remain stopped. Any running service whose DUMB
-process or instance label is renamed is also included even when its linkage is
-otherwise unrelated, preventing an old process from being orphaned under its
-former name. Generated provider category directories beneath
-`completed-symlinks` are SQLite-backed virtual paths, so DUMB rewrites the
-history, queue, and DAV category/path records that materialize them while the
-provider is stopped. Do not try to rename those paths through the live FUSE
-mount. The database is part of the private rollback bundle. DUMB then updates and verifies
-configured or live-reference-discovered Arr root folders, existing
-movie/series/artist paths, import-list roots, Radarr collection roots, managed
-download-client names/categories, Arr tag labels (without changing tag IDs),
-Prowlarr Arr application names and
-core-service tag labels (also without changing IDs), and Plex/Jellyfin/Emby
-library paths. Compatible Arr builds receive bounded bulk-editor batches for
-root-prefix-only item changes; unsupported editor APIs fall back to exact
-per-record updates. When a supported bulk editor reports a conflict, DUMB
-bisects that batch to isolate the conflicting records instead of converting an
-otherwise large catalog into hundreds or thousands of serial API writes. DUMB
-validates every resulting API item path and requires the canonical filesystem
-path for every file-bearing Arr item and every changed list/collection root
-before continuing,
-so a partial or incompatible bulk result still fails into the normal rollback
-path. The job reports completed/total counts for the current Arr and across all
-affected Arrs instead of holding one percentage for an entire large catalog.
-Plex identity, scan-guard, inventory, and library-path operations use an
-extended API response window because large servers can respond slowly during
-cutover. If a Plex library update times out after submission, DUMB does not
-blindly submit it again: it reconnects and accepts the change only when the
-library exposes the exact requested path set. An unverifiable result still
-fails into rollback.
-
-Do not manually change Arr roots or scan a media library while the job is still
-running. DUMB keeps media-server scan guards in place until canonical Arr item
-directories and media-library paths have passed these checks. After the job
-reports success, confirm the new roots contain the expected symlinks, then run
-the normal Arr and media-server scans. Keep automatic trash/deletion disabled
-until the refreshed libraries and sample playback are verified.
-
-Arr's **Update All** action refreshes existing records; it does not change root
-folders, import-list roots, or Radarr collection roots. If manual recovery is
-required after an older migration, use the Arr root-folder change workflow and
-choose **No, I'll move the files myself** because DUMB already moved the
-symlink library. Update import lists and Radarr collections separately before
-scanning, then run **Update All** only as the follow-up refresh.
+Existing NzbDAV installations keep their identity and paths until you choose a migration. Fresh InfiniDysk installations do not need it. Read the [complete migration procedure](infinidysk-migration.md) before starting: it covers independent backups, preflight, downtime, automatic rollback, and recovery.
 
 ### After the full migration succeeds
 
-Do not start this checklist unless the result is **Namespace migration
-completed**. A rolled-back, interrupted, or attention-required result needs its
-recovery details reviewed first.
-
-1. Confirm InfiniDysk, its rclone mount, every affected Arr, Prowlarr, and the
-   affected media server report healthy.
-2. Open each affected Arr and confirm its canonical root is populated, sample
-   existing items use the `infinidysk-symlinks` path, and **System → Health**
-   has no missing-root or download-client path warning.
-3. Open the Arr's main library page and click **Update All** in its top toolbar:
-   **Movies → Update All** in Radarr, **Series → Update All** in Sonarr,
-   **Artists → Update All** in Lidarr, or the equivalent main-library
-   **Update All** action in Whisparr. This is the circular-arrows refresh action
-   beside the main library controls—not a System task or root-folder edit. Do
-   not use **Change Root Folder** or ask Arr to move files after a successful
-   migration—DUMB already updated the roots, existing item paths, import-list
-   roots, and Radarr collection roots and moved the managed symlink namespace.
-4. In Prowlarr, confirm the affected Arr applications connect and the canonical
-   `infinidysk` tag is present where the legacy `nzbdav` tag was used.
-5. Keep automatic trash/deletion disabled, then scan the affected
-   Plex/Jellyfin/Emby libraries. DUMB updates and verifies their paths but does
-   not start the scans.
-6. Compare expected library counts, inspect several items, and test playback
-   plus seeking for at least one movie and one episode.
-7. Only after those checks pass, restore the operator's preferred automatic
-   trash/deletion behavior. Retain the independent backup and DUMB rollback
-   bundle for a suitable observation period.
-
-The compatibility-only migration keeps all paths unchanged. After that path,
-verify InfiniDysk starts, attached services reconnect, and existing playback
-works; an Arr or media-library scan is not normally required.
+Verify native service health, Arr/Prowlarr connections, updated library paths, and representative playback before restoring automatic trash/deletion behavior. DUMB does not launch library scans for you. Follow the [post-migration checklist](infinidysk-migration.md#after-the-full-migration-succeeds).
 
 ### Finalize the migration and remove recovery data
 
-After the checklist passes and the migrated stack has remained healthy for a
-suitable observation period, the InfiniDysk service page can permanently purge
-DUMB-owned migration recovery material. This action is optional. It appears
-only when the backend advertises `infinidysk_migration_cleanup`, the latest
-recorded migration is a successful terminal result, and cleanup has not already
-been finalized. It is unavailable during active, failed, interrupted,
-rolled-back, or rollback-attention jobs.
-
-Choose **Review cleanup** to request a short-lived preview. The
-preview reports counts, total bytes, user-facing deletion categories, retained
-categories, and its expiry without exposing private filesystem paths. Review it
-after every refresh because the token is bound to the current migration state.
-To proceed, acknowledge that:
-
-- the post-migration validation and playback checks passed; and
-- DUMB's rollback bundle and detailed migration history will no longer be
-  available.
-
-Then type the exact phrase `REMOVE INFINIDYSK MIGRATION DATA` and select the
-permanent cleanup action.
-
-Cleanup deletes the detailed InfiniDysk namespace-migration state, preflight
-inventory, namespace job history, and DUMB-owned migration backups under
-`/config/migrations/infinidysk-backups`. It replaces the state with a small
-private mode-`0600` tombstone containing only the selected mode, terminal
-status, and finalization metadata. DUMB retains:
-
-- current DUMB and InfiniDysk configuration;
-- the InfiniDysk runtime, application data, and databases;
-- mounts, symlink libraries, and normal symlink snapshots;
-- the minimal controller-owned PostgreSQL cutover authorization and
-  database-migration job evidence under `/config/arr-postgres-migration`, which
-  keeps restart and guarded database-rollback contracts verifiable; and
-- operator-managed backups outside the namespace rollback root.
-
-!!! danger "Cleanup is irreversible"
-
-    DUMB cannot reconstruct the deleted recovery bundle, detailed preflight, or
-    job history. Keep independent operator backups somewhere outside the
-    DUMB-owned migration backup directory. Cleanup does not delete service data
-    or the separate PostgreSQL migration authorization/job store, but anything
-    intentionally placed inside
-    `/config/migrations/infinidysk-backups` is in the purge scope.
-
-After finalization, the migration notice and manual migration action remain
-permanently hidden. Finalizing a compatibility-only migration records that the
-retained legacy paths are the accepted final namespace, so DUMB no longer
-prompts for the complete namespace workflow.
-
-If a stage fails, DUMB stops the partially migrated stack, restores paths and
-saved files with their captured ownership and permissions, reapplies and
-validates the previous Arr/Prowlarr/media-library references, removes every Arr
-root path created only by the failed direction, and restores the exact captured
-symlink targets after the original symlink roots are back in place. Missing
-symlink roots, restore errors, target mismatches, or obsolete Arr roots make
-rollback report that attention is required rather than claiming recovery.
-Rollback restarts the original process names and publishes its own path,
-symlink-catalog, configuration, service, Arr, Prowlarr, media-library, and
-scan-guard progress stages. A
-terminal rolled-back job finishes at 100% and retains a redacted root-cause
-message; 100% means the recovery workflow finished, not that the requested
-cutover succeeded. When rollback needs attention, the dashboard lists the
-sanitized component errors and retained backup/config paths. Inspect those
-details and verify the legacy stack before performing a targeted repair; do
-not manually toggle service/provider settings, blindly restore the complete
-bundle, or rerun the migration.
-
-The terminal namespace statuses have different meanings:
-
-- `failed_rolled_back` means DUMB's automatic rollback completed. Verify the
-  legacy service, paths, integrations, and playback before generating a fresh
-  preflight; do not reuse old preflight approval.
-- `rollback_attention_required` means one or more rollback surfaces could not
-  be proven restored. DUMB freezes ordinary service/config lifecycle changes.
-  Open the persisted result, inspect its component errors and retained paths,
-  and repair only the named surface; this is not a signal to restore the whole
-  bundle.
-- `interrupted` before any namespace filesystem mutation may allow DUMB to
-  cold-start the known legacy topology so a new live preflight can be made.
-  An interruption at an unknown or post-mutation stage remains frozen for
-  recovery review. Never force a provider or path toggle to bypass either
-  state.
-
-Older DUMB builds did not retain file ownership metadata in this rollback
-manifest. If an older rollback reports that InfiniDysk/NzbDAV cannot read its
-configuration path, inspect the owner and mode of the named database and its
-SQLite `-wal`/`-shm` sidecars. Restore only the affected files to the configured
-PUID/PGID and their prior restrictive mode before restarting DUMB; do not
-recursively change ownership across the blob, mount, or symlink trees.
-
-Combined relationships remain combined: for example,
-`decypharr, nzbdav` becomes `decypharr,infinidysk`; DUMB does not discard the
-Decypharr relationship. Zurg is deliberately not an InfiniDysk migration
-consumer. Its `core_service` field is used by other workflows and does not make
-Zurg part of this cutover.
-
-The complete cutover runs as a backend-persisted background job. The migration
-dialog shows the current stage, percentage, and recent stage history. Closing
-the dialog or navigating to another page does not cancel the job; a persistent
-**InfiniDysk migration running** banner shows the latest progress and reopens
-the dialog. Reloading the dashboard or signing in from another browser/device
-reattaches to the same backend-owned job. If a browser observes it finish while
-the dialog is closed, that browser shows a dismissible result banner once. A
-terminal job first discovered after a later reload, sign-in, or focus event is
-not announced again as a new completion; its persisted result remains manually
-reopenable from the InfiniDysk service page.
-
-The live job record and full preflight inventory are stored as separate private
-mode-`0600` sidecars under `/config/migrations`. This keeps job-status polling
-small and responsive even when the rollback inventory contains tens of
-thousands of Arr records; polling never rewrites the complete inventory.
-
-Do not restart the DUMB container while the migration is active. A backend
-restart cannot safely resume an in-process filesystem/API cutover, so DUMB
-marks the retained job **interrupted** and directs the operator to inspect its
-private backup bundle and current service paths before retrying. Normal dialog
-closure and dashboard navigation do not interrupt it.
-
-The final paths are `/infinidysk`, `/log/infinidysk.log`,
-`/mnt/debrid/infinidysk`, and
-`/mnt/debrid/infinidysk-symlinks`. Historical snapshot filenames are retained;
-future scheduled snapshots use `infinidysk-{timestamp}.json`. DUMB intentionally
-does not launch Arr or media-server scans after success. Review service health,
-then scan the affected libraries so their availability state is refreshed.
-
-!!! warning "Preflight must be current"
-
-    A passing preflight expires after 30 minutes. DUMB repeats structural/API
-    checks before starting and then owns the live quiescence window. Queue,
-    playback, and active-read activity shown as pending conditions does not
-    invalidate the preflight; it must drain during the one-hour automatic
-    quiescence stage before DUMB moves any path. The explicit playback-stop
-    action interrupts viewers but does not waive the active-read drain.
-
----
+Recovery-data cleanup is optional and irreversible. Keep the rollback bundle until validation and an observation period are complete. Review the [cleanup scope and confirmation steps](infinidysk-migration.md#finalize-the-migration-and-remove-recovery-data) before purging it.
 
 ## Resources
 

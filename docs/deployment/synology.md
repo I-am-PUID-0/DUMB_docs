@@ -61,6 +61,10 @@ at `/api`; the native backend on `8000` is intentionally not published.
 
 ## FUSE and mount propagation
 
+Prepare the producer host path as a shared Linux mount before relying on
+`rshared`/`rslave`. Compose propagation flags alone do not change the host
+mount. Check both the producer and consumer mount namespaces.
+
 Keep `/dev/fuse`, `SYS_ADMIN`, and the security options from the maintained
 Compose file when your workflow needs rclone/FUSE. Support can vary by DSM,
 model, and kernel. A successful container start alone does not prove that an

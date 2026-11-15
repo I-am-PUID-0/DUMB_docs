@@ -1,13 +1,11 @@
 ---
 title: PostgreSQL FAQ
+description: Troubleshoot PostgreSQL startup and connections in DUMB, understand which services use the database, and choose the correct listener and client settings.
 icon: lucide/database
 ---
 
 # PostgreSQL FAQ
 
-Below are common questions and explanations related to **PostgreSQL**, which is the primary database engine used by DUMB.
-
----
 
 ## How PostgreSQL is used in DUMB
 
@@ -33,7 +31,6 @@ Each service has its **own database**, created automatically when DUMB starts:
 
 Additional databases are registered from service configuration. PostgreSQL's internal data directory defaults to `/postgres_data`; the maintained Compose layout persists it at `/data/postgres` through DUMB's managed data mapping.
 
----
 
 ## What happens if I delete the database?
 
@@ -81,7 +78,6 @@ migration, complete that before enabling PostgreSQL or opening Database
 Migration. Do not try a direct provider toggle on an existing SQLite install:
 DUMB fails closed and requires the guided workflow.
 
----
 
 ## Can I reset the database intentionally?
 
@@ -93,7 +89,6 @@ Alternatively, use **pgAdmin 4** (if enabled) to drop individual databases manua
 
 > Alternatively, see the [pgAdmin FAQ](pgadmin.md#drop-a-database-or-create-a-manual-backup-in-pgadmin) section.
 
----
 
 ## What are the default credentials?
 
@@ -102,25 +97,24 @@ Alternatively, use **pgAdmin 4** (if enabled) to drop individual databases manua
 - **Port**: `5432`
 - These values can be customized in the `postgres` section of `dumb_config.json`.
 
----
 
 ## Can I connect to PostgreSQL externally?
 
-Yes — by default, PostgreSQL binds to `127.0.0.1`. If you want to connect from an external app (like DBeaver or pgAdmin on your host machine), you'll need to:
+Use DUMB's embedded [pgAdmin](../services/optional/pgadmin.md) when browser-based inspection is enough; it avoids publishing a database port.
 
-1. Change `host` in the `postgres` section of `dumb_config.json` to `0.0.0.0`
-2. Add a port binding (e.g., `5432:5432`) to your container
-3. Optionally secure with a firewall or password change
+For a separate database client, an administrator must review PostgreSQL's actual `listen_addresses`, host-based access rules, the Docker port binding, and network protection. The `postgres.host` setting is the address DUMB uses to connect; changing it to `0.0.0.0` does not configure the server listener.
 
----
+<details class="geek-details" markdown="1">
+<summary>Technical details: external PostgreSQL access</summary>
+
+Inspect `SHOW listen_addresses;` and `SHOW hba_file;` in pgAdmin or `psql`, then review the matching PostgreSQL configuration. If host access is required, bind a published port to a specific trusted interface or loopback, such as `127.0.0.1:5432:5432`, and use a protected tunnel or trusted network path. Authentication and host-based access rules must permit the intended client. Replace public bootstrap passwords before granting access.
+
+</details>
 
 ## Is it safe to run queries against the databases?
 
-Yes — but with caution. Direct queries using tools like pgAdmin or psql can be useful for debugging or data inspection, but changes may break app logic unless you know what you're doing.
+Use read-only queries for inspection. Direct writes can bypass the application's validation and break relationships or migration state. Use the application's own controls where possible; take a restorable backup before intentional database changes.
 
-When in doubt, make a backup first!
-
----
 
 ## Related Pages
 

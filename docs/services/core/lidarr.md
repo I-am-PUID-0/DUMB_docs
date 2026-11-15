@@ -8,9 +8,21 @@ icon: lucide/music
 
 **Lidarr** is a music manager that automates searching, grabbing, and organizing albums through indexers and download clients.
 
+<!-- dev:start -->
 The [setup checklist](../../features/setup-checklist.md) can discover existing music roots and their native quality and metadata profiles. Select the intended defaults, preview the changes and approve saving them. DUMB reads the result back without changing existing artists, monitoring choices or tags. Profile availability depends on the installed Lidarr instance.
+<!-- dev:end -->
+
 
 ---
+
+## First start
+
+1. Select Lidarr during onboarding and choose its download workflow.
+2. Open Lidarr and check indexers, download clients, the music root folder, and available quality/metadata profiles.
+3. Choose whether an added artist should monitor existing albums, future albums, or neither.
+4. Test one intended album import before enabling broad artist monitoring.
+
+Keep the default SQLite database unless you are planning a database migration.
 
 ## Service Relationships
 
@@ -23,9 +35,13 @@ The [setup checklist](../../features/setup-checklist.md) can discover existing m
 
 ---
 
+<details class="geek-details" markdown="1">
+<summary>Technical details: configuration reference</summary>
+
 ## Configuration in `dumb_config.json`
 
 ```json
+{
 "lidarr": {
   "instances": {
     "Default": {
@@ -57,9 +73,10 @@ The [setup checklist](../../features/setup-checklist.md) can discover existing m
     }
   }
 }
+}
 ```
 
-### Key Configuration Fields
+### Key configuration fields { #key-configuration-fields }
 
 * `core_service`: Set to `decypharr`, `infinidysk`, `altmount`, or a list of workflow keys to enable DUMB integration.
 * `use_neutarr`: Opt this instance into NeutArr automation.
@@ -71,10 +88,12 @@ The [setup checklist](../../features/setup-checklist.md) can discover existing m
 * `release_version_enabled` / `release_version`: Use GitHub releases (e.g., `latest`, `nightly`, `prerelease`, or a tag).
 * `clear_on_update`: Clear the install directory before updating.
 * `exclude_dirs`: Directories to preserve when clearing.
-* `platforms`: Build platforms (auto‑defaults to `["dotnet"]` when using branches).
+* `platforms`: Build platforms (defaults to `["dotnet"]` when using branches).
 * `config_dir`, `config_file`, `log_file`: Paths for config and logs.
 
 ---
+
+</details>
 
 ## PostgreSQL database mode
 
@@ -103,7 +122,7 @@ For an existing instance, use **Database Migration** on the service page. DUMB r
 
 ## Repo-based installs and updates
 
-Lidarr now supports the same repo‑based controls as other DUMB services.
+Lidarr now supports the same repository-based controls as other DUMB services.
 
 - **GitHub releases**: Set `release_version_enabled: true` with a valid `repo_owner`/`repo_name`.
 - **Default updater**: Leave `release_version_enabled: false` to use the standard Arr updater.
@@ -125,6 +144,8 @@ GitHub sources take priority when enabled and are **not** a fallback. `pinned_ve
 ---
 
 ## Accessing the UI
+
+Open the service from DUMB's **Embedded UI** tab when available. The native URLs below require the corresponding Docker host port to be published; use the port saved in your running configuration.
 
 * Navigate to: `http://<host>:8686`
 

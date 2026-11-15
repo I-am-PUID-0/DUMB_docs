@@ -10,12 +10,20 @@ icon: lucide/play
 
 ---
 
+## First start
+
+1. Select Jellyfin in onboarding and open its embedded UI after startup.
+2. Complete administrator setup and choose the library folders visible inside DUMB.
+3. Review scanning settings before the first scan of a remote mount.
+4. Test playback and seeking. If you need transcoding, configure it in Jellyfin's playback settings after mapping the GPU into the container.
+
+<!-- dev:start -->
 ## Setup checklist and remaining work
 
 The checklist guides supported fresh-administrator setup and explicit library creation/reuse. Existing initialized servers are not reinitialized. Supported new-library forms offer an optional initial scan, off by default; review the paths before enabling it. Existing libraries are not rescanned by this creation choice. Choose sharing, remote access, hardware acceleration and playback policy, then test real library access/playback.
 
 Requires the backend setup-arrangement capability. See [Setup checklist and automation](../../features/setup-checklist.md) for retained tasks, coverage and safe retries.
-
+<!-- dev:end -->
 
 ## Service Relationships
 
@@ -28,9 +36,13 @@ Requires the backend setup-arrangement capability. See [Setup checklist and auto
 
 ---
 
+<details class="geek-details" markdown="1">
+<summary>Technical details: configuration reference</summary>
+
 ## Configuration in `dumb_config.json`
 
 ```json
+{
 "jellyfin": {
   "enabled": false,
   "process_name": "Jellyfin Media Server",
@@ -46,9 +58,10 @@ Requires the backend setup-arrangement capability. See [Setup checklist and auto
   "command": [],
   "env": {}
 }
+}
 ```
 
-### Key Configuration Fields
+### Key configuration fields { #key-configuration-fields }
 
 * `pinned_version`: Optional version pin for Jellyfin updates.
 * `port`: Web UI port (default `8096`).
@@ -57,7 +70,11 @@ Requires the backend setup-arrangement capability. See [Setup checklist and auto
 
 ---
 
+</details>
+
 ## Accessing the UI
+
+Open the service from DUMB's **Embedded UI** tab when available. The native URLs below require the corresponding Docker host port to be published; use the port saved in your running configuration.
 
 * Navigate to: `http://<host>:8096` (default Jellyfin port)
 * With service UIs enabled in DUMB, open **Embedded UI** on the Jellyfin service page and sign in to Jellyfin there.
@@ -92,6 +109,7 @@ not enable transcoding.
 See [native Proxmox GPU setup](../../deployment/proxmox.md#gpu-passthrough-and-jellyfin)
 and [Jellyfin's Intel GPU guide](https://jellyfin.org/docs/general/post-install/transcoding/hardware-acceleration/intel/).
 
+<!-- dev:start -->
 ### Intel OpenCL tone mapping
 
 AMD64 DUMB images include the distribution's current and legacy Intel OpenCL
@@ -124,10 +142,15 @@ establish working GPU tone mapping. Configure OpenCL tone mapping in Jellyfin,
 then test a short HDR transcode and inspect Jellyfin's FFmpeg log before relying
 on it for playback. See [Jellyfin's Intel guide](https://jellyfin.org/docs/general/post-install/transcoding/hardware-acceleration/intel/)
 for the current hardware and codec requirements.
+<!-- dev:end -->
 
 ## Media Library Protection
 
-Jellyfin requires an authorized API key before DUMB can inspect sessions and temporarily control scan tasks/library real-time monitoring. Compatible guided first-administrator setup can create a dedicated application key; the checklist offers a separate explicit choice to save that key for Library Protection. You can also create a key in Jellyfin's dashboard and save it under **Library Protection** on the Jellyfin service page. New setup-created protection policies remain disabled until you review their mount scope and enable them. Without usable credentials, unattended storage maintenance is deferred because activity is unknown.
+Jellyfin requires an authorized API key before DUMB can inspect sessions and temporarily control scan tasks/library real-time monitoring. Create a key in Jellyfin's dashboard and save it under **Library Protection** on the Jellyfin service page. Review the configured mount scope and enablement. Without usable credentials, unattended storage maintenance is deferred because activity is unknown.
+
+<!-- dev:start -->
+The guided first-administrator task can create a dedicated application key. Saving it for Library Protection is a separate explicit checklist choice; a new setup-created protection policy stays disabled until reviewed.
+<!-- dev:end -->
 
 See [Media Library Protection](../../features/media-library-protection.md).
 

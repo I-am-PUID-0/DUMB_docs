@@ -1,5 +1,6 @@
 ---
 title: Tautulli
+description: Connect Tautulli to Plex in DUMB, review playback history and activity, configure notifications, and protect its persistent monitoring data.
 icon: lucide/bar-chart-3
 ---
 
@@ -9,12 +10,25 @@ Tautulli is a monitoring and statistics application for Plex Media Server. It tr
 
 ---
 
+## Initial setup
+
+After enabling Tautulli and starting the service:
+
+1. Access the Tautulli UI at `http://<host>:8181`
+2. Complete the setup wizard:
+   - Connect to your Plex Media Server
+   - Enter your Plex server URL (`http://127.0.0.1:32400` for DUMB's internal Plex)
+   - Authenticate with your Plex account or use a Plex token
+
+---
+
+<!-- dev:start -->
 ## Setup checklist and remaining work
 
 The checklist can configure/check Plex after Tautulli generates configuration and authorized credentials exist. Existing nonempty settings are preserved unless a deliberate supported change is selected. Complete administrator setup, notifications and retention separately. Process readiness does not verify Plex access. Applying a connection change restarts Tautulli only after explicit permission; opening or rechecking the checklist does not grant that permission.
 
 Requires the backend setup-arrangement capability. See [Setup checklist and automation](../../features/setup-checklist.md) for retained tasks, coverage and safe retries.
-
+<!-- dev:end -->
 
 ## Overview
 
@@ -37,11 +51,15 @@ Tautulli provides:
 
 ---
 
+<details class="geek-details" markdown="1">
+<summary>Technical details: configuration reference</summary>
+
 ## Configuration settings in `dumb_config.json`
 
 Below is a sample configuration for Tautulli within the `dumb_config.json` file:
 
 ```json
+{
 "tautulli": {
   "enabled": false,
   "process_name": "Tautulli",
@@ -81,6 +99,7 @@ Below is a sample configuration for Tautulli within the `dumb_config.json` file:
   "log_file": "/tautulli/data/logs/tautulli.log",
   "env": {}
 }
+}
 ```
 
 ### Configuration key descriptions
@@ -91,10 +110,10 @@ Below is a sample configuration for Tautulli within the `dumb_config.json` file:
 - **`release_version_enabled`** / **`release_version`**: Use a tagged release if enabled.
 - **`commit_sha`**: Build an exact Tautulli revision from its full 40-character GitHub SHA. It overrides release/branch selection and disables automatic updates until cleared.
 - **`branch_enabled`** / **`branch`**: Use a specific branch if enabled.
-- **`suppress_logging`**: If `true`, disables log output for this service.
+- **`suppress_logging`**: Suppresses service messages in the main DUMB output.
 - **`log_level`**: Logging verbosity.
 - **`port`**: Port the Tautulli web UI is exposed on.
-- **`auto_update`**: Enables automatic self-updates from GitHub.
+- **`auto_update`**: Enables DUMB's scheduled update checks; `auto_update_mode` determines whether a detected update is installed.
 - **`auto_update_interval`**: How often (in hours) to check for updates.
 - **`clear_on_update`**: Clears build artifacts or cache during updates.
 - **`exclude_dirs`**: Prevents specific directories from being affected by updates.
@@ -106,17 +125,7 @@ Below is a sample configuration for Tautulli within the `dumb_config.json` file:
 
 ---
 
-## Initial setup
-
-After enabling Tautulli and starting the service:
-
-1. Access the Tautulli UI at `http://<host>:8181`
-2. Complete the setup wizard:
-   - Connect to your Plex Media Server
-   - Enter your Plex server URL (`http://127.0.0.1:32400` for DUMB's internal Plex)
-   - Authenticate with your Plex account or use a Plex token
-
----
+</details>
 
 ## Connecting to Plex
 

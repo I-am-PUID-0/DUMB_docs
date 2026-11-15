@@ -4,109 +4,55 @@ description: Explore DUMB features for Debrid and Usenet automation, Arr apps, m
 icon: lucide/list
 ---
 
-# Features Overview
+# Features
 
-## What is DUMB?
+Choose a task to find its controls, configuration, and recovery steps. For a list of applications, use the [service catalog](../services/index.md).
 
-DUMB (Distributed Unlimited Media Bridge) is an all-in-one media management solution designed to streamline the process of **finding, downloading, organizing, and streaming media content**. It integrates multiple services into a **single Docker image**, providing automation and efficiency for managing media libraries.
+## Set up and connect services
 
-### Key Features
+| Task | Guide |
+| --- | --- |
+| Change ports, paths, credentials, or service settings | [Configuration](configuration.md) |
+| Run and inspect individual services | [Everyday use](usage.md) |
+| Open an application's own interface | [Embedded service UIs](embedded-ui.md) |
+| Require login or connect an identity provider | [Authentication](authentication.md) |
+| Mirror requests to another media stack | [Seerr Sync](seerr-sync.md) |
 
-* **[Setup checklist and automation](setup-checklist.md)** – Preview automatic changes, choose exact connections, reuse provider accounts, and retain manual or failed setup tasks after leaving onboarding.
+## Keep the stack running
 
-* **Unified Deployment** – Combines multiple tools into a single, easy-to-deploy system with onboarding-driven setup.
-* **Built-In Media Server Integration** – Includes **Plex Media Server, Jellyfin, and Emby**, fully embedded in the container to eliminate mount propagation issues.
-* **Automated Content Management** – Uses **Debrid** and **Usenet** services alongside **Plex Discover Watchlists**, **Trakt lists**, and **Seerr** to automate media retrieval.
-* **Arr + WebDAV Workflows** – Supports **Sonarr, Radarr, Lidarr, Whisparr**, plus WebDAV-driven clients like **Decypharr** (Debrid and Usenet), **InfiniDysk**, and **AltMount**.
-* **NeutArr automation** – Core backlog-search automation to fill missing content and upgrade quality.
-* **Pulsarr watchlist automation** – Optional Plex watchlist request flow that can route requests into Sonarr and Radarr.
-* **Maintainerr library cleanup** – Optional rule-based review collections and delayed cleanup actions for Plex, Jellyfin, or Emby libraries.
-* **mediastorm streaming** – Optional self-hosted clients and server for Debrid, torrent, and Usenet playback.
-* **AIOStreams for Stremio** – Optional addon aggregation with local Prowlarr, Zilean, InfiniDysk, AltMount, or native Debrid and Usenet services.
-* **[Seerr Sync](seerr-sync.md)** – One-way request replication from a primary Seerr to subordinate instances for multi-household or multi-stack setups.
-* **Integrated Web UI** – Control and manage services through a simple **web-based interface** with embedded service UIs.
-* **[Service reset and removal](service-reset.md)** – Preview, stop, reset, or remove one configured service/instance without deleting shared mounts, caches, databases, or other service configuration.
-* **Traefik access layer** – DUMB-managed embedded UI routes, optional Traefik Proxy Admin user routes, and optional Cloudflared tunnel ingress all share the bundled Traefik entrypoint while keeping ownership boundaries clear.
-* **[Authentication](authentication.md)** – Optional JWT-based security with user management and session handling.
-* **[Auto-update](auto-update.md)** – Keep services current with automatic updates from GitHub releases, nightly builds, or specific branches.
-* **[Media Library Protection](media-library-protection.md)** – Guard Plex, Jellyfin, and Emby scans and coordinate active streams when a storage dependency stops, updates, or crashes.
-* **[Installation backup and restore](installation-backups.md)** – Preview and archive managed configuration, application data and databases, schedule backups, and restore from mounted storage.
-* **[Backup Storage](backup-storage.md)** – Register local or already-mounted NAS destinations for installation archives, InfiniDysk migration archives and symlink snapshots, with explicit defaults and verified recovery.
-* **[Symlink Operations](symlinks.md)** – End-to-end guide for repair, migration, backup/restore, scheduled snapshots, and path-transition playbooks.
-* **[SQLite to PostgreSQL Migration](arr-postgres-migration.md)** – Rehearse, validate, cut over, and roll back supported Arr, subtitle, request, and storage services.
-* **[InfiniDysk 2 Installation and Upgrade](infinidysk-v2-migration.md)** – Review the explicit native-generation opt-in, preserved mount and library paths, contained major rehearsal, recovery, and separate native PostgreSQL conversion.
-* **Modular Design** – Each service (Riven, Zurg, Zilean, etc.) is independently configurable and upgradable.
-* **Advanced Logging & Monitoring** – View and filter service logs directly from the [DUMB Frontend](../services/dumb/dumb-frontend.md).
-* **[FFprobe monitor](ffprobe-monitor.md)** – Background worker that detects and unsticks ffprobe scans in Sonarr/Radarr.
-* **Real-Time Metrics** – Monitor CPU, memory, disk, and network usage with WebSocket-powered live updates.
-* **[Rclone Streaming Optimizer](rclone-optimizer.md)** – Benchmark bounded InfiniDysk-backed rclone profiles against live provider traffic, compare startup/warm/cold behavior, and explicitly apply or roll back a deployment-specific recommendation.
-* **[Notifications](notifications.md)** – Route persistent backend health and operational events through Apprise or generic JSON webhooks with retries, cooldowns, recovery messages, and delivery history.
-* **[AI Assistant](ai-assistant.md)** – Optional local or cloud model diagnostics using redacted logs, service config, and dependency context.
+| Task | Guide |
+| --- | --- |
+| Understand startup order and readiness | [Startup lifecycle](startup-lifecycle.md) |
+| Restart a failed application automatically | [Auto-restart](auto-restart.md) |
+| Review, schedule, or pin service updates | [Auto-update](auto-update.md) |
+| Reuse verified downloads and recover a failed update | [Install cache and safe updates](install-cache.md) |
+| Guard media libraries during storage outages | [Media Library Protection](media-library-protection.md) |
+| Deliver health and operation alerts | [Notifications](notifications.md) |
 
-## Component Groups
+## Protect and move data
 
-DUMB integrates the following projects and service families to create a complete media experience:
+| Task | Guide |
+| --- | --- |
+| Repair paths, move symlink libraries, or restore a snapshot | [Symlink operations](symlinks.md) |
+| Rehearse a supported SQLite-to-PostgreSQL conversion | [Database migration](arr-postgres-migration.md) |
+| Reset one service or remove its managed files | [Service reset and removal](service-reset.md) |
 
-### **DUMB platform**
+## Investigate performance and failures
 
-- **DUMB API** coordinates configuration, service lifecycle, logs, metrics, health checks, updates, onboarding, and backend automation.
-- **DUMB Frontend (dmbdb)** provides the dashboard, onboarding wizard, service pages, embedded UI tabs, logs, metrics, and configuration editors.
+| Task | Guide |
+| --- | --- |
+| Inspect CPU, memory, storage, networks, and database pressure | [Metrics](metrics.md) |
+| Compare bounded rclone streaming profiles | [Rclone Streaming Optimizer](rclone-optimizer.md) |
+| Investigate a stuck Sonarr/Radarr ffprobe | [FFprobe monitor](ffprobe-monitor.md) |
+| Ask a model to help interpret selected, redacted evidence | [AI Assistant](ai-assistant.md) |
 
-### **Workflow engines**
+<!-- dev:start -->
+## Development additions
 
-- **Riven Backend** and **CLI Debrid** provide Debrid-oriented orchestration for searching, collecting, and organizing media.
-- **Decypharr** supports Debrid, native Usenet, and hybrid Arr workflows with torrent/Sabnzbd-compatible endpoints and symlink libraries.
-- **InfiniDysk** provides an NZB WebDAV gateway and Arr download-client integration for Usenet workflows.
-- **AltMount** provides a Usenet streaming workflow with WebDAV access, SABnzbd-compatible Arr integration, built-in FUSE/rclone modes, and operator-selected direct, symlink, or STRM imports.
+- [Setup checklist and automation](setup-checklist.md) retains missing inputs, verified connections, and manual work.
+- [Backup storage](backup-storage.md) registers mounted archive destinations.
+- [Installation backup and restore](installation-backups.md) protects managed installation state.
+- [InfiniDysk 2 installation and upgrade](infinidysk-v2-migration.md) handles the native generation separately from 1.x.
+<!-- dev:end -->
 
-### **Arr automation**
-
-- **Sonarr**, **Radarr**, **Lidarr**, and **Whisparr** manage media queues, imports, renaming, and library organization.
-- **Prowlarr** centralizes indexer management and syncs indexers to Arr instances.
-- **NeutArr** handles missing-content and quality-upgrade searches across selected Arr instances.
-- **Profilarr** syncs profiles, custom formats, regex patterns, and media-management settings for Sonarr/Radarr.
-
-During onboarding, selecting Decypharr, InfiniDysk, AltMount, or combinations of them can wire Arr instances automatically. DUMB uses `core_service` to keep those integrations scoped to the intended workflow.
-
-### **Requests and watchlists**
-
-- **Seerr** provides a request and discovery portal that can feed Sonarr/Radarr.
-- **Pulsarr** monitors Plex watchlists and routes requests to Sonarr and Radarr when Plex is the request front door.
-- **Maintainerr** evaluates library and automation metadata to create review collections and apply operator-defined cleanup actions.
-- **mediastorm** provides PostgreSQL-backed accounts, watch state, and streaming clients for configured Debrid, torrent, and Usenet sources.
-- **AIOStreams** combines supported Stremio addons, indexers, and playback services into one configurable addon.
-- Plex Discover watchlists, Trakt, MDBList, and similar list sources can feed supported workflow engines.
-
-### **Media servers**
-
-- **Plex Media Server** is bundled directly inside DUMB, giving it internal access to mounted and symlinked media without extra host bind-mount gymnastics.
-- **Jellyfin** and **Emby** are alternative embedded media servers for the same internal-library model.
-
-### **Storage, metadata, and databases**
-
-- **rclone** mounts remote Debrid or WebDAV-backed storage into the container.
-- **Zurg** provides WebDAV access to Debrid content for workflows that use it.
-- **Zilean** caches metadata and hash lookups to improve scraping performance.
-- **PostgreSQL**, **pgAdmin 4**, **Phalanx DB**, and **CLI Battery** support database, metadata, and administration workflows.
-
-### **Access and proxying**
-
-- **Traefik** serves DUMB-owned embedded service UI routes under `/service/ui/<service>`.
-- **Traefik Proxy Admin** manages user-created LAN or public host routes through Traefik without overwriting DUMB's embedded UI routes.
-- **Cloudflared** forwards Cloudflare Tunnel traffic to DUMB Traefik without direct router port forwarding.
-
-## How Does It Work?
-
-DUMB simplifies the media management workflow by:
-
-1. **Run Onboarding** to select core services and auto-enable required dependencies.
-2. **Scan Lists & Requests** from Plex, Trakt, and Seerr.
-3. **Fetch From Debrid or Usenet** providers (Real-Debrid, AllDebrid, etc.).
-4. **Route Through Orchestrators** (Riven/CLI Debrid) or **Arr clients** (Decypharr/InfiniDysk/AltMount).
-5. **Mount & Organize Content** via Zurg + rclone and Arr-managed libraries.
-6. **Stream via Plex/Jellyfin/Emby** using internal paths and embedded media servers.
-7. **Access Safely** through DUMB embedded UI routes, TPA-managed hostnames, or Cloudflare Tunnel routes that all terminate at DUMB Traefik.
-
-## Next Steps
-
-Explore the [Configuration](../features/configuration.md) section to understand how to set up and customize DUMB according to your needs.
+Features appear in the dashboard only when the connected DUMB API supports them. A newer frontend cannot add a missing backend capability. Each guide calls out additional prerequisites and actions that still need your decision.

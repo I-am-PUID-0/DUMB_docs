@@ -5,13 +5,12 @@ description = "Documentation for the Distributed Unlimited Media Bridge media au
 authors = [
     {name = "I-am-PUID-0",email = "36779668+I-am-PUID-0@users.noreply.github.com"}
 ]
-license = {text = "MIT"}
+license = "GPL-3.0-only"
 readme = "README.md"
-requires-python = "^3.11"
+requires-python = ">=3.11,<4.0"
 dependencies = [
-    "pymdown-extensions (>=10.3,<12.0)",
-    "zensical (>=0.0.15,<0.1.0)",
-    "mkdocstrings[python,shell] (>=1.0.0,<2.0.0)"
+    "zensical (>=0.1.1,<0.2.0)",
+    "pyyaml (>=6.0.3,<7.0.0)"
 ]
 
 

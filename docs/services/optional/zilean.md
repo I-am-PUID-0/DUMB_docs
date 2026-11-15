@@ -1,17 +1,31 @@
 ---
 title: Zilean
+description: Enable Zilean and its PostgreSQL database, wait for hash-list imports, connect search consumers, and review configuration and source selection.
 icon: lucide/book-open
 ---
 
-Zilean is a service that enables users to search for content sourced by [Debrid Media Manager](https://github.com/debridmediamanager/) and shared by others. It can be configured as a Torznab indexer in various content applications, allowing seamless integration and content discovery. Additionally, Zilean can scrape data from a running Zurg instance and other Zilean instances. 
+# Zilean
+
+Zilean indexes shared [Debrid Media Manager](https://github.com/debridmediamanager/debrid-media-manager) hash lists and exposes search and Torznab interfaces. It can also ingest supported Zurg and Zilean sources. DUMB manages its runtime and PostgreSQL database; configure consumers such as CLI Debrid, Riven, or AIOStreams to use its search endpoint.
 
 ---
 
+## First start
+
+1. Enable Zilean in onboarding if your workflow will use it as a search source.
+2. Let DUMB start PostgreSQL and Zilean, then inspect Zilean's startup/import log.
+3. Configure the intended search consumer to use Zilean's internal address and assigned port.
+4. Test a search from that consumer before relying on automated acquisition.
+
+<details class="geek-details" markdown="1">
+<summary>Technical details: configuration reference</summary>
+
 ## Configuration Settings in `dumb_config.json`
 
-Below is a sample configuration for Zilean within the `dumb_config.json` file:
+Merge overrides into the `zilean` section of your existing configuration:
 
 ```json
+{
 "zilean": {
   "enabled": false,
   "process_name": "Zilean",
@@ -52,7 +66,8 @@ Below is a sample configuration for Zilean within the `dumb_config.json` file:
     "ZILEAN_PYTHON_PYLIB": "/usr/local/lib/libpython3.11.so.1.0",
     "Zilean__Database__ConnectionString": "Host={postgres_host};Port={postgres_port};Database=zilean;Username={postgres_user};Password={postgres_password};Timeout=300;CommandTimeout=3600;"
   }
-},
+}
+}
 ```
 
 ### Configuration Key Descriptions
@@ -63,11 +78,11 @@ Below is a sample configuration for Zilean within the `dumb_config.json` file:
 - **`release_version_enabled`** / **`release_version`**: Use a tagged release if enabled.
 - **`commit_sha`**: Builds an exact Zilean revision from its full 40-character GitHub SHA.
 - **`branch_enabled`** / **`branch`**: Use a specific branch if enabled.
-- **`suppress_logging`**: If `true`, disables log output for this service.
+- **`suppress_logging`**: Suppresses service messages in the main DUMB output.
 - **`log_level`**: Logging verbosity (e.g., `DEBUG`, `INFO`).
 - **`host`**: IP address for the Zilean service to bind to.
 - **`port`**: Port the Zilean API is exposed on.
-- **`auto_update`**: Enables automatic self-updates.
+- **`auto_update`**: Enables DUMB's scheduled update checks; `auto_update_mode` determines whether a detected update is installed.
 - **`auto_update_interval`**: How often (in hours) to check for updates.
 - **`clear_on_update`**: Clears build artifacts or cache during updates.
 - **`exclude_dirs`**: Prevents specific directories from being affected by updates when using `clear_on_update`
@@ -90,17 +105,11 @@ Below is a sample configuration for Zilean within the `dumb_config.json` file:
 
 ---
 
+</details>
+
 ## Commit / Branch / Version Targeting
-You can control which source revision of Zilean is deployed by setting:
 
-- `commit_sha` to a full 40-character SHA for an immutable source pin
-- `branch_enabled: true` and specifying a `branch`
-- or `release_version_enabled: true` and specifying a `release_version`
-
-The exact commit overrides release and branch selection. Automatic updates stay
-disabled while the pin is present.
-
----
+Choose a full `commit_sha`, a release selector, or an enabled branch in this service's DUMB settings. A commit pin takes precedence over the other selectors and disables automatic updates until you clear it. Review [source selection and update modes](../../features/auto-update.md) before changing a running service.
 
 ## Tips
 - The first-time run of Zilean can take a long time; see the [Zilean FAQ](../../faq/zilean.md#why-is-zilean-spamming-my-logs) for more info.

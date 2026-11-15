@@ -1,5 +1,6 @@
 ---
 title: AI Assistant API
+description: Configure DUMB AI providers and saved profiles, preview redacted diagnostic bundles, request service or stack analysis, and continue diagnosis sessions.
 icon: lucide/brain
 ---
 
@@ -8,6 +9,20 @@ icon: lucide/brain
 The AI API manages provider settings and service diagnostics. Authentication follows the same DUMB API authentication behavior as the rest of the backend.
 
 The backend makes provider requests from inside the DUMB container. Use provider URLs that are reachable from that container, not just from your browser.
+
+## Choose an endpoint
+
+| Task | Route |
+|---|---|
+| Read or save active settings | `GET` / `PUT /ai/settings` |
+| Save, activate, or remove provider profiles | `/ai/profiles`, `/ai/profiles/{profile_id}/activate`, `/ai/profiles/{profile_id}` |
+| Discover prompts or models | `GET /ai/presets`, `POST /ai/models` |
+| Test provider connectivity | `POST /ai/test` |
+| Preview or run service diagnostics | `POST /ai/diagnose` |
+| Preview or run stack diagnostics | `POST /ai/diagnose-stack` |
+| Continue an earlier diagnosis | `POST /ai/follow-up` |
+
+Use a diagnostic dry run to review the redacted context before sending it to a provider. Provider calls use the configured account and may have provider-side usage costs.
 
 ## `GET /ai/settings`
 
@@ -74,7 +89,7 @@ Creates a new profile when `id` is omitted, or updates an existing profile when 
 
 ```json
 {
-  "name": "Free Gemini",
+  "name": "Gemini",
   "provider": "gemini",
   "model": "gemini-3.5-flash-lite",
   "api_key": "YOUR_GEMINI_API_KEY",

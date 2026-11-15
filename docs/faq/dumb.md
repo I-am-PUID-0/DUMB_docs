@@ -1,27 +1,28 @@
 ---
 title: DUMB FAQ
+description: Check DUMB image contents, recover dashboard access, diagnose WebSocket problems, and investigate service restarts or container PID exhaustion.
 icon: lucide/help-circle
 ---
 
 # DUMB FAQ
 
-Below are some common questions and solutions related to **DUMB**.
+Start here for image versions, dashboard access, and service startup problems.
 
----
-## Frequently Asked Questions (FAQ)
 
-### Does the **DUMB** image have the latest version of `x`
+### Does the DUMB image have the latest version of a service? { #does-the-dumb-image-have-the-latest-version-of-x }
 
 The GitHub repository for **DUMB** uses continuous integration and deployment workflows to build and report image contents.
 
 For example, the [Check for New Release Tags](https://github.com/I-am-PUID-0/DUMB/actions/workflows/fetch-latest-tags.yml) workflow is automated to run every three hours and check for updates to the various services/projects utilized in DUMB. If an update is found, the [Docker Image CI](https://github.com/I-am-PUID-0/DUMB/actions/workflows/docker-image.yml) workflow is called to build a new image with the latest services. 
 
+<!-- dev:start -->
 To pair DUMB `dev` with an unreleased frontend, maintainers can use the manual
 [frontend image-build selection](../services/dumb/dumb-frontend.md#build-a-development-image-with-a-chosen-frontend).
 Each frontend choice on DUMB `dev` publishes the normal `:dev` image tag, so
 that tag follows the last published backend/frontend combination. Automatic builds
 continue to select a tagged frontend release. Use a registry digest to retain an
 exact image; selecting a frontend commit alone does not pin the backend.
+<!-- dev:end -->
 
 ### What versions are in the latest **DUMB** image
 
@@ -32,7 +33,6 @@ To check, click on one of the [Docker Image CI](https://github.com/I-am-PUID-0/D
 Example `Build Summary` below:
 ![Build Summary](../assets/images/build_summary.PNG)
 
----
 
 ## Authentication
 
@@ -49,13 +49,7 @@ See the [Authentication Guide](../features/authentication.md) for details.
 
 ### I'm locked out of DUMB - how do I reset authentication?
 
-If you cannot access your account:
-
-1. Stop the DUMB container
-2. Edit `/config/users.json`
-3. Set `"enabled": false`
-4. Restart the container
-5. Access the dashboard and create a new user
+Use the [lockout recovery procedure](authentication.md#i-forgot-my-password-how-do-i-reset-it). Disabling authentication temporarily does not reset an existing user's password or remove its account.
 
 ### Why do I get "Invalid credentials" when logging in?
 
@@ -70,7 +64,6 @@ If you cannot access your account:
 - If issues persist, clear browser storage and log in again
 - Check if "Remember Me" was checked during login
 
----
 
 ## WebSocket and Real-time Updates
 
@@ -87,19 +80,14 @@ If you cannot access your account:
 - The frontend will automatically reconnect
 - If it persists, check DUMB API logs for errors
 
----
 
 ## Services
 
 ### How do I access service UIs?
 
-When embedded UIs are enabled, access services at:
+Open the service page's **Embedded UI** tab. The dashboard selects the route for that exact service instance. Direct native-port access requires an explicitly published Docker port; a configured listener alone is not reachable from the host.
 
-```
-http://<host>:18080/service/ui/<service_name>
-```
-
-Or access services directly on their native ports. See [Embedded Service UIs](../features/embedded-ui.md).
+See [Embedded service UIs](../features/embedded-ui.md) for routing and access protection.
 
 ### Why can no services start after the container has been running for days?
 

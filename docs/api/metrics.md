@@ -1,5 +1,6 @@
 ---
 title: Metrics API
+description: Query live DUMB metrics, discover filesystems and interfaces, read chart history, inspect storage providers, and activate PostgreSQL history.
 icon: lucide/activity
 ---
 
@@ -128,6 +129,11 @@ The response includes `status`, `provider`, `database`, `postgres_enabled`, `pos
 Clients should gate this call on the `metrics_history_hot_activation` process capability. Older backends require the normal DUMB restart to provision PostgreSQL.
 
 ## Failure behavior
+
+<!-- dev:start -->
+During installation backup/restore holds, history reads and maintenance routes can return `409` instead of starting concurrent persistence work. Retain the response and retry after the controlling operation releases its hold.
+<!-- dev:end -->
+
 
 In PostgreSQL mode, each new sample is committed to SQLite before PostgreSQL synchronization. PostgreSQL read/write failures change the active provider to SQLite. The complete retained SQLite window is idempotently reconciled after PostgreSQL recovers, and PostgreSQL is promoted only after that succeeds.
 

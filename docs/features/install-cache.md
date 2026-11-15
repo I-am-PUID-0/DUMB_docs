@@ -21,6 +21,19 @@ data/database directories, root-level SQLite files and their active sidecars,
 and symlinked data directories. The guarded paths are also excluded from archive
 merges, while replaceable source and runtime output can still be refreshed.
 
+## Use the cache controls
+
+Open **Dashboard → Updates → Install cache** when supported by your backend. Check usage and fallback state, then choose an action deliberately:
+
+| Task | Action |
+| --- | --- |
+| Check cached downloads | Verify downloads |
+| Reclaim rebuildable space | Prune to limit |
+| Force a runtime rebuild next time | Clear build artifacts |
+| Change the managed size target | Save the limit, then prune separately if desired |
+
+These actions do not stop services or delete active runtimes. Removing warm caches can make the next install slower. If an update is already active, wait for it to finish.
+
 ## Installing a configured release
 
 For services using the shared release installer, an explicit configured-target
@@ -103,6 +116,9 @@ also do not imply universal publisher-signature or provenance verification.
 Bundled signing keys need maintenance when their publishers announce rotations
 or revocations; verification does not fetch new trust roots at runtime.
 
+<details class="geek-details" markdown="1">
+<summary>Technical details: cache paths, limits, and ownership</summary>
+
 ## Configuration
 
 ```json
@@ -148,6 +164,11 @@ shows this fallback and its reason. Correct the configured path or ownership
 and restart DUMB to resume the persistent cache; the temporary fallback is not
 reused after restart.
 
+</details>
+
+<details class="geek-details" markdown="1">
+<summary>Technical details: package-manager cache behavior</summary>
+
 ## Package-manager behavior
 
 - pnpm uses a shared content-addressed store grouped by pnpm major, verifies
@@ -163,6 +184,8 @@ reused after restart.
 - Bun, Yarn, and Deno retain persistent shared caches and use immutable/frozen
   lock behavior when their project supplies a lockfile.
 - mediastorm OCI data remains digest-addressed and verified.
+
+</details>
 
 ## Dashboard maintenance
 

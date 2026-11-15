@@ -10,12 +10,22 @@ icon: lucide/search
 
 ---
 
+## First start
+
+1. Enable Prowlarr during onboarding, then open its embedded UI.
+2. Add the indexers you intend to use and run their connection tests.
+3. Review the Sonarr, Radarr, Lidarr, or Whisparr application connections and choose the intended synchronization policy.
+4. Check indexer tags and supported categories so each application receives the sources you expect.
+
+A saved connection is not a passed indexer test. Check both before enabling automated searches.
+
+<!-- dev:start -->
 ## Setup checklist and remaining work
 
 Select exact managed or registered external Arr targets on setup-arrangement backends. Review adoption before changing an unowned application connection. For private/Usenet indexers, add a stable entry, choose a native definition, refresh its advertised settings and provide its credentials. Preview the proposed fields and deliberately authorize its connection test and save. Enablement, synchronization policy and effective category/tag routing remain explicit decisions; a saved entry is distinct from a successful connection test. Existing unrelated indexers, application entries and tags are preserved.
 
 Requires the backend setup-arrangement capability. See [Setup checklist and automation](../../features/setup-checklist.md) for retained tasks, coverage and safe retries.
-
+<!-- dev:end -->
 
 ## Service Relationships
 
@@ -28,9 +38,13 @@ Requires the backend setup-arrangement capability. See [Setup checklist and auto
 
 ---
 
+<details class="geek-details" markdown="1">
+<summary>Technical details: configuration reference</summary>
+
 ## Configuration in `dumb_config.json`
 
 ```json
+{
 "prowlarr": {
   "instances": {
     "Default": {
@@ -60,9 +74,10 @@ Requires the backend setup-arrangement capability. See [Setup checklist and auto
     }
   }
 }
+}
 ```
 
-### Key Configuration Fields
+### Key configuration fields { #key-configuration-fields }
 
 * `postgres_enabled`: Opt this instance into DUMB-managed PostgreSQL config. SQLite is the default; set this to `true` only when you want Prowlarr to use PostgreSQL.
 * `postgres_main_db` / `postgres_log_db`: Optional database-name overrides. When blank, DUMB uses `prowlarr-main` and `prowlarr-log` for the default instance, or unique instance-scoped names for additional instances.
@@ -72,10 +87,12 @@ Requires the backend setup-arrangement capability. See [Setup checklist and auto
 * `release_version_enabled` / `release_version`: Use GitHub releases (e.g., `latest`, `nightly`, `prerelease`, or a tag).
 * `clear_on_update`: Clear the install directory before updating.
 * `exclude_dirs`: Directories to preserve when clearing.
-* `platforms`: Build platforms (auto‑defaults to `["dotnet"]` when using branches).
+* `platforms`: Build platforms (defaults to `["dotnet"]` when using branches).
 * `config_dir`, `config_file`, `log_file`: Paths for config and logs.
 
 ---
+
+</details>
 
 ## PostgreSQL database mode
 
@@ -104,7 +121,7 @@ For an existing instance, use **Database Migration** on the service page. DUMB r
 
 ## Repo-based installs and updates
 
-Prowlarr now supports the same repo‑based controls as other DUMB services.
+Prowlarr now supports the same repository-based controls as other DUMB services.
 
 - **GitHub releases**: Set `release_version_enabled: true` with a valid `repo_owner`/`repo_name`.
 - **Default updater**: Leave `release_version_enabled: false` to use the standard Arr updater.
@@ -131,7 +148,14 @@ This is an AIOStreams runtime integration, not a Prowlarr application entry that
 
 ### Automated Arr sync
 
-DUMB reads Arr API keys after initialization and can create managed Prowlarr applications. On setup-arrangement backends, choose each Prowlarr instance's exact targets and review adoption/sync policy for existing entries. Older backends retain their broad enabled-Arr synchronization; review those entries manually. Connection tests remain separate from saving an entry.
+DUMB reads Arr API keys after initialization and can create managed Prowlarr applications. Review the resulting application targets and synchronization policy, and test connections separately from saving entries.
+
+<!-- dev:start -->
+The setup checklist retains exact targets per Prowlarr instance and asks you to review adoption of existing entries.
+<!-- dev:end -->
+<!-- release:start -->
+DUMB 2.23.0 synchronizes enabled Arr applications broadly. Review those entries in Prowlarr before relying on automatic indexer synchronization.
+<!-- release:end -->
 
 Requirements:
 
@@ -181,6 +205,8 @@ Other custom indexers in the definition repository are available to add manually
 ---
 
 ## Accessing the UI
+
+Open the service from DUMB's **Embedded UI** tab when available. The native URLs below require the corresponding Docker host port to be published; use the port saved in your running configuration.
 
 * Navigate to: `http://<host>:9696`
 

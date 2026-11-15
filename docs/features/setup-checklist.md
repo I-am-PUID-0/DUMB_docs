@@ -1,4 +1,5 @@
 ---
+development_only: true
 title: Setup Checklist and Automation
 description: Preview DUMB setup automation, reuse provider accounts, choose exact connections and libraries, and resume manual or failed setup tasks safely.
 icon: lucide/list-checks
@@ -160,6 +161,9 @@ Prowlarr adds explicit Arr application assignments. Seerr or Pulsarr adds chosen
 
 The actual checklist depends on selections and supported application interfaces:
 
+<details class="geek-details" markdown="1">
+<summary>Technical details: automation coverage by service</summary>
+
 | Services | DUMB can handle or guide | Decisions or checks that remain yours |
 |---|---|---|
 | Decypharr, InfiniDysk 1, AltMount | Provider inputs/references, selected Arr clients, categories, roots and managed mounts; supported guarded AltMount account/WebDAV setup | Account limits, indexer accounts, administrator/import decisions, credential-rotation/restart consent, external mounts and real imports |
@@ -180,6 +184,8 @@ The actual checklist depends on selections and supported application interfaces:
 | AIOStreams | Selected Prowlarr/Zilean presets and InfiniDysk/AltMount playback settings in an explicitly chosen encrypted profile, plus public-origin readiness | Profile password/creation consent, compatible playback credentials and public origins; final Stremio installation and preferences |
 | Traefik, Traefik Proxy Admin, Authelia, Cloudflared | Runtime dependencies, bootstrap panels and reviewed native TPA domain/application routes | First TPA administrator, DNS, certificate/tunnel settings, notifier setup, identity enrollment and deliberate SSO/protection choices |
 | PostgreSQL, pgAdmin, Zilean | Managed database/runtime configuration and supported pgAdmin PostgreSQL registration through its official provisioning CLI | Backup/restore policy, database password on pgAdmin's first connection and Zilean's initial index population |
+
+</details>
 
 Unavailable or unrecognized interfaces remain manual, unsupported or needing review. DUMB does not guess successful integration.
 

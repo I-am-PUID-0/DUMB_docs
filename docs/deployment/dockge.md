@@ -26,11 +26,11 @@ mounted at the same path inside the Dockge container as on the host. See the
 Run this on the Docker host, not in the Dockge web terminal:
 
 ```bash
-sudo mkdir -p /opt/dumb/{config,log,data,mnt/debrid}
-sudo chown -R 1000:1000 /opt/dumb
+sudo install -d -o 1000 -g 1000 /opt/dumb
+sudo install -d -o 1000 -g 1000 /opt/dumb/{config,log,data,mnt,mnt/debrid}
 ```
 
-Replace `1000:1000` with the `PUID:PGID` you will use for DUMB.
+Replace `1000` with the nonzero UID and GID you will use for DUMB. These commands prepare new directories. For an existing installation, inspect its current ownership and mounts before changing them; do not recursively change the whole tree.
 
 ## Create the stack
 
@@ -67,6 +67,10 @@ Compose file when the stack uses FUSE. Remove `/dev/dri` only when the host does
 not provide it and no selected service needs hardware acceleration.
 
 ## External media-server mounts
+
+Prepare the producer host path as a shared Linux mount before relying on
+`rshared`/`rslave`. Compose propagation flags alone do not change the host
+mount. Check both the producer and consumer mount namespaces.
 
 If Plex, Jellyfin, Emby, or an Arr runs in another container and must see a
 submount created inside DUMB, change the DUMB mount to:

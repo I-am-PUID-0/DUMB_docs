@@ -1,5 +1,6 @@
 ---
 title: CLI Battery
+description: Understand when CLI Debrid needs standalone CLI Battery, how DUMB handles embedded layouts, and where to find its settings, logs, and metadata.
 icon: lucide/battery-charging
 ---
 
@@ -10,6 +11,10 @@ integration for CLI Debrid. Older CLI Debrid layouts run it as a separate
 Flask application. Newer layouts include it inside the CLI Debrid process.
 This service's separate process, port, and web interface apply to the older
 standalone layout.
+
+<!-- dev:start -->
+<details class="geek-details" markdown="1">
+<summary>Technical details: installed CLI Battery layout</summary>
 
 !!! info "DUMB follows the installed CLI Debrid layout"
 
@@ -31,6 +36,14 @@ standalone layout.
     reports an error; install or repair CLI Debrid first. Separately configured
     Battery commands or source directories retain their own behavior.
 
+</details>
+
+<!-- dev:end -->
+<!-- release:start -->
+For an upstream CLI Debrid layout with embedded Battery, DUMB 2.23.0 does not detect the replacement automatically. Review the [CLI Debrid FAQ](../../faq/cli-debrid.md#does-cli-debrid-v0729-still-need-a-separate-cli-battery-process) before enabling that layout.
+<!-- release:end -->
+
+
 ## Service relationships
 
 | Classification | Role |
@@ -41,9 +54,17 @@ standalone layout.
 
 ---
 
+!!! warning "Trakt authorization"
+
+    CLI Battery handles Trakt OAuth flows. Make sure the callback URL you authorize matches the port you expose.
+
+<details class="geek-details" markdown="1">
+<summary>Technical details: configuration reference</summary>
+
 ## Configuration settings in `dumb_config.json`
 
 ```json
+{
 "cli_battery": {
   "enabled": false,
   "process_name": "CLI Battery",
@@ -65,14 +86,15 @@ standalone layout.
     "USER_DB_CONTENT": "/cli_debrid/data/db_content/",
     "CLI_DEBRID_BATTERY_PORT": "{port}"
   }
-},
+}
+}
 ```
 
 ### Configuration Key Descriptions
 
 * **`enabled`**: Enables the CLI Battery service.
 * **`process_name`**: Display name in logs and process manager.
-* **`suppress_logging`**: Suppresses CLI Battery logs in the main DUMB output.
+- **`suppress_logging`**: Suppresses service messages in the main DUMB output.
 * **`log_level`**: Controls verbosity of logging.
 * **`port`**: CLI Battery service port.
 * **`command`**: How the service is started.
@@ -88,18 +110,16 @@ standalone layout.
 * `USER_DB_CONTENT`: Metadata database directory (`/cli_debrid/data/db_content/`).
 * `PYTHONPATH`: Module lookup path (`/cli_debrid`).
 
-!!! warning "Trakt authorization"
-
-    CLI Battery handles Trakt OAuth flows. Make sure the callback URL you authorize matches the port you expose.
-
 ---
+
+</details>
 
 ## Required by standalone CLI Debrid layouts
 
 CLI Battery must be running **before** a CLI Debrid layout that depends on its
 standalone API launches. DUMB starts the enabled managed Battery first for
-that layout. A recognized embedded layout uses the CLI Debrid process and
-does not need a separate port-5001 service.
+that layout. An upstream embedded layout runs Battery within CLI Debrid
+and has no separate port-5001 service; follow the version-specific guidance above.
 
 ---
 
@@ -125,6 +145,8 @@ CLI Battery is a Flask web app exposing a browser UI and REST API:
 ---
 
 ## Access
+
+Open the service from DUMB's **Embedded UI** tab when available. The native URLs below require the corresponding Docker host port to be published; use the port saved in your running configuration.
 
 - Navigate to: `http://<host>:<port>` (default `5001`)
 

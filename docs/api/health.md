@@ -1,50 +1,30 @@
 ---
 title: Health Check API
+description: Check DUMB process and listener readiness through GET /health, and interpret unhealthy payloads, timeouts, and execution failures correctly.
 icon: lucide/heart-pulse
 ---
 
 # Health Check API
 
-The **Health Check API** provides a simple mechanism to verify that the DUMB container and core services are operational.
+`GET /health` runs DUMB's health-check script and reports tracked process/listener readiness.
 
----
-
-## Endpoint
-
-### `GET /health`
-Returns a JSON response indicating whether the container is healthy.
-
-#### Response
-```json
-{
-  "status": "healthy"
-}
-```
-
-If a tracked process or one of its configured listener ports fails the check, the
-response remains HTTP 200 with `"status": "unhealthy"` and a sanitized `details`
-field. A health-check timeout returns HTTP 504; an execution failure returns
-HTTP 500.
-
----
-
-!!! tip "Use Cases"
-    - Used by orchestrators or monitoring tools to confirm container availability.
-    - Use in load balancers or uptime monitoring dashboards.
-
----
-
-## Implementation
-This route executes the container health-check script:
 ```bash
-/healthcheck.py
+curl http://localhost:3005/api/health
 ```
-It reads DUMB's tracked process file, confirms each PID is still running, and
-tests configured service ports when present. It is a stack/process readiness
-signal, not a deep application-data or provider health test.
 
----
+## Responses
 
-## Related
-- [API Overview](index.md)
-- [Process Management](process.md)
+| HTTP status | Body | Meaning |
+|---|---|---|
+| `200` | `{"status":"healthy"}` | The health-check script passed |
+| `200` | `{"status":"unhealthy","details":"..."}` | A tracked PID or configured listener failed its check |
+| `504` | Error detail | The script exceeded its eight-second timeout |
+| `500` | Error detail | DUMB could not execute the check |
+
+**Read the JSON `status` value. HTTP 200 alone does not mean the stack is healthy.** An HTTP-only uptime check can miss an unhealthy response.
+
+## Scope of the check
+
+The script reads the tracked process manifest, checks PIDs, and tests configured listener ports where present. It does not verify provider credentials, application data, imports, or playback.
+
+The Docker runtime uses `/healthcheck.py`; native deployments resolve the script through DUMB's runtime paths. For per-service state and startup progress, use the [process endpoints](process.md).

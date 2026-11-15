@@ -10,8 +10,6 @@ Seerr Sync provides one-way request replication from a **primary** Seerr instanc
 
 It polls the primary at a configurable interval, fingerprints requests using `{mediaType}:{tmdbId}:{is4k}`, and persists sync state in `/config/seerr_sync_state.json` to survive restarts.
 
----
-
 ## Endpoints
 
 ### GET `/seerr-sync/status`
@@ -55,8 +53,6 @@ Response (initializing):
 }
 ```
 
----
-
 ### GET `/seerr-sync/failed`
 
 List failed sync attempts with details.
@@ -76,8 +72,6 @@ List failed sync attempts with details.
   ]
 }
 ```
-
----
 
 ### GET `/seerr-sync/state`
 
@@ -104,8 +98,6 @@ Raw sync state (debugging).
   }
 }
 ```
-
----
 
 ### POST `/seerr-sync/test`
 
@@ -139,8 +131,6 @@ Response (failure):
 }
 ```
 
----
-
 ### DELETE `/seerr-sync/failed`
 
 Clear failed requests so they are retried on the next poll.
@@ -157,8 +147,6 @@ Response:
   "cleared": 9
 }
 ```
-
----
 
 ## Notes
 

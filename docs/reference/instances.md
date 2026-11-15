@@ -1,13 +1,12 @@
 ---
 title: Multi-instance configuration
+description: Configure multiple supported DUMB service instances with distinct names, ports, configuration paths, logs, and download workflow selectors.
 icon: lucide/layers
 ---
 
 # Multi-instance configuration
 
 Several DUMB services support multiple instances (for example Sonarr, Radarr, Lidarr, Whisparr, and rclone). This guide shows how to configure instances safely.
-
----
 
 ## Instance pattern
 
@@ -36,16 +35,12 @@ Services that support instances use an `instances` map keyed by a friendly name:
 }
 ```
 
----
-
 ## Best practices
 
 - Assign unique ports per instance to avoid collisions.
 - Use distinct `config_dir` and `log_file` paths.
 - Keep `process_name` descriptive for clarity in the UI.
 - Set `core_service` when integrating with Decypharr, InfiniDysk, or AltMount (single value, list, or comma-separated).
-
----
 
 ## rclone instances
 
@@ -65,8 +60,6 @@ rclone also uses an `instances` map for different mount targets:
   }
 }
 ```
-
----
 
 ## Related pages
 

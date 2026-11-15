@@ -1,27 +1,24 @@
 ---
 title: Zurg FAQ
+description: Investigate Zurg and rclone HTTP 423 errors by checking provider readiness, request activity, and the source logs before changing limits.
 icon: lucide/zap
 ---
 
 # Zurg FAQ
 
-Below are some common questions and solutions related to Zurg when used with **DUMB**.
+## `ERROR - rclone w/ RealDebrid subprocess: : IO error: File is temporarily unavailable: 423 Locked`
 
----
+The remote WebDAV source returned `423 Locked`. Read the accompanying Zurg/provider logs to distinguish unavailable or preparing content from provider throttling. The status code alone does not prove a rate limit.
 
-## Frequently Asked Questions (FAQ)
+If background library work is generating excessive requests:
 
-### `ERROR - rclone w/ RealDebrid subprocess: : IO error: File is temporarily unavailable: 423 Locked`
-This error generally indicates that a **rate limit is being enforced by Real-Debrid**. It often occurs during media server scans that hit the API too frequently.
+1. Review [Plex analysis and scan settings](plex.md#recommended-library-settings).
+2. Check how many clients and scans use the same provider account.
+3. Consider a conservative rclone transaction limit using `RCLONE_TPSLIMIT` and observe the result.
 
-To mitigate this:
-- If you're using **Plex**, this is commonly caused by automatic scans that trigger repeatedly.
-- Alternatively, you may also need to impose a transactions (requests) per second limit with rclone.
+See the [rclone FAQ](rclone.md#i-think-i-might-be-rate-limited-by-the-debrid-service-seeing-423-errors) for the correct variable and its limits.
 
-See the [Plex FAQ](plex.md#recommended-library-settings) for more Plex-specific recommendations and details.
-See the [rclone FAQ](../faq/rclone.md#i-think-i-might-be-rate-limited-by-the-debrid-service-seeing-423-errors) for more rclone-specific recommendations and details.
+## Related pages
 
----
-
-## Related Pages
-- [Zurg Configuration](../services/dependent/zurg.md)
+- [Zurg configuration](../services/dependent/zurg.md)
+- [rclone configuration](../services/dependent/rclone.md)

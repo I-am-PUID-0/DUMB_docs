@@ -12,6 +12,18 @@ In DUMB, AltMount is a core Usenet workflow service. DUMB installs and starts Al
 
 ---
 
+## First-start checklist
+
+1. Select **AltMount** as the Usenet workflow in guided onboarding, then choose its mount mode.
+2. Create the first administrator in AltMount, or sign in with the existing administrator.
+3. Replace first-run WebDAV credentials before exposing the endpoint outside a trusted network. Update dependent clients and restart the affected mount when needed.
+4. Add and test at least one TLS-enabled NNTP provider in AltMount.
+5. Review the DUMB-selected mount type/path in AltMount's Mount settings.
+6. Choose `NONE`, `SYMLINK`, or `STRM` and configure any required import directory.
+7. Verify the linked Arr instances and their `altmount` download clients.
+8. Send a small test NZB and confirm queue, import, library scan, and playback behavior end to end.
+
+<!-- dev:start -->
 ## Setup checklist and remaining work
 
 Choose the mount/import arrangement deliberately. The checklist collects or references provider accounts and guides selected Arr connections. Authorize the AltMount administrator, choose direct/symlink/STRM behavior, provide external mounts and validate paths. Sharing an account does not create an unlimited connection budget.
@@ -23,7 +35,7 @@ The download-client/SABnzbd API key does not authorize administrator settings ch
 The WebDAV task reuses authenticated existing custom credentials when possible. To set or rotate them, enter the replacement credentials, review the masked field preview and explicitly approve that exact proposal. DUMB verifies authenticated WebDAV access and keeps the handoff to selected consumers private. Coordinate external clients separately: DUMB cannot rewrite unknown consumers. For an internal rclone mount, changing credentials requires an explicitly authorized AltMount-only restart, which can interrupt active playback. External/no-mount layouts can use the supported native hot configuration path. API/configuration checks do not prove FUSE mounts or the complete playback workflow.
 
 Requires the backend setup-arrangement capability. See [Setup checklist and automation](../../features/setup-checklist.md) for retained tasks, coverage and safe retries.
-
+<!-- dev:end -->
 
 ## Workflow diagram
 
@@ -76,7 +88,7 @@ The dashed arrows are DUMB automation. The solid arrows are the normal request a
 
 ## What AltMount provides
 
-- A modern web UI and API for configuration, queue visibility, and health monitoring
+- A web UI and API for configuration, queue visibility, and health monitoring
 - WebDAV access and range-based streaming directly from Usenet
 - A SABnzbd-compatible download-client API for Arr applications
 - Multiple NNTP providers with load distribution and failover
@@ -91,9 +103,9 @@ AltMount owns the media-processing behavior. DUMB supplies the service lifecycle
 
 | DUMB manages | You manage in AltMount |
 |--------------|------------------------|
-| Downloads the architecture-specific release binary and records its version; guides guarded first-administrator creation or existing login | Administrator credentials and application access policy |
-| Creates directories and applies supported explicitly supplied/referenced NNTP accounts after administrator authorization | Provider accounts, connection allocation and TLS policy |
-| Generates `JWT_SECRET` and `ALTMOUNT_API_KEY` when missing; guides reviewed WebDAV credential handoff | Credential rotation/restart consent, existing external clients and public/reverse-proxy cookie-domain changes |
+| Downloads the architecture-specific release binary and records its version | Administrator credentials and application access policy |
+| Creates config, metadata, log, rclone, and mount directories | Provider accounts, connection allocation, and TLS policy |
+| Generates `JWT_SECRET` and `ALTMOUNT_API_KEY` when missing | WebDAV credentials, external clients, and public/proxy settings |
 | Maps DUMB's mount choice into AltMount's native `mount_type` | Import strategy, import directory, streaming cache, health monitoring, and advanced provider behavior |
 | Enables SABnzbd compatibility and adds standard media categories | Arr root folders, media-server library paths, and validation of the complete import path |
 | Adds linked Arr instances to AltMount and adds AltMount as their download client | Optional AltMount webhooks and any tuning beyond DUMB's baseline |
@@ -114,11 +126,15 @@ AltMount owns the media-processing behavior. DUMB supplies the service lifecycle
 
 The native port is inside the DUMB container. It is directly reachable from the host only if your deployment publishes or otherwise exposes it.
 
+<details class="geek-details" markdown="1">
+<summary>Technical details: configuration reference</summary>
+
 ## Configuration in `dumb_config.json`
 
 The current default block is:
 
 ```json
+{
 "altmount": {
   "enabled": false,
   "postgres_enabled": false,
@@ -154,6 +170,7 @@ The current default block is:
     "ALTMOUNT_API_KEY": ""
   }
 }
+}
 ```
 
 ### Important fields
@@ -170,6 +187,8 @@ The current default block is:
 - `env.COOKIE_DOMAIN`: Defaults to `localhost`; change it only when your direct or reverse-proxied AltMount access model requires another cookie domain.
 
 `command`, `PUID`, `PGID`, and `PORT` are reconciled by setup. Avoid treating them as independent AltMount UI settings.
+
+</details>
 
 ## Mount modes
 
@@ -207,13 +226,17 @@ See AltMount's [ARR integration guide](https://altmount.kipsilabs.top/docs/Confi
 For an enabled Sonarr, Radarr, Lidarr, or Whisparr instance, set:
 
 ```json
+{
 "core_service": "altmount"
+}
 ```
 
 For a shared Arr instance that uses several workflow services, use a list or the equivalent comma-separated UI selection:
 
 ```json
+{
 "core_service": ["decypharr", "infinidysk", "altmount"]
+}
 ```
 
 During guided onboarding, DUMB then:
@@ -225,22 +248,11 @@ During guided onboarding, DUMB then:
 5. Enables AltMount's SABnzbd-compatible API and standard categories (`movies`, `tv`, `music`, and `adult`).
 6. Creates or updates an `altmount` SABnzbd download client in each linked Arr with the matching category.
 
-Standard configuration scopes integration through `core_service`. Compatible setup checklists also retain exact selected Arr assignments. DUMB does not add every enabled Arr automatically. Existing native entries are preserved or adopted only through the supported reviewed task.
+The `core_service` selection scopes normal Arr integration. Review the exact native entries after setup; enabling an Arr process alone does not assign it to AltMount.
 
 !!! warning "Finish the AltMount-owned setup"
 
-    A new native configuration starts with `providers` empty. Use the compatible checklist to supply or reference provider accounts and apply authorized settings, or configure them in AltMount's UI. Choose and validate the import strategy, confirm the Arr root/import paths, and test playback before relying on automation.
-
-## First-start checklist
-
-1. Select **AltMount** as the Usenet workflow in guided onboarding, then choose its mount mode.
-2. Explicitly create the first administrator through a supported checklist task, or use AltMount's own UI; authorize an existing administrator when reusing a server.
-3. Replace first-run WebDAV credentials through the reviewed task or native UI before exposing the endpoint outside a trusted network. Coordinate external clients and authorize an internal-rclone restart when needed.
-4. Supply/reference and test at least one TLS-enabled NNTP provider through the checklist or AltMount's UI.
-5. Review the DUMB-selected mount type/path in AltMount's Mount settings.
-6. Choose `NONE`, `SYMLINK`, or `STRM` and configure any required import directory.
-7. Verify the linked Arr instances and their `altmount` download clients.
-8. Send a small test NZB and confirm queue, import, library scan, and playback behavior end to end.
+    A new native configuration starts with `providers` empty. Configure and test the required NNTP accounts in AltMount. Choose and validate the import strategy, confirm the Arr root/import paths, and test playback before relying on automation.
 
 ## AIOStreams playback
 

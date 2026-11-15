@@ -1,0 +1,58 @@
+{# Based on Zensical's MIT-licensed shared header. Keep theme controls intact. #}
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="{{ lang.t('header') }}">
+    <a href="{{ nav.homepage.url | url }}" class="md-header__button md-logo" aria-label="DUMB documentation home">
+      {% include "partials/logo.html" %}
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      {% include ".icons/material/menu.svg" %}
+      <span class="md-visually-hidden">{{ lang.t('nav') }}</span>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic"><span class="md-ellipsis">DUMB docs</span></div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">{{ page.title | default('DUMB docs') }}</span>
+        </div>
+      </div>
+    </div>
+    {% if config.extra.docs_channel %}
+      {% set root_url = config.extra.docs_root | url %}
+      {% if root_url and root_url[-1] != '/' %}{% set root_url = root_url ~ '/' %}{% endif %}
+      {% set release_page = page.url if page.url in config.extra.docs_release_pages else '' %}
+      {% set dev_page = page.url if page.url in config.extra.docs_dev_pages else '' %}
+      <div class="docs-tools" data-docs-root="{{ root_url }}" data-docs-channel="{{ config.extra.docs_channel }}">
+        <details class="docs-version">
+          <summary aria-label="Documentation version: {% if config.extra.docs_channel == 'dev' %}Development{% else %}Latest release{% endif %} {{ config.extra.docs_version }}">
+            <span class="docs-version-label">{% if config.extra.docs_channel == 'dev' %}Development{% else %}Latest release{% endif %}</span>
+            <span class="docs-version-short" aria-hidden="true">{% if config.extra.docs_channel == 'dev' %}Dev{% else %}Release{% endif %}</span>
+            <span class="docs-version-number">{{ config.extra.docs_version }}</span>
+          </summary>
+          <nav class="docs-version-menu" aria-label="Choose documentation version">
+            <a href="{{ root_url }}{{ release_page }}" data-docs-version="release"{% if config.extra.docs_channel == 'release' %} aria-current="true"{% endif %}>
+              Latest release <small>{{ config.extra.docs_release_version }}</small>
+            </a>
+            <a href="{{ root_url }}dev/{{ dev_page }}" data-docs-version="dev"{% if config.extra.docs_channel == 'dev' %} aria-current="true"{% endif %}>
+              Development <small>{{ config.extra.docs_dev_version }}</small>
+            </a>
+          </nav>
+        </details>
+        <button type="button" class="docs-geek" aria-pressed="false" title="Expand technical details in guides">Geek mode</button>
+      </div>
+    {% endif %}
+    {% if config.theme.palette and config.theme.palette is not mapping %}
+      {% include "partials/palette.html" %}
+      {% include "partials/javascripts/palette.html" %}
+    {% endif %}
+    {% if 'search' in config.plugins %}
+      <label class="md-header__button md-icon" for="__search">
+        {% include ".icons/material/magnify.svg" %}
+        <span class="md-visually-hidden">{{ lang.t('search') }}</span>
+      </label>
+      {% include "partials/search.html" %}
+    {% endif %}
+    <div class="md-header__source">
+      {% if config.repo_url %}{% include "partials/source.html" %}{% endif %}
+    </div>
+  </nav>
+</header>

@@ -1,28 +1,18 @@
 ---
 title: Dependent Services Overview
+description: Find the databases, WebDAV mounts, and metadata services required by selected DUMB workflows, including layout-dependent CLI Battery startup.
 icon: lucide/box
 ---
 
-# Dependent Services
+# Dependent services
 
-Dependent services are essential building blocks required by one or more core services to operate correctly. These services do not perform media automation on their own but provide critical functionality like mounting, database storage, or metadata enrichment.
-
----
-
-## What Are Dependent Services?
-
-A service is considered **dependent** if:
-
-* It must be running before a core service can start successfully
-* It provides a shared capability such as metadata, storage, or content mounting
-
----
+These services provide databases, mounted files, or metadata to another application. The dependencies you need depend on that application's configuration and installed layout.
 
 ## Dependent Service Index
 
 | Service                                    | Description                                         | Required By                               |
 | ------------------------------------------ | --------------------------------------------------- | ----------------------------------------- |
-| [CLI Battery](../dependent/cli-battery.md) | Standalone metadata and Trakt layer for stable/older CLI Debrid releases | CLI Debrid before the v0.7.29 in-process pre-release layout |
+| [CLI Battery](../dependent/cli-battery.md) | Standalone metadata and Trakt layer for stable/older CLI Debrid releases | CLI Debrid layouts that still use the standalone service |
 | [Phalanx DB](../dependent/phalanx-db.md)   | Distributed metadata store for CLI Debrid           | CLI Debrid (optional but often used)      |
 | [PostgreSQL](../dependent/postgres.md)     | Shared database engine for required and optional service backends | Riven, Zilean, pgAdmin, TPA, mediastorm, migrated services, optional Metrics history |
 | [rclone](../dependent/rclone.md)           | Mounts Debrid/Usenet WebDAV storage                  | CLI Debrid, stable Riven, InfiniDysk, Decypharr external-rclone mode |
@@ -30,29 +20,25 @@ A service is considered **dependent** if:
 
 ---
 
-## How They Work
+## How they work
 
-Dependent services act as building blocks — either providing runtime resources or exposing interfaces used by core services.
+| Dependency | Startup requirement |
+|---|---|
+<!-- dev:start -->
+| [CLI Battery](cli-battery.md) | Runs before CLI Debrid only when its installed layout needs the standalone API. DUMB skips the managed Battery process for a recognized embedded layout. |
+<!-- dev:end -->
+<!-- release:start -->
+| [CLI Battery](cli-battery.md) | Runs before a CLI Debrid installation that uses its standalone API. If testing an upstream embedded layout, review the [release-specific guidance](../../faq/cli-debrid.md). |
+<!-- release:end -->
 
-For example:
+| [PostgreSQL](postgres.md) | Starts before applications configured to use its managed databases. |
+| [rclone](rclone.md) | Makes a configured WebDAV source available as local files. The source service must be ready first. |
+| [Zurg](zurg.md) | Exposes Debrid content to an rclone instance configured to use Zurg. |
 
-* **[CLI Battery](../dependent/cli-battery.md)** must start before stable/older CLI Debrid layouts. For the upstream v0.7.29+ pre-release in-process layout, manually disable the standalone DUMB service and verify that guided core-start/onboarding actions did not re-enable it.
-* **[PostgreSQL](../dependent/postgres.md)** must start before every service configured to use one of its databases.
-* **[rclone](../dependent/rclone.md)** must be active to expose the debrid content as a mounted file system to facilitate symlink creation or raw file use.
-* **[Zurg](../dependent/zurg.md)** must run if rclone is configured to use its WebDAV endpoint.
+A disabled dependency can prevent its consumer from becoming ready even if the consumer's own process starts. Check both logs when diagnosing startup failures.
 
----
+## Related pages
 
-## Tips
-
-* These services are typically auto-launched when their associated core service starts
-* Avoid disabling them manually unless you're sure the core service won't need them
-* Check logs for startup dependency errors if a core service fails to launch
-
----
-
-## Related Pages
-
-* [Core Services](../core/index.md)
-* [Optional Services](../optional/index.md)
-* [How Services Work Together](../index.md#how-the-services-work-together)
+- [Core services](../core/index.md)
+- [Optional services](../optional/index.md)
+- [Startup lifecycle](../../features/startup-lifecycle.md)

@@ -1,5 +1,6 @@
 ---
 title: Tautulli FAQ
+description: Fix Tautulli access and Plex connection problems in DUMB, interpret startup errors, and understand which data is needed to recover watch history.
 icon: lucide/help-circle
 ---
 
@@ -7,7 +8,6 @@ icon: lucide/help-circle
 
 Common questions and fixes for Tautulli in DUMB.
 
----
 
 ## Why is the Tautulli UI not loading?
 
@@ -17,9 +17,8 @@ Common questions and fixes for Tautulli in DUMB.
 
 !!! tip "Traefik access"
 
-    If Traefik is enabled, you can access Tautulli at `http://<host>:18080/service/ui/tautulli/`.
+    Open **Tautulli → Embedded UI** in DUMB. Direct port access requires that port to be published.
 
----
 
 ## Tautulli cannot connect to Plex
 
@@ -27,15 +26,13 @@ Common questions and fixes for Tautulli in DUMB.
 - Check the Plex URL and token in Tautulli settings.
 - Verify that the Plex port (`32400`) is reachable from the container.
 
----
 
 ## Tautulli data is missing or incomplete
 
-- Make sure your Plex libraries have been scanned recently.
-- Check that Tautulli has permission to access Plex history and metadata.
+Tautulli keeps its own history database. Check that DUMB still uses the original persistent Tautulli data directory and that Tautulli is connected to the intended Plex server. A library scan does not reconstruct a lost Tautulli history database.
 
+If only new activity is missing, verify the Plex connection and Tautulli's session-monitoring log before changing stored data.
 
----
 
 ## Settings shows `KeyError: 'pms_is_cloud'`
 

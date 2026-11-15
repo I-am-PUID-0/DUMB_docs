@@ -1,148 +1,146 @@
 ---
-title: DUMB Media Automation
-description: Deploy and manage Debrid or Usenet media automation, Arr apps, Plex, Jellyfin, Emby, monitoring, and service UIs in one guided Docker platform.
+title: DUMB documentation
+description: Set up and manage your DUMB media stack. Find plain-language guides for Docker, Debrid, Usenet, Plex, Jellyfin, Arr apps, updates and troubleshooting.
 icon: lucide/home
 hide:
   - navigation
   - toc
 ---
 
-<div class="md-hero hero-card" markdown>
+<div class="docs-home" markdown>
 
-<div class="hero-container" markdown>
-<a href="https://github.com/I-am-PUID-0/DUMB">
-  <picture>
-    <source
-      type="image/webp"
-      srcset="assets/images/DUMB.webp"
-    >
-    <img
-      class="hero"
-      alt="Distributed Unlimited Media Bridge ecosystem banner"
-      src="assets/images/DUMB.png"
-      width="1536"
-      height="1024"
-      decoding="async"
-      fetchpriority="high"
-    >
-  </picture>
-</a>
+<section class="home-hero" markdown>
 
-<div class="hero-text" markdown>
-<h1>DUMB — All-in-One Media Automation for Debrid and Usenet</h1>
+<div class="home-intro" markdown>
 
-**Distributed Unlimited Media Bridge (DUMB)** is an open-source, all-in-one Docker media automation platform. Deploy and manage Debrid or Usenet workflows, Sonarr, Radarr and other Arr apps, Plex, Jellyfin, Emby, request tools, logs, metrics, notifications, and embedded service UIs from one guided dashboard.
+<p class="eyebrow">Distributed Unlimited Media Bridge</p>
 
-<div class="hero-actions" markdown>
-[:octicons-arrow-right-24: Deployment Guide](deployment/index.md){ .md-button .md-button--primary }
-[:material-sitemap: Architecture](architecture/index.md){ .md-button }
-</div>
-</div>
-</div>
-</div>
+# Your media stack.<br>One place to manage it.
 
-<div class="badges-container" style="display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; margin: 2em 0;">
-  <a href="https://github.com/I-am-PUID-0/DUMB/stargazers">
-    <img
-      alt="GitHub Repo stars"
-      src="https://img.shields.io/github/stars/I-am-PUID-0/DUMB?style=for-the-badge"
-    />
-  </a>
-  <a href="https://github.com/I-am-PUID-0/DUMB/issues">
-    <img
-      alt="Issues"
-      src="https://img.shields.io/github/issues/I-am-PUID-0/DUMB?style=for-the-badge"
-    />
-  </a>
-  <a href="https://github.com/I-am-PUID-0/DUMB/blob/master/LICENSE">
-    <img
-      alt="License"
-      src="https://img.shields.io/github/license/I-am-PUID-0/DUMB?style=for-the-badge"
-    />
-  </a>
-  <a href="https://github.com/I-am-PUID-0/DUMB/graphs/contributors">
-    <img
-      alt="Contributors"
-      src="https://img.shields.io/github/contributors/I-am-PUID-0/DUMB?style=for-the-badge"
-    />
-  </a>
-  <a href="https://hub.docker.com/r/iampuid0/dumb">
-    <img
-      alt="Docker Pulls"
-      src="https://img.shields.io/docker/pulls/iampuid0/dumb?style=for-the-badge&logo=docker&logoColor=white"
-    />
-  </a>
-  <a href="https://discord.gg/8dqKUBtbp5">
-    <img
-      alt="Join Discord"
-      src="https://img.shields.io/badge/Join%20us%20on%20Discord-5865F2?style=for-the-badge&logo=discord&logoColor=white"
-    />
-  </a>
-</div>
+DUMB brings your media services together in one Docker container. Choose the
+apps you need, follow the setup, and manage them from a shared dashboard.
 
-<div class="grid cards" markdown>
+These guides help you get running, connect your services, and work out what to
+do when something needs attention.
 
-- ## :material-rocket-launch:{ .lg .middle } Quick Start
-  Get DUMB up and running in minutes with Docker, Portainer, Unraid, or other platforms.
+<div class="home-actions" markdown>
 
-- ## :material-puzzle:{ .lg .middle } Unified Platform
-  All your favorite media services in one container. Plex, Jellyfin, Emby, Sonarr, Radarr, and more—pre-configured and ready to use.
-
-- ## :material-cog:{ .lg .middle } Automated Workflows
-  Connect Debrid and Usenet services, Trakt lists, and Plex Discover watchlists. DUMB auto-wires the stack from onboarding to streaming.
-
-- ## :material-auto-fix:{ .lg .middle } Guided Onboarding
-  Step-by-step setup for core services, optional tools, credentials, and embedded UIs. Start with sane defaults, then refine later.
-
-- ## :material-monitor-share:{ .lg .middle } Embedded UIs
-  Use Traefik to unify service UIs under one endpoint and manage everything from the DUMB dashboard.
-
-- ## :material-cloud-lock:{ .lg .middle } Integrated Access Layer
-  Keep DUMB-owned embedded UI routes, user-managed Traefik Proxy Admin routes, and Cloudflare Tunnel ingress in clearly separated lanes.
-
-- ## :material-chart-line:{ .lg .middle } Live Metrics
-  Track CPU, memory, disk, and network usage in real time with WebSocket-powered updates.
-
-- ## :material-auto-fix:{ .lg .middle } AI Assist
-  Ask service or stack questions with optional local or cloud AI, using previewable redacted context from logs, docs, config, and dependencies.
-
-- ## :material-shield-lock:{ .lg .middle } Authentication
-  Optional JWT auth with user management to secure the UI and API.
-
-- ## :material-update:{ .lg .middle } Auto-Update
-  Keep services current with scheduled updates or pinned versions.
-
-- ## :material-refresh:{ .lg .middle } Auto-Restart
-  Health checks and backoff restarts keep services resilient.
+[Set up DUMB :lucide-arrow-right:](getting-started/installation.md){ .md-button .md-button--primary }
+[Explore the services](services/index.md){ .md-button }
 
 </div>
 
-## What's Included
+<p class="home-footnote">Already installed? <a href="frontend/index.md">Find your way around the dashboard.</a></p>
 
-DUMB integrates a comprehensive ecosystem of media management tools:
+</div>
 
-- **Media Servers**: Plex Media Server, Jellyfin, Emby
-- **Workflow services**: Riven, CLI Debrid, Decypharr, InfiniDysk, AltMount
-- **Automation**: Sonarr, Radarr, Lidarr, Prowlarr, Whisparr, NeutArr, Profilarr
-- **Storage & Caching**: Zurg, rclone
-- **Requests & Watchlists**: Seerr, Pulsarr
-- **Streaming & Stremio Addons**: mediastorm, AIOStreams
-- **Monitoring & Tools**: Tautulli, Zilean, AI Assist
-- **Access & Proxying**: Traefik, Traefik Proxy Admin, Cloudflared
-- **Database**: PostgreSQL, pgAdmin 4, Phalanx DB
+<div class="stack-map" markdown>
 
-All services work together seamlessly with Plex Discover Watchlists, Trakt lists, Seerr, and more to streamline media discovery and access.
+<div class="stack-map-heading" markdown>
 
-## Integrated Access Layer
+![DUMB bridge logo](assets/images/logo.png){ width="46" height="46" }
 
-DUMB's Traefik integration is more than a convenience proxy. It gives the stack a single controlled access layer:
+**Choose what you run**
 
-- **Embedded service UIs** are DUMB-owned routes generated under `/service/ui/<service>` and surfaced in the dmbdb service pages.
-- **Traefik Proxy Admin** manages operator-created LAN or public hostnames through Traefik's HTTP provider, while DUMB keeps owning the embedded UI route file.
-- **Cloudflared** brings Cloudflare Tunnel traffic to DUMB Traefik without requiring direct router port forwarding.
+One dashboard. Your choice of services.
 
-That separation matters: DUMB can keep regenerating service UI routes for enabled services, TPA can own the routes you deliberately publish, and Cloudflared can be the ingress path for Cloudflare-hosted DNS without replacing Traefik.
+</div>
 
----
+<div class="stack-map-row" markdown>
 
-Ready to get started? Check out the [Deployment Guide](deployment/index.md) or explore the [Features](features/index.md), [Services](services/index.md), and [Reference](reference/index.md) documentation.
+:lucide-play: **Watch and listen**
+
+Plex · Jellyfin · Emby
+
+</div>
+
+<div class="stack-map-row" markdown>
+
+:lucide-library: **Organize your library**
+
+Sonarr · Radarr · Lidarr · Whisparr
+
+</div>
+
+<div class="stack-map-row" markdown>
+
+:lucide-workflow: **Build a workflow**
+
+Debrid · Usenet · Requests · Indexers
+
+</div>
+
+<div class="stack-map-footer" markdown>
+
+:lucide-sliders-horizontal: Service controls · Logs · Updates · Metrics
+
+</div>
+
+</div>
+
+</section>
+
+## What do you want to do?
+
+<div class="grid cards home-paths" markdown>
+
+-   :lucide-package-open: **Install for the first time**
+
+    Choose your platform, prepare storage, and open the dashboard.
+
+    [Start with installation :lucide-arrow-right:](getting-started/installation.md)
+
+-   :lucide-route: **Connect your services**
+
+    Pick a workflow and find the setup guide for each app.
+
+    [Browse the service guides :lucide-arrow-right:](services/index.md)
+
+-   :lucide-monitor: **Use the dashboard**
+
+    Start and stop services, edit settings, and read their logs.
+
+    [Learn the everyday controls :lucide-arrow-right:](frontend/index.md)
+
+-   :lucide-refresh-cw: **Update with confidence**
+
+    Understand version choices, update checks, and recovery options.
+
+    [Manage service updates :lucide-arrow-right:](features/auto-update.md)
+
+-   :lucide-life-buoy: **Get something working again**
+
+    Find answers to common startup, connection, and playback problems.
+
+    [Open troubleshooting :lucide-arrow-right:](faq/general.md)
+
+-   :lucide-network: **Understand the connections**
+
+    Check ports, storage paths, and how DUMB fits your network.
+
+    [Review networking :lucide-arrow-right:](deployment/networking.md)
+
+</div>
+
+<div class="home-next" markdown>
+
+### A small start is a good start
+
+You do not need every service. Start with one workflow and one media server,
+check that a file plays, then add the tools you need. DUMB manages the apps;
+you still provide accounts, provider credentials, and your library choices.
+
+[Choose your workflow](getting-started/index.md)
+
+</div>
+
+<div class="home-reference" markdown>
+
+**Looking for the technical detail?** Turn on Geek mode in the header to expand
+configuration examples and implementation notes, or go straight to the
+[API](api/index.md), [configuration reference](reference/index.md), or
+[architecture](architecture/index.md). [Text documentation for agents](llms.txt).
+
+</div>
+
+</div>

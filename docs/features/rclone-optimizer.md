@@ -10,6 +10,17 @@ The rclone streaming optimizer measures how an **InfiniDysk-backed DUMB-managed 
 
 The optimizer is currently limited to InfiniDysk. It appears on the specific **rclone service page**, not as an InfiniDysk configuration tool. When an associated test is active, the InfiniDysk service page shows a link to that rclone job.
 
+## Run a bounded comparison
+
+1. Open the InfiniDysk-backed **rclone** service page and select **Rclone Optimizer**.
+2. Stop media activity and wait for imports and unrelated provider reads to finish.
+3. Review one to eight representative files and choose a test depth.
+4. Set traffic, connection, cache, memory, free-space, and duration limits for your deployment.
+5. Run the job and review failed samples, startup/seek measurements, provider evidence, and cleanup results.
+6. Apply a recommendation only after review; apply and rollback both interrupt the production rclone mount.
+
+The limits and evidence below explain what this comparison can establish.
+
 ## What the test actually reads
 
 Each candidate uses this path:

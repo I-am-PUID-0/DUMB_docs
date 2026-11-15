@@ -1,379 +1,155 @@
 ---
 title: Onboarding Wizard
+description: Set up your first DUMB workflow, choose services and providers, enter credentials, and check what still needs attention after onboarding.
 icon: lucide/wand-2
 ---
 
-# Onboarding Wizard
+# Onboarding
 
-The onboarding wizard guides you through the initial setup of DUMB, helping you choose an arrangement, review automatic changes, and retain unfinished configuration tasks.
+Onboarding selects services, collects their settings, and starts the chosen stack. It opens on a fresh installation; use **Settings → Onboarding → Launch Onboarding** to run it again.
 
----
+Existing application data is retained, but the wizard can apply new settings. Use a service's own configuration editor for an ordinary setting change. Onboarding is not a database or namespace migration.
 
-## Overview
+## Before you begin
 
-The wizard walks you through:
+Have the intended storage mounted inside DUMB, provider credentials ready, and a plan for which application owns requests, downloads, imports, and playback. A host-only mount or browser-reachable URL may not be visible from inside the container.
 
-1. Choosing the services in your arrangement by role
-2. Running preflight health/readiness checks
-3. Configuring debrid service credentials (when applicable)
-4. Choosing companion services
-5. Customizing service-specific options
-6. Choosing exact connections, libraries and policies when supported
-7. Reviewing and applying your configuration
-8. Following the retained checklist and finishing remaining tasks
-
----
-
-## Onboarding flow
-
-```mermaid
-%%{ init: { "flowchart": { "curve": "basis" } } }%%
-flowchart TD
-    A([App start<br/>or launch onboarding])
-    B{Onboarding Required?}
-    C[Choose services by role]
-    D[Preflight Checks]
-    E[Apply Configuration]
-    F[Apply setup and track actions]
-    G([Dashboard])
-
-    A ==> B
-    B -- No --> G
-    B -- Yes --> C
-    C ==> D
-    D ==> E
-    E ==> F
-    F ==> H[Retained checklist and manual tasks]
-    H ==> G
-```
-
----
-
-## When to use onboarding
-
-The onboarding wizard runs automatically when:
-
-- DUMB is started for the first time
-- No core services have been configured
-- You manually navigate to `/onboarding`
-
-You can also re-run onboarding at any time from the Settings page to reconfigure your setup.
-
----
+<!-- dev:start -->
+A compatible backend retains a setup checklist after you leave the wizard. It records configured actions, failed checks, missing inputs, and manual work separately. A running process does not complete an arrangement. See [Setup checklist and automation](../features/setup-checklist.md).
+<!-- dev:end -->
 
 ## Wizard steps
 
 ### Step 1: Choose services
 
-Choose the services that form your arrangement. The manual list groups them by role,
-including **Download workflows**, **Library automation**, **Media servers and
-playback**, and **Requests and discovery**. Category headings and service names
-are sorted alphabetically.
+Select your workflow applications and supporting services, or use **Guided setup**:
 
-Open a category to browse its services, then open a service to read its details
-and configure its instances. Expanded descriptions preserve paragraphs, lists,
-emphasis, and inline code, with clickable documentation links in both core and
-optional service details.
+1. Choose **Debrid**, **Usenet**, or **Both**.
+2. For Usenet, choose Decypharr, InfiniDysk, AltMount, or a supported combination.
+3. Decide whether to use Arrs; Usenet arrangements require them.
+4. Choose **Combined** or **Separate** Arr instances when using several workflows.
+5. Optionally choose separate quality-tier Sonarr/Radarr instances.
+6. Select supporting services and choose **Apply recommendations**.
 
-You can keep several categories open at once or use **Expand all** and
-**Collapse all**. Category summaries show your selection counts, so you can
-review your choices while a category is collapsed. Expanding or collapsing a
-category does not change your selections.
+| Layout | Result |
+| --- | --- |
+| Combined | One Arr instance can use several `core_service` values |
+| Separate | Independent Arr instances per workflow |
+| Multi-quality | Additional Sonarr/Radarr instances per quality tier |
 
-Categories containing selected services open initially. If no core services are
-selected, the first category opens to help you get started.
+A tier name such as `1080p` is an instance label, not proof that the application has the intended quality profile.
 
-!!! info "Chosen services and required dependencies"
+<!-- dev:start -->
+The manual catalog groups services by role, with alphabetical expandable categories and service descriptions. **Expand all** and **Collapse all** change only the layout. Selected categories open initially; summaries retain selection counts when closed.
 
-    Choose the complete arrangement you want. The review distinguishes your choices, required dependencies and optional companions. Historical core/optional catalog names do not mean every core service is mandatory.
-
-!!! note "Guided setup"
-
-    1. Choose **Debrid**, **Usenet**, or **Both**.
-    2. Choose the Usenet workflow service (**Decypharr**, **InfiniDysk**, **AltMount**, InfiniDysk + AltMount, or **All**) when using Usenet.
-    3. Decide whether to use **Arrs** (required for Usenet).
-    4. If using both workflows, pick **Combined** or **Separate** Arr instances.
-    5. (Optional) Enable **multi-quality** Sonarr/Radarr instances.
-    6. Select supporting services (Seerr, NeutArr, Profilarr, music/adult Arrs, and optional utilities in later steps).
-    7. Click **Apply recommendations** to populate the core services list.
-
-!!! tip "Arr instance layouts"
-
-    - **Combined**: one Arr instance uses a list-based `core_service` when multiple workflow services are selected. Decypharr-only hybrid setups keep `core_service: decypharr`.
-    - **Separate**: Debrid and Usenet get separate Arr instances
-    - **Multi-quality**: Sonarr/Radarr instances are created per quality tier
-
----
+Review **Chosen by you**, **Required dependency**, and **Optional companion** separately. The historical Core/Optional catalog names do not make every core service mandatory.
+<!-- dev:end -->
 
 ### Step 2: Preflight checks
 
-The wizard checks these frontend-proxied endpoints before proceeding:
+The wizard checks backend health, capabilities, service catalogs, configuration, and embedded UI readiness through the frontend proxy.
 
-- `GET /api/health`
-- `GET /api/process/capabilities`
-- `GET /api/process/core-services`
-- `GET /api/config`
-- `GET /api/config/service-ui`
+<!-- release:start -->
+Resolve blocking failures before continuing. A passed API response does not independently prove that a configured storage path is mounted or usable by another application.
+<!-- release:end -->
+<!-- dev:start -->
+Health, capability, and catalog failures block the next step. Storage-path inventory and embedded UI checks are advisory. Unknown storage, remote timeout, or consumer-namespace results stay **Not verified** rather than being reported as passed. Correct confirmed critical failures before starting.
+<!-- dev:end -->
 
-Backend health, capability and service-catalog failures block the next step. The storage configuration inventory remains **Not verified** because configured path strings do not prove mount readiness or consumer access. It and embedded UI readiness are advisory. Arrangement review adds its own checks: unknown remote storage, timeout or consumer-namespace results remain **Not verified**, distinct from a passed check or a confirmed critical failure.
+### Step 3: Configure provider credentials
 
----
+Enter the credentials requested by the selected workflow. Debrid API keys are available from the provider's account page. DUMB maps supported inputs into the selected services' configuration.
 
-### Step 3: Configure debrid service
-
-For each debrid-capable core service, provide your debrid credentials:
-
-| Field | Description |
-|-------|-------------|
-| **Debrid Service** | Select your provider (RealDebrid, AllDebrid, etc.) |
-| **API Key** | Your debrid service API key |
-
-!!! tip "Finding your API key"
-
-    - **RealDebrid**: [real-debrid.com/apitoken](https://real-debrid.com/apitoken)
-    - **AllDebrid**: Account settings :material-arrow-right: API Keys
-    - **Premiumize**: Account :material-arrow-right: API Key
-
-For Decypharr, DUMB writes the selected provider, API key, download folder, and mount mode before the service starts for the first time. Decypharr's separate standalone setup wizard should therefore already be complete when you open its UI.
-
----
+An NNTP provider account and an NZB indexer account serve different purposes; supplying one does not configure the other.
 
 ### Step 4: Choose companion services
 
-Choose additional services to enable from the same alphabetical, expandable
-category layout. Optional roles include **Access and security**, **Databases and
-administration**, **Library automation**, **Media servers and playback**,
-**Requests and discovery**, and **Utilities and interfaces**.
+Select optional tools that fit the chosen workflow. Required dependencies can be added automatically and may not appear as separate choices. Already enabled optional services remain visible but cannot be selected as new installations.
 
-Categories containing selected optional services open initially; the others stay
-collapsed until you open them. Use **Expand all** to browse everything or
-**Collapse all** to review the category summaries. Those summaries show selected
-and already enabled service counts. Already enabled services remain visible in
-their categories with a disabled selection control.
+Authelia appears only when the backend supports its managed integration. A newer frontend cannot enable an unsupported service on an older API.
 
-The available services still depend on your backend's supported integrations,
-core dependencies, and earlier selections. For example, PostgreSQL may be added
-automatically as a dependency rather than offered as a separate choice.
-Categories with no matching services are omitted.
-
-Authelia is additionally gated by the backend's `authelia_integration`
-capability. dmbdb removes it from the Optional Services list when connected to
-an older backend instead of submitting unsupported setup options.
-
-Selecting Authelia enables PostgreSQL and installs the Authelia runtime, but
-intentionally does not start Authelia during onboarding. After onboarding, a
-**Stopped** or **Unhealthy** Authelia status is expected until you open its
-service page and complete **Step 1: Configure and start Authelia**. Only that
-first step is required; the DUMB OIDC, TPA OIDC, and ForwardAuth steps are
-optional. DNS and an HTTPS Traefik route are required before browser SSO can
-work.
-
-!!! warning "mediastorm first login"
-
-    Current mediastorm builds use the public first-login credentials `admin` / `admin`. During that same sign-in, the login form requires a new password and confirmation before creating the first admin session; this works through Docker and reverse proxies. The later mediastorm onboarding page recognizes that the password is already secured and does not require a second change. DUMB's Optional Services step directs you to the mediastorm service page, where the protected bootstrap file keeps older, pinned, or explicitly customized first-login passwords compatible. mediastorm removes the file and DUMB hides the notice after the password changes.
-
-mediastorm's service-options step also allows its OCI runtime to follow `latest` or be pinned to a release tag, full commit SHA, or OCI digest. Leave release pinning disabled for normal automatic updates. See the [mediastorm version-selection guide](../services/optional/mediastorm.md#version-selection) before selecting a fixed build.
-
-!!! info "AIOStreams needs a public URL and dashboard login"
-
-    AIOStreams can start with its generated local `base_url`, but remote Stremio clients require a stable trusted HTTPS origin. Set the final hostname, such as `https://aiostreams.example.com`, then create the matching reverse-proxy route before saving/installing the addon. Onboarding also requires an administrator username and a 12–256-character password for the AIOStreams Dashboard. The Configure page remains public unless you later enable AIOStreams' **Auth Required** setting. DUMB generates and preserves AIOStreams' separate encryption secret automatically. The initial integration uses SQLite by default; PostgreSQL is an advanced `aiostreams.database_uri` override rather than an onboarding toggle or guided migration. See [AIOStreams](../services/optional/aiostreams.md).
-
-For GitHub source-build services, the service-options step also exposes
-`commit_sha`. Paste the full 40-character SHA to select an immutable source
-revision. Once the SHA is complete, onboarding clears competing release and
-branch selections; enabling a release or branch clears the commit pin.
-
----
+| Application | First-start consideration |
+| --- | --- |
+| mediastorm | Use its [initial credential flow](../services/optional/mediastorm.md#initial-setup) and replace the bootstrap password |
+| AIOStreams | Set a stable public HTTPS base URL for remote clients and create its dashboard login |
+| Authelia / TPA / Cloudflared | Review public origins, DNS, and authentication routes separately from embedded UI access |
 
 ### Step 5: Service-specific options
 
-Configure additional settings for selected services:
+Review paths, ports, mount mode, media-server settings, and requested provider/database options. Defaults are starting values, not a validation of your deployment.
 
-**Example options:**
+For Decypharr and AltMount, choose FUSE, embedded rclone, external rclone, or no-mount mode where offered. AltMount still needs an administrator, NNTP provider, import strategy, and valid consumer paths; use its [first-start checklist](../services/core/altmount.md#first-start-checklist).
 
-- **Zurg**: Custom port, log level
-- **rclone**: Mount options, log level
-- **Phalanx DB**: Enable/disable for CLI Debrid
-- **Decypharr**: FUSE, embedded rclone, external rclone, or no-mount mode
-- **AltMount**: FUSE, embedded rclone, external rclone, or no-mount mode
-- **InfiniDysk 1**: Fresh-install SQLite or PostgreSQL main database
-- **InfiniDysk 2**: Guarded native installation or migration, with historical rclone or native FUSE
-- **AIOStreams**: Public base URL and Dashboard administrator credentials
+InfiniDysk 1's `postgres_enabled` and `postgres_database` options are for a fresh installation. They do not copy an existing SQLite library. Existing installations must use the guarded [database migration workflow](../features/arr-postgres-migration.md), after any required namespace migration.
 
-Default values are pre-filled but can be customized.
+<!-- dev:start -->
+For InfiniDysk 2, review the separate runtime and mount choices. Generation 1 retains historical rclone; generation 2 can use rclone-over-WebDAV or native FUSE. FUSE needs a visible device, permissions, and the same mount in every consumer namespace.
 
-!!! info "InfiniDysk runtime and mount choices"
-
-    With the advertised setup runtime capability, arrangement review distinguishes
-    InfiniDysk 1 from InfiniDysk 2. Generation 1 keeps historical rclone. Generation
-    2 can use rclone over WebDAV or native FUSE; FUSE requires the device,
-    permissions and mount visibility in every consumer namespace.
-
-    Choosing generation 2 opens the existing guarded installation/migration tool.
-    It passes your mount preference without starting a job or accepting its
-    acknowledgements. Complete that tool, then refresh the setup plan before
-    starting setup. Existing generation 1 data requires major migration; a setup
-    option does not convert it. An existing generation 2 installation keeps its
-    detected mount choice and paths.
-
-    Native FUSE omits the associated rclone dependency and its options. Review
-    Arr/media paths, remote mappings, symlinks and STRM origins separately. Native
-    provider/account, Arr-link and import-strategy configuration remains manual
-    where no generation 2 setup adapter is advertised. These tasks stay visible;
-    process readiness does not complete them. See the
-    [InfiniDysk 2 guide](../features/infinidysk-v2-migration.md).
-
-!!! info "InfiniDysk onboarding PostgreSQL is fresh-install only"
-
-    InfiniDysk v1.2.0+ exposes `postgres_enabled` and
-    `postgres_database` (default `infinidysk`) in its service options. Enable
-    PostgreSQL here only for a fresh InfiniDysk installation, matching
-    upstream support.
-
-    For an existing SQLite installation, leave the onboarding option disabled.
-    After onboarding, open **Database Migration** on the InfiniDysk service
-    page and complete DUMB's guarded rehearsal before cutover. The DUMB adapter
-    accepts an official stable v1.2.0-or-newer runtime only while its source
-    SQLite and staged PostgreSQL databases exactly match the supported contract;
-    schema drift blocks migration until DUMB is updated. Only the main
-    `db.sqlite` moves; `metrics.sqlite`, `warden.db`, and
-    `usenet-migration.db` remain local and require filesystem backups. If the
-    installation still needs an InfiniDysk identity or namespace migration,
-    complete that before making any PostgreSQL selection.
-
-!!! note "AltMount still needs deliberate choices"
-
-    Select the mount mode, provider account/reference and intended Arr links.
-    Create the administrator, choose an import strategy and validate library
-    paths. Unfinished choices remain in the
-    [setup checklist](../features/setup-checklist.md); see the
-    [AltMount guide](../services/core/altmount.md#first-start-checklist).
-
-!!! info "Instances"
-
-    Services that support multiple instances show instance panels on a single page. Each instance can have its
-    own options (including `core_service` routing).
-
----
+Choosing generation 2 opens its guarded installation/migration tool without accepting its acknowledgements or starting a job. Finish the tool, then refresh the setup plan. Existing 1.x data needs major migration; selecting an option does not convert it. Native FUSE omits the associated rclone dependency. See [InfiniDysk 2 installation and upgrade](../features/infinidysk-v2-migration.md).
 
 ### Connections and choices
 
-On compatible backends, choose exact application connections and settings DUMB cannot safely infer: provider-account references, per-client connection budgets, library creation/reuse, actual quality profiles and roots, languages, and default/4K request routes.
+Choose exact application instances, authorized external services, provider-account allocations, library paths, quality profiles, languages, and default/4K request routes. **External server** and **No media server** are separate choices.
 
-Choices refresh when you select targets. Profiles or roots needing an initialized application remain unfinished until first start and can be selected later. **External services** and **No media server** are separate choices. Existing connections require deliberate adoption when DUMB would change unowned settings.
+Some profiles, roots, and generated keys are available only after first start. Leave those tasks unfinished and return to them later. Existing unowned settings require a reviewed adoption before DUMB changes them.
+<!-- dev:end -->
 
 ### Embedded service access
 
-When offered, enable proxied service tabs, direct links and split view. This choice does not configure public DNS or external HTTPS origins.
+Enable embedded UIs when offered to use proxied service tabs, split view, and direct links. This does not publish public DNS or configure an external HTTPS origin.
 
 ### Review configuration
 
-Review selected services, required dependencies and companions, followed by meaningful library/provider/routing choices with credentials masked.
+Review selected services, dependencies, credentials, instance paths, and custom options before applying. Confirmation can install, configure, and start services.
 
-The plan groups tasks into **DUMB will configure**, **Information you must provide**, and **Finish manually**. Click **Start services** on this review step to apply the plan. A preview or healthy process is not proof of a working complete arrangement.
+<!-- dev:start -->
+The plan groups work into **DUMB will configure**, **Information you must provide**, and **Finish manually**. Choose **Start services** to apply the reviewed plan.
 
 ### Setup progress and retained tasks
 
-The progress page shows the backend checklist and live logs. Configuration, verification, failures and missing input remain distinct. Use targeted apply, retry and recheck controls after correcting the relevant choice.
+Follow the checklist and live logs. Correct the relevant input, then apply, retry, or recheck that action. **Continue to dashboard** leaves the wizard without discarding unfinished work; the same checklist appears on the dashboard and matching service pages.
 
-**Continue to dashboard** leaves onboarding without discarding unfinished work. The checklist remains on the dashboard and matching service pages. There is no fixed success delay or automatic redirect. Manual completion records your confirmation separately from a passed connection test.
+Manual completion records your confirmation separately from an independently passed check. Closing the browser does not complete remaining tasks. External provider/account setup and unsupported connections remain visible as manual work.
+<!-- dev:end -->
+<!-- release:start -->
+### Setup progress
 
-See [Setup checklist and automation](../features/setup-checklist.md) for coverage, account reuse and remaining manual tasks. Older backends without this capability show an honest startup result and require you to check each application's configuration.
-
----
+Follow live setup logs and the reported startup result. If a service fails, inspect its error and dependency state before retrying. After the stack starts, check each application's accounts, provider/indexer settings, routes, and a representative import/playback path; process startup alone does not verify them.
+<!-- release:end -->
 
 ## Skipping onboarding
 
-If you prefer to configure services manually:
-
-1. Navigate to `/onboarding`
-2. Click **Skip Onboarding**
-3. Configure services individually in Settings
-
-!!! warning "Manual setup caveats"
-
-    Onboarding is the preferred way to add or configure services. Manual edits
-    can miss the nuanced wiring DUMB applies for core services, so a manual-only
-    setup may fail to fully configure dependencies and integrations.
-
-!!! note "Re-running onboarding"
-
-    You can always return to onboarding from Settings :material-arrow-right: Launch Onboarding.
-
----
+If you configure services manually, set the appropriate `enabled` flags and required paths/credentials. Disabled applications will not start merely because their files already exist. Do not skip setup steps by guessing a generated API key or database selector.
 
 ## Configuration applied
 
-The wizard updates `dumb_config.json` with:
-
-- Enabled services
-- Selected provider inputs, including supported direct source-mode mappings
-- Service options
-- Instance configurations
-
----
+The wizard updates the runtime `dumb_config.json`, including enabled services, selected provider inputs, service options, and instances. Higher-priority environment or secret values still apply. See [configuration precedence](../features/configuration.md#configuration-precedence).
 
 ## Multi-instance support
 
-For services that support multiple instances (like Zurg or rclone), the wizard:
+Instances need distinct names, process identities, ports, and appropriate data paths. Combined Arr layouts can use list-based `core_service`; separate layouts keep independent integrations. Review the [multi-instance guide](../reference/instances.md) before changing a working topology.
 
-- Creates instances linked to core services
-- Names them appropriately (e.g., "Zurg w/ Riven")
-- Configures separate ports to avoid conflicts
-
-For Arr services and NeutArr, instance names can be used to split workflows (e.g., Debrid vs Usenet, or multiple
-quality tiers). 
-
-Combined Arr workflows that include Decypharr plus InfiniDysk or AltMount use
-`/mnt/debrid/combined_symlinks/<slug>` for the Decypharr-managed root. An
-AltMount-only route—or InfiniDysk + AltMount without Decypharr—does not get a
-combined root automatically.
-
----
-
+<!-- dev:start -->
 ## External media and Plex authorization
 
-Guided setup separates **External server** from **No media server**. The selected choice becomes the initial connection choice for selected request and maintenance applications; review each application's typed connection form before applying it. External URLs must be reachable from DUMB, and private network endpoints require deliberate authorization.
+External endpoints must be reachable from DUMB and require explicit authorization for private-network access. The media-server choice becomes the initial connection choice for selected request/maintenance applications; review each form before applying.
 
-Plex options no longer require an early claim token before you can continue. Use the retained account task after Plex is ready to submit a fresh claim token when needed. Existing claimed servers retain their account. Plex API tokens and claim inputs are masked.
-
----
+Plex can be claimed from its retained account task after it is ready. Use a fresh short-lived claim token when needed. Existing claimed servers retain their account; claim inputs and API tokens remain masked.
+<!-- dev:end -->
 
 ## After onboarding
 
-After leaving the wizard:
-
-1. **Dashboard** shows your services and retained setup checklist
-2. **Settings** allows further customization
-3. **Service UIs** are accessible (if enabled)
-4. **Logs** can be viewed for each service
-
----
+Check service status, actual application configuration, and one intended end-to-end workflow. Configure [media-library protection](../features/media-library-protection.md) before unattended storage maintenance, and keep application data backed up.
 
 ## Troubleshooting
 
-### Services fail to start
+| Problem | Next step |
+| --- | --- |
+| A step blocks Next | Read its validation error; check required fields and backend reachability |
+| Service fails to start | Inspect its logs, dependencies, configured ports, and mount access |
+| Existing service is not offered again | Use its service page; the wizard filters already-enabled selections |
+| Need a different topology | Review the change in onboarding; use dedicated migration tools for existing data |
 
-- Check logs for specific error messages
-- Verify debrid API key is valid
-- Ensure required ports are available
-
-### Can't proceed past a step
-
-- Fill in all required fields
-- Check for validation errors (red highlights)
-- Retry the failed request after resolving its explanation. Refreshing loses unsubmitted credential drafts, but not the backend setup run.
-
-### Need to change configuration
-
-- Resume the retained checklist for unfinished connections or manual tasks
-- Use Settings to modify individual services
-- Launch Onboarding to review another arrangement; re-running it is not a database migration
-
----
-
-## Related pages
-
-- [Dashboard](dashboard.md) - Post-setup service management
-- [Settings](settings.md) - Manual configuration
-- [Authentication](../features/authentication.md) - User setup
+<!-- dev:start -->
+Refreshing loses unsaved credential drafts, but the backend's retained setup run remains. Resume its checklist rather than reinstalling successful services.
+<!-- dev:end -->

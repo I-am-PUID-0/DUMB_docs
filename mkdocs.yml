@@ -1,4 +1,4 @@
-site_name: Distributed Unlimited Media Bridge
+site_name: DUMB docs
 site_description: Documentation for DUMB, an all-in-one Docker media automation platform for Debrid, Usenet, Arr apps, Plex, Jellyfin, and Emby.
 site_author: DUMB Team
 site_url: "https://dumbarr.com/"
@@ -8,148 +8,169 @@ edit_uri: "https://github.com/I-am-PUID-0/DUMB_docs/edit/master/docs/"
 
 
 nav:
-  - Home: index.md
-  - Getting Started:
-      - Introduction: getting-started/index.md
-      - Installation: getting-started/installation.md
-  - Features:
-      - Overview: features/index.md
-      - Configuration: features/configuration.md
-      - Backup Storage: features/backup-storage.md
-      - Installation Backup & Restore: features/installation-backups.md
-      - Usage: features/usage.md
-      - Service Reset & Removal: features/service-reset.md
-      - Authentication: features/authentication.md
-      - Auto-restart: features/auto-restart.md
-      - Startup lifecycle: features/startup-lifecycle.md
-      - Setup Checklist & Automation: features/setup-checklist.md
-      - Auto-update: features/auto-update.md
-      - Install Cache & Safe Updates: features/install-cache.md
-      - Media Library Protection: features/media-library-protection.md
-      - PostgreSQL Migration: features/arr-postgres-migration.md
-      - InfiniDysk 2 Upgrade: features/infinidysk-v2-migration.md
-      - Symlink Operations: features/symlinks.md
-      - Seerr Sync: features/seerr-sync.md
-      - FFprobe Monitor: features/ffprobe-monitor.md
-      - Metrics: features/metrics.md
-      - Rclone Streaming Optimizer: features/rclone-optimizer.md
-      - Notifications: features/notifications.md
-      - AI Assistant: features/ai-assistant.md
-      - Embedded UIs: features/embedded-ui.md
-  - Frontend:
-      - Overview: frontend/index.md
-      - Dashboard: frontend/dashboard.md
-      - Onboarding: frontend/onboarding.md
-      - Settings: frontend/settings.md
-      - Service Pages: frontend/service-pages.md
-      - Metrics: frontend/metrics.md
-  - Architecture:
-      - Overview: architecture/index.md
-      - Backend: architecture/backend.md
-      - Frontend: architecture/frontend.md
-      - Traefik: architecture/traefik.md
-  - Services:
-      - Overview: services/index.md
-      - DUMB:
-        - Overview: services/dumb/index.md
-        - DUMB API: services/dumb/api.md
-        - DUMB Frontend: services/dumb/dumb-frontend.md
-      - Core:
-        - Overview: services/core/index.md
-        - CLI Debrid: services/core/cli-debrid.md
-        - Decypharr: services/core/decypharr.md
-        - InfiniDysk: services/core/infinidysk.md
-        - NzbDAV migration: services/core/nzbdav.md
-        - AltMount: services/core/altmount.md
-        - Plex Media Server: services/core/plex-media-server.md
-        - Jellyfin: services/core/jellyfin.md
-        - Emby: services/core/emby.md
-        - Seerr: services/core/seerr.md
-        - Riven Backend: services/core/riven-backend.md
-        - Sonarr: services/core/sonarr.md
-        - Radarr: services/core/radarr.md
-        - Lidarr: services/core/lidarr.md
-        - Prowlarr: services/core/prowlarr.md
-        - Whisparr: services/core/whisparr.md
-        - NeutArr: services/core/neutarr.md
-        - Profilarr: services/core/profilarr.md
-      - Dependent:
-        - Overview: services/dependent/index.md
-        - CLI Battery: services/dependent/cli-battery.md
-        - Phalanx DB: services/dependent/phalanx-db.md
-        - PostgreSQL: services/dependent/postgres.md
-        - rclone: services/dependent/rclone.md
-        - zurg: services/dependent/zurg.md
-      - Optional:
-        - Overview: services/optional/index.md
-        - pgAdmin: services/optional/pgadmin.md
-        - Riven Frontend: services/optional/riven-frontend.md
-        - Tautulli: services/optional/tautulli.md
-        - Audiobookshelf: services/optional/audiobookshelf.md
-        - Bazarr: services/optional/bazarr.md
-        - Pulsarr: services/optional/pulsarr.md
-        - Maintainerr: services/optional/maintainerr.md
-        - mediastorm: services/optional/mediastorm.md
-        - AIOStreams: services/optional/aiostreams.md
-        - Traefik Proxy Admin: services/optional/traefik-proxy-admin.md
-        - Authelia: services/optional/authelia.md
-        - Cloudflared: services/optional/cloudflared.md
-        - Zilean: services/optional/zilean.md
-  - Deployment:
-      - Overview: deployment/index.md
-      - Docker: deployment/docker.md
-      - Networking and Ports: deployment/networking.md
-      - Portainer: deployment/portainer.md 
-      - Unraid: deployment/unraid.md     
-      - WSL: deployment/wsl.md
-      - Proxmox: deployment/proxmox.md
-      - Synology: deployment/synology.md
-      - QNAP: deployment/qnap.md
-      - TrueNAS: deployment/truenas.md
-      - Dockge: deployment/dockge.md
+- Home: index.md
+- Start here:
+  - Introduction: getting-started/index.md
+  - Installation: getting-started/installation.md
+  - Choose a platform:
+    - Overview: deployment/index.md
+    - Docker: deployment/docker.md
+    - Networking and Ports: deployment/networking.md
+    - Portainer: deployment/portainer.md
+    - Unraid: deployment/unraid.md
+    - WSL: deployment/wsl.md
+    - Proxmox: deployment/proxmox.md
+    - Synology: deployment/synology.md
+    - QNAP: deployment/qnap.md
+    - TrueNAS: deployment/truenas.md
+    - Dockge: deployment/dockge.md
+- Guides:
+  - Everyday dashboard:
+    - Overview: frontend/index.md
+    - Dashboard: frontend/dashboard.md
+    - Onboarding: frontend/onboarding.md
+    - Settings: frontend/settings.md
+    - Service Pages: frontend/service-pages.md
+    - Metrics: frontend/metrics.md
+  - Setup and maintenance:
+    - Overview: features/index.md
+    - Configuration: features/configuration.md
+    - Backup Storage: features/backup-storage.md
+    - Installation Backup & Restore: features/installation-backups.md
+    - Usage: features/usage.md
+    - Service Reset & Removal: features/service-reset.md
+    - Authentication: features/authentication.md
+    - Auto-restart: features/auto-restart.md
+    - Startup lifecycle: features/startup-lifecycle.md
+    - Setup Checklist & Automation: features/setup-checklist.md
+    - Auto-update: features/auto-update.md
+    - Install Cache & Safe Updates: features/install-cache.md
+    - Media Library Protection: features/media-library-protection.md
+    - PostgreSQL Migration: features/arr-postgres-migration.md
+    - InfiniDysk 2 Upgrade: features/infinidysk-v2-migration.md
+    - Symlink Operations: features/symlinks.md
+    - Seerr Sync: features/seerr-sync.md
+    - FFprobe Monitor: features/ffprobe-monitor.md
+    - Metrics: features/metrics.md
+    - Rclone Streaming Optimizer: features/rclone-optimizer.md
+    - Notifications: features/notifications.md
+    - AI Assistant: features/ai-assistant.md
+    - Embedded UIs: features/embedded-ui.md
+- Services:
+  - Overview: services/index.md
+  - DUMB:
+    - Overview: services/dumb/index.md
+    - DUMB API: services/dumb/api.md
+    - DUMB Frontend: services/dumb/dumb-frontend.md
+  - Core:
+    - Overview: services/core/index.md
+    - CLI Debrid: services/core/cli-debrid.md
+    - Decypharr: services/core/decypharr.md
+    - InfiniDysk:
+      - Overview: services/core/infinidysk.md
+      - Installation and configuration: services/core/infinidysk-installation.md
+      - PostgreSQL migration: services/core/infinidysk-postgres.md
+      - NzbDAV migration: services/core/infinidysk-migration.md
+      - Troubleshooting: services/core/infinidysk-troubleshooting.md
+    - NzbDAV migration: services/core/nzbdav.md
+    - AltMount: services/core/altmount.md
+    - Plex Media Server: services/core/plex-media-server.md
+    - Jellyfin: services/core/jellyfin.md
+    - Emby: services/core/emby.md
+    - Seerr: services/core/seerr.md
+    - Riven Backend: services/core/riven-backend.md
+    - Sonarr: services/core/sonarr.md
+    - Radarr: services/core/radarr.md
+    - Lidarr: services/core/lidarr.md
+    - Prowlarr: services/core/prowlarr.md
+    - Whisparr: services/core/whisparr.md
+    - NeutArr: services/core/neutarr.md
+    - Profilarr: services/core/profilarr.md
+  - Dependent:
+    - Overview: services/dependent/index.md
+    - CLI Battery: services/dependent/cli-battery.md
+    - Phalanx DB: services/dependent/phalanx-db.md
+    - PostgreSQL: services/dependent/postgres.md
+    - rclone: services/dependent/rclone.md
+    - zurg: services/dependent/zurg.md
+  - Optional:
+    - Overview: services/optional/index.md
+    - pgAdmin: services/optional/pgadmin.md
+    - Riven Frontend: services/optional/riven-frontend.md
+    - Tautulli: services/optional/tautulli.md
+    - Audiobookshelf: services/optional/audiobookshelf.md
+    - Bazarr: services/optional/bazarr.md
+    - Pulsarr: services/optional/pulsarr.md
+    - Maintainerr: services/optional/maintainerr.md
+    - mediastorm: services/optional/mediastorm.md
+    - AIOStreams: services/optional/aiostreams.md
+    - Traefik Proxy Admin: services/optional/traefik-proxy-admin.md
+    - Authelia: services/optional/authelia.md
+    - Cloudflared: services/optional/cloudflared.md
+    - Zilean: services/optional/zilean.md
+- Troubleshooting:
+  - General: faq/general.md
+  - Authentication: faq/authentication.md
+  - CLI Debrid: faq/cli-debrid.md
+  - Decypharr: faq/decypharr.md
+  - DUMB: faq/dumb.md
+  - NeutArr: faq/neutarr.md
+  - pgAdmin: faq/pgadmin.md
+  - Plex: faq/plex.md
+  - PostgreSQL: faq/postgres.md
+  - rclone: faq/rclone.md
+  - Riven: faq/riven.md
+  - Seerr: faq/seerr.md
+  - Tautulli: faq/tautulli.md
+  - Zilean: faq/zilean.md
+  - Zurg: faq/zurg.md
+- Reference:
+  - Overview: reference/index.md
+  - Service Ports: reference/ports.md
+  - Environment Variables: reference/environment-variables.md
+  - Config Schema: reference/config-schema.md
+  - Multi-instance Setup: reference/instances.md
+  - Core Service Routing: reference/core-service.md
+  - Documentation versions: reference/doc-versions.md
+- Developers:
   - API:
-      - Overview: api/index.md
-      - Authentication: api/auth.md
-      - Health: api/health.md
-      - Process Management: api/process.md
-      - Configuration: api/config.md
-      - Logs: api/logs.md
-      - Metrics: api/metrics.md
-      - Media Library Protection: api/media-library-protection.md
-      - Notifications: api/notifications.md
-      - AI Assistant: api/ai.md
-      - Seerr Sync: api/seerr-sync.md
-      - WebSocket: api/websocket.md
-      - WebSocket Logs: api/websocket_logs.md
-  - Reference:
-      - Overview: reference/index.md
-      - Service Ports: reference/ports.md
-      - Environment Variables: reference/environment-variables.md
-      - Config Schema: reference/config-schema.md
-      - Multi-instance Setup: reference/instances.md
-      - Core Service Routing: reference/core-service.md
-  - FAQ:
-      - General: faq/general.md
-      - Authentication: faq/authentication.md
-      - CLI Debrid: faq/cli-debrid.md
-      - Decypharr: faq/decypharr.md
-      - DUMB: faq/dumb.md
-      - NeutArr: faq/neutarr.md
-      - pgAdmin: faq/pgadmin.md
-      - Plex: faq/plex.md
-      - PostgreSQL: faq/postgres.md
-      - rclone: faq/rclone.md
-      - Riven: faq/riven.md
-      - Seerr: faq/seerr.md
-      - Tautulli: faq/tautulli.md
-      - Zilean: faq/zilean.md
-      - Zurg: faq/zurg.md
+    - Overview: api/index.md
+    - Authentication: api/auth.md
+    - Health: api/health.md
+    - Process Management: api/process.md
+    - Workflows:
+      - Setup automation: api/setup.md
+      - Updates: api/updates.md
+      - Symlinks: api/symlinks.md
+      - Installation backups: api/installation-backups.md
+      - Backup storage: api/backup-storage.md
+      - PostgreSQL migration: api/postgres-migration.md
+      - rclone optimizer: api/rclone-optimizer.md
+      - InfiniDysk migration: api/infinidysk-migration.md
+      - InfiniDysk 2 upgrade: api/infinidysk-v2.md
+    - Configuration: api/config.md
+    - Logs: api/logs.md
+    - Metrics: api/metrics.md
+    - Media Library Protection: api/media-library-protection.md
+    - Notifications: api/notifications.md
+    - AI Assistant: api/ai.md
+    - Seerr Sync: api/seerr-sync.md
+    - WebSocket: api/websocket.md
+    - WebSocket Logs: api/websocket_logs.md
+  - Architecture:
+    - Overview: architecture/index.md
+    - Backend: architecture/backend.md
+    - Frontend: architecture/frontend.md
+    - Traefik: architecture/traefik.md
+- Project:
   - Changelog: changelog.md
   - Contributing: contributing.md
   - About: about.md
 
 theme:
   name: material
+  variant: modern
+  font: false
   logo: assets/images/logo.png
   favicon: assets/images/favicon.ico
   icon:
@@ -158,7 +179,6 @@ theme:
   features:
     - navigation.instant
     - navigation.instant.progress
-    - navigation.expand
     - navigation.tabs
     - navigation.path
     - navigation.indexes
@@ -170,8 +190,6 @@ theme:
     - search.suggest
     - search.highlight
     - search.share
-    - content.action.edit
-    - content.action.view
     - content.code.copy
     - content.code.annotate 
 
@@ -196,9 +214,8 @@ theme:
         name: Switch to system preference
 
 extra_javascript:
-  - https://cdn.jsdelivr.net/npm/medium-zoom@1.1.0/dist/medium-zoom.min.js
   - assets/js/zoom.js
-  - assets/js/github-meta.js
+  - assets/js/docs.js
 
 extra_css:
   - assets/css/main.css
@@ -217,7 +234,6 @@ extra:
 plugins:
   - search
   - tags
-  - mkdocstrings
   - typeset
   - meta
 
@@ -228,14 +244,14 @@ markdown_extensions:
   - md_in_html
   - admonition
   - tables
-  - codehilite:
-      linenums: false
+  - pymdownx.highlight:
+      anchor_linenums: true
   - toc:
       permalink: true
       toc_depth: 2
   - pymdownx.emoji:
-      emoji_index: !!python/name:material.extensions.emoji.twemoji
-      emoji_generator: !!python/name:material.extensions.emoji.to_svg
+      emoji_index: !!python/name:zensical.extensions.emoji.twemoji
+      emoji_generator: !!python/name:zensical.extensions.emoji.to_svg
   - pymdownx.details
   - pymdownx.superfences:
       custom_fences:
@@ -248,12 +264,8 @@ markdown_extensions:
       slugify: !!python/object/apply:pymdownx.slugs.slugify
         kwds:
           case: lower
-  # - pymdownx.blocks.admonition
   - pymdownx.magiclink
   - pymdownx.smartsymbols
   - pymdownx.tilde
   - pymdownx.mark
   - pymdownx.keys 
-  - markdown.extensions.toc:
-      slugify: !!python/object/apply:pymdownx.slugs.slugify {kwds: {case: lower}}
-      permalink: "#"  

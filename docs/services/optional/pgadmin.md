@@ -1,123 +1,97 @@
 ---
 title: pgAdmin 4
+description: Enable pgAdmin in DUMB, set its first-run login, connect to managed PostgreSQL, and distinguish pgAdmin state from database backups.
 icon: lucide/database
 ---
 
 # pgAdmin 4
 
-pgAdmin 4 is a web-based administration tool for managing PostgreSQL databases. 
+Use pgAdmin to inspect PostgreSQL, run SQL, create database backups, and manage pgAgent jobs. It is optional and disabled by default.
 
-DUMB includes pgAdmin pre-installed and configured to work out of the box, allowing you to inspect, query, and back up your databases directly from a browser.
+| Setting | Default |
+|---|---|
+| Web UI port | `5050` |
+| Configuration | `/pgadmin/data/config_local.py` |
+| Local state and log directory | `/pgadmin/data` |
+| Persistence in the maintained layout | `/data/pgadmin` |
+| pgAdmin configuration database | `pgadmin` in managed PostgreSQL |
 
-!!! danger "Change the bootstrap credentials"
+## Enable pgAdmin
 
-    The documented defaults are public bootstrap values. Change them before
-    exposing pgAdmin beyond a trusted local network, and prefer keeping pgAdmin
-    disabled when it is not actively needed. pgAdmin can read and modify every
-    registered database in the shared DUMB PostgreSQL cluster.
+1. Set a first-run email/username and a strong password in pgAdmin's DUMB settings.
+2. Enable pgAdmin and start the service. Managed PostgreSQL must also be running.
+3. Open **pgAdmin → Embedded UI**, or use `http://<host>:5050` if you deliberately publish that port.
+4. Sign in with the pgAdmin account, then review the saved PostgreSQL connection.
 
----
+The shipped bootstrap account is `DUMB@DUMB.DUMB` with password `postgres`. Replace these public values before use outside a trusted local network. An existing pgAdmin account can have different credentials; changing DUMB's first-run settings does not reset that account's password.
 
-## Configuration Settings in `dumb_config.json`
+The email serves as the username and can use a reserved address such as `pgadmin@example.com`.
+
+![pgAdmin login](../../assets/images/pgadmin/pgadmin-login.png)
+
+<details class="geek-details" markdown="1">
+<summary>Technical details: configuration reference</summary>
+
+## Configuration settings in `dumb_config.json`
+
+A minimal override for a fresh account:
+
 ```json
-"pgadmin": {
-    "enabled": false,
-    "process_name": "pgAdmin4",
-    "config_dir": "/pgadmin/data",
-    "config_file": "/pgadmin/data/config_local.py",
-    "log_file": "/pgadmin/data/pgadmin4.log",
-    "port": 5050,
-    "default_server": "0.0.0.0",
-    "setup_email": "DUMB@DUMB.DUMB",
-    "setup_password": "postgres",
-    "command": ""
-},
-```    
+{
+  "pgadmin": {
+    "enabled": true,
+    "setup_email": "pgadmin@example.com",
+    "setup_password": "<choose-a-strong-password>",
+    "port": 5050
+  }
+}
+```
 
-### Configuration Key Descriptions
-- **`enabled`**: Whether to start the pgAdmin service.
-- **`process_name`**: The label used in logs and process tracking.
-- **`config_dir`** – Directory where pgAdmin configuration files are stored.
-- **`config_file`** – Path to the primary pgAdmin configuration file.
-- **`port`**: Port exposed for the pgAdmin.
-- **`default_server`**: IP address pgAdmin should bind to. 
+| Field | Meaning |
+|---|---|
+| `enabled` | Start the managed pgAdmin service |
+| `setup_email`, `setup_password` | First-run account credentials; environment overrides are `PGADMIN_SETUP_EMAIL` and `PGADMIN_SETUP_PASSWORD` |
+| `default_server` | Listener address; default `0.0.0.0` binds all container interfaces |
+| `port` | Container listener port; this does not publish a Docker host port |
+| `config_dir`, `config_file`, `log_file` | Managed state, generated configuration, and log paths |
+| `command` | Managed startup command; normally leave this to DUMB |
 
-    !!! note "`0.0.0.0` allows access to pgAdmin from all addresses"
+</details>
 
-- **`setup_email`**: The email address to be used with pgAdmin.
-- **`setup_password`**: The password to be used with pgAdmin. 
-- **`command`** – The command used to start pgAdmin.
+## Server configuration
 
-## Accessing pgAdmin
-- Navigate to: `http://<host>:<port>` 
-    - default port `5050`
-- Login using the credentials set via environment variables:
-  - `PGADMIN_SETUP_EMAIL` 
-    - default: `DUMB@DUMB.DUMB`
-  - `PGADMIN_SETUP_PASSWORD` 
-    - default: `postgres`
+The pgAdmin login and the PostgreSQL connection use separate credentials. When opening a saved server, enter the database password from `postgres.password` or `POSTGRES_PASSWORD`; its public bootstrap default is `postgres`.
 
-!!! tip "The email is used as the username. It does not need to be a real email address."
+<!-- dev:start -->
+The [setup checklist](../../features/setup-checklist.md) can register a connection through pgAdmin's supported provisioning command. Choose the connection name and group, review the preview, then apply it. DUMB reuses an exact existing connection and preserves unrelated definitions and saved-password settings. If automatic registration cannot use an existing pgAdmin account, the web service can still run; review or add the connection manually.
+<!-- dev:end -->
 
-In the maintained volume layout, `/pgadmin/data` persists under the mounted
-`/data/pgadmin` subtree. Backing up pgAdmin's own data does not back up the
-PostgreSQL databases it administers. Use logical `pg_dump` backups for those;
-the [scheduled pgAdmin/pgAgent example](../../faq/pgadmin.md#example-scheduled-backups-with-pgagent)
-includes all-database discovery, retention, off-system-copy guidance, and a
-restore test.
+For a manual connection, use the managed PostgreSQL host and port saved in DUMB (normally `127.0.0.1:5432` inside the container), maintenance database `postgres`, and the configured PostgreSQL user.
 
-![Login Screen](../../assets/images/pgadmin/pgadmin-login.png)
-
----
-
-## Server Configuration
-- The retained setup task can register managed PostgreSQL through pgAdmin's supported provisioning CLI, with a connection name and group you choose. It reuses an exact existing connection and preserves unrelated definitions and saved-password settings.
-- The default server group is **DUMB**. Confirm the saved PostgreSQL connection's name and address in pgAdmin.
-- On first login, you must enter the password for the PostgreSQL server connection.
-    - Default password: `postgres`
-    - Or, use the value of `POSTGRES_PASSWORD` if set in your environment.
-
-![Server View](../../assets/images/pgadmin/pgadmin-server-view.png)
-
----
+![Saved PostgreSQL connection](../../assets/images/pgadmin/pgadmin-server-view.png)
 
 ## Extensions
-The following PostgreSQL extensions are included in the DUMB image:
 
 ### `system_stats`
-Provides system performance statistics inside PostgreSQL.
 
-- Find it in the pgAdmin dashboard under the connected database (e.g., `pgadmin` or `riven`).
+The image includes the PostgreSQL system-statistics extension. Inspect it in a connected database where the extension is installed.
 
-![System Stats](../../assets/images/pgadmin/pgadmin-system-stats.png)
+![PostgreSQL system statistics](../../assets/images/pgadmin/pgadmin-system-stats.png)
 
 ### `pgAgent`
-A job scheduler for PostgreSQL. Useful for:
 
-- Scheduling backups
-- Routine maintenance
+DUMB starts pgAgent with pgAdmin for scheduled database jobs. Follow the [scheduled-backup example](../../faq/pgadmin.md#example-scheduled-backups-with-pgagent) for database discovery, retention, off-system copies, and a restore test.
 
-See the [complete scheduled-backup example](../../faq/pgadmin.md#example-scheduled-backups-with-pgagent).
+![pgAgent jobs](../../assets/images/pgadmin/pgadmin-pgagent-jobs.png)
 
-![pgAgent Jobs](../../assets/images/pgadmin/pgadmin-pgagent-jobs.png)
+## Backups and access
 
----
+Backing up pgAdmin's local data alone does not back up the databases it administers, or its PostgreSQL-backed configuration database. Use logical `pg_dump` backups for the databases and protect the local pgAdmin state as well.
 
-## More Info
+The configured database role determines what pgAdmin can change. The default shared DUMB role can administer the registered application databases, so keep access restricted and disable pgAdmin when it is no longer needed.
 
-- [pgAdmin FAQ](../../faq/pgadmin.md)
+## More info
 
-- [pgAdmin Docs](https://www.pgadmin.org/docs/pgadmin4/latest/index.html)
-
-- [pgAgent Job Scheduler](https://www.pgadmin.org/docs/pgadmin4/latest/pgagent_jobs.html)
-
----
-
-## Summary
-| Setting                | Value                |
-|------------------------|----------------------|
-| UI Address             | `http://<host>:5050` |
-| Default Email/Username | `DUMB@DUMB.DUMB`     |
-| Default Password       | `postgres`           |
-| Data Directory         | `/pgadmin/data`      |
-| Config File            | `/pgadmin/data/config_local.py` |
+- [pgAdmin FAQ and backup examples](../../faq/pgadmin.md)
+- [pgAdmin documentation](https://www.pgadmin.org/docs/pgadmin4/latest/index.html)
+- [pgAgent jobs](https://www.pgadmin.org/docs/pgadmin4/latest/pgagent_jobs.html)

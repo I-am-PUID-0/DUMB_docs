@@ -1,5 +1,6 @@
 ---
 title: CLI Debrid FAQ
+description: Resolve CLI Debrid dependency, Battery layout, HTTP 423, update, and symlink questions, with separate guidance for released and development DUMB.
 icon: lucide/terminal
 ---
 
@@ -21,15 +22,12 @@ includes a
 that imports Battery as an in-process Python module instead of running its Flask
 service on port `5001`.
 
-DUMB's current configuration still declares CLI Battery as a static dependency.
-For stable/older CLI Debrid releases, keep it enabled. If you intentionally use
-v0.7.29 or a newer pre-release containing the in-process rewrite, manually
-disable the standalone CLI Battery service; its old `cli_battery/main.py` command
-is no longer the required runtime.
-
-Normal container startup respects the disabled toggle. The current guided
-**Start Core Service** and onboarding flows may re-enable CLI Battery because
-their dependency model is not yet version-aware, so verify the toggle afterward.
+<!-- dev:start -->
+DUMB inspects the installed CLI Debrid files. For a recognized embedded layout it removes the managed standalone Battery dependency and skips that separate process, even if its saved toggle remains enabled. Older layouts that still provide `cli_battery/main.py` need the standalone service. A missing entrypoint alone does not prove the embedded layout; an unrecognized installation needs repair.
+<!-- dev:end -->
+<!-- release:start -->
+DUMB 2.23.0 still uses the standalone Battery dependency. If you deliberately install an upstream layout with the in-process rewrite, disable the standalone Battery service and review whether onboarding or **Start Core Service** re-enables it. The release backend does not provide the newer installed-layout detection.
+<!-- release:end -->
 
 ## Why is CLI Battery on a separate port?
 

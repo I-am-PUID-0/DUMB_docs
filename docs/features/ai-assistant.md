@@ -6,7 +6,7 @@ icon: lucide/brain
 
 # AI Assistant
 
-DUMB includes an optional AI diagnostics assistant for service pages. It can collect a redacted runtime bundle for one service, preview that bundle, and optionally send it to a configured local or cloud model for troubleshooting guidance.
+AI Assist collects a selected, redacted evidence bundle for a service or the stack. Preview it first, then decide whether to send it to a local or cloud model. The response is troubleshooting guidance; check its claims against logs and measurements before changing the system.
 
 The frontend also includes **Stack AI Assist** for whole-stack questions. Use the service-page **AI Assist** tab when one service is the focus, and use **Stack AI Assist** when you want the assistant to reason across service status, dependency chains, selected logs, and docs context for the entire DUMB deployment.
 
@@ -24,36 +24,24 @@ The assistant is disabled by default. You can still use **Preview bundle** witho
 8. Confirm the redacted bundle only includes context you are comfortable sharing.
 9. Enable **Provider calls**, save settings, then use **Analyze**.
 
-!!! tip "Start local first"
-    A local Ollama or OpenAI-compatible endpoint is the safest first test because logs and config context stay on your own machine or LAN.
+!!! tip "Keep an initial test local"
+    A local endpoint can keep diagnostic content on your machine or LAN. Confirm where that endpoint actually sends requests; a local gateway can still forward them to a cloud provider.
 
 ## What It Can Use
 
-Service diagnostic bundles can include:
+| Evidence | Service AI Assist | Stack AI Assist |
+| --- | --- | --- |
+| Status and health | Selected service | Stack summary and services needing attention |
+| Logs | Selected service's bounded redacted logs | Targeted tails for affected services |
+| Configuration | Optional selected service config | Optional enabled-service configs |
+| Dependencies | Service graph | Aggregated enabled-service graph |
+| Product/docs context | Selected documentation snippets | Documentation and service catalog for planning |
+| Question | Your service diagnostic focus | Your whole-stack question |
 
-- DUMB product facts, including the canonical expansion: Distributed Unlimited Media Bridge
-- Current service status and health details
-- Recent redacted service logs
-- Redacted service configuration
-- Backend dependency graph context
-- Selected public DUMB documentation snippets
-- Optional compact process list
-- Your free-form question or troubleshooting focus
+Metrics history, recorded changes, and native diagnostics can add evidence when available. Preview the actual bundle for source coverage. DUMB redacts common secret fields and sensitive patterns before returning or sending it; review the result before sharing deployment-specific content.
 
-Stack diagnostic bundles can include:
-
-- DUMB product facts, including the canonical expansion: Distributed Unlimited Media Bridge
-- Stack-wide service status counts
-- Services needing attention, grouped by unhealthy, stopped, or unknown state
-- Compact process list for the included services
-- Aggregated runtime dependency graph across enabled services
-- Short targeted log tails for services needing attention
-- Optional redacted configs for enabled services
-- Selected public DUMB documentation snippets
-- A small DUMB service catalog for workflow planning questions
-- Your free-form stack question or troubleshooting focus
-
-DUMB redacts common secret fields and sensitive log patterns before the bundle is returned or sent to a provider. This includes common API key, password, token, cookie, authorization, OAuth client secret, GitHub token, Plex token, and Cloudflare tunnel token fields.
+<details class="geek-details" markdown="1">
+<summary>Technical details: time-window and native evidence</summary>
 
 ## Evidence Over Time
 
@@ -86,6 +74,8 @@ These metrics do not measure Plex click-to-first-frame latency. AI Assist labels
 
 Native collectors are allowlisted and read-only. Services without a native collector still receive the generic diagnostics above.
 
+</details>
+
 ## Guided Workflow
 
 Both service and stack assistants provide presets for health, performance, recent changes, errors, and dependencies. Choose a time window and baseline, preview the evidence, then analyze it.
@@ -93,6 +83,9 @@ Both service and stack assistants provide presets for health, performance, recen
 Provider results render as sanitized Markdown, including tables. You can copy or download the report, download the redacted JSON bundle, and ask follow-up questions using a short-lived in-memory diagnostic session. Follow-ups reuse the same evidence instead of rescanning logs or silently changing the comparison window.
 
 Sessions expire after one hour and are not written to disk. Starting a new backend process also clears them.
+
+<details class="geek-details" markdown="1">
+<summary>Technical details: documentation context sources</summary>
 
 ### Docs Context
 
@@ -108,6 +101,8 @@ Docs context is included in **Preview bundle**, so you can see exactly which pag
 Official DUMB images include a Markdown-only snapshot of DUMB_docs at `/usr/share/dumb/docs`; images and other documentation assets are excluded to keep the image-size increase small. The backend prefers `DUMB_DOCS_PATH`, then this bundled snapshot and common dev/workbench locations.
 
 If no local docs are available, DUMB fetches the matching public page from `https://dumbarr.com`, extracts its article content, and removes navigation, scripts, page chrome, and whitespace-only lines before adding the excerpt. The raw page is processed in memory and is not cloned or cached to disk. If neither source is available, the bundle includes an explicit note instead of silently omitting docs context.
+
+</details>
 
 ## Providers
 
@@ -184,7 +179,7 @@ Gemini model discovery remains the preferred way to choose a model because free-
 
 1. Create a Gemini API key in [Google AI Studio](https://aistudio.google.com/app/apikey).
 2. Restrict the key to Gemini API use and do not put it in logs, screenshots, or tracked config examples.
-3. Select **Google Gemini** in AI Assist. DUMB manages the official Google API endpoint and starts with `gemini-3.5-flash-lite`.
+3. Select **Google Gemini** in AI Assist. DUMB manages the official Google API endpoint.
 4. Enter the key, select **Load models**, and choose a `generateContent` model actually returned for your project.
 5. Use **Test provider**, then **Preview bundle**, before enabling provider calls.
 
@@ -194,7 +189,7 @@ If Google returns `429` with a quota `limit: 0`, first check whether the selecte
 
 ### Testing Context Quality
 
-Use **Preview bundle** to prove DUMB is collecting the right context before you judge a model response. Preview mode returns the redacted bundle without sending it to a provider.
+Use **Preview bundle** to inspect the context before judging a model response. Preview mode returns the redacted bundle without sending it to a provider.
 
 Good context checks:
 
@@ -205,10 +200,13 @@ Good context checks:
 
 Then use **Analyze** with the same prompt. This separates two different checks:
 
-- Preview proves DUMB is building the context correctly.
-- Analyze proves whether the selected model follows that context.
+- Preview shows the collected context and available sources.
+- Analyze lets you assess how the selected model uses that context.
 
 Small local models may still lean on generic training data. To keep important answers stable, DUMB applies deterministic finalizers for selected product facts and workflow-planning traps. For example, DUMB pins the official acronym expansion and replaces generic Usenet advice that recommends SABnzbd, NZBGet, or NZBHydra as the primary DUMB path.
+
+<details class="geek-details" markdown="1">
+<summary>Technical details: AI field reference</summary>
 
 ### Field Reference
 
@@ -242,6 +240,8 @@ Small local models may still lean on generic training data. To keep important an
 | **Docs characters** | Maximum documentation characters included across selected snippets. |
 | **Timeout seconds** | How long DUMB waits for the provider response. |
 
+</details>
+
 ## Stack AI Assist
 
 Open **Stack AI Assist** from the sidebar for whole-deployment troubleshooting. It uses the same provider settings as the service-page assistant, but the diagnostic bundle is built around the entire stack instead of one service.
@@ -262,6 +262,9 @@ For provider calls, Stack AI Assist compacts the preview bundle before sending i
 Stack workflow prompts also include a DUMB-specific service catalog. For example, Usenet planning is grounded around DUMB services such as Decypharr, InfiniDysk, AltMount, Arr apps, Prowlarr, and rclone instead of generic external download-client advice. If a provider returns a generic Usenet answer that recommends SABnzbd, NZBGet, or NZBHydra as the primary path, DUMB replaces it with the DUMB-native planning answer.
 
 Product identity prompts are also guarded. If a provider invents a different acronym expansion, DUMB returns the canonical product fact instead: **Distributed Unlimited Media Bridge**.
+
+<details class="geek-details" markdown="1">
+<summary>Technical details: AI configuration and examples</summary>
 
 ## Configuration
 
@@ -378,6 +381,8 @@ Open WebUI:
   "api_key": "YOUR_OPEN_WEBUI_API_KEY"
 }
 ```
+
+</details>
 
 ## Privacy Notes
 

@@ -6,10 +6,33 @@ icon: lucide/database
 
 # Riven Backend Configuration
 
-The **Riven Backend** is the core component responsible for data handling, automation, API integrations, and scraping within the Riven ecosystem. Proper configuration ensures seamless integration with services like Seerr, Plex, and Trakt.
+Riven acquires content through configured sources and scrapers, then presents an organized library for your media server. DUMB manages the runtime and PostgreSQL dependency. Configure Riven's provider, source, scraper, and library policies before enabling acquisition.
 
 ---
 
+## Initial Setup: Riven Backend
+
+Before Riven Backend can be used, **initial configuration is required**.
+
+After completing the DUMB onboarding, navigate to the **Riven Frontend** and open the `Settings` page. The following sections should be reviewed and updated:
+
+!!! important "Required Configuration"
+    At a minimum, **enable at least one Content source** under the `Content` section. Without this, Riven cannot function.
+
+### Recommended Setup Areas
+
+- **General** – Adjust base settings like min/max files size, etc.
+- **Media Server** – Review your Plex, Jellyfin, or Emby connection, then choose whether its updater should run.
+- **Content** – Configure sources such as Trakt, Seerr, or the Plex Watchlist, MDB List, Listrr.
+- **Scrapers** – Enable one or more scrapers (e.g., Zilean, Torrentio, Knightcrawler, Orionoid, Jackett, Mediafusion, Prowlarr, Comet).
+- **Ranking** – Customize how results are scored and filtered.
+
+!!! note "After Configuration"
+    Once complete, Riven will begin processing requests based on the selected sources and configurations.
+
+---
+
+<!-- dev:start -->
 ## Setup checklist and remaining work
 
 The checklist distinguishes selected source modes and direct supported provider inputs from legacy mounts. On recognized Riven versions, it checks the generated backend key, native settings schema and version before offering a media-server connection. Select managed Plex, Jellyfin or Emby, or supply an explicitly authorized external server. Existing custom connection changes need a fresh field-by-field preview and acceptance.
@@ -17,7 +40,7 @@ The checklist distinguishes selected source modes and direct supported provider 
 Saving a media-server connection preserves its existing updater enablement, library path and all content policies; supplying a URL/key does not enable an updater. Review and deliberately enable the desired native behavior in Riven. Content sources, scrapers, rankings and library policy remain separate choices. Do not enable an obsolete mount just to carry a provider key; source-specific manual work remains visible. A verified settings save is not proof of library scanning or a complete download workflow.
 
 Requires the backend setup-arrangement capability. See [Setup checklist and automation](../../features/setup-checklist.md) for retained tasks, coverage and safe retries.
-
+<!-- dev:end -->
 
 ## Workflow diagram
 
@@ -50,9 +73,21 @@ flowchart TD
 
 ```
 
+!!! warning "Port conflicts and auto-shift"
+
+    Riven defaults (`3000`/`8080`) overlap with InfiniDysk defaults. DUMB can auto-shift
+    conflicting ports at container startup or during the onboarding core-service
+    start flow, updating `dumb_config.json` accordingly.
+    Per-service stop/start/restart does not re-run port conflict resolution, so fix
+    conflicts manually before restarting a single service.
+
+<details class="geek-details" markdown="1">
+<summary>Technical details: configuration reference</summary>
+
 ## Configuration Settings in `dumb_config.json`
 
 ```json
+{
 "riven_backend": {
     "enabled": false,
     "process_name": "Riven Backend",
@@ -102,16 +137,9 @@ flowchart TD
     "log_file": "/log/riven_backend.log",
     "env": {},
     "wait_for_dir": ""
-},
+}
+}
 ```
-
-!!! warning "Port conflicts and auto-shift"
-
-    Riven defaults (`3000`/`8080`) overlap with InfiniDysk defaults. DUMB can auto-shift
-    conflicting ports at container startup or during the onboarding core-service
-    start flow, updating `dumb_config.json` accordingly.
-    Per-service stop/start/restart does not re-run port conflict resolution, so fix
-    conflicts manually before restarting a single service.
 
 ### Configuration Key Descriptions
 
@@ -123,11 +151,9 @@ flowchart TD
 - **`release_version_enabled`** / **`release_version`**: Use a tagged release if enabled.
 - **`commit_sha`**: Builds an exact Riven revision from its full 40-character GitHub SHA.
 - **`branch_enabled`** / **`branch`**: Use a specific branch if enabled.
-- **`suppress_logging`**: If `true`, disables log output for this service.
+- **`suppress_logging`**: Suppresses service messages in the main DUMB output.
 - **`log_level`**: Logging verbosity level (e.g., `DEBUG`, `INFO`).
-- **`host`**: IP address the backend should bind to.
-- **`port`**: Port the backend API is served on.
-- **`auto_update`**: Enables automatic self-updates.
+- **`auto_update`**: Enables DUMB's scheduled update checks; `auto_update_mode` determines whether a detected update is installed.
 - **`auto_update_interval`**: How often (in hours) to check for updates.
 - **`symlink_library_path`**: Target path for media symlinks.
 - **`clear_on_update`**: Clears build artifacts or cache during updates.
@@ -142,41 +168,11 @@ flowchart TD
 
 ---
 
+</details>
+
 ## Commit / Branch / Version Targeting
-You can control which source revision of the backend is deployed by setting:
 
-- `commit_sha` to a full 40-character SHA for an immutable source pin
-- `branch_enabled: true` and specifying a `branch`
-- or `release_version_enabled: true` and specifying a `release_version`
-
-The commit pin has highest precedence and disables automatic updates until it
-is changed or cleared. Commit builds use the same source-build runtime path as
-Riven branch builds.
-
----
-
-## Initial Setup: Riven Backend
-
-Before Riven Backend can be used, **initial configuration is required**.
-
-After completing the DUMB onboarding, navigate to the **Riven Frontend** and open the `Settings` page. The following sections should be reviewed and updated:
-
-!!! important "Required Configuration"
-    At a minimum, **enable at least one Content source** under the `Content` section. Without this, Riven cannot function.
-
-### Recommended Setup Areas
-
-- **General** – Adjust base settings like min/max files size, etc.
-- **Media Server** – Review the checklist-saved connection or add your Plex, Jellyfin, or Emby server details, then choose whether its updater should run.
-- **Content** – Configure sources such as Trakt, Seerr, or the Plex Watchlist, MDB List, Listrr.
-- **Scrapers** – Enable one or more scrapers (e.g., Zilean, Torrentio, Knightcrawler, Orionoid, Jackett, Mediafusion, Prowlarr, Comet).
-- **Ranking** – Customize how results are scored and filtered.
-
-!!! note "After Configuration"
-    Once complete, Riven will begin processing requests based on the selected sources and configurations.
-
----
-
+Choose a full `commit_sha`, a release selector, or an enabled branch in this service's DUMB settings. A commit pin takes precedence over the other selectors and disables automatic updates until you clear it. Review [source selection and update modes](../../features/auto-update.md) before changing a running service.
 
 ## Riven's Environment Variables in the `.env.example`
 
@@ -190,8 +186,7 @@ The `.env.example` file includes:
 - `API_KEY`: Custom static API key.
 - `WORKERS`: Number of indexing workers.
 
-Each Riven env can also be set within DUMB, either through the **"env"** section of the "riven_backend" within the `dumb_config.json`, or buy utilizing methods defined in the [Configuration](../../features/configuration.md) section of the docs.
-
+Each Riven env can also be set within DUMB, either through the **"env"** section of the "riven_backend" within the `dumb_config.json`, or by using the methods defined in the [Configuration](../../features/configuration.md) section of the docs.
 
 
 [View full example on GitHub](https://github.com/rivenmedia/riven/blob/main/.env.example)
@@ -201,4 +196,3 @@ Each Riven env can also be set within DUMB, either through the **"env"** section
 ## Additional Resources
 
 - [Riven Repository](https://github.com/rivenmedia/riven)
-- [Riven GitHub Repository](https://github.com/rivenmedia/riven)

@@ -1,18 +1,31 @@
 ---
 title: PostgreSQL
+description: Use managed PostgreSQL for DUMB applications, plan SQLite migrations, protect separate databases, and troubleshoot startup or storage problems.
 icon: lucide/database
 ---
 
 # PostgreSQL
 
-PostgreSQL is the core database system used by DUMB to store metadata and internal configuration for services like Riven, Zilean, and pgAdmin. 
+PostgreSQL provides separate application databases for services such as Riven, Zilean, and pgAdmin. DUMB's main configuration remains in `/config/dumb_config.json`; it is not stored in this cluster.
 
-It is pre-installed and automatically initialized during container startup.
+The image includes PostgreSQL, but the service is disabled by default until selected directly or required by an enabled consumer. DUMB initializes the configured cluster and databases when setting it up.
 
 ---
 
+## When to enable PostgreSQL
+
+DUMB starts managed PostgreSQL when a selected service requires it. You normally do not need to enable it separately for Riven or Zilean.
+
+For an existing SQLite-backed application, use **Database Migration** on its service page. Keep the SQLite setting unchanged until you have an independent backup, a successful rehearsal, and a reviewed cutover. Turning on PostgreSQL alone can open an empty library.
+
+Use [pgAdmin](../optional/pgadmin.md) for browser-based inspection and the [backup example](../../faq/pgadmin.md#example-scheduled-backups-with-pgagent) to protect application databases.
+
+<details class="geek-details" markdown="1">
+<summary>Technical details: configuration reference</summary>
+
 ## Configuration Settings in `dumb_config.json`
 ```json
+{
 "postgres": {
   "enabled": false,
   "process_name": "PostgreSQL",
@@ -38,15 +51,16 @@ It is pre-installed and automatically initialized during container startup.
   "run_directory": "/run/postgresql",
   "command": "postgres -D {postgres_config_dir} -c config_file={postgres_config_file}",
   "env": {}
-},
+}
+}
 ```
 
 ### Configuration Key Descriptions
 - **`enabled`**: Whether to start the PostgreSQL service.
 - **`process_name`**: The label used in logs and process tracking.
-- **`suppress_logging`**: If `true`, disables log output for this service.
+- **`suppress_logging`**: Suppresses service messages in the main DUMB output.
 - **`log_level`**: Logging verbosity level (e.g., `DEBUG`, `INFO`).
-- **`host`**: IP address for PostgreSQL to listen on.
+- **`host`**: Address DUMB and managed consumers use to connect to PostgreSQL. Listener binding is controlled separately by PostgreSQL's `listen_addresses`.
 - **`port`**: Port exposed for the PostgreSQL server.
 - **`shared_buffers`** – Amount of memory allocated to PostgreSQL.
 - **`max_connections`** – Maximum simultaneous database connections.
@@ -64,6 +78,8 @@ It is pre-installed and automatically initialized during container startup.
 
 
 ---
+
+</details>
 
 ## Access & Credentials
 - Default Port: `5432`
@@ -110,6 +126,7 @@ It is pre-installed and automatically initialized during container startup.
     PostgreSQL is selected. See
     [InfiniDysk](../core/infinidysk.md#postgresql-in-infinidysk-v120).
 
+<!-- dev:start -->
 !!! info "InfiniDysk 2 uses its native conversion workflow"
 
     A generation 1 to generation 2 upgrade first imports into generation 2
@@ -124,6 +141,7 @@ It is pre-installed and automatically initialized during container startup.
     [dedicated destination preparation example](../../features/infinidysk-v2-migration.md#prepare-a-postgresql-destination)
     before previewing. Do not change the existing cluster locale or replace an
     existing application's database to satisfy that check.
+<!-- dev:end -->
 
 !!! danger "The PostgreSQL toggle is not a migration tool"
     DUMB does not copy existing SQLite data merely because `postgres_enabled`
@@ -201,6 +219,13 @@ safe restore test.
 
 ---
 
+!!! danger "Database reset deletes application data"
+
+    Dropping the Riven database permanently removes that application's data. Deleting the PostgreSQL cluster removes every database in it. Verify the exact target and a restorable backup before using database-reset commands.
+
+<details class="geek-details" markdown="1">
+<summary>Technical details: PostgreSQL command-line maintenance</summary>
+
 ## Useful Commands
 
 ### Run SQL Command Directly (one-liner)
@@ -230,6 +255,8 @@ DROP DATABASE riven;
 ```
 
 ---
+
+</details>
 
 ## Tips
 - Always restart the container after modifying config files in `/postgres_data`.

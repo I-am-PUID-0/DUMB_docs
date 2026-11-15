@@ -1,15 +1,16 @@
 ---
 title: pgAdmin FAQ
+description: Inspect PostgreSQL in pgAdmin, use the Query Tool, create manual backups, and schedule pgAgent dumps with retention and restore testing.
 icon: lucide/database
 ---
 
 # pgAdmin FAQ
 
-Below are common questions and helpful usage tips for working with **pgAdmin** in DUMB.
+Use pgAdmin to inspect databases, run queries, and create logical backups. For a guided backup of DUMB configuration and supported service state, start with [Installation Backup & Restore](../features/installation-backups.md). The SQL and pgAgent examples here are for direct database administration.
+
 
 ---
 
-## Frequently Asked Questions (FAQ)
 
 ### What is pgAdmin used for in DUMB?
 
@@ -21,7 +22,6 @@ You can use it to:
 - Run SQL queries manually using the **Query Tool**
 - Schedule tasks using **pgAgent** (optional tool inside pgAdmin)
 - View the [System Stats](../services/optional/pgadmin.md#system_stats) inside PostgreSQL
----
 
 ## Using pgAdmin’s Query Tool
 
@@ -34,18 +34,30 @@ To run manual queries (e.g., inspecting or modifying blacklist entries):
 
 ### Example: View & Clear Riven's Stream Blacklist
 
+<details class="geek-details" markdown="1">
+<summary>Technical details: database SQL</summary>
+
 ```sql
 SELECT id, media_item_id, stream_id FROM "StreamBlacklistRelation";
 DELETE FROM "StreamBlacklistRelation";
 ```
 
+</details>
+
+
 ![Remove Blacklist](../assets/images/pgadmin/pgadmin-remove-blacklist.PNG)
 
 To just view the count:
 
+<details class="geek-details" markdown="1">
+<summary>Technical details: database SQL</summary>
+
 ```sql
 SELECT COUNT(*) FROM "StreamBlacklistRelation";
 ```
+
+</details>
+
 
 ![View Blacklist](../assets/images/pgadmin/pgadmin-view-blacklist.PNG)
 
@@ -58,7 +70,6 @@ Click **Save As** in the Query Tool to store frequently used queries as `.sql` f
 
 ![Save Query](../assets/images/pgadmin/pgadmin-query-save-as.PNG)
 
----
 
 ## Drop a Database or Create a Manual Backup in pgAdmin
 
@@ -75,7 +86,6 @@ You can delete a database from within pgAdmin if you no longer need it (e.g., to
     This will permanently remove the database and all its data.  
     Ensure you’ve backed up anything you want to keep before proceeding.
 
----
 
 ### Manually Create a Database Backup
 
@@ -97,7 +107,6 @@ To create a backup of any database using the pgAdmin interface:
 
 6. Click **Backup** to start the process.
 
----
 
 ### .backup vs .sql
 
@@ -113,7 +122,7 @@ To create a backup of any database using the pgAdmin interface:
     - Human-readable and easy to inspect or modify manually
     - Can be restored via `psql`, but lacks compression and selective restoration features
 
-!!! tip  "For a reliable, restorable snapshot of your database, always choose `.backup` with Custom format."
+The selected **Format** controls the archive type; the filename extension does not. Use Custom with `.backup` for the examples here, and verify a restore. Plain SQL with `.sql` remains valid when restored through `psql`.
 
 ---
 
@@ -249,7 +258,6 @@ For the underlying behavior, see the official
 [pg_dump documentation](https://www.postgresql.org/docs/current/app-pgdump.html),
 and [pg_restore documentation](https://www.postgresql.org/docs/current/app-pgrestore.html).
 
----
 
 ## Related Pages
 

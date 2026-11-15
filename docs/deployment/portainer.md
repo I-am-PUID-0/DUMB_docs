@@ -1,249 +1,91 @@
 ---
 title: Deploy with Portainer
-description: Deploy DUMB as a Portainer stack with persistent volumes, required mounts, ports, environment variables, and guided first-run setup.
+description: Deploy DUMB as a Portainer stack, set persistent host paths and user IDs, inspect logs, and replace the image without losing application data.
 icon: simple/portainer
 ---
 
-## Deploying DUMB with Portainer
+# Deploy with Portainer
 
-Portainer provides a user-friendly web interface for managing Docker containers
-and stacks. This guide walks you through deploying **Distributed Unlimited Media
-Bridge (DUMB)** using Portainer's stack deployment feature.
+Use a Portainer stack to manage DUMB's Compose configuration. You need a running Docker environment in Portainer and permission to deploy a stack to it.
 
----
+If Portainer is not installed, follow its [official Docker installation guide](https://docs.portainer.io/start/install-ce/server/docker/linux). For Docker installation, use [Docker Engine's supported packages](https://docs.docker.com/engine/install/). Avoid the Snap build for DUMB's FUSE workflows.
 
-## Prerequisites
+## 1. Prepare paths on the Docker host
 
-Before you begin:
-
-- Docker must be installed and running
-- Portainer must be installed and running
-- Internet access (to pull the DUMB image)
-- Host directories prepared for persistent data storage
-
-!!! warning "Avoid the Snap package"
-
-    Do not install Docker via Snap. The Snap build often breaks networking,
-    volume mounts, and socket permissions required by DUMB. Use the official
-    Docker install method instead.
-
----
-
-## Install Docker (if needed)
-
-If Docker is not installed yet, follow the [Docker deployment guide](docker.md)
-up through **Confirm Docker and Compose are installed**.
-
----
-
-## Install Portainer (quick start)
-
-Use this if Portainer is not installed yet. It runs Portainer as a container.
+Create persistent directories on the machine running Docker, not merely on the machine where your browser or Portainer server runs:
 
 ```bash
-docker volume create portainer_data
-docker run -d \
-  --name portainer \
-  -p 9443:9443 \
-  -p 9000:9000 \
-  -v /var/run/docker.sock:/var/run/docker.sock \
-  -v portainer_data:/data \
-  --restart=always \
-  portainer/portainer-ce:latest
+mkdir -p "$HOME/docker/DUMB"/{config,log,data,mnt/debrid}
+id -u
+id -g
 ```
 
-Then open `https://<host>:9443` and complete the setup wizard.
+Use the absolute path and nonzero IDs from the account that should own application data. Portainer stack files do not reliably expand `~`.
 
----
+## 2. Prepare the Compose file
 
-## Prepare the directory structure
-
-Create folders for persistent config, logs, data, and mounts:
+Copy the maintained [DUMB Compose file](https://github.com/I-am-PUID-0/DUMB/blob/master/docker-compose.yml), or download it:
 
 ```bash
-mkdir -p /home/$USER/docker/DUMB/config /home/$USER/docker/DUMB/log /home/$USER/docker/DUMB/data /home/$USER/docker/DUMB/mnt/debrid
+curl --fail --show-error --location \
+  https://raw.githubusercontent.com/I-am-PUID-0/DUMB/master/docker-compose.yml \
+  --output docker-compose.yml
 ```
 
-!!! warning "Avoid `~` in Portainer stacks"
+Before deploying, edit:
 
-    Portainer does not reliably expand `~` in stack files. Use full paths such
-    as `/home/<user>/docker/DUMB`.
+- The four host paths: replace `/home/username/docker/DUMB` with your absolute directory.
+- `PUID` and `PGID`: use nonzero IDs with access to those directories.
+- `TZ`: use your time zone, for example `Etc/UTC`.
+- Device mappings: keep `/dev/fuse` and its required capability/security options for FUSE workflows. Remove `/dev/dri` if the Docker host has no such device.
+- Image: use the stable `latest` image or the intended development image. Keep the [docs channel](../reference/doc-versions.md) aligned.
 
----
+The standard file publishes `3005` for dashboard, API, WebSockets, and embedded UI access. A normal private `/mnt/debrid` bind works for consumers inside DUMB. See [mount planning](../getting-started/installation.md#decide-who-reads-the-library) before enabling propagation for external consumers.
 
-## Where to get the Compose file
+## 3. Deploy the stack
 
-Pull the latest Compose file from GitHub:
+1. Open Portainer and select the intended Docker environment.
+2. Choose **Stacks** → **Add stack**.
+3. Enter `dumb` as the stack name.
+4. Choose **Web editor** and paste the reviewed Compose file.
+5. Select **Deploy the stack**.
 
-```bash
-curl -O https://raw.githubusercontent.com/I-am-PUID-0/DUMB/master/docker-compose.yml
-```
+??? example "Portainer screens"
 
----
+    Labels may differ by Portainer version.
 
-## Edit paths and environment variables
+    ![Stacks navigation](../assets/images/portainer/stacks.PNG)
+    ![Add stack](../assets/images/portainer/add_stack.PNG)
+    ![Compose editor](../assets/images/portainer/create_stack.PNG)
+    ![Deploy stack](../assets/images/portainer/deploy_the_stack.PNG)
 
-Update the Compose file before pasting it into Portainer:
+## 4. Verify startup
 
-- Replace `/home/username/docker/DUMB` with your actual path (for example `/home/<user>/docker/DUMB`).
-- Set `TZ` to your timezone (for example `America/New_York`).
-- Set `PUID` and `PGID` to your user and group IDs.
+Open **Containers**, select DUMB, then open **Logs**. Follow startup and check any reported installation or permissions error.
 
-Use this helper to patch the compose file:
+Open `http://<docker-host>:3005` and complete [onboarding](../frontend/onboarding.md). Check that the host address belongs to the selected Docker environment; a remote agent's containers do not run on the Portainer server by default.
 
-```bash
-read -p "Enter your DUMB base path [/home/$USER/docker/DUMB]: " DUMB_PATH
-DUMB_PATH=${DUMB_PATH:-/home/$USER/docker/DUMB}
-read -p "Enter your timezone [UTC]: " TZ
-TZ=${TZ:-UTC}
-PUID=$(id -u)
-PGID=$(id -g)
+For a diagnostic shell, use the container's **Console** action and select `/bin/bash` or `/bin/sh`. This is separate from attaching to the container's existing main process.
 
-sed -i \
-  -e "s|/home/username/docker/DUMB|$DUMB_PATH|g" \
-  -e "s|TZ=|TZ=$TZ|" \
-  -e "s|PUID=|PUID=$PUID|" \
-  -e "s|PGID=|PGID=$PGID|" \
-  docker-compose.yml
-```
+## Direct application ports
 
----
-
-## Copy the Compose content for Portainer
-
-Print the file and copy it into Portainer’s **Web editor**:
-
-```bash
-cat docker-compose.yml
-```
-
----
-
-## Step-by-step deployment
-
-### 1. Log into Portainer
-
-Navigate to your Portainer instance (e.g., `http://localhost:9000`, or `https://localhost:9443`) and log in.
-
----
-
-### 2. Navigate to Stacks
-
-Click on **Stacks** in the left sidebar.
-
-![Stacks Sidebar](../assets/images/portainer/stacks.PNG)
-
----
-
-### 3. Click "Add Stack"
-
-Click the **+ Add stack** button at the top-right.
-
-![Add Stack](../assets/images/portainer/add_stack.PNG)
-
----
-
-### 4. Configure the stack
-
-Enter the following:
-
-- **Name**: `dumb`
-- **Build method**: Select `Web editor`
-- **Web editor**: Paste the DUMB `docker-compose` content
-
-![Create Stack](../assets/images/portainer/create_stack.PNG)
-
----
-
-### 5. Deploy the stack
-
-Click **Deploy the stack** to launch DUMB.
-
-![Deploy the Stack](../assets/images/portainer/deploy_the_stack.PNG)
-
----
-
-## That’s it!
-
-Once deployed, DUMB will initialize and expose the frontend at `:3005`. The frontend proxies DUMB API calls under `/api`; the backend's native `:8000` listener remains container-loopback-only unless you deliberately reconfigure and publish it.
-
-You can now manage DUMB entirely through the **[DUMB Frontend](../services/dumb/dumb-frontend.md)**, or explore the [Configuration](../features/configuration.md) docs to adjust settings as needed.
-
----
-
-## Expose ports (direct access)
-
-Portainer only exposes the ports listed in your Compose file. If a UI is not
-reachable, confirm the port mapping exists in the stack.
-
-Example:
+Add mappings only when another client needs direct access, for example:
 
 ```yaml
 ports:
-  - "3005:3005" # DUMB Frontend
-  - "7878:7878" # Radarr
+  - "3005:3005"
+  - "7878:7878" # Radarr, if its actual assigned port is 7878
 ```
 
-After editing ports, click **Update the stack** to redeploy.
+Update the stack after changing mappings. See [Service ports](../reference/ports.md) and [Networking](networking.md).
 
-!!! info "Reverse proxy or embedded UIs"
+The DUMB backend on `8000` is loopback-only by default. Prefer the gateway at `:3005/api/...`; a Portainer port mapping alone does not expose the backend listener.
 
-    If you use a reverse proxy (Traefik, Nginx, Caddy) or DUMB’s embedded UIs,
-    you can avoid exposing every service port directly.
+## Update the DUMB image
 
-!!! danger "Direct backend API"
-    If a direct API consumer truly requires port `8000`, setting a Portainer mapping alone is not enough. Set `DUMB_API_SERVICE_HOST=0.0.0.0`, publish the port, enable DUMB authentication, and restrict access with a firewall/trusted network. Prefer the frontend's `:3005/api/...` proxy for normal use.
+1. Open **Stacks** → `dumb` → **Editor**.
+2. Review Compose changes against your existing paths and settings. Preserve your values rather than replacing the file blindly.
+3. Select **Update the stack** and choose the option to re-pull the image when offered.
+4. Check the container logs and dashboard after replacement.
 
----
-
-## Viewing Logs for DUMB
-
-Once your stack is deployed, you can view logs for the DUMB container:
-
-1. Navigate to **Containers** from the left sidebar.
-2. Click on the **DUMB** container name.
-3. Go to the **Logs** tab.
-4. Logs will stream live by default. You can scroll or refresh for updates.
-
-!!! note "This is helpful for debugging service startup or checking configuration issues."
-
----
-
-## Attach to the Container
-
-To view live output or run interactive commands:
-
-1. From the **Containers** page, click on the **DUMB** container.
-2. Click the **Attach Console** button
-3. Choose a shell (e.g., `sh`, `bash`, or `/venv/bin/python`) and click **Connect**.
-
-!!! note "Use this for tasks like inspecting running processes, modifying configs, or testing tools inside the container."
-
----
-
-## Console Access
-
-You can also use the **Console** option to access the container shell:
-
-1. From the **Containers** tab, click on **DUMB**.
-2. Click the **Console** tab.
-3. Choose the shell you wish to run.
-4. Click **Connect**.
-
-!!! note "Great for quick inspection or administrative tasks inside the container."
-
----
-
-## Update the stack
-
-To update DUMB:
-
-1. Open **Stacks**
-2. Click the `dumb` stack
-3. Click **Edit**
-4. Replace the Compose content with the latest version
-5. Click **Update the stack**
-
-If you have auto-update enabled in DUMB, you may not need to redeploy the stack
-for application updates, but you should still update the Compose file if it
-changes.
+Application auto-updates inside DUMB do not update the DUMB image itself. Keep `/config`, `/data`, `/log`, and library mounts across replacement, and keep a separate backup before upgrades.

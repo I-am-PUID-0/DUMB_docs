@@ -1,123 +1,74 @@
 ---
 title: Services Overview
-description: Understand the core, dependent, and optional services DUMB can manage for Debrid, Usenet, Arr automation, media playback, and access.
+description: Choose DUMB services for Debrid, Usenet, Arr automation, media playback, databases, and access; understand which dependencies each workflow needs.
 icon: lucide/layers
 ---
 
-# Services Overview
+# Choose your services
 
-DUMB is composed of multiple services that work together to provide a complete automated media management system. Services are categorized into:
+Start with the workflow you want, then enable its services in onboarding. You do not need every service in this catalog. DUMB runs managed applications as processes inside its container; they share the container's network and mounted paths.
 
-* [DUMB Services](../services/dumb/index.md): Required for system orchestration and user interaction
-* [Core Services](../services/core/index.md): Manage Debrid content orchestration or media playback
-* [Dependent Services](../services/dependent/index.md): Required by one or more core services to function
-* [Optional Services](../services/optional/index.md): Enhance or simplify workflows but are not required
+## How the services work together
 
----
+| You want to… | Start with | Also review |
+|---|---|---|
+| Automate a Debrid library | [CLI Debrid](core/cli-debrid.md), [Riven](core/riven-backend.md), or [Decypharr](core/decypharr.md) | Provider credentials, mounts, and curated library paths |
+| Stream a Usenet library | [InfiniDysk](core/infinidysk.md), [AltMount](core/altmount.md), or [Decypharr](core/decypharr.md) | NNTP account limits, indexers, Arr clients, and import strategy |
+| Manage movies, TV, or music | [Radarr](core/radarr.md), [Sonarr](core/sonarr.md), [Lidarr](core/lidarr.md), [Whisparr](core/whisparr.md) | [Prowlarr](core/prowlarr.md), download clients, roots, and profiles |
+| Play an existing library | [Plex](core/plex-media-server.md), [Jellyfin](core/jellyfin.md), or [Emby](core/emby.md) | Readable media paths, accounts, and hardware acceleration |
+<!-- dev:start -->
+| Serve books or podcasts | [Audiobookshelf](optional/audiobookshelf.md) | Book/podcast folders and library access |
+<!-- dev:end -->
+| Take requests | [Seerr](core/seerr.md) or [Pulsarr](optional/pulsarr.md) | Exact media-server and Arr connections, approvals, and quotas |
+| Use Stremio addons | [AIOStreams](optional/aiostreams.md) | Sources and a dedicated public HTTPS addon address |
+| Use a separate streaming client | [mediastorm](optional/mediastorm.md) | PostgreSQL and playback-provider accounts |
+| Publish selected applications | [Traefik Proxy Admin](optional/traefik-proxy-admin.md) | Route protection, DNS, HTTPS, and optional [Cloudflared](optional/cloudflared.md) |
 
-## How the Services Work Together
+DUMB can prepare supported connections, but account authorization, profiles, library policy, and playback still need review.
 
-DUMB is built as a collection of microservices that communicate over internal APIs and shared paths. Below is an example flow:
+<!-- dev:start -->
+Follow the [setup checklist](../features/setup-checklist.md) after starting your chosen services.
+<!-- dev:end -->
 
-1. **Platform Infrastructure**
+## Quick reference
 
-    *  **DUMB API** coordinates and manages all service interactions
-    *  **DUMB Frontend** provides the web interface for managing and viewing services
+| Service | Role |
+|---|---|
+| [DUMB API](dumb/api.md) | Backend configuration, lifecycle, logs, and health |
+| [DUMB Frontend](dumb/dumb-frontend.md) | Dashboard, onboarding, service controls, and embedded UIs |
+| [CLI Debrid](core/cli-debrid.md) | Debrid acquisition, list monitoring, upgrades, and symlinks |
+| [Riven Backend](core/riven-backend.md) | Debrid acquisition and library organization |
+| [Decypharr](core/decypharr.md) | Debrid/Usenet download clients, WebDAV, and mounts |
+| [InfiniDysk](core/infinidysk.md) | Usenet WebDAV and Arr download-client workflow |
+| [AltMount](core/altmount.md) | Usenet WebDAV, mounts, and Arr import workflow |
+| [Plex](core/plex-media-server.md), [Jellyfin](core/jellyfin.md), [Emby](core/emby.md) | Video library servers |
+| [Sonarr](core/sonarr.md), [Radarr](core/radarr.md), [Lidarr](core/lidarr.md), [Whisparr](core/whisparr.md) | TV, movies, music, and adult media automation |
+| [Prowlarr](core/prowlarr.md) | Indexer management and Arr synchronization |
+| [NeutArr](core/neutarr.md) | Scheduled backlog and upgrade searches |
+| [Profilarr](core/profilarr.md) | Sonarr/Radarr profiles and custom formats |
+| [Seerr](core/seerr.md) | Requests and discovery |
+| [rclone](dependent/rclone.md), [Zurg](dependent/zurg.md) | WebDAV mounting and Debrid file access |
+| [PostgreSQL](dependent/postgres.md) | Shared cluster with separate application databases |
+| [CLI Battery](dependent/cli-battery.md), [Phalanx DB](dependent/phalanx-db.md) | CLI Debrid metadata dependencies where required by the installed layout |
+| [Zilean](optional/zilean.md) | Searchable Debrid hash lists and Torznab access |
+| [pgAdmin](optional/pgadmin.md) | PostgreSQL administration |
+| [Riven Frontend](optional/riven-frontend.md) | Optional Riven interface |
+| [Tautulli](optional/tautulli.md) | Plex playback history and monitoring |
+<!-- dev:start -->
+| [Audiobookshelf](optional/audiobookshelf.md) | Books and podcasts |
+<!-- dev:end -->
+| [Bazarr](optional/bazarr.md) | Subtitles for Sonarr/Radarr libraries |
+| [Pulsarr](optional/pulsarr.md) | Plex watchlist requests |
+| [Maintainerr](optional/maintainerr.md) | Rule-based review collections and optional cleanup |
+| [mediastorm](optional/mediastorm.md), [AIOStreams](optional/aiostreams.md) | Additional streaming workflows |
+| [Authelia](optional/authelia.md) | Identity provider and optional ForwardAuth |
+| [Traefik Proxy Admin](optional/traefik-proxy-admin.md), [Cloudflared](optional/cloudflared.md) | Application routes and tunnel ingress |
 
-2. **Debrid Orchestration & Content Management**
+## Service categories
 
-    *  **Riven Backend** and **CLI Debrid** serve as Debrid orchestrators; **Decypharr** can serve Debrid, Usenet, or hybrid Arr workflows
-    * These core services integrate with providers like Trakt, Seerr, and Debrid APIs to manage what content gets fetched
-    *  **InfiniDysk** and **AltMount** provide WebDAV/download-client style integrations for NZB workflows
-    *  **Sonarr/Radarr/Lidarr/Whisparr** manage media queues and organize content from download clients
-    *  **Prowlarr** manages indexers and syncs them to the Arrs
-    *  **NeutArr** automates backlog and quality-upgrade searches across the Arr stack
+- [DUMB services](dumb/index.md): the management API and dashboard.
+- [Core services](core/index.md): acquisition, automation, requests, and playback.
+- [Dependent services](dependent/index.md): mounts, databases, and supporting runtimes.
+- [Optional services](optional/index.md): tools you add for a particular workflow.
 
-3. **Media Playback**
-
-    *  **Plex** is the core service that hosts and serves collected content to users
-        * It relies on symlinked or mounted content made available through rclone/Zurg from the other core services
-    *  **Jellyfin** and **Emby** can be used as alternatives to Plex for library playback
-    *  **Audiobookshelf** serves audiobook, podcast, and basic ebook libraries from folders you provide
-    *  **AIOStreams** creates a configurable Stremio addon from Debrid, Usenet, Prowlarr, Zilean, InfiniDysk, AltMount, and other supported sources
-
-4. **Storage & Retrieval**
-
-    *  **rclone** mounts remote Debrid storage for local access
-    *  **Zurg** provides WebDAV access to debrid downloads
-
-5. **Metadata & Caching**
-
-    *  **CLI Battery** serves as the standalone local metadata layer for stable/older CLI Debrid releases; v0.7.29+ pre-releases move it in-process. **Phalanx DB** provides distributed metadata.
-    *  **Zilean** caches metadata and exposes a Torznab-compatible indexer for scraping optimization
-
-6. **Database Layer**
-
-    *  **PostgreSQL** stores data for Riven, Zilean, pgAdmin, Authelia, Traefik Proxy Admin, mediastorm, optional Metrics history, and services deliberately migrated from SQLite
-    *  **pgAdmin** is a GUI for exploring PostgreSQL databases
-
-7. **Access Layer**
-
-    *  **Traefik** serves DUMB-owned embedded UI routes from `/config/traefik/dynamic/services.yaml`
-    *  **Authelia** can provide DUMB/TPA OIDC and a reusable Traefik ForwardAuth middleware
-    *  **Traefik Proxy Admin** owns user-managed LAN or public host routes through Traefik's HTTP provider
-    *  **Cloudflared** can carry Cloudflare Tunnel traffic to DUMB Traefik without direct port forwarding
-
----
-
-## Quick Reference
-
-| Service                                                  | Type      | Key Role                                                  |
-| -------------------------------------------------------- | --------- | --------------------------------------------------------- |
-| [DUMB API](../services/dumb/index.md)                    | DUMB      | Centralized orchestration                                 |
-| [DUMB Frontend](../services/dumb/index.md)               | DUMB      | Web-based control panel                                   |
-| [Riven Backend](../services/core/riven-backend.md)       | Core      | Debrid orchestrator (searching, scraping, automation)     |
-| [CLI Debrid](../services/core/cli-debrid.md)             | Core      | Debrid orchestrator (list scanning, upgrades, Plex watch) |
-| [Decypharr](../services/core/decypharr.md)               | Core      | Debrid and native Usenet workflow service for Arrs        |
-| [InfiniDysk](../services/core/infinidysk.md)                     | Core      | WebDAV gateway for NZB + Arr download client workflows    |
-| [AltMount](../services/core/altmount.md)                 | Core      | Usenet streaming, WebDAV, mount, and Arr import workflow  |
-| [Plex](../services/core/plex-media-server.md)            | Core      | Media server for hosting and playing content              |
-| [Jellyfin](../services/core/jellyfin.md)                 | Core      | Media server for hosting and playing content              |
-| [Emby](../services/core/emby.md)                         | Core      | Media server for hosting and playing content              |
-| [Seerr](../services/core/seerr.md)                       | Core      | Media request and discovery platform                      |
-| [Sonarr](../services/core/sonarr.md)                     | Core      | TV automation and organization                            |
-| [Radarr](../services/core/radarr.md)                     | Core      | Movie automation and organization                         |
-| [Lidarr](../services/core/lidarr.md)                     | Core      | Music automation and organization                         |
-| [Prowlarr](../services/core/prowlarr.md)                 | Core      | Indexer management for Arrs                               |
-| [Whisparr](../services/core/whisparr.md)                 | Core      | Adult content automation and organization                 |
-| [NeutArr](../services/core/neutarr.md)                   | Core      | Backlog search automation for Arrs                        |
-| [Profilarr](../services/core/profilarr.md)               | Core      | Profiles/custom formats manager for Sonarr/Radarr         |
-| [rclone](../services/dependent/rclone.md)                | Dependent | Mount Debrid storage                                      |
-| [Zurg](../services/dependent/zurg.md)                    | Dependent | Serve Debrid content via WebDAV                           |
-| [PostgreSQL](../services/dependent/postgres.md)          | Dependent | Persistent metadata database                              |
-| [CLI Battery](../services/dependent/cli-battery.md)      | Dependent | Standalone metadata service for stable/older CLI Debrid releases |
-| [Phalanx DB](../services/dependent/phalanx-db.md)        | Dependent | Distributed metadata storage                              |
-| [Zilean](../services/optional/zilean.md)                 | Optional  | Metadata cache and scraping backend                       |
-| [pgAdmin](../services/optional/pgadmin.md)               | Optional  | PostgreSQL GUI                                            |
-| [Riven Frontend](../services/optional/riven-frontend.md) | Optional  | UI for Riven Backend                                      |
-| [Bazarr](../services/optional/bazarr.md)                 | Optional  | Subtitle search and management for Sonarr/Radarr          |
-| [Audiobookshelf](optional/audiobookshelf.md)             | Optional  | Audiobook and podcast libraries with basic ebook reading  |
-| [Pulsarr](../services/optional/pulsarr.md)               | Optional  | Plex watchlist request automation                         |
-| [Maintainerr](../services/optional/maintainerr.md)       | Optional  | Rule-based library cleanup and review collections         |
-| [mediastorm](../services/optional/mediastorm.md)         | Optional  | Self-hosted Debrid, torrent, and Usenet streaming         |
-| [AIOStreams](../services/optional/aiostreams.md)         | Optional  | Stremio addon aggregation and streaming integration       |
-| [Authelia](../services/optional/authelia.md)             | Optional  | OIDC identity provider and Traefik ForwardAuth            |
-| [Traefik Proxy Admin](../services/optional/traefik-proxy-admin.md) | Optional  | User-managed Traefik reverse proxy routes                 |
-| [Cloudflared](../services/optional/cloudflared.md)       | Optional  | Cloudflare Tunnel connector for DUMB Traefik              |
-
----
-
-## Tips
-
-* Use the onboarding UI to enable only the services you need
-* Services will auto-start in dependency order
-* Logs and errors can be viewed in the DUMB Frontend
-
----
-
-## Service Categories
-
-* [DUMB Services](../services/dumb/index.md)
-* [Core Services](../services/core/index.md)
-* [Dependent Services](../services/dependent/index.md)
-* [Optional Services](../services/optional/index.md)
+These categories describe DUMB's service model. An optional service can still be essential to your chosen workflow; disabling it may break clients that use it.

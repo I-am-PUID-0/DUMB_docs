@@ -10,12 +10,26 @@ Maintainerr helps keep a media library lean by finding content that matches your
 
 ---
 
+## Initial setup
+
+1. Enable Maintainerr during DUMB onboarding or from its service configuration.
+2. Start Maintainerr. The first source download and Yarn production build can take longer than a normal restart.
+3. Open Maintainerr from its DUMB service page or browse directly to `http://<host>:6246` when that port is published.
+4. Select one media server: Plex, Jellyfin, or Emby.
+5. Add any Sonarr, Radarr, Seerr, or Tautulli integrations used by your rules. Services inside the same DUMB container can normally use `127.0.0.1` and their configured ports.
+6. Create a collection-only rule, test several media items, and confirm the resulting collection before enabling an unmonitor or delete action.
+
+Maintainerr owns its application configuration inside its SQLite database; there is no separate DUMB-managed settings file to edit.
+
+---
+
+<!-- dev:start -->
 ## Setup checklist and remaining work
 
 The checklist guides supported connections after authorization. Review exact instances and adoption of existing settings. Connection setup never authorizes deletion, unmonitoring or retention actions; preview and activate rules deliberately inside Maintainerr.
 
 Requires the backend setup-arrangement capability. See [Setup checklist and automation](../../features/setup-checklist.md) for retained tasks, coverage and safe retries.
-
+<!-- dev:end -->
 
 ## Overview
 
@@ -43,9 +57,13 @@ Maintainerr's primary SQLite database is `/maintainerr/data/maintainerr.sqlite`.
 
 ---
 
+<details class="geek-details" markdown="1">
+<summary>Technical details: configuration reference</summary>
+
 ## Configuration settings in `dumb_config.json`
 
 ```json
+{
 "maintainerr": {
   "enabled": false,
   "process_name": "Maintainerr",
@@ -83,6 +101,7 @@ Maintainerr's primary SQLite database is `/maintainerr/data/maintainerr.sqlite`.
     "UV_USE_IO_URING": "0"
   }
 }
+}
 ```
 
 ### Configuration key descriptions
@@ -92,25 +111,14 @@ Maintainerr's primary SQLite database is `/maintainerr/data/maintainerr.sqlite`.
 - **`commit_sha`**: Build an exact Maintainerr revision from its full 40-character GitHub SHA. It overrides release/branch selection, disables automatic updates, and is treated as a development/source build for data compatibility.
 - **`branch_enabled`** / **`branch`**: Build an upstream source branch instead of a stable release. Upstream does not support moving a development data directory back to stable.
 - **`port`**: Maintainerr's web UI and API port.
-- **`auto_update`**: Check for and install newer releases using DUMB's update scheduler.
+- **`auto_update`**: Enables DUMB's scheduled update checks; `auto_update_mode` determines whether a detected update is installed.
 - **`clear_on_update`** / **`exclude_dirs`**: Replace application source and build output while retaining `/maintainerr/data`.
 - **`config_dir`**: Maintainerr source and runtime directory.
 - **`env.BASE_PATH`**: DUMB keeps this blank because its embedded UI proxy supplies the service context while Maintainerr continues to run at its own root path.
 
 ---
 
-## Initial setup
-
-1. Enable Maintainerr during DUMB onboarding or from its service configuration.
-2. Start Maintainerr. The first source download and Yarn production build can take longer than a normal restart.
-3. Open Maintainerr from its DUMB service page or browse directly to `http://<host>:6246` when that port is published.
-4. Select one media server: Plex, Jellyfin, or Emby.
-5. Add any Sonarr, Radarr, Seerr, or Tautulli integrations used by your rules. Services inside the same DUMB container can normally use `127.0.0.1` and their configured ports.
-6. Create a collection-only rule, test several media items, and confirm the resulting collection before enabling an unmonitor or delete action.
-
-Maintainerr owns its application configuration inside its SQLite database; there is no separate DUMB-managed settings file to edit.
-
----
+</details>
 
 ## Updates, backups, and rollback
 

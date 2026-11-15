@@ -1,72 +1,53 @@
 ---
 title: WebSocket Logs API
+description: Consume the DUMB live text log stream, authenticate the connection, send heartbeats, and recover missed lines through the retained Logs API.
 icon: lucide/waves
 ---
 
 # WebSocket Logs API
 
-The WebSocket Logs API provides a real-time streaming interface for receiving logs from all DUMB-managed subprocesses. It is primarily used by the DUMB Frontend to power the live log viewer.
+Connect to `/ws/logs` for DUMB's live log stream. The frontend forwards the path unchanged; use `ws://<host>:3005/ws/logs` or `wss://` for HTTPS deployments.
 
----
+When DUMB authentication is enabled, provide an access token using the [WebSocket authentication rules](websocket.md#authentication).
 
-## WebSocket Endpoint
+## Messages and filtering
 
-```
-/ws/logs
-```
+Log messages arrive as text, for example:
 
-Connect to this endpoint using a WebSocket client (e.g., browser or Python client) to receive log lines as plain text.
-
----
-
-## Message Format
-
-Each log entry is sent as a plain text line formatted by DUMB’s logger, for example:
-
-```
+```text
 Apr 12, 2025 10:04:01 - INFO - Riven Backend started
 ```
 
----
+The connection receives the shared stream. Filter by process name, level, or search text in the client; `/ws/logs` does not take a server-side process filter.
 
-!!! info "Filtering Logs (Client-side)"
-    The server pushes all logs to connected clients. It is up to the client to filter based on:
+Both `ping` and `{"type":"ping"}` receive the text response `pong`.
 
-    - **Process Name**
-    - **Log Level**
-    - **Search Term**
+## Reconnect and recover history
 
-    The DUMB Frontend implements dropdowns and search bars for this purpose.
+The server does not replay missed log lines after a reconnect. Reconnect to `/ws/logs`, then use [GET /logs](logs.md) to recover retained history when needed. Keep the REST cursor and file identity to detect rotation.
 
----
+Log responses use DUMB's redaction. Review diagnostics before sharing them; native application log files may follow different logging rules.
 
-!!! note "Connection Behavior"
-    - The server **broadcasts logs** to all connected WebSocket clients.
-    - If the connection is dropped, reconnect using `/ws/logs`.
-    - Log history is **not buffered**, so missed logs are not resent on reconnect.
-    - Sending `{"type":"ping"}` will return `pong`.
+## Python example
 
----
-
-## Example (Python Client)
+This example requires the third-party `websockets` package. Set `DUMB_ACCESS_TOKEN` when authentication is enabled.
 
 ```python
-import websockets
 import asyncio
-import json
+import os
+from urllib.parse import urlencode
+
+import websockets
 
 async def consume_logs():
-    uri = "ws://localhost:3005/ws/logs"
+    query = urlencode({"token": os.environ["DUMB_ACCESS_TOKEN"]})
+    uri = f"ws://localhost:3005/ws/logs?{query}"
     async with websockets.connect(uri) as websocket:
         async for message in websocket:
-            print(message)
+            if message != "pong":
+                print(message)
 
 asyncio.run(consume_logs())
 ```
 
----
-
-## Related Modules
-- [`websocket_logs.py`](https://github.com/I-am-PUID-0/DUMB/blob/dev/api/routers/websocket_logs.py)
-- [Logs API](logs.md) for historical log file access
-- [Frontend Log Viewer](../frontend/service-pages.md#logs)
+See [WebSocket API](websocket.md) for status, metrics, connection errors, and reconnection behavior.

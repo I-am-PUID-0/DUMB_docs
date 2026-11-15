@@ -1,5 +1,6 @@
 ---
 title: NeutArr FAQ
+description: Troubleshoot NeutArr startup and missing Arr connections, check integration opt-ins and workflow filters, and choose separate instances.
 icon: lucide/help-circle
 ---
 
@@ -7,7 +8,6 @@ icon: lucide/help-circle
 
 Common questions and fixes for NeutArr in DUMB.
 
----
 
 ## Why is the NeutArr UI not loading?
 
@@ -19,19 +19,21 @@ Check the following:
 
 !!! tip "Traefik access"
 
-    If Traefik is enabled, you can access NeutArr at `http://<host>:18080/service/ui/neutarr/`.
+    Open the specific NeutArr instance's **Embedded UI** tab. The dashboard selects its route and assigned port.
 
----
 
 ## Why doesn't NeutArr see my Arr instances?
 
 NeutArr relies on Arr API access.
 
-- Ensure Sonarr/Radarr/Lidarr are running and reachable.
-- Verify API keys are set in the Arr configs.
-- Check that `core_service` is set appropriately in your Arr instance configs.
+- Ensure the intended Sonarr, Radarr, Lidarr, or Whisparr instance is running and reachable.
+- In the Arr's DUMB settings, enable its NeutArr integration (`use_neutarr`).
+- Check API-key discovery and any workflow filter on the NeutArr instance. A filter only includes Arr instances whose workflow selections overlap.
 
----
+<!-- dev:start -->
+If the setup checklist retains exact Arr targets for this NeutArr instance, review those selections as well.
+<!-- dev:end -->
+
 
 ## Which NeutArr instance should I use?
 

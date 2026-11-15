@@ -6,266 +6,127 @@ icon: lucide/settings
 
 # Configuration
 
-## Overview
-DUMB relies on the runtime configuration file `/config/dumb_config.json` to control its services, logging, API settings, and more. The copy at `utils/dumb_config.json` inside the image or source tree is the default template, not the file DUMB updates at runtime.
+DUMB stores its runtime configuration at `/config/dumb_config.json`. The copy at `utils/dumb_config.json` is the default template. Edit the runtime file or use the dashboard; changing the template does not change an existing installation's saved configuration.
 
-DUMB also supports **environment variables, .env files, and Docker secrets**. If the same setting is defined in multiple places, the **precedence is as follows:**
+## Change a setting
 
-!!! tip "Configuration Precedence"
-    1. **Docker Secrets** (`/run/secrets/<ENV_VAR>`, highest priority)
-    2. **Container/Process Environment Variables**
-    3. **`/config/.env`**
-    4. **`dumb_config.json`** (lowest priority)
+1. Open a service page and choose **DUMB Config** for DUMB-managed settings, or **Service Config** for the application's own configuration when available.
+2. Change the intended fields and select **Save to File**.
+3. Review any setup or restart action required by that application.
+4. If a saved value changes back, check for an environment or secret override before editing again.
 
-```mermaid
-%%{ init: { "flowchart": { "curve": "basis" } } }%%
-flowchart TD
-    SEC([Docker secrets])
-    ENV([Environment variables])
-    DOT([/config/.env])
-    CFG[(dumb_config.json)]
-    MERGE[Resolved configuration]
-    API[DUMB API]
-    PH[Process handler]
-    SVC[Managed services]
+For file edits, keep a copy of the working runtime configuration and use valid JSON. DUMB validates and merges known settings with its defaults; unsupported keys can be pruned. The [config schema reference](../reference/config-schema.md) explains the structure.
 
-    SEC ==> MERGE
-    ENV ==> MERGE
-    DOT ==> MERGE
-    CFG ==> MERGE
-    MERGE ==> API
-    API ==> PH
-    PH ==> SVC
-```
+## Configuration precedence
 
-## Configuration File Structure
+When a field has more than one value, DUMB uses this order:
 
-!!! caution "Be Careful When Modifying `dumb_config.json`"
-    While DUMB is highly configurable via `dumb_config.json`,  
-    some changes can cause failures during startup.  
-    As such, it is **not recommended** to make modifications unless you fully understand their impact.
-    
-Below is a **schematic** of the main `dumb_config.json` sections. The ellipses
-stand for nested service objects; copy the actual template or query the config
-API when you need valid JSON.
+| Priority | Source |
+| --- | --- |
+| 1 — highest | Docker secret at `/run/secrets/<ENV_VAR>` |
+| 2 | Container or process environment |
+| 3 | `/config/.env` |
+| 4 | `/config/dumb_config.json` |
+| 5 — fallback | Default template |
 
-```text
+Environment names follow nested config paths, such as `DUMB_GITHUB_TOKEN` for `dumb.github_token`. Use the backend's [`.env.example`](https://github.com/I-am-PUID-0/DUMB/blob/master/.env.example) or the [environment variable reference](../reference/environment-variables.md) for exact names. A saved JSON value cannot override a higher-priority source.
+
+<span id="configuration-file-structure"></span>
+
+## General settings
+
+These fields live at the top level:
+
+```json
 {
-    "puid": 1000,
-    "pgid": 1000,
-    "tz": "",
-    "data_root": "/data",
-    "dumb": { ... },
-    "traefik": { ... },
-    "traefik_proxy_admin": { ... },
-    "cloudflared": { ... },
-    "cli_debrid": { ... },
-    "cli_battery": { ... },
-    "decypharr": { ... },
-    "infinidysk": { ... },
-    "emby": { ... },
-    "jellyfin": { ... },
-    "lidarr": { ... },
-    "phalanx_db": { ... },
-    "plex": { ... },
-    "tautulli": { ... },
-    "bazarr": { ... },
-    "pulsarr": { ... },
-    "maintainerr": { ... },
-    "mediastorm": { ... },
-    "aiostreams": { ... },
-    "altmount": { ... },
-    "neutarr": { ... },
-    "profilarr": { ... },
-    "seerr": { ... },
-    "seerr_sync": { ... },
-    "postgres": { ... },
-    "pgadmin": { ... },
-    "prowlarr": { ... },
-    "rclone": { ... },
-    "riven_backend": { ... },
-    "riven_frontend": { ... },
-    "radarr": { ... },
-    "sonarr": { ... },
-    "whisparr": { ... },
-    "zilean": { ... },
-    "zurg": { ... }
+  "puid": 1000,
+  "pgid": 1000,
+  "tz": "America/New_York",
+  "data_root": "/data"
 }
 ```
 
-Each section configures a specific service.
+| Field | Purpose |
+| --- | --- |
+| `puid`, `pgid` | User and group IDs for managed services; use IDs that can access the mounted data |
+| `tz` | Timezone for schedules and application configuration |
+| `data_root` | Base container path for service data directories |
 
-Below is a breakdown of some of the sections:
+`puid` and `pgid` must be nonzero. Changing an ID or data root on an existing installation can affect ownership and application paths; verify the mounted directories before restarting.
 
----
+## Logging settings
 
-## General Settings
-
-### **User & Timezone**
-```json
-"puid": 1000,
-"pgid": 1000,
-"tz": "",
-"data_root": "/data"
-```
-
-- **puid** / **pgid** – Define the user and group IDs for container execution.
-- **tz** – Set the timezone (e.g., `America/New_York`).
-- **data_root** – Base path for service data directories.
-
-!!! warning "Root User Not Allowed"
-    `puid`/`pgid` cannot be set to `0` (root). DUMB requires a non-root user for security reasons.
----
-
-## Logging Settings
-Located in `dumb`:
-```json
-"log_level": "INFO",
-"log_name": "DUMB",
-"log_dir": "/log",
-"log_count": 2,
-"log_size": "10M",
-"color_log": true
-```
-
-- **log_level** – Set the logging verbosity (`DEBUG`, `INFO`, `WARNING`, `ERROR`).
-- The DUMB API service page also provides a capability-gated temporary DEBUG
-  override. It applies immediately without a restart and does not persist or
-  alter managed-service log levels.
-- **log_dir** – Directory where logs are stored.
-- **log_count** – Number of rotated logs to retain.
-- **log_size** – Maximum log file size before rotation.
-- **color_log** – Enables colored log output.
-
----
-
-## Integration Tokens & Credentials
-Located in the `dumb` section of `dumb_config.json`:
+Logging settings live under `dumb`:
 
 ```json
-"plex_token": "",
-"plex_address": "",
-"github_token": "",
-"github_username": ""
+{
+  "log_level": "INFO",
+  "log_name": "DUMB",
+  "log_dir": "/log",
+  "log_count": 2,
+  "log_size": "10M",
+  "color_log": true
+}
 ```
 
-### Plex Integration
-- **`plex_token`** – This token is used by Riven backend for interacting with your Plex account. It allows features such as using watchlists and sending library scan requests to the Plex server.
-- **`plex_address`** – The internal or external URL of your Plex server (e.g., `http://127.0.0.1:32400`).
+| Field | Purpose |
+| --- | --- |
+| `log_level` | Verbosity, such as `DEBUG`, `INFO`, `WARNING`, or `ERROR` |
+| `log_dir` | Container directory for logs |
+| `log_count` | Number of rotated logs to retain |
+| `log_size` | Size that triggers rotation |
+| `color_log` | Colored console output |
 
-These values are used automatically by Riven when setting up the [Riven Backend](../services/core/riven-backend.md).
+On supported backends, the DUMB API service page also offers a temporary DEBUG override. It takes effect immediately, does not persist, and does not change managed applications' log levels.
 
----
+## Integration tokens & credentials
 
-### GitHub Integration
-- **`github_token`** – Used to increase GitHub API rate limits and unlock access to private/sponsored repositories such as [`zurg`](https://github.com/debridmediamanager/zurg) when associated with your GitHub account.
-- **`github_username`** – (Reserved for future use) Will support additional GitHub-sourced services and contributor personalization.
+| Field under `dumb` | Use |
+| --- | --- |
+| `plex_token` | Plex API integrations, including Riven watchlists and library scans |
+| `plex_address` | Plex URL reachable from inside DUMB, such as `http://127.0.0.1:32400` for bundled Plex |
+| `github_token` | Higher GitHub API limits and authorized access to private or sponsored release sources |
+| `github_username` | Reserved; not needed for normal setup |
 
-To create a GitHub token:
+Create a GitHub token from [Developer settings](https://github.com/settings/tokens) only when needed. Grant the repository read access required by the release source; DUMB does not need package-write permissions. Public release checks can work without a token. Store it as `DUMB_GITHUB_TOKEN` in `/config/.env`, the container environment, or a Docker secret, or set `dumb.github_token` in the runtime JSON.
 
-1. Go to [GitHub Developer Settings → Tokens (Classic)](https://github.com/settings/tokens)
-2. Click **Generate new token (classic)**
-3. Set an expiration and grant only the read access required by the repository you need. Public release checks normally require no token. Private or sponsored repositories require read access granted by that repository's owner; DUMB does not require package-write access.
+Configuration files and backups can contain live credentials. Keep them private and redact values before sharing troubleshooting output.
 
-    ![GitHub Token](../assets/images/github_token_scope.png)
-    
-4. Click **Generate token** and **copy the token** — it will only be shown once
-5. Add the token to `/config/.env` or your container environment as `DUMB_GITHUB_TOKEN=`, or set `dumb.github_token` in `/config/dumb_config.json`.
+## Service and instance settings
 
----
+Each managed application has its own section. Some, including Arr apps, hold settings under `instances`:
 
-## Service Configuration
+```json
+{
+  "sonarr": {
+    "instances": {
+      "Default": {
+        "enabled": true,
+        "core_service": "decypharr"
+      }
+    }
+  }
+}
+```
 
-Each DUMB-integrated service is configured within its own section of `dumb_config.json`.
-
-See the individual service pages for in-depth configuration details:
-
-- [DUMB API](../services/dumb/api.md)
-- [DUMB Frontend](../services/dumb/dumb-frontend.md)
-- [Traefik](../architecture/traefik.md)
-- [Traefik Proxy Admin](../services/optional/traefik-proxy-admin.md)
-- [Cloudflared](../services/optional/cloudflared.md)
-- [Decypharr](../services/core/decypharr.md)
-- [CLI Debrid](../services/core/cli-debrid.md)
-- [InfiniDysk](../services/core/infinidysk.md)
-- [AltMount](../services/core/altmount.md)
-- [Plex Media Server](../services/core/plex-media-server.md)
-- [Jellyfin](../services/core/jellyfin.md)
-- [Emby](../services/core/emby.md)
-- [Seerr](../services/core/seerr.md)
-- [Sonarr](../services/core/sonarr.md)
-- [Radarr](../services/core/radarr.md)
-- [Lidarr](../services/core/lidarr.md)
-- [Prowlarr](../services/core/prowlarr.md)
-- [Whisparr](../services/core/whisparr.md)
-- [NeutArr](../services/core/neutarr.md)
-- [Profilarr](../services/core/profilarr.md)
-- [Bazarr](../services/optional/bazarr.md)
-- [Pulsarr](../services/optional/pulsarr.md)
-- [Maintainerr](../services/optional/maintainerr.md)
-- [mediastorm](../services/optional/mediastorm.md)
-- [AIOStreams](../services/optional/aiostreams.md)
-- [pgAdmin 4](../services/optional/pgadmin.md)
-- [PostgreSQL](../services/dependent/postgres.md)
-- [rclone](../services/dependent/rclone.md)
-- [Riven Backend](../services/core/riven-backend.md)
-- [Riven Frontend](../services/optional/riven-frontend.md)
-- [Zilean](../services/optional/zilean.md)
-- [Zurg](../services/dependent/zurg.md)
-
----
+This is a partial example. Use the existing instance's complete configuration or the current default template when creating a new one. Ports, paths, process names, source selectors, and credentials vary by application; the [service catalog](../services/index.md) links to each guide.
 
 ## `core_service` (Arr integration)
 
-Some services (notably the Arrs) include a `core_service` field to tell DUMB
-which core workflow(s) they should attach to. This field accepts a single value,
-a comma-separated string, or a list.
+`core_service` tells DUMB which workflow an Arr instance should use. It accepts one value, a comma-separated string, or a list:
 
-See the [Core Service Routing reference](../reference/core-service.md) for detailed behavior and examples.
+| Value | Integration |
+| --- | --- |
+| `""` | No core workflow integration |
+| `"decypharr"` | Decypharr |
+| `"infinidysk"` | InfiniDysk |
+| `"altmount"` | AltMount |
+| `["decypharr", "infinidysk", "altmount"]` | Combined workflows |
 
-Allowed values:
+For example, set `"core_service": "infinidysk"` on an InfiniDysk-backed Radarr instance. Connections still require the chosen workflow's prerequisites and setup steps. See [Core service routing](../reference/core-service.md) for matching rules and migration considerations.
 
-* `""` (blank): no core integration
-* `decypharr`: route Arr automation through Decypharr
-* `infinidysk`: route Arr automation through InfiniDysk
-* `altmount`: route Arr automation through AltMount
+## Related guides
 
-To combine workflows, use a list or a comma-separated `core_service`.
-
-Examples:
-
-```json
-"sonarr": {
-  "instances": {
-    "Default": {
-      "core_service": "decypharr"
-    }
-  }
-}
-```
-
-```json
-"radarr": {
-  "instances": {
-    "Default": {
-      "core_service": "infinidysk"
-    }
-  }
-}
-```
-
-```json
-"whisparr": {
-  "instances": {
-    "Combined": {
-      "core_service": ["decypharr", "infinidysk", "altmount"]
-    }
-  }
-}
-```
-
-
-## Next Steps
-1. Review and modify `dumb_config.json` as needed.
-2. Review the [Usage](usage.md) page. 
-3. For a deep dive into individual services, see the [Services](../services/index.md) section.
+- [Setup checklist](setup-checklist.md) for connections and retained manual tasks.
+- [Everyday use](usage.md) for saving, starting, and updating services.
+- [Multi-instance setup](../reference/instances.md) for additional application instances.

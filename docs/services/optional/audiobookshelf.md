@@ -1,4 +1,5 @@
 ---
+development_only: true
 title: Audiobookshelf
 description: Run Audiobookshelf in DUMB for audiobook, ebook, and podcast libraries with persistent storage, first-run accounts, media mounts, and updates.
 icon: lucide/book-open
@@ -10,12 +11,31 @@ icon: lucide/book-open
 
 DUMB handles installation, updates, process control, and web access. Add existing book files through your media mounts and configure libraries in Audiobookshelf. Book acquisition and download-client integration remain separate workflows; podcast subscriptions and episode downloads are configured in Audiobookshelf.
 
+## First-time setup
+
+1. Start Audiobookshelf and open its UI from the DUMB service page.
+2. Complete **Initial Server Setup** to create its root administrator account and password. The displayed config and metadata paths should match your DUMB configuration.
+3. Sign in with that Audiobookshelf account.
+4. Add a book or podcast library and choose one or more mounted container folders.
+5. Scan the library and review the identified items before listening or reading.
+
+The account created here is used by Audiobookshelf's web and mobile clients. See the [upstream initialization API](https://api.audiobookshelf.org/#initialize-the-server) for the corresponding first-run setup contract.
+
+For direct access, publish the assigned port on the DUMB container and open:
+
+```text
+http://<dumb-host>:13378/audiobookshelf/
+```
+
+DUMB uses Audiobookshelf's standard `/audiobookshelf/` application path. Reverse proxies must preserve that path and support WebSocket connections. See [service ports](../../reference/ports.md) for port publishing and [upstream reverse proxy guidance](https://audiobookshelf.org/docs/category/reverse-proxy/).
+
+<!-- dev:start -->
 ## Setup checklist and remaining work
 
 The checklist can guide demonstrably fresh root-account setup and explicit library creation/reuse. Initialized servers remain preserved. Choose audiobook/podcast paths and user access, then test scans and actual playback. Readiness is not a library/playback test.
 
 Requires the backend setup-arrangement capability. See [Setup checklist and automation](../../features/setup-checklist.md) for retained tasks, coverage and safe retries.
-
+<!-- dev:end -->
 
 ## Runtime requirements
 
@@ -28,6 +48,7 @@ Select **Audiobookshelf** in the **Optional Services** onboarding step. For an e
 The relevant defaults are:
 
 ```json
+{
 "audiobookshelf": {
   "enabled": false,
   "process_name": "Audiobookshelf",
@@ -45,6 +66,7 @@ The relevant defaults are:
   "runtime_dir": "/opt/audiobookshelf",
   "config_dir": "/audiobookshelf/config",
   "metadata_dir": "/audiobookshelf/metadata"
+}
 }
 ```
 
@@ -83,24 +105,6 @@ Adjust the host paths to your folders. Inside Audiobookshelf, select the contain
 
 The managed service uses DUMB's configured `puid` and `pgid`. It needs read access to book folders and write access to a podcast folder when downloading episodes. The read-only book examples support scanning and playback; tools that modify source files need a writable mount.
 
-## First-time setup
-
-1. Start Audiobookshelf and open its UI from the DUMB service page.
-2. Complete **Initial Server Setup** to create its root administrator account and password. The displayed config and metadata paths should match your DUMB configuration.
-3. Sign in with that Audiobookshelf account.
-4. Add a book or podcast library and choose one or more mounted container folders.
-5. Scan the library and review the identified items before listening or reading.
-
-The account created here is used by Audiobookshelf's web and mobile clients. See the [upstream initialization API](https://api.audiobookshelf.org/#initialize-the-server) for the corresponding first-run setup contract.
-
-For direct access, publish the assigned port on the DUMB container and open:
-
-```text
-http://<dumb-host>:13378/audiobookshelf/
-```
-
-DUMB uses Audiobookshelf's standard `/audiobookshelf/` application path. Reverse proxies must preserve that path and support WebSocket connections. See [service ports](../../reference/ports.md) for port publishing and [upstream reverse proxy guidance](https://audiobookshelf.org/docs/category/reverse-proxy/).
-
 ## Organize books and podcasts
 
 For books made of multiple files, keep each book in its own folder. A simple layout is:
@@ -130,10 +134,12 @@ The default follows the latest official release. To select an exact release, set
 To use a branch, save these source settings in Audiobookshelf's **DUMB Config**:
 
 ```json
+{
 "release_version_enabled": false,
 "commit_sha": "",
 "branch_enabled": true,
 "branch": "master"
+}
 ```
 
 Select **Check for updates**, then **Install configured branch** to build the selected branch head. The branch is resolved to an exact commit before building; the installed version includes its branch name and shortened commit SHA. A branch can change without changing Audiobookshelf's package version, so update checks compare the source commit.

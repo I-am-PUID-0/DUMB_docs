@@ -1,125 +1,78 @@
 ---
 title: Contributing
+description: Choose the right DUMB repository and branch, reproduce a problem, run the relevant checks, and submit a focused code or documentation change.
 icon: lucide/git-pull-request
-hide:
-  - navigation
 ---
 
-## Contributing to DUMB
+# Contributing
 
-Thanks for helping improve **Distributed Unlimited Media Bridge (DUMB)**.
+You can help with code, documentation, reproducible bug reports, or testing a proposed fix. Start with the repository that owns the behavior.
 
-Code, docs, testing feedback, and issue triage are all valuable contributions.
+## Choose a repository and branch
 
-## Branch Strategy
+| Change | Repository | Normal pull request target |
+|---|---|---|
+| Backend API, service installation, process lifecycle, container image | [DUMB](https://github.com/I-am-PUID-0/DUMB) | `dev` |
+| Dashboard, onboarding UI, embedded proxy, browser behavior | [dmbdb](https://github.com/nicocapalbo/dmbdb) | `dev` |
+| This documentation site | [DUMB_docs](https://github.com/I-am-PUID-0/DUMB_docs) | `master` |
 
-- `dev` is the default collaboration branch.
-- `master` is the production and release branch.
-- Open normal feature and fix PRs against `dev`.
-- Open PRs against `master` only for release work or approved hotfixes.
+DUMB's release branch is `master`; dmbdb's release branch is `main`. Normal fixes and features go to `dev`. Release work and approved hotfixes may target the release branch.
 
-## Development Setup
+A change can span repositories. An API change may need a dashboard capability check and a docs update; a dashboard workflow change may need revised user instructions.
 
-Recommended: use the DUMB devcontainer:
+## Report a problem
 
-- [.devcontainer/devcontainer.json](https://github.com/I-am-PUID-0/DUMB/blob/dev/.devcontainer/devcontainer.json)
+Include the DUMB image/version, relevant application version, what you expected, what happened, and the smallest steps that reproduce it. For UI issues, include the browser and a screenshot if useful.
 
-Quick start:
+Use logs exported through DUMB where possible. Review logs, configuration, screenshots, and URLs for credentials and personal information before attaching them. Do not upload a whole configuration directory or database to a public issue.
 
-1. Fork [I-am-PUID-0/DUMB](https://github.com/I-am-PUID-0/DUMB).
-2. Clone your fork.
-3. Open the workspace in VS Code Dev Containers.
-4. Create a feature branch from `dev`.
-5. Make changes and run relevant checks.
-6. Open a PR to `dev`.
+- [Backend issues](https://github.com/I-am-PUID-0/DUMB/issues)
+- [Dashboard issues](https://github.com/nicocapalbo/dmbdb/issues)
+- [Documentation issues](https://github.com/I-am-PUID-0/DUMB_docs/issues)
+- [Community discussion](https://discord.gg/8dqKUBtbp5)
 
-If you do not use Dev Containers, run with Docker using the same mounts and environment layout.
+## Develop and validate
 
-## Pull Request Guidelines
+Use the selected repository's devcontainer and checked-in instructions. For the backend, fork the repo, create a feature branch from `dev`, and run focused tests while iterating.
 
-- Keep PRs focused and small when possible.
-- Include a clear summary, motivation, and test notes.
-- Link related issues.
-- Add screenshots for UI changes.
-- Update docs when behavior changes.
+Before opening a backend pull request:
 
-### Commit Format
+```bash
+make format
+make verify
+```
 
-Use Conventional Commits for PR titles and commits, for example:
+`make format` applies formatting; `make verify` checks metadata, the lockfile, formatting, lint, syntax, tests, and security. Run it in a disposable development environment rather than against a live media library.
 
-- `feat(api): add new symlink repair mode`
-- `fix(proxy): route iframe websocket path correctly`
-- `docs: update onboarding preflight guide`
+For the dashboard, use the pinned package manager, a frozen lockfile installation, the relevant test scripts, and a production build. Embedded routing changes need the repository's browser checks as well.
 
-`conventional-commits.yml` validates PRs targeting both `dev` and `master`.
+For docs, use the [repository README](https://github.com/I-am-PUID-0/DUMB_docs#readme) for the current build and validation commands. Check both release and development output when changing channel-specific content.
 
-## Dependabot and Automation Notes
+### Service installer and updater regressions
 
-- Dependabot updates are targeted to `dev`.
-- Integration testing for combined Dependabot updates runs from `dev`.
-- Release automation remains pinned to `master`.
+DUMB includes a disposable previous-version-to-latest matrix. It gives each selected case fresh configuration, data, logs, mounts, and databases rather than downgrading an operator's installation.
 
-## Testing Expectations
-
-Before opening a PR:
-
-- Run formatters/linters relevant to changed files. For DUMB backend changes, run `make format` before `make verify`; `make verify` is check-only and does not rewrite Black formatting drift.
-- Run focused tests for your change.
-- Include manual verification notes when automated tests are not available.
-
-### Service update regression suite
-
-DUMB retains a disposable previous-version-to-latest regression matrix for service installers and updaters. It runs selected services in isolated Docker containers with fresh configuration, data, logs, mounts, and databases; it never downgrades the operator's live service data.
-
-From the DUMB repository on a Docker-capable host:
+From a Docker-capable development host:
 
 ```bash
 make regression-image
 make regression-service-updates REGRESSION_JOBS=2
 ```
 
-Two workers are the conservative default because source builds can be CPU-, memory-, and disk-intensive. Cases run concurrently when they do not share a worker, while each service's install, update, and health checks remain ordered within that container. Use `REGRESSION_ARGS="--case <case-id>"` for focused coverage or `REGRESSION_ARGS="--include-pending --case <case-id>"` while qualifying a new matrix entry. `REGRESSION_ARGS="--use-gh-auth-token"` uses the current GitHub CLI token without printing it and avoids anonymous API limits.
+Two workers are the default because source builds can be resource-intensive. To focus a run, pass `REGRESSION_ARGS="--case <case-id>"`; use `--include-pending` while qualifying a pending entry. `--use-gh-auth-token` uses the current GitHub CLI token without printing it.
 
-The matrix lives in `scripts/service_update_regression_matrix.json`. Qualified cases run by default; pending entries document services that still need deterministic prior versions, dependency fixtures, or disposable credentials. Per-case logs and an aggregate JSON report are written under the ignored `.regression-reports/` directory. The verified install cache is retained separately so repeat runs also exercise safe cache reuse.
+The matrix is `scripts/service_update_regression_matrix.json`. Qualified entries run by default. Pending entries still need prior versions, dependency fixtures, or disposable credentials. Reports go to ignored `.regression-reports/`; the separate verified install cache is retained for reuse checks.
 
-## Docs Contributions
+## Submit a pull request
 
-Docs live in [DUMB_docs](https://github.com/I-am-PUID-0/DUMB_docs).
+Describe the concrete problem, the resulting behavior, and how you tested it. Link related issues, include screenshots for UI changes, and update user docs when behavior changes. Keep unrelated cleanup separate.
 
-- Update docs when API behavior, onboarding flow, or service settings change.
-- Keep examples and screenshots current.
-- Prefer small, reviewable docs PRs.
+Use Conventional Commit titles, for example:
 
-## Non-Code Contributions
+- `fix(proxy): preserve embedded service WebSocket routing`
+- `feat(api): expose symlink comparison results`
+- `docs: clarify first-run provider setup`
 
-Even if you don't write code, there are **plenty of ways** to help!
+Distinguish automated checks from any manual or operational testing that remains. For dependency updates, inspect the changed versions and the affected runtime path as well as the build result.
 
-### Star the Repo
-A quick way to show support is by starring the project on GitHub:  [github.com/I-am-PUID-0/DUMB](https://github.com/I-am-PUID-0/DUMB)
-
-### Join the Community
-- Ask questions or help others in the **[DUMB Discord server](https://discord.gg/8dqKUBtbp5)**
-- Boost the server if you find it helpful 
-- Share your setups and improvements
-
-### Help with Documentation
-- Found a typo or confusing section in the docs? Open an issue or pull request.
-- Suggestions and feedback on existing documentation are **always welcome**.
-
----
-
-## Monetary Contributions?
-
-- Sponsor the Dev through [GitHub Sponsors](https://github.com/sponsors/I-am-PUID-0)
-
----
-
-## Roadmap & Feedback
-
-If you have ideas, feature requests, or feedback:
-
-- Create a [GitHub Issue](https://github.com/I-am-PUID-0/DUMB/issues)
-
-- Discuss in the community before starting larger PRs
-
----
+For a larger feature, discuss the proposed behavior in an issue or the community before building it.

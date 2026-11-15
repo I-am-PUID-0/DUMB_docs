@@ -1,5 +1,6 @@
 ---
 title: Core service routing
+description: Look up core_service workflow selectors, understand Arr and indexer routing, and configure separate or combined Debrid and Usenet instances.
 icon: lucide/waypoints
 ---
 
@@ -9,8 +10,6 @@ icon: lucide/waypoints
 download workflows. It keeps Debrid- and Usenet-based stacks isolated while
 still allowing multiple instances of the same Arr service.
 
----
-
 ## Where `core_service` is used
 
 | Config block | Purpose |
@@ -19,8 +18,6 @@ still allowing multiple instances of the same Arr service.
 | NeutArr instances | Filters which Arr instances are sent to NeutArr. |
 | Profilarr instances | Filters which Arr instances are auto-linked to Profilarr. |
 | rclone/zurg instances | Labels the instance for the workflow it supports. |
-
----
 
 ## Routing map
 
@@ -50,8 +47,6 @@ flowchart TD
     CS ==> PROFILARR
 ```
 
----
-
 ## Supported values
 
 Use one or more of the core workflow keys:
@@ -65,8 +60,6 @@ Use one or more of the core workflow keys:
 Leave `core_service` empty if you do not want DUMB to auto-wire a service into a
 workflow. To combine workflows, set `core_service` to a list or use a
 comma-separated string.
-
----
 
 ## What DUMB does with it
 
@@ -92,8 +85,6 @@ When `core_service` is set on a Profilarr instance, DUMB:
 
 - Auto-links only Arr instances whose core services overlap the Profilarr instance.
 - Seeds profile/custom format/regex/media-management sync for those Arr instances (when `use_profilarr` is enabled on the Arr).
-
----
 
 ## Example: split Debrid and Usenet workflows
 
@@ -121,7 +112,7 @@ When `core_service` is set on a Profilarr instance, DUMB:
 In this layout:
 
 - The Debrid Radarr instance syncs with Decypharr and Debrid indexers.
-- The Usenet Radarr instance can sync with Decypharr, InfiniDysk, AltMount, or any selected Usenet workflow service.
+- The Usenet Radarr instance links to InfiniDysk because its `core_service` is `infinidysk`. Change that field to select another workflow.
 - NeutArr only receives the Debrid instance because `use_neutarr` is set there.
 - Profilarr only links the Debrid instance because `use_profilarr` is set there.
 
@@ -143,8 +134,6 @@ In this layout, DUMB wires Decypharr, InfiniDysk, and AltMount download clients 
 the same Sonarr instance. Decypharr and InfiniDysk coordinate the DUMB-managed
 combined root; AltMount's import strategy and compatible Arr paths still need
 to be reviewed in AltMount.
-
----
 
 ## Related references
 

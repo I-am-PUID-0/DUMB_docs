@@ -1,5 +1,6 @@
 ---
 title: Decypharr FAQ
+description: Choose a Decypharr mount mode, locate provider credentials, check Arr download clients, and recover from obsolete source files during an update.
 icon: lucide/shield
 ---
 

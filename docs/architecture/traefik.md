@@ -1,13 +1,12 @@
 ---
 title: Traefik proxy
+description: Understand DUMB Traefik route ownership, embedded UI paths, optional host-based routes, tunnel ingress, and authentication boundaries.
 icon: lucide/traffic-cone
 ---
 
 # Traefik proxy
 
 Traefik provides optional reverse-proxy routing for service UIs and user-managed external routes. When enabled, it exposes a single entry point and maps requests to services through DUMB-generated dynamic config and, optionally, Traefik Proxy Admin. Cloudflared can then carry Cloudflare Tunnel traffic to that same entrypoint.
-
----
 
 ## What Traefik does in DUMB
 
@@ -17,8 +16,6 @@ Traefik provides optional reverse-proxy routing for service UIs and user-managed
 - Can poll Traefik Proxy Admin for user-managed host-based reverse proxy routes
 - Can load the optional DUMB-managed Authelia ForwardAuth middleware
 - Can receive public traffic through the optional Cloudflared service
-
----
 
 ## Default access
 
@@ -30,15 +27,13 @@ Traefik provides optional reverse-proxy routing for service UIs and user-managed
 
 !!! info "Path prefixes"
 
-    Some services use explicit prefixes (for example Emby/Jellyfin use `/web`), which Traefik preserves.
-
----
+    Media applications may enter through a web asset directory such as `/web`. Their native API and media paths still live at the application root; do not prepend `/web` to every request.
 
 ## How routes are generated
 
 The backend generates Traefik config based on enabled services and their ports. Services with UIs are registered automatically when they are enabled in `dumb_config.json`.
 
-DUMB separates Traefik configuration ownership into lanes:
+The generated configuration has separate owners:
 
 | Owner | Purpose | Location or endpoint |
 |-------|---------|----------------------|
@@ -50,7 +45,7 @@ DUMB separates Traefik configuration ownership into lanes:
 
 Traefik watches `/config/traefik/dynamic` with the file provider. When Traefik Proxy Admin is enabled, DUMB also adds Traefik's HTTP provider pointed at TPA's generated config endpoint.
 
-This split is intentional:
+In practice:
 
 - DUMB can safely regenerate embedded UI routes whenever services change.
 - TPA can manage host-based routes, auth, and middleware without DUMB overwriting them.
@@ -58,9 +53,7 @@ This split is intentional:
   may attach to selected routes.
 - Cloudflared can bring external traffic to Traefik without replacing either DUMB's routes or TPA's routes.
 
----
-
-## Default configuration
+## Configuration example
 
 ```json
 "traefik": {
@@ -86,12 +79,10 @@ This split is intentional:
 }
 ```
 
-`pinned_version` selects the Traefik binary DUMB installs. The config and both
+This excerpt shows the main settings; the running schema/template is authoritative for additional fields. `pinned_version` selects the Traefik binary DUMB installs. The config and both
 log paths live under the persistent `/config` and `/log` mounts. DUMB rewrites
 its generated route files when service UI definitions change; put operator-owned
 host routes in Traefik Proxy Admin rather than editing `services.yaml` by hand.
-
----
 
 ## Security considerations
 
@@ -105,8 +96,6 @@ host routes in Traefik Proxy Admin rather than editing `services.yaml` by hand.
 Do not protect the Authelia portal with its own ForwardAuth middleware. Also
 avoid combining the Authelia ForwardAuth middleware with TPA Service SSO on one
 router unless two sequential login gates are intentional.
-
----
 
 ## Related pages
 

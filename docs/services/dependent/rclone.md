@@ -1,15 +1,33 @@
 ---
 title: rclone
+description: Set up DUMB-managed rclone mounts, choose cache settings, share media with external containers, and understand provider credentials and paths.
 icon: lucide/hard-drive
 ---
 
-rclone is a command-line tool used in DUMB to mount cloud storage—specifically Debrid services like Real-Debrid—into the container as a local file system. It works in tandem with Zurg and is configured automatically during container startup.
+# rclone
+
+rclone exposes a remote source as files inside DUMB. Depending on the selected workflow, that source can be Zurg, a direct Debrid endpoint, InfiniDysk, or Decypharr WebDAV. DUMB prepares the managed mount; the source service must be ready before it can serve files.
 
 ---
+
+## First start
+
+Choose your mount through the parent workflow in onboarding; DUMB creates the corresponding rclone instance where that workflow needs one. You do not need to assemble a command to use the standard setup.
+
+1. Check that the source service, such as Zurg or InfiniDysk, is ready.
+2. Open the rclone service page and review its mount and cache locations.
+3. Confirm your media server can read the same absolute paths, including symlink targets.
+4. Test playback and seeking before changing cache or concurrency settings.
+
+For a media server outside DUMB, also review [mount propagation](#mount-propagation).
+
+<details class="geek-details" markdown="1">
+<summary>Technical details: configuration reference</summary>
 
 ## Configuration Settings in `dumb_config.json`
 Each `rclone` instance is defined under the `rclone.instances` section in `dumb_config.json`. Example:
 ```json
+{
 "rclone": {
     "instances": {
         "RealDebrid": {
@@ -35,14 +53,15 @@ Each `rclone` instance is defined under the `rclone.instances` section in `dumb_
             "customer_id": ""
         }
     }
-},
+}
+}
 ```
 
 ### Configuration Key Descriptions
 - **`enabled`**: Whether this rclone instance should be started.
 - **`core_service`**: Flag to indicate the associated core service(s) during onboarding.
 - **`process_name`**: The label used in logs and process tracking.
-- **`suppress_logging`**: If `true`, disables log output for this service.
+- **`suppress_logging`**: Suppresses service messages in the main DUMB output.
 - **`log_level`**: Logging verbosity level (e.g., `DEBUG`, `INFO`).
 - **`key_type`**: The debrid or WebDAV service to use (`RealDebrid`, `AllDebrid`, `InfiniDysk`, etc.).
 - **`zurg_enabled`**: Whether Zurg is linked to this rclone mount.
@@ -53,7 +72,7 @@ Each `rclone` instance is defined under the `rclone.instances` section in `dumb_
 - **`config_dir`**: Directory where the rclone config file is stored.
 - **`config_file`**: Full path to the rclone configuration file.
 - **`zurg_config_file`**: Full path to the Zurg config file for this instance.
-- **`command`**: Custom CLI arguments to be appended to rclone at runtime.
+- **`command`**: Saved command and tunable arguments. DUMB reconciles required mount, identity, cache-path, and provider flags during setup.
 - **`api_key`**: (Optional) Debrid API key, used if Zurg is not linked.
 - **`username`** / **`password`**: Optional direct WebDAV/FTP login credentials for providers that require account login instead of only an API key, such as direct `TorBox`, `TorBox-FTP`, and direct `RealDebrid` mounts.
 - **`customer_id`**: Optional Premiumize customer ID for direct Premiumize WebDAV mounts.
@@ -83,6 +102,7 @@ Users can define additional rclone instances by duplicating the structure in the
 
 Example:
 ```json
+{
 "rclone": {
   "instances": {
     "RealDebrid": {
@@ -153,9 +173,12 @@ Example:
     }
   }
 }
+}
 ```
 
 ---
+
+</details>
 
 ## Features Enabled by DUMB
 
@@ -393,121 +416,64 @@ This naming convention makes it easy to identify and separate raw debrid mounts 
 
 ## Mount Propagation
 
-!!! note "/mnt/debrid:rshared"    
-    The `:rshared` must be included in order to support [mount propagation](https://docs.docker.com/storage/bind-mounts/#configure-bind-propagation) for rclone to the host when exposing the raw debrid files/links to an external container; e.g., the arrs or a media server.
+Mount propagation is needed when a mount created **inside DUMB** must become visible on the host or inside another container. Applications inside DUMB already share its mount namespace and do not need propagation for that internal access.
 
-    `:rshared` is not required when using the default configuration leveraging the internal media server or when not utilizing [Decypharr](../core/decypharr.md)
+### Required propagation flags
 
-Mount propagation controls how mount events (like new mounts created inside the container) are shared between the host and the container.
-
-In the context of DUMB, mount propagation is critical for ensuring that media servers (e.g., Plex, Jellyfin) running **OUTSIDE** the container can see and access the dynamically-mounted cloud content that rclone brings in **inside** the container.
-
-### Required Propagation Flags
-
-When mounting a path like `/mnt/debrid` from the host into the DUMB container, the bind mount must include **[mount propagation](https://docs.docker.com/storage/bind-mounts/#configure-bind-propagation)** flags to allow sub-mounts (e.g., `/mnt/debrid/riven`, `/mnt/debrid/decypharr`, etc.) to be visible **OUTSIDE** the container.
-
-#### Recommended Flag: `:rshared`
-
-Example:
+Use a shared bind for DUMB, which produces the FUSE mount, and a receiving bind for external consumers:
 
 ```yaml
-docker-compose.yml:
-  volumes:
-    - /home/username/docker/DUMB/mnt/debrid:/mnt/debrid:rshared
+services:
+  dumb:
+    volumes:
+      - /path/to/dumb/mnt/debrid:/mnt/debrid:rshared
+  media-server:
+    volumes:
+      - /path/to/dumb/mnt/debrid:/mnt/debrid:rslave
 ```
 
-Explanation:
+This is a volume-layout excerpt, not a complete Compose file. The source path must be on a suitable shared Linux host mount. Absolute symlink targets must resolve inside the consumer too; propagation does not rewrite paths.
 
-* `:rshared` ensures two-way mount propagation.
-* Any mount created inside `/mnt/debrid` in the **container** will also appear in the **host**, and vice versa.
+### Summary table for mount propagation use cases
 
-#### Alternative: `:rslave`
+The directions below are relative to the container receiving the bind:
 
-* This is a safer but one-way variant.
-* Host will see container mounts, but not the other way around.
+| Mode | Container → host | Host → container | Typical use |
+|---|---|---|---|
+| `rshared` | Yes | Yes | DUMB's mount-producing media bind |
+| `rslave` | No | Yes | External Plex, Jellyfin, or Arr container receiving DUMB's mounts |
+| `rprivate` (Docker default) | No | No | A layout with no external mount consumers |
 
-Use `:rslave` **only if** you do not need to propagate mounts **from the host into the container**.
+`rslave` receives host events. It cannot send a FUSE mount created inside DUMB back to the host, so it cannot replace `rshared` on DUMB's producer bind.
 
----
+### Common issues without propagation
 
-### Common Issues Without Propagation
+A raw mount can work inside DUMB while the host or another container sees an empty directory. Check both the producer and consumer binds, then compare their actual mount views. A regular read/write bind alone does not propagate later submount events.
 
-* You may not see rclone mounts or Zurg's WebDAV mount in `/mnt/debrid` on the host.
-* Media servers running on the host or in other containers may report missing files or empty directories.
-* Decypharr and similar tools relying on externally (from the container) mounted paths may fail to operate correctly.
+### Host system requirements
 
----
+Propagation is a Linux host feature; Docker Desktop does not support it. See the [official Docker reference](https://docs.docker.com/engine/storage/bind-mounts/#configure-bind-propagation).
 
-### Host System Requirements
-!!! note "mount --make-rshared /"
+### How to check
 
-    Most Linux distributions support mount propagation. However, the base path must be a shared or slave mount, or mount propagation will not function correctly.
-
-    See the [rclone FAQ](../../faq/rclone.md#error-response-from-daemon-path-yourhostpathmnt-is-mounted-on-but-it-is-not-a-shared-mount) for related troubleshooting.
-
-To use mount propagation:
-
-* The host filesystem **must support it** (most Linux distributions do).
-* The base mount point (e.g., `/mnt/debrid`) must itself be a **shared** or **slave** mount.
-
-### How to Check
-
-You can verify the current propagation mode using the `mount` or `findmnt` command:
+Run on the Docker host, using the actual host source path:
 
 ```bash
-findmnt -o TARGET,PROPAGATION /mnt/debrid
+findmnt -T /path/to/dumb/mnt/debrid -o TARGET,SOURCE,FSTYPE,PROPAGATION
 ```
 
-or:
+Also inspect the mount inside DUMB and the consumer. Checking only the Compose string does not establish that the host topology supports it.
 
-```bash
-mount | grep /mnt/debrid
-```
+### How to enable
 
-Look for one of these at the end of the line:
+If the source is on a private host mount, plan a dedicated shared bind while the affected services are stopped. Follow the [host-side repair example](../../faq/rclone.md#error-response-from-daemon-path-yourhostpathmnt-is-mounted-on-but-it-is-not-a-shared-mount). Persist that host configuration through the host's mount or service manager and verify it after reboot.
 
-* `shared:` → shared mount
-* `slave:` → slave mount
-* `private:` → not propagating (default)
+### Best practices
 
-### How to Enable
-
-To ensure the base directory allows propagation:
-
-```bash
-mount --make-shared /mnt/debrid
-```
-
-Or to make **all** mounts shared (advanced users only):
-
-```bash
-mount --make-rshared /
-```
-
-!!! warning
-    These commands modify mount flags at runtime and will not persist across reboots. To persist them, you may need to update your systemd unit files or `/etc/fstab` with the appropriate `shared` propagation settings.
-
-    See the [rclone FAQ](../../faq/rclone.md#error-response-from-daemon-path-yourhostpathmnt-is-mounted-on-but-it-is-not-a-shared-mount) for additional details
-
-
-### Best Practices
-
-* Always prefer `:rshared` for `/mnt/debrid` in **DUMB** container mounts when external access to the mounts is needed.
-* Use `:rslave` in **consumer containers** (e.g., Plex, Sonarr, Radarr) for safer downstream propagation.
-* Avoid `:rw` without a propagation flag—it won't propagate sub-mounts at all.
-* Verify mounts with `findmnt` or `mount` on host and inside containers.
-
----
-
-### Summary Table for Mount Propagation Use Cases
-
-| Propagation Mode    | Container → Host | Host → Container | Used For                                       | Notes                                                                     |
-| ------------------- | ---------------- | ---------------- | ---------------------------------------------- | ------------------------------------------------------------------------- |
-| `rshared`           | Yes              | Yes              | `/mnt/debrid` in DUMB (for external consumers) | Required when external services (e.g., arrs, external Plex) access mounts |
-| `rslave`            | Yes              | No               | Containers like Plex, Sonarr, Radarr           | Safer for downstream-only visibility of mounts                            |
-| `private` (default) | No               | No               | Internal-only setups using DUMB's media server | Suitable when no external container needs access to rclone mounts         |
-
-The `rshared` flag should be reserved for DUMB's own mount directory so other services can inherit its mounts, while `rslave` is appropriate for media servers that only need read access to what DUMB exposes. `private` can be used safely if no external mount visibility is needed (e.g., with built-in media server only).
+- Scope shared propagation to the media mount-producing directory.
+- Use `rslave` for consumers that only receive mount events.
+- Keep absolute symlink targets consistent between DUMB and consumers.
+- Verify the actual mount views after container recreation or host reboot.
 
 ---
 

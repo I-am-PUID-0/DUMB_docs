@@ -86,6 +86,7 @@ The first TPA screen asks you to create a local admin account.
 
 After this, TPA admin auth protects the TPA UI and API.
 
+<!-- dev:start -->
 ## Guided domain and application routes
 
 On backends with the setup-arrangement capability, the retained checklist can
@@ -122,6 +123,7 @@ Complete the separate public-route checks and the DNS/tunnel configuration below
 
 !!! tip "SSO can come later"
     Start with local admin auth so you have a known-good break-glass login. You can configure admin SSO later from TPA's Security page.
+<!-- dev:end -->
 
 ## Link DUMB-managed Authelia
 
@@ -365,9 +367,13 @@ Full steps are in the [Cloudflared guide](cloudflared.md).
 
 ---
 
+<details class="geek-details" markdown="1">
+<summary>Technical details: configuration reference</summary>
+
 ## Configuration settings in `dumb_config.json`
 
 ```json
+{
 "traefik_proxy_admin": {
   "enabled": false,
   "process_name": "Traefik Proxy Admin",
@@ -425,6 +431,7 @@ Full steps are in the [Cloudflared guide](cloudflared.md).
     }
   ]
 }
+}
 ```
 
 DUMB may add generated database/auth secrets to the effective environment. Use
@@ -452,6 +459,8 @@ runtime values rather than copying them from a running instance.
     disables automatic updates until changed or cleared.
 
 ---
+
+</details>
 
 ## Troubleshooting
 

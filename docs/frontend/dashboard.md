@@ -1,11 +1,12 @@
 ---
 title: Dashboard
+description: Read DUMB service status, start or stop an app, check update notices, and find logs and configuration from the dashboard.
 icon: lucide/home
 ---
 
 # Dashboard
 
-The dashboard is the main page of the DUMB Frontend, providing an at-a-glance view of all your services with real-time status updates and quick controls.
+The dashboard shows configured services, their health, and start/stop/restart controls. Select a card to open its logs, configuration, and application interface.
 
 ---
 
@@ -22,9 +23,12 @@ The dashboard displays service cards for each configured service, showing:
 
 ---
 
+<!-- dev:start -->
 ## Setup checklist
 
 Compatible backends retain the latest or remembered setup run, automatic/manual tasks and independent connection results. Correct inputs, retry an action or recheck connections without repeating successful installations. Leaving onboarding does not complete missing tasks. See [Setup checklist and automation](../features/setup-checklist.md).
+
+<!-- dev:end -->
 
 ## Service cards
 
@@ -165,9 +169,9 @@ of service-page controls (config editors, logs, auto-restart overrides, and embe
 
 The dashboard automatically receives updates via WebSocket:
 
-- Status changes appear immediately
-- Health check results update in real-time
-- No manual refresh needed
+- Status changes arrive over the live connection
+- Health results update as backend checks complete
+- Reconnect after a lost connection to obtain current state
 
 The connection status is shown in the header area. If disconnected, the frontend will automatically attempt to reconnect.
 
@@ -240,7 +244,7 @@ When system resources are critically high, alerts appear at the top of the dashb
 | Memory Warning | Memory usage exceeds threshold (default 85%) |
 | Disk Warning | Disk usage exceeds threshold (default 90%) |
 
-Configure alert thresholds in the [Settings](settings.md) page.
+Set browser-local alert thresholds on the [Metrics page](metrics.md#alert-thresholds). Outbound notifications have separate persistent settings.
 
 ---
 

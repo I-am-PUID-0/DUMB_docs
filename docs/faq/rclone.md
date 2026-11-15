@@ -1,136 +1,77 @@
 ---
 title: rclone FAQ
+description: Diagnose rclone HTTP 423 errors, set the correct transaction-limit variable, filter mounted files, and repair Linux mount propagation deliberately.
 icon: lucide/hard-drive
 ---
 
 # rclone FAQ
 
-Below are some common questions and solutions related to using **rclone** with **DUMB**.
+## I think I might be rate limited by the debrid service - seeing `423` errors.
 
----
+HTTP `423 Locked` means the requested resource is locked or unavailable. It can appear while a provider is preparing content as well as during provider-side limits. Check Zurg or the source service's logs alongside rclone's error before deciding which limit applies.
 
-## Frequently Asked Questions (FAQ)
+To reduce rclone HTTP transaction frequency, the correct variable is:
 
-### I think I might be rate limited by the debrid service - seeing `423` errors.
-
-Add `- RCLONE_TSP_LIMIT=10` to the environment variable section of the compose.
-
----
-
-### How do I enable rclone filtering to include only specific resolutions? 
-
-
-#### Using rclone [--exclude](https://rclone.org/filtering/#exclude-exclude-files-matching-pattern) pattern matching:
-
-
-##### Example docker-compose to include only 4k|2160|UHD content. 
-
-Add `- RCLONE_EXCLUDE=**/**{{(?i)(1080|720|480)}}**` to the environment variable section of the compose.
-
-
-##### Example docker-compose to exclude only 4k|2160|UHD content. 
-
-Add `- RCLONE_EXCLUDE=**/**{{(?i)(4k|uhd|2160)}}**` to the environment variable section of the compose. 
-
-
-#### Using rclone [--filter-from](https://rclone.org/filtering/#filter-from-read-filtering-patterns-from-a-file) pattern matching:
-
-
-##### Example docker-compose to include only 4k|2160|UHD content. 
-
-Add `- RCLONE_FILTER_FROM=/config/filter_include_2160.txt` to the environment variable section of the compose and add the below content to a `filter_include_2160.txt` file in the config directory for the container. 
-
-
-###### Example filter_include_2160.txt
-
-```bash
-- **/**{{(?i)(1080|720|480)}}**
-+ *
+```env
+RCLONE_TPSLIMIT=10
 ```
 
+The earlier spelling `RCLONE_TSP_LIMIT` is invalid. `10` is an example, not a guaranteed provider allowance. A request limit does not cap streaming bandwidth or coordinate every other application using the same provider. Also review [Plex background analysis](plex.md#recommended-library-settings) and any other consumers.
 
-##### Example docker-compose to exclude only 4k|2160|UHD content. 
-Add `- RCLONE_FILTER_FROM=/config/filter_exclude_2160.txt` to the environment variable section of the compose and the below content to a `filter_exclude_2160.txt` file in the config directory for the container.
+See the official [rclone `--tpslimit` reference](https://rclone.org/docs/#tpslimit-float).
 
+## How do I filter mounted files by resolution?
 
-###### Example filter_exclude_2160.txt
+These filters use filename matching; they do not inspect a video's actual resolution. An exclusion can also hide a file referenced by an existing symlink, so test on a small listing before changing a production mount.
 
-```bash
+| Goal | Docker environment variable |
+|---|---|
+| Hide names containing `1080`, `720`, or `480` | `RCLONE_EXCLUDE=**/**{{(?i)(1080|720|480)}}**` |
+| Hide names containing `4k`, `uhd`, or `2160` | `RCLONE_EXCLUDE=**/**{{(?i)(4k|uhd|2160)}}**` |
+
+The first pattern does not strictly include only 4K files; files without those lower-resolution labels still pass.
+
+For a mounted filter file, set:
+
+```env
+RCLONE_FILTER_FROM=/config/filter_exclude_2160.txt
+```
+
+Create `/config/filter_exclude_2160.txt` with:
+
+```text
 - **/**{{(?i)(4k|uhd|2160)}}**
 + *
 ```
 
----
+Restart the affected mount after reviewing the effective command and environment. These global variables affect all rclone instances that inherit them. See [rclone filtering](https://rclone.org/filtering/) and [per-instance flags](../services/dependent/rclone.md#rclone-flags-via-environment-variables).
 
-### Error response from daemon: path `/your/host/path/mnt` is mounted on `/` but it is not a shared mount.
+## Error response from daemon: path `/your/host/path/mnt` is mounted on `/` but it is not a shared mount.
 
-From the host OS, enter `sudo mount --make-rshared /` 
-
-Or if using a NAS device `sudo mount --make-rshared /volume1/` 
-
-If neither of the above resolves the error, ensure that docker is not installed via snap. Install docker via apt. 
-
-!!! note 
-    `sudo mount --make-rshared` does not persist reboots, so it will need to be run each time WSL2 or Windows is restarted. Alternatively, see the below guide for automatically executing the command on startup for Ubuntu.
-
-
-### Ubuntu systemd service:
-
-To make Ubuntu run a command like `sudo mount --make-rshared /` on startup, you can use a systemd service unit that executes this command at boot.
-
-Systemd is a system and service manager for Linux operating systems, which allows you to specify custom startup tasks through service units.
-
-Here's how you can do it:
-
-
-#### Create a systemd service file:
-First, you need to create a new systemd service file. You can do this by creating a file in the /etc/systemd/system directory. Let's call this file make-rshared.service.
-
-Open a terminal and use your favorite text editor to create this file. You'll need sudo privileges to create a file in this directory. For example, using nano:
+Docker cannot propagate a mount from a private host mount. On the Linux Docker host, inspect the actual source path first:
 
 ```bash
-sudo nano /etc/systemd/system/make-rshared.service
+findmnt -T /path/to/dumb/mnt/debrid -o TARGET,SOURCE,FSTYPE,PROPAGATION
 ```
 
-Add the following contents to the service file:
+For external consumers, DUMB's producer bind needs `rshared`; downstream consumers usually use `rslave` to receive host mount events without sending theirs back. See [mount propagation](../services/dependent/rclone.md#mount-propagation) for the layout and direction table.
+
+If the intended source is an ordinary directory on a private mount, an administrator can create a dedicated bind mount and mark it shared:
 
 ```bash
-[Unit]
-Description=Make root filesystem rshared
-After=local-fs.target
-
-[Service]
-Type=oneshot
-ExecStart=/bin/mount --make-rshared /
-RemainAfterExit=yes
-
-[Install]
-WantedBy=multi-user.target
+sudo mount --bind /path/to/dumb/mnt/debrid /path/to/dumb/mnt/debrid
+sudo mount --make-rshared /path/to/dumb/mnt/debrid
 ```
 
+Plan this before starting DUMB or while the affected mounts are stopped. Inspect the existing mount topology before adding another bind; do not stack repeated bind mounts on retries. Avoid changing propagation for the entire root filesystem just to repair one media directory.
 
-#### Enable and start the service:
-After saving the file, you need to reload the systemd daemon to recognize your new service and then enable the service to start on boot:
+### Ubuntu systemd service
 
-```bash
-sudo systemctl daemon-reload
-sudo systemctl enable make-rshared.service
-```
-To start the service immediately without rebooting, you can use:
+The commands above are temporary. On a systemd host, have an administrator persist the dedicated mount and its propagation policy in the host's mount configuration or a unit ordered before Docker/DUMB. Use the real source mount's dependencies and verify after reboot with `findmnt`; ordering and persistence depend on the host or NAS.
 
-```bash
-sudo systemctl start make-rshared.service
-```
+Docker Desktop does not support Linux bind propagation in the same way. WSL and NAS deployments need their platform's [deployment instructions](../deployment/index.md).
 
+## Related pages
 
-#### Verify the service is active:
-
-After rebooting or starting the service, you can check its status to ensure it's active and has run successfully:
-
-```bash
-sudo systemctl status make-rshared.service
-```
-
-
-## Related Pages
-- [Rclone Configuration](../services/dependent/rclone.md)
+- [rclone configuration](../services/dependent/rclone.md)
+- [Docker bind propagation](https://docs.docker.com/engine/storage/bind-mounts/#configure-bind-propagation)

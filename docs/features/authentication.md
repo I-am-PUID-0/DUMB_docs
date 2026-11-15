@@ -11,23 +11,7 @@ local accounts, an external OpenID Connect (OIDC) provider, or both.
 
 ---
 
-## Overview
-
-The authentication system provides:
-
-- **Local, OIDC, or hybrid sign-in**
-- **JWT token-based DUMB sessions** after either login method succeeds
-- **User management** with create, update, and delete capabilities
-- **First-time setup wizard** for creating the initial local user
-- **External Authelia and generic standards-compatible OIDC providers**
-- **DUMB-managed Authelia linking** from the Authelia service page
-- **Optional authentication** - can be skipped for local/trusted environments
-- **Session persistence** with "Remember Me" functionality
-
-!!! important "No role separation"
-    DUMB currently has one authenticated privilege level. Every enabled user can reach the same service-control, configuration, and user-management endpoints; usernames are not viewer/editor/admin roles.
-
----
+DUMB has one authenticated privilege level. Every accepted local or OIDC identity can manage services, configuration, and users. OIDC groups can restrict who may sign in; they do not create viewer/editor/admin roles.
 
 ## Authentication modes
 
@@ -40,11 +24,6 @@ The authentication system provides:
 Hybrid mode keeps local password login as a break-glass path if DNS, TLS, the
 identity provider, or its database is unavailable. OIDC-only mode requires an
 explicit lockout-risk confirmation in Settings or the Authelia wizard.
-
-!!! important "One DUMB privilege level"
-    OIDC groups can limit who may sign in, but DUMB does not currently map
-    groups to viewer/editor/admin roles. Every accepted identity receives the
-    same DUMB operator privilege.
 
 ## Authentication flow
 
@@ -98,9 +77,11 @@ When DUMB starts for the first time, the frontend detects that no users exist an
 
 When authentication is enabled, users must log in to access the dashboard and API.
 
+<!-- dev:start -->
 After either login method succeeds, the dashboard can return to an internal page
 on the same origin. External destinations and malformed or ambiguous return
 paths fall back to the dashboard home page.
+<!-- dev:end -->
 
 ### Local login
 
@@ -156,9 +137,8 @@ create accounts for multiple people.
 
 ### Managing users via settings
 
-1. Navigate to **Settings** in the sidebar
-2. Scroll to the **User Management** section
-3. Use the interface to add, disable, or delete users
+1. Open **Settings → Authentication**.
+2. Use its user list to add, disable, enable, or delete accounts.
 
 ---
 
@@ -185,6 +165,9 @@ Authentication can be toggled at any time through the Settings page.
     Disabling authentication exposes all DUMB functionality to anyone who can reach the API. Only disable authentication in trusted, isolated environments.
 
 ---
+
+<details class="geek-details" markdown="1">
+<summary>Technical details: authenticated API and WebSocket requests</summary>
 
 ## API authentication
 
@@ -219,6 +202,11 @@ When an access token expires, the API returns a `401 Unauthorized` response. The
 If the refresh token is also expired, the user is redirected to the login page.
 
 ---
+
+</details>
+
+<details class="geek-details" markdown="1">
+<summary>Technical details: authentication state file</summary>
 
 ## Configuration
 
@@ -268,6 +256,10 @@ Authentication state is stored in `/config/users.json`:
 
 `users.json` contains the OIDC client secret and DUMB JWT signing secret. Keep
 the file private and include it in protected configuration backups.
+
+</details>
+
+Keep `/config/users.json` private: it contains the OIDC client secret and JWT signing secret as well as local password hashes. Include it only in protected configuration backups.
 
 ## Configure an OIDC provider
 

@@ -1,5 +1,6 @@
 ---
 title: Authentication API
+description: Use DUMB local or OIDC authentication, issue and refresh access tokens, configure login providers, and manage local accounts through the API.
 icon: lucide/key
 ---
 
@@ -8,13 +9,20 @@ icon: lucide/key
 The Authentication API provides local login, OIDC Authorization Code with PKCE,
 DUMB token handling, provider configuration, and user management.
 
----
+## Endpoint groups
+
+| Task | Routes |
+|---|---|
+| Check mode and initial setup | `/auth/status`, `/auth/setup`, `/auth/skip-setup` |
+| Password login and DUMB tokens | `/auth/login`, `/auth/refresh`, `/auth/verify` |
+| Configure OIDC | `/auth/provider`, `/auth/oidc/test` |
+| Complete OIDC login | `/auth/oidc/start`, `/auth/oidc/callback`, `/auth/oidc/exchange` |
+| Enable or disable authentication | `/auth/enable`, `/auth/disable` |
+| Manage local users | `/auth/users`, `/auth/users/{username}` |
 
 ## Overview
 
 Backend-native authentication endpoints are prefixed with `/auth`. Through the normal DUMB Frontend proxy, add `/api` (for example, `/api/auth/login`). When authentication is enabled, protected API endpoints require a valid JWT token in the `Authorization: Bearer <token>` header.
-
----
 
 ## Endpoints
 
@@ -45,8 +53,6 @@ Returns the current authentication status.
 | `local_login_enabled` | boolean | Whether password login is available |
 | `oidc_login_enabled` | boolean | Whether the OIDC login flow is available |
 | `oidc_provider_name` | string | Display name shown by the login UI |
-
----
 
 ### `GET /auth/provider`
 
@@ -100,8 +106,6 @@ Redeems the one-time callback code for DUMB access and refresh tokens:
 
 The code is single-use and does not contain provider tokens.
 
----
-
 ### `POST /auth/login`
 
 Authenticates a user and returns JWT tokens.
@@ -129,7 +133,6 @@ Authenticates a user and returns JWT tokens.
 
 | Status | Description |
 |--------|-------------|
-| 401 | Invalid credentials |
 | 401 | User account is disabled or the credentials are invalid |
 
 #### Example
@@ -149,8 +152,6 @@ curl -X POST http://localhost:3005/api/auth/login \
   -H "Content-Type: application/json" \
   -d '{"username": "admin", "password": "yourpassword"}'
 ```
-
----
 
 ### `POST /auth/refresh`
 
@@ -180,8 +181,6 @@ Exchanges a refresh token for new access and refresh tokens.
 |--------|-------------|
 | 401 | Invalid or expired refresh token |
 
----
-
 ### `POST /auth/verify`
 
 Verifies that an access token is valid.
@@ -200,8 +199,6 @@ POST /auth/verify?token=eyJhbGciOiJIUzI1NiIs...
   "username": "admin"
 }
 ```
-
----
 
 ### `POST /auth/setup`
 
@@ -233,8 +230,6 @@ Creates the first user account and enables authentication. Only works when no us
 | 400 | Users already exist |
 | 400 | Username is shorter than 3 characters or password is outside the 8–72 character range |
 
----
-
 ### `POST /auth/skip-setup`
 
 Skips the initial setup wizard, leaving authentication disabled.
@@ -246,8 +241,6 @@ Skips the initial setup wizard, leaving authentication disabled.
   "message": "Authentication setup skipped successfully"
 }
 ```
-
----
 
 ### `POST /auth/enable`
 
@@ -267,8 +260,6 @@ Enables authentication. Requires at least one user to exist.
 |--------|-------------|
 | 400 | No users exist - create a user first |
 
----
-
 ### `POST /auth/disable`
 
 Disables authentication, allowing unauthenticated access to all endpoints.
@@ -284,8 +275,6 @@ Disables authentication, allowing unauthenticated access to all endpoints.
   "message": "Authentication disabled successfully"
 }
 ```
-
----
 
 ## User management endpoints
 
@@ -311,8 +300,6 @@ Lists all user accounts.
   ]
 }
 ```
-
----
 
 ### `POST /auth/users`
 
@@ -342,8 +329,6 @@ Creates a new user account.
 |--------|-------------|
 | 400 | Username already exists |
 | 400 | Username is shorter than 3 characters or password is outside the 8–72 character range |
-
----
 
 ### `PUT /auth/users/{username}`
 
@@ -379,8 +364,6 @@ Updates a user account (enable/disable).
 | 400 | Cannot disable the last active user |
 | 400 | User not found |
 
----
-
 ### `DELETE /auth/users/{username}`
 
 Deletes a user account.
@@ -405,8 +388,6 @@ Deletes a user account.
 |--------|-------------|
 | 400 | Cannot delete yourself, cannot delete the last user, or user not found |
 
----
-
 ## Token structure
 
 JWT tokens contain the following claims:
@@ -424,15 +405,18 @@ JWT tokens contain the following claims:
 | `sub` | Username (subject) |
 | `exp` | Expiration timestamp (Unix epoch) |
 | `type` | Token type: `access` or `refresh` |
+| `provider` | Authentication source, such as `local` or `oidc` |
+| `groups` | Group claims carried into the DUMB token |
+
+The example is abbreviated; tokens also carry the authentication provider and group claims.
 
 ### Token lifetimes
 
 | Token Type | Default Lifetime |
 |------------|------------------|
 | Access Token | 60 minutes |
-| Refresh Token | 30 days |
-
----
+| Local refresh token | 30 days |
+| OIDC refresh token | 1 day |
 
 ## Using authentication with other endpoints
 
@@ -450,8 +434,6 @@ For WebSocket connections, pass the token as a query parameter:
 ```
 ws://localhost:3005/ws/status?token=eyJhbGciOiJIUzI1NiIs...
 ```
-
----
 
 ## Error handling
 
@@ -471,8 +453,6 @@ When receiving a 401 response:
 1. Send the refresh token to `POST /auth/refresh` (or `/api/auth/refresh` through the frontend proxy)
 2. If successful, retry the original request with the new access token
 3. If refresh fails, redirect the user to login
-
----
 
 ## Related pages
 

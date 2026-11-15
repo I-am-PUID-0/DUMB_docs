@@ -6,16 +6,24 @@ icon: lucide/radar
 
 # NeutArr
 
-NeutArr is DUMB's default backlog-search automation service. It continuously searches for missing or upgraded content in your Arr applications. It periodically triggers searches in Radarr, Sonarr, Lidarr, and Whisparr to find better quality releases or fill gaps in your library.
+NeutArr schedules missing-content and upgrade searches in selected Radarr, Sonarr, Lidarr, and Whisparr instances. It is disabled by default. Review targets, schedules, and limits before enabling searches against your indexers.
 
 ---
 
+## First start
+
+1. Enable NeutArr and opt only the intended Arr instances into its automation.
+2. Open NeutArr and review the discovered connections and quality profiles.
+3. Choose conservative search intervals and limits before activating a schedule.
+4. Observe one search cycle in the logs before widening the schedule or adding targets.
+
+<!-- dev:start -->
 ## Setup checklist and remaining work
 
 The checklist tracks owned Arr connections independently from search policy. Review schedules and limits. Owned opt-outs/disabled targets are reconciled while unowned entries and intentional user disables are preserved. Starting NeutArr does not authorize a new search policy.
 
 Requires the backend setup-arrangement capability. See [Setup checklist and automation](../../features/setup-checklist.md) for retained tasks, coverage and safe retries.
-
+<!-- dev:end -->
 
 ## Overview
 
@@ -60,6 +68,7 @@ DUMB auto-populates NeutArr with Arr instances that opt in.
 Example Arr instance:
 
 ```json
+{
 "radarr": {
   "instances": {
     "Decypharr": {
@@ -71,17 +80,20 @@ Example Arr instance:
     }
   }
 }
+}
 ```
 
 Example NeutArr instance filter:
 
 ```json
+{
 "neutarr": {
   "instances": {
     "Decypharr": {
       "core_service": ["decypharr", "infinidysk", "altmount"]
     }
   }
+}
 }
 ```
 
@@ -96,11 +108,15 @@ For deeper behavior details, see [Core Service Routing](../../reference/core-ser
 
 ---
 
+<details class="geek-details" markdown="1">
+<summary>Technical details: configuration reference</summary>
+
 ## Configuration settings in `dumb_config.json`
 
 Below is a sample configuration for NeutArr within the `dumb_config.json` file:
 
 ```json
+{
 "neutarr": {
   "instances": {
     "Default": {
@@ -141,6 +157,7 @@ Below is a sample configuration for NeutArr within the `dumb_config.json` file:
     }
   }
 }
+}
 ```
 
 ### Configuration key descriptions
@@ -151,10 +168,10 @@ Below is a sample configuration for NeutArr within the `dumb_config.json` file:
 - **`release_version_enabled`** / **`release_version`**: Use a tagged release if enabled.
 - **`commit_sha`**: Build this instance from an exact full 40-character GitHub SHA. It overrides release/branch selection and disables automatic updates for that instance until cleared.
 - **`branch_enabled`** / **`branch`**: Use a specific branch if enabled.
-- **`suppress_logging`**: If `true`, disables log output for this service.
+- **`suppress_logging`**: Suppresses service messages in the main DUMB output.
 - **`log_level`**: Logging verbosity (e.g., `DEBUG`, `INFO`).
 - **`port`**: Port the NeutArr web UI is exposed on.
-- **`auto_update`**: Enables automatic self-updates from GitHub.
+- **`auto_update`**: Enables DUMB's scheduled update checks; `auto_update_mode` determines whether a detected update is installed.
 - **`auto_update_interval`**: How often (in hours) to check for updates.
 - **`clear_on_update`**: Clears build artifacts or cache during updates.
 - **`exclude_dirs`**: Prevents specific directories from being affected by updates.
@@ -165,6 +182,8 @@ Below is a sample configuration for NeutArr within the `dumb_config.json` file:
 - **`env`**: Environment variables passed at runtime.
 
 ---
+
+</details>
 
 ## Multi-instance support
 
@@ -186,6 +205,8 @@ Each instance maintains its own:
 ---
 
 ## NeutArr web UI
+
+Open the service from DUMB's **Embedded UI** tab when available. The native URLs below require the corresponding Docker host port to be published; use the port saved in your running configuration.
 
 NeutArr provides a web interface for:
 

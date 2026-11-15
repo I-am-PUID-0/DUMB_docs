@@ -6,7 +6,7 @@ icon: lucide/gauge
 
 # Metrics Collection
 
-DUMB includes a comprehensive metrics collection system that monitors system resources and provides both real-time updates and historical data for analysis.
+Use Metrics to inspect CPU, memory, filesystems, networks, and managed processes. History is enabled by default; Database Health and Plex Cloud Status are separate opt-in collectors.
 
 ---
 
@@ -50,6 +50,9 @@ The metrics system provides:
 | **Memory RSS** | Resident set size in bytes |
 
 ---
+
+<details class="geek-details" markdown="1">
+<summary>Technical details: metrics JSON and settings reference</summary>
 
 ## Configuration
 
@@ -134,6 +137,8 @@ Metrics are configured in `dumb_config.json`:
 | `plex_status.enabled` | `false` | Poll and cache Plex's public cloud-service status |
 | `plex_status.interval_sec` | `300` | Minimum seconds between Plex status feed requests (60-3600) |
 
+</details>
+
 ### Plex Cloud Status
 
 Plex Cloud Status is disabled by default. Enable it from **Metrics → Settings → Plex Cloud Status** or from the Plex service page's **Plex Status** panel. DUMB then polls the fixed public summary feed behind [status.plex.tv](https://status.plex.tv/) from the backend, caches the normalized result, and includes it in live metrics snapshots.
@@ -161,7 +166,7 @@ Database Health Monitoring is disabled by default and enabled independently for 
 | **PostgreSQL** | DUMB PostgreSQL, pgAdmin, mediastorm, Riven Backend, Zilean, and Traefik Proxy Admin; Arr instances when `postgres_enabled=true` |
 | **Custom persistent stores** | Decypharr append-only logs, Phalanx DB Hyperbee/Corestore data, and the Zurg state directory |
 
-For InfiniDysk, **SQLite or PostgreSQL** describes only its main operational
+For InfiniDysk 1, **SQLite or PostgreSQL** describes only its main operational
 database. `metrics.sqlite`, `warden.db`, and `usenet-migration.db` remain
 auxiliary SQLite stores after a PostgreSQL cutover, so their local filesystem
 health and backup requirements do not disappear when the main provider changes.
@@ -208,6 +213,9 @@ Compact database-health samples are included in normal metrics history without s
 
 ---
 
+<details class="geek-details" markdown="1">
+<summary>Technical details: WebSocket sample and parameters</summary>
+
 ## Real-time streaming
 
 Metrics are streamed via WebSocket at `/ws/metrics`:
@@ -233,6 +241,8 @@ ws.onmessage = (event) => {
 | `token` | - | JWT token (if auth enabled) |
 
 ---
+
+</details>
 
 ## Historical data
 
@@ -272,6 +282,9 @@ The filesystem database size will not exactly equal compressed payload size:
 - Recently deleted rows/pages may remain allocated for reuse.
 
 For that reason, SQLite usually provides the clearest space reduction for a single DUMB container. PostgreSQL is primarily useful for longer retention, external queries, stronger concurrency, and centralized operations—not as a guaranteed compression improvement over SQLite.
+
+<details class="geek-details" markdown="1">
+<summary>Technical details: stored samples and history queries</summary>
 
 ### Data structure
 
@@ -318,6 +331,8 @@ curl "http://localhost:3005/api/metrics/history/storage?probe_postgresql=true"
 ```
 
 ---
+
+</details>
 
 ## cgroup awareness
 
@@ -417,7 +432,7 @@ The frontend Metrics page displays:
 
 ### Dashboard alerts
 
-Configure thresholds in Settings to show alerts:
+Set browser-local thresholds in the Metrics page header:
 
 | Resource | Default Threshold |
 |----------|------------------|
@@ -459,21 +474,11 @@ rm /config/metrics/metrics-*.jsonl
 
 ### Collection overhead
 
-Metrics collection has minimal performance impact:
-
-- CPU sampling uses `/proc/stat`
-- Memory from `/proc/meminfo`
-- Non-blocking I/O operations
+Collection and storage costs depend on the enabled services, interfaces, filesystems, and optional probes. Increase sampling intervals if measured overhead is excessive; do not assume a fixed cost for every installation.
 
 ### Storage requirements
 
-Estimate storage needs:
-
-| Interval | Daily Size (approx) |
-|----------|---------------------|
-| 5 seconds | ~5 MB |
-| 10 seconds | ~2.5 MB |
-| 30 seconds | ~800 KB |
+Storage depends on sample size and compression, not just the interval. Check **Metrics → Settings → History Storage** for actual sample count, compressed payload size, database allocation, and compression ratio. Retention limits payloads; allocated SQLite/PostgreSQL files may remain larger until their normal maintenance reuses or releases pages.
 
 ---
 
@@ -482,13 +487,13 @@ Estimate storage needs:
 ### Metrics not updating
 
 1. Check WebSocket connection status
-2. Verify `metrics.enabled` is `true`
+2. Confirm the API is reachable and the metrics stream is connected; there is no `metrics.enabled` setting
 3. Check for JavaScript errors in browser console
 
 ### High storage usage
 
 1. Reduce `history_retention_days`
-2. Increase `history_interval`
+2. Increase `history_interval_sec`
 3. Lower `history_max_total_mb`
 4. Compare compressed payload and database allocation in **Metrics → Settings → History Storage**
 5. If PostgreSQL is active, review its relation size and normal PostgreSQL maintenance behavior

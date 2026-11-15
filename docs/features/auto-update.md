@@ -6,7 +6,17 @@ icon: lucide/download
 
 # Auto-update
 
-DUMB includes a comprehensive auto-update system that keeps your services current with the latest releases. Each service can be configured independently with different update strategies, from fully automatic updates to version pinning.
+Choose how each service checks for new versions and whether it should install them automatically. Checking does not restart the service; installing normally does.
+
+## Set an update policy
+
+1. Open the service page and select **Tools → Updates**.
+2. Run **Check for updates** to inspect the current and available versions.
+3. Enable scheduled checks if wanted, then choose **Show on dashboard** or **Install automatically**.
+4. Set the start time and interval, and save.
+5. Review source pins and media-library protection before installing.
+
+Use [dashboard Updates](../frontend/dashboard.md#check-and-update-multiple-services) to install several ordinary available updates. A fixed branch, commit, release, or version choice needs review on its own service page.
 
 ---
 
@@ -23,6 +33,9 @@ The auto-update system supports multiple update strategies:
 | **Version Pinning** | Locks to a specific version without scheduled updates | Stability critical |
 
 ---
+
+<details class="geek-details" markdown="1">
+<summary>Technical details: update lifecycle and timing</summary>
 
 ## How it works
 
@@ -107,24 +120,31 @@ each service's Updates panel when the backend advertises
 
 When an update affects storage used by Plex, Jellyfin, or Emby, [Media Library Protection](media-library-protection.md) runs before the service is stopped. Scheduled updates are deferred while playback is active or activity cannot be verified. Manual installs show explicit protect, keep-running, stop-now, and defer choices in dmbdb.
 
+</details>
+
 ### Frontend notices
 
-The DUMB Frontend polls `GET /api/process/update-notices` for project-level update notices. DUMB retains the last terminal DUMB API and DUMB Frontend update state, plus applied and informational notices, in `/config/update_notices.json`. Available-update notices therefore survive an API restart and do not depend on the browser that happened to perform the check. If a later GitHub check temporarily fails, DUMB keeps showing the last known available update and marks the recheck failure instead of silently removing the notice.
+The global **DUMB Updates** banner and **Settings → About** share the backend's retained API/frontend update result. Open either to inspect versions, messages, and release/source links. A later failed recheck does not silently erase a known available result.
 
-The global **DUMB Updates** banner and review dialog show the current and available API/frontend versions. The Settings **About** rows reuse the same backend-retained state and open the same dialog. For ordinary published releases, they also show how many releases the installed version is behind when the current tag can be found in GitHub's bounded release history. Branch builds, rolling dev builds, and very old or missing tags may omit the count rather than guess.
+- **Dismiss** hides only that browser's banner; About can show it again.
+- Released versions can show a releases-behind count when GitHub history includes the installed tag.
+- Development builds show **Dev build** rather than an invented release count.
+- API checks run at startup and daily in check-only mode. Apply an API update through your Docker image/stack; these checks never replace the container automatically.
 
-DUMB API release checks are always enabled: the backend checks once during startup and then daily in check-only mode. This does not opt the deployment into automatic container replacement or API self-installation. Applying an API update remains an operator-owned image/stack update. DUMB Frontend checking and installation continue to follow its normal manual and configured auto-update controls.
+DUMB API and frontend have independent version numbers. A development suffix identifies a moving image/source build, while stable releases link to their release notes. See [API versions](../services/dumb/api.md#development-and-release-versions).
 
-DUMB dev images use rolling versions such as `v2.24.0-dev.34`. The core (`2.24.0` in this example) is the candidate API version; the `-dev.N` suffix identifies the development image build. These are treated as dev builds, so their notice action points to the rolling dev-build reference. Production semver releases link to their release notes, and branch builds with commit markers link to the relevant commit or comparison. See [development and release versions](../services/dumb/api.md#development-and-release-versions) for synchronization and stable promotion.
+<!-- dev:start -->
+The candidate core in `v2.24.0-dev.34` is `2.24.0`; `-dev.34` identifies the rolling image build. The frontend follows its own releases and source commits; see [frontend development versions](../services/dumb/dumb-frontend.md#frontend-development-versions).
+<!-- dev:end -->
 
-The frontend's candidate version follows dmbdb's own stable releases and
-commits, independently of the DUMB API version. Verified development source
-continues to show its **Dev build** badge and branch/SHA in **Settings → About**.
-See [frontend development versions](../services/dumb/dumb-frontend.md#frontend-development-versions).
+!!! warning "Fixed versions and update schedules"
 
-Dismissals are stored in browser local storage and only hide the global banner for that browser. They do not remove the backend's retained available state or applied-update history. The About page continues to show the retained status, and its review dialog can restore a dismissed banner; a different browser can also still review the notice.
+    Fixed release, branch, commit, and pinned-version choices can disable automatic
+    scheduling. Review the configuration details below before relying on a saved
+    schedule; an enabled auto-update toggle alone does not guarantee checks run.
 
----
+<details class="geek-details" markdown="1">
+<summary>Technical details: update configuration fields</summary>
 
 ## Configuration
 
@@ -211,6 +231,8 @@ legacy `install` behavior.
 
 ---
 
+</details>
+
 ## Update strategies
 
 ### Latest release (default)
@@ -219,11 +241,13 @@ The default strategy fetches the latest stable release from GitHub:
 
 ```json
 {
-  "frontend": {
-    "auto_update": true,
-    "auto_update_mode": "install",
-    "auto_update_start_time": "04:00",
-    "auto_update_interval": 24
+  "dumb": {
+    "frontend": {
+      "auto_update": true,
+      "auto_update_mode": "install",
+      "auto_update_start_time": "04:00",
+      "auto_update_interval": 24
+    }
   }
 }
 ```
@@ -377,6 +401,7 @@ The `auto_update_start_time` and `auto_update_interval` settings control update 
 
 With this example, checks run once per day at 04:00. If you set `auto_update_interval` to another value (for example `12`), checks run every 12 hours anchored from the configured start time.
 
+<!-- dev:start -->
 ### Scheduled work and deferrals
 
 DUMB uses one shared scheduler. Scheduled service update checks and installs
@@ -402,6 +427,8 @@ it returns, and later updates remain deferred where necessary.
 An exception records an error and leaves the scheduler available for later
 work. A service process starting successfully does not by itself mean update
 health stabilization and cleanup have finished.
+
+<!-- dev:end -->
 
 ---
 
@@ -494,29 +521,11 @@ Different services have specialized update handling:
 
 ### Dashboard update center
 
-The dashboard **Updates** button provides an on-demand alternative to enabling
-automatic updates. It checks all enabled update-capable services sequentially,
-shows the services with available versions, and lets you install some or all of
-those ordinary updates. Each service card also gains an Update shortcut while an
-ordinary update is recorded as available.
+Open **Updates** on the dashboard to check enabled services, select ordinary available updates, and follow sequential installs. A saved source target is marked **Review source** and needs its own service-page review.
 
-Bulk installation is deliberately conservative: saved release, branch, commit,
-and pinned-version selections appear as **Review source** and cannot be selected.
-Use the individual service page when you need **Install configured target** or
-**Override + latest**. Selected services install one at a time and restart as
-needed; the frontend and API are placed last to reduce control-plane interruption.
-If the selection includes DUMB Frontend, its replacement is prepared while the
-old UI stays online. The bulk runner resumes after the brief activation restart
-and reloads the dashboard only after the remaining selected updates have been
-processed.
+The panel retains in-app progress when closed. Frontend updates can briefly interrupt the loaded page during activation; reconnect and inspect the retained result. After any install, verify the service's health and logs.
 
-The individual service Updates panel also retains active check/install state if
-you close it or navigate to another service page. A background-progress banner
-reopens the operation, and returning to the service shows the same live progress
-or completed result.
-
-See [Dashboard](../frontend/dashboard.md#check-and-update-multiple-services) for
-the complete workflow.
+See [Dashboard updates](../frontend/dashboard.md#check-and-update-multiple-services) for timing measurements, background progress, and source-selection limits.
 
 ### Check current versions
 
@@ -547,12 +556,15 @@ INFO - [Auto-Update] Update complete: frontend v1.33.0
 3. **Review logs** for error messages
 4. **Verify network connectivity** to GitHub
 
+<!-- dev:start -->
 If the status is `deferred`, review its message and next retry time. Another
 update, lifecycle operation, or migration can temporarily prevent admission.
 For a running or long-running update, review the active service's install
 stage and logs. Elapsed time alone does not identify the blocking operation;
 collecting a thread traceback may be needed to diagnose a persistent stall.
 The scheduler does not terminate the active installer to start another one.
+
+<!-- dev:end -->
 
 ### Update fails repeatedly
 
@@ -570,18 +582,9 @@ The scheduler does not terminate the active installer to start another one.
 
 ---
 
-## Best practices
+## Before enabling automatic installation
 
-!!! tip "Recommendations"
-
-    - **Test updates** in a non-production environment first
-    - **Use version pinning** for critical services
-    - **Set appropriate intervals** based on service stability needs
-    - **Monitor logs** after updates for any issues
-    - **Keep backups** of configuration files
-    - **Add a GitHub token** to avoid rate limiting
-
----
+Keep application/database backups, select a maintenance time, and confirm media-library protection is configured. Some upstream data migrations cannot be undone by restoring an older runtime. Start with **Show on dashboard** if updates need your review.
 
 ## Related pages
 

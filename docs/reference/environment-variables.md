@@ -1,13 +1,12 @@
 ---
 title: Environment variables
+description: Look up DUMB startup variables, derive override names, understand Docker secret precedence, and distinguish service environments from controller settings.
 icon: lucide/terminal
 ---
 
 # Environment variables
 
-Every scalar/list setting in DUMB's configuration can be overridden at startup with an environment variable or Docker secret. Service subprocess variables are separately defined under each service's `env` block.
-
----
+DUMB reads startup overrides for supported configuration leaf values from environment variables or Docker secrets. Override names follow the existing configuration tree; they do not create new service instances or arbitrary keys. Service subprocess variables are separately defined under each service's `env` block.
 
 ## Container variables
 
@@ -41,7 +40,7 @@ DUMB joins a configuration path with underscores and uppercases it:
 | `infinidysk.frontend_port` | `INFINIDYSK_FRONTEND_PORT` |
 | `sonarr.instances.Default.port` | `SONARR_INSTANCES_DEFAULT_PORT` |
 
-Lists and objects must be valid JSON, such as `DUMB_METRICS_FILESYSTEM_PATHS=["/","/mnt/debrid"]`.
+List values use valid JSON, such as `DUMB_METRICS_FILESYSTEM_PATHS=["/","/mnt/debrid"]`. Set dictionary members through their individual leaf names; edit JSON configuration or use the API for structural changes.
 
 ## Sources and precedence
 
@@ -61,8 +60,6 @@ Blank environment values do not replace configured values. Docker secrets are re
     DUMB checks those names as fallbacks until the deployment opts into the
     canonical persisted identity.
 
----
-
 ## Service environment variables
 
 Each service can define variables passed to that subprocess under its `env` block in `/config/dumb_config.json`. These are service runtime variables, not names for overriding DUMB's own config tree.
@@ -81,8 +78,6 @@ Example:
 !!! warning "Secrets in config files"
 
     Treat tokens and passwords in `dumb_config.json` as secrets. Avoid committing them to source control.
-
----
 
 ## Related pages
 

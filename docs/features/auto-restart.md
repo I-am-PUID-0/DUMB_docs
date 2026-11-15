@@ -6,357 +6,147 @@ icon: lucide/refresh-cw
 
 # Auto-restart
 
-DUMB includes an automatic restart system that monitors service health and restarts failed services to maintain system stability without manual intervention.
+Auto-restart monitors explicitly selected services and retries a restart after repeated health failures. It is disabled by default. Use it for recoverable application failures; investigate repeated failures rather than raising the retry limit.
 
----
+## Enable it for a service
 
-## Overview
+1. Open the service page and select **Tools → Auto-restart**.
+2. Enable the global policy and select the exact service to monitor.
+3. Review its failure threshold, grace period, restart window, and backoff delays.
+4. Save, then check the service's health reason and restart status.
 
-The auto-restart system provides:
+An empty service list monitors nothing, even when the global switch is enabled. A deliberate manual stop disables monitoring for that service until it is started again.
 
-- **Health monitoring** - Periodic health checks for each service
-- **Automatic recovery** - Restart services that become unhealthy
-- **Exponential backoff** - Increasing delays between restart attempts
-- **Restart limits** - Prevent infinite restart loops
-- **Grace periods** - Allow services time to initialize
-- **Startup lifecycle gating** - Do not restart services while the stack is still assembling
-- **Verified recovery** - Count success only after the restarted service is healthy
-
-![Auto-restart status](../assets/images/features/auto_restart.png){ .shadow }
 ![Auto-restart indicators](../assets/images/features/auto_restart_indicators.png){ .shadow }
-
----
 
 ## How it works
 
 ```mermaid
-%%{ init: { "flowchart": { "curve": "basis" } } }%%
-flowchart TD
-    A([Service running])
-    B{Health check}
-    C{Threshold exceeded?}
-    D{Restart limit reached?}
-    E[Restart service]
-    F([Stop retrying])
-    G[Wait grace period]
-
-    A ==> B
-    B -- Healthy --> A
-    B -- Unhealthy --> C
-    C -- No --> B
-    C -- Yes --> D
-    D -- Not reached --> E
-    D -- Reached --> F
-    E ==> G
-    G ==> B
+flowchart LR
+    Ready[Stack ready/degraded] --> Grace[Wait service grace period]
+    Grace --> Check[Check service health]
+    Check -->|Consecutive unhealthy threshold| Limit{Within retry limit?}
+    Limit -->|Yes| Restart[Wait backoff, restart]
+    Restart --> Grace
+    Limit -->|No| Hold[Wait for attempts to age out]
+    Check -->|Healthy, degraded, or starting| Check
 ```
 
-1. **Startup gate** - Monitoring waits until DUMB startup is `ready` or `degraded`
-2. **Grace period** - Each service receives its configured post-start grace
-3. **Health check** - DUMB verifies the process, configured ports, and—where a
-   safe local endpoint exists—the application itself
-4. **Unhealthy detection** - Multiple consecutive failures trigger action
-5. **Restart attempt** - Service is stopped and restarted
-6. **Recovery verification** - Success is recorded only after health checks pass
-7. **Repeat** - Continue monitoring after restart
-
----
+DUMB checks the tracked process, configured ports, and an allowlisted read-only application endpoint where available. Monitoring pauses while the stack is starting. After a restart, DUMB records success only when health checks pass.
 
 ## Health states and application probes
 
-DUMB reports four application health states:
+| State | Meaning | Restart behavior |
+| --- | --- | --- |
+| Healthy | Process, ports, and applicable probe passed | Reset consecutive failures |
+| Degraded | Reachable, with a warning or an unsupported/protected optional probe | Keep running; show the reason |
+| Starting | Application reports initialization or migration | Wait without counting a failure |
+| Unhealthy | Process/port failure or a restart-relevant application failure | Count toward the threshold |
 
-| State | Meaning | Auto-restart behavior |
-|-------|---------|-----------------------|
-| **Healthy** | Process, ports, and application probe passed | Reset the consecutive-failure counter |
-| **Degraded** | The application is reachable but reports a warning, or an optional probe is unsupported/protected | Keep the service running and show the reason |
-| **Starting** | The application explicitly reports initialization or migration work | Keep waiting; do not count it as an Auto-restart failure |
-| **Unhealthy** | The process/port failed or the application endpoint reports a real failure | Count toward `unhealthy_threshold` |
+Current application probes include InfiniDysk `/health`, Servarr `/ping`, Jellyfin `/health`, Emby ping, Plex `/identity`, Seerr status, TPA health, PostgreSQL `pg_isready`, pgAdmin ping, and rclone's local RC version endpoint when enabled. Unknown services retain process/port checks.
 
-Application probes are bounded, read-only, loopback requests cached briefly by
-the backend. Current probes include:
+Indexer/provider warnings, missing articles, and content-health failures are not restart signals. Restarting a healthy application does not usually repair those conditions. InfiniDysk's migration response, `503 {"status":"migrating"}`, is treated as Starting rather than a restart failure.
 
-- InfiniDysk backend `/health`
-- Servarr `/ping` for Sonarr, Radarr, Lidarr, Prowlarr, and Whisparr
-- Jellyfin `/health`, Emby application ping, and Plex `/identity`
-- Seerr status and Traefik Proxy Admin health
-- PostgreSQL `pg_isready` and pgAdmin ping
-- rclone's local RC version endpoint when RC is enabled
-
-Services without a known safe application endpoint retain process and port
-checks. DUMB deliberately does not use content health, missing articles,
-indexer/provider warnings, or other external-integration checks as restart
-signals. Those conditions may require operator action, but restarting a healthy
-application usually does not fix them and can create a restart loop.
-
-For InfiniDysk specifically, the maintained fork can keep its backend port open
-during a blocking database migration while `/health` returns
-`503 {"status":"migrating"}`. DUMB reports this as **Starting**, so stack
-readiness waits for the real backend without repeatedly restarting a legitimate
-migration.
-
----
+<details class="geek-details" markdown="1">
+<summary>Technical details: restart JSON and field reference</summary>
 
 ## Configuration
 
-Auto-restart is configured globally in `dumb.auto_restart`:
+Set defaults under `dumb.auto_restart`:
 
 ```json
-"dumb": {
-  "auto_restart": {
-    "enabled": false,
-    "restart_on_unhealthy": true,
-    "healthcheck_interval": 30,
-    "unhealthy_threshold": 3,
-    "max_restarts": 3,
-    "window_seconds": 300,
-    "backoff_seconds": [5, 15, 45, 120],
-    "grace_period_seconds": 30,
-    "services": []
+{
+  "dumb": {
+    "auto_restart": {
+      "enabled": true,
+      "restart_on_unhealthy": true,
+      "healthcheck_interval": 30,
+      "unhealthy_threshold": 3,
+      "max_restarts": 3,
+      "window_seconds": 300,
+      "backoff_seconds": [5, 15, 45, 120],
+      "grace_period_seconds": 30,
+      "services": [
+        {
+          "process_name": "Riven Backend",
+          "enabled": true,
+          "grace_period_seconds": 60
+        }
+      ]
+    }
   }
 }
 ```
 
-### Configuration options
+This example enables monitoring for Riven Backend. The shipped defaults have `enabled: false` and `services: []`.
 
-| Option | Default | Description |
-|--------|---------|-------------|
-| `enabled` | `false` | Enable auto-restart globally |
-| `restart_on_unhealthy` | `true` | Restart when health checks fail |
-| `healthcheck_interval` | `30` | Seconds between health checks |
-| `unhealthy_threshold` | `3` | Consecutive failures before restart |
-| `max_restarts` | `3` | Maximum restarts within the window |
-| `window_seconds` | `300` | Time window in seconds |
-| `backoff_seconds` | `[5, 15, 45, 120]` | Backoff delays between restarts |
-| `grace_period_seconds` | `30` | Seconds to wait after stack readiness or a later service launch before health checks |
-| `services` | `[]` | Limit auto-restart to these process names |
+| Field | Shipped default | Meaning |
+| --- | --- | --- |
+| `enabled` | `false` | Global switch |
+| `restart_on_unhealthy` | `true` | Allow unhealthy checks to trigger a restart |
+| `healthcheck_interval` | `30` | Seconds between checks |
+| `unhealthy_threshold` | `3` | Consecutive failures before retry |
+| `max_restarts` | `3` | Attempts allowed within the rolling window |
+| `window_seconds` | `300` | Length of that window in seconds |
+| `backoff_seconds` | `[5, 15, 45, 120]` | Explicit delays between attempts |
+| `grace_period_seconds` | `30` | Wait after stack readiness or a later launch |
+| `services` | `[]` | Policy objects containing an exact `process_name` |
 
----
+Use process names from `GET /process/processes`, not guessed display labels. There is no separate `health_check` configuration object.
+
+</details>
 
 ## Backoff schedule
 
-To prevent rapid restart loops, DUMB selects delays from the configured
-`backoff_seconds` list:
-
-| Attempt | Delay |
-|---------|-------|
-| 1 | 5 seconds |
-| 2 | 15 seconds |
-| 3 | 45 seconds |
-| 4+ | 120 seconds |
-
-This is an explicit list, not a calculated multiplier. You can replace it with
-any ordered list of non-negative delays. Attempts beyond the list use its last
-value.
-
----
+The delay comes from the configured list, not an exponential multiplier. The example uses 5, 15, 45, then 120 seconds for later attempts. Any attempt beyond the list uses its last entry.
 
 ## Restart limits
 
-Services have a maximum number of restart attempts within a time window:
+The default permits three attempts within a rolling five-minute window. Attempts age out automatically. A manual start re-enables monitoring after an intentional stop but does not erase the recent-attempt record.
 
-- **Default**: 3 restart attempts in a rolling 300-second window
-- After reaching the limit, additional automatic attempts are suppressed while
-  those attempts remain inside the window
-- Old attempts age out of the rolling window automatically
-- A manual start re-enables monitoring after an intentional stop, but does not
-  erase the recorded rolling-window attempts
-
-!!! warning "Restart limit reached"
-
-    If a service keeps failing, investigate the root cause rather than increasing limits. Check logs for error messages.
-
----
+A slow application can receive a longer per-service grace period without delaying other services. Choose it from observed startup time. The stack's readiness deadline is separate; see [Startup lifecycle](startup-lifecycle.md).
 
 ## Health checks
 
-For each explicitly selected service, DUMB verifies:
+Checks reject missing/zombie PIDs and test the service's configured `port`, `frontend_port`, `backend_port`, and `webdav_port`, including corresponding environment values. Incorrect configured ports can therefore create false failures.
 
-- the tracked PID still exists and is not a zombie; and
-- each configured `port`, `frontend_port`, `backend_port`, or `webdav_port`
-  (including corresponding values in `env`) accepts a TCP connection.
-
-There is no standalone `health_check` object in the current config. Add a
-service to `dumb.auto_restart.services`; its entry may inherit all global values
-or override selected policy fields:
-
-```json
-"services": [
-  {
-    "process_name": "Riven Backend",
-    "enabled": true,
-    "unhealthy_threshold": 4,
-    "grace_period_seconds": 60
-  }
-]
-```
-
-An empty `services` list monitors no services even when the global `enabled`
-flag is true. Use exact process names from `GET /process/processes` or select
-services in the frontend panel.
-
-Slow applications can use a longer service override without delaying checks
-for the rest of the stack. A 300-second override is a reasonable starting point
-for a Seerr instance that performs migrations or a first-run frontend build.
-The stack-wide readiness deadline is configured separately under
-`dumb.startup`; see [Startup lifecycle](startup-lifecycle.md).
-
----
+A longer grace period helps a known slow startup. It does not fix a wrong port, failed database connection, or broken mount.
 
 ## Monitoring restart status
 
-### Dashboard indicators
-
-The dashboard shows auto-restart status for each service:
-
-- **Restart count** - Number of restarts in current window
-- **Last restart** - Timestamp of most recent restart
-- **Health status** - Current healthy/unhealthy state
-
-### API endpoints
-
-Query restart status via the API:
+Hover the dashboard or service-page health/restart indicator for its current reason. For API access:
 
 ```bash
-# Get service status including restart info
 curl 'http://localhost:3005/api/process/service-status?process_name=Riven%20Backend&include_health=true'
 ```
 
-Response includes:
+Add an Authorization header when DUMB authentication is enabled. The response includes `health_status`, `health_reason`, `health_details`, and a `restart` object:
 
-```json
-{
-  "process_name": "Riven Backend",
-  "status": "running",
-  "healthy": true,
-  "health_status": "healthy",
-  "health_reason": null,
-  "health_details": {
-    "probe": "process_and_ports",
-    "ports": [8080]
-  },
-  "restart": {
-    "restart_attempts": 2,
-    "restart_successes": 2,
-    "restart_failures": 0,
-    "recent_restart_attempts": 2,
-    "pending": false,
-    "next_restart_time": null,
-    "disabled": false,
-    "last_restart_time": 1736937000.0,
-    "last_failure_reason": null,
-    "last_exit_time": 1736936995.0,
-    "last_exit_reason": "Port 127.0.0.1:8080 not responding",
-    "unhealthy_count": 0,
-    "unhealthy_threshold": 3
-  }
-}
-```
+| Restart field | Meaning |
+| --- | --- |
+| `restart_attempts`, `restart_successes`, `restart_failures` | Recorded outcomes |
+| `recent_restart_attempts` | Attempts still in the rolling window |
+| `pending`, `next_restart_time` | Scheduled retry state |
+| `last_restart_time`, `last_exit_time`, `last_exit_reason` | Recent lifecycle evidence |
+| `unhealthy_count`, `unhealthy_threshold` | Consecutive failure count and policy |
+| `disabled` | Whether monitoring is disabled for this process |
 
-### WebSocket updates
-
-Real-time restart events via `/ws/status`:
-
-```json
-{
-  "type": "status",
-  "processes": [
-    {
-      "process_name": "Riven Backend",
-      "status": "running",
-      "healthy": true,
-      "restart": {
-        "restart_attempts": 2,
-        "restart_successes": 2,
-        "restart_failures": 0,
-        "recent_restart_attempts": 2,
-        "pending": false,
-        "next_restart_time": null,
-        "disabled": false,
-        "last_restart_time": 1736937000.0,
-        "last_failure_reason": null,
-        "last_exit_time": 1736936995.0,
-        "last_exit_reason": "Port 127.0.0.1:8080 not responding",
-        "unhealthy_count": 0,
-        "unhealthy_threshold": 3
-      }
-    }
-  ]
-}
-```
-
----
+Live process updates arrive through [`/ws/status`](../api/websocket.md). [Notifications](notifications.md) can deliver success/failure events; the destination's severity filter still applies.
 
 ## Disabling auto-restart
 
-### Per-service
-
-Remove a service from the monitored list, or retain an explicit disabled entry:
-
-```json
-"services": [
-  {
-    "process_name": "Riven Backend",
-    "enabled": false
-  }
-]
-```
-
-### Globally
-
-To disable auto-restart for all services, set `dumb.auto_restart.enabled` to
-`false`, or use the frontend panel. Per-service entries may remain stored for a
-later re-enable.
-
----
-
-## Best practices
-
-### Appropriate thresholds
-
-- **Critical services** (Plex, rclone): Lower threshold (2-3)
-- **Background services** (Zilean, NeutArr): Higher threshold (3-5)
-
-### Grace periods
-
-- **Fast-starting services**: 10-15 seconds
-- **Database-dependent services**: 30-60 seconds
-- **Services with startup tasks**: 60-120 seconds
-
-### Monitoring
-
-- Review restart counts regularly
-- Investigate services with frequent restarts
-- Check logs after restart events
-
----
+Remove a service from `services`, or retain an entry with `"enabled": false`. Disable all monitoring with `dumb.auto_restart.enabled: false`; saved service entries can remain for later use.
 
 ## Troubleshooting
 
-### Service keeps restarting
-
-1. Check service logs for errors
-2. Verify configuration is valid
-3. Ensure dependencies are running
-4. Check for port conflicts
-
-### Auto-restart not working
-
-1. Verify `auto_restart.enabled` is `true`
-2. Confirm the exact process name is present and enabled in `auto_restart.services`
-3. Check whether the restart limit was reached
-4. Confirm the configured service port is accurate and reachable on container loopback
-
-### Restart delay too long
-
-- Shorten the values in `backoff_seconds`
-- Review `max_restarts` and `window_seconds` before changing limits
-- Fix the underlying health failure instead of using a zero-delay retry loop
-
----
+| Symptom | Check first |
+| --- | --- |
+| Repeated restarts | Actual service error, dependency health, mounts, and configured ports |
+| No automatic restart | Global switch, exact enabled service entry, startup/grace state, and rolling-window limit |
+| Long wait before retry | Current backoff entry and recent attempts; verify the underlying failure before shortening delays |
 
 ## Related pages
 
-- [Dashboard](../frontend/dashboard.md) - View restart status
-- [Process Management API](../api/process.md) - API controls
-- [WebSocket API](../api/websocket.md) - Real-time updates
+- [Dashboard](../frontend/dashboard.md)
+- [Process management API](../api/process.md)
+- [Startup lifecycle](startup-lifecycle.md)

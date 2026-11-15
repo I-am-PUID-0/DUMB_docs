@@ -6,16 +6,39 @@ icon: lucide/tv
 
 # Plex Media Server (Core Service)
 
-**Plex Media Server** serves as the centralized media host for the DUMB ecosystem. It enables playback of collected media through a wide range of client devices and integrates seamlessly with DUMB core orchestrators like Riven, CLI Debrid, and Decypharr.
+Plex organizes and streams media from local folders or mounted remote content. DUMB manages its process and persistent data; you choose the Plex account, library paths, sharing policy, and transcoding settings.
 
 ---
 
+## How to Start
+
+1. Select Plex during onboarding. For a fresh server on the release backend, provide its short-lived claim token immediately before startup.
+2. Open Plex from the DUMB service page and confirm the intended Plex account owns the server.
+3. Add library folders using the paths visible inside DUMB. Keep automatic trash removal disabled while validating a remote mount.
+4. Test playback and seeking before setting up sharing, remote access, or transcoding.
+
+A Plex claim token authorizes a server claim. A Plex API token lets configured integrations call that server; neither token grants a Plex Pass subscription or its features.
+
+### Utilize the onboarding process
+
+You can reopen onboarding from DUMB Settings. Review account authorization and selected library paths rather than recreating an existing server.
+
+### Manually
+
+<details class="geek-details" markdown="1">
+<summary>Technical details: manual Plex startup</summary>
+
+For manual configuration, review the `plex` settings below. A fresh instance needs a valid `plex_claim` immediately before startup. Start Plex from its DUMB service page. A deliberately published native port also allows `http://<host>:32400/web` access.
+
+</details>
+
+<!-- dev:start -->
 ## Setup checklist and remaining work
 
 Review account/claim authorization separately from libraries. The checklist can create or reuse explicitly selected libraries when authorized, preserving existing libraries and paths. Sharing, remote access, host GPU mapping and real playback remain deliberate decisions/checks.
 
 Requires the backend setup-arrangement capability. See [Setup checklist and automation](../../features/setup-checklist.md) for retained tasks, coverage and safe retries.
-
+<!-- dev:end -->
 
 ## Service Relationships
 
@@ -28,9 +51,13 @@ Requires the backend setup-arrangement capability. See [Setup checklist and auto
 
 ---
 
+<details class="geek-details" markdown="1">
+<summary>Technical details: configuration reference</summary>
+
 ## Configuration in `dumb_config.json`
 
 ```json
+{
 "plex": {
   "enabled": false,
   "process_name": "Plex Media Server",
@@ -71,9 +98,10 @@ Requires the backend setup-arrangement capability. See [Setup checklist and auto
   "command": [],
   "env": {}
 }
+}
 ```
 
-### Key Configuration Fields
+### Key configuration fields { #key-configuration-fields }
 
 * `enabled`: Toggle Plex Media Server on or off.
 * `plex_claim`: Plex claim token for initial server registration.
@@ -87,11 +115,13 @@ Requires the backend setup-arrangement capability. See [Setup checklist and auto
 
 ---
 
+</details>
+
 ## Setup & Behavior
 
 ### Media Library Protection
 
-The Plex service page includes **Library Protection**. Existing configured policies retain their settings; a new policy created by arrangement setup remains disabled until its mount scope and enablement are reviewed. When enabled, DUMB uses its existing Plex token to check sessions, inhibit scans before rclone/InfiniDysk/Decypharr/Zurg/AltMount/CLI Debrid maintenance, and restore Plex after the dependency stabilizes. The same panel exposes live Plex library preferences, including **Empty trash automatically after every scan**; keep that option off for remote or virtual libraries.
+The Plex service page includes **Library Protection**. Review the configured mount scope and policy. When enabled, DUMB uses its existing Plex token to check sessions, inhibit scans before rclone/InfiniDysk/Decypharr/Zurg/AltMount/CLI Debrid maintenance, and restore Plex after the dependency stabilizes. The same panel exposes live Plex library preferences, including **Empty trash automatically after every scan**; keep that option off for remote or virtual libraries.
 
 See [Media Library Protection](../../features/media-library-protection.md) for the override choices, recommended Plex settings, recovery journal, and limitations.
 
@@ -178,11 +208,12 @@ DUMB/data/plex/Plex Media Server/Plug-in Support/Databases/...
 Update the `dumb_config.json` to ensure the `config_dir` is `/plex`, which is the internal path mounted inside the container.
 
 ```json
-"plex": {
-  "enabled": true,
-  "config_dir": "/plex",
-  "config_file": "/plex/Plex Media Server/Preferences.xml",
-  ...
+{
+  "plex": {
+    "enabled": true,
+    "config_dir": "/plex",
+    "config_file": "/plex/Plex Media Server/Preferences.xml"
+  }
 }
 ```
 
@@ -266,6 +297,7 @@ Once complete, your DUMB-based Plex server should fully replicate your prior set
 
 --- 
 
+<!-- dev:start -->
 ## Claim authorization during setup
 
 With the arrangement checklist, start Plex first and use its retained account task when a fresh claim is needed. Claim tokens are short-lived; submit one when the server is ready, then retry that account task without reinstalling the arrangement. An already claimed Plex server keeps its account.
@@ -273,27 +305,7 @@ With the arrangement checklist, start Plex first and use its retained account ta
 The checklist tracks account authorization, library configuration and verified connection checks separately. A successful account claim does not verify playback, sharing or remote access. See [Setup Checklist and Automation](../../features/setup-checklist.md).
 
 ---
-
-## How to Start
-
-### Utilize the onboarding process
-
-!!! tip "The onboarding process can be re-launched from the DUMB Frontend settings menu"
-
-  1. Start Plex through onboarding. With the arrangement checklist, finish any fresh claim in the retained account task after the server is ready. Older backends can accept the initial Plex Claim Token in service options.
-  2. Onboarding will optionally prompt for your Plex Token. If provided, this enables:
-
-    * Enhanced functionality for Plex Pass members (e.g., downloads)
-    * Preconfigured integration with other core services like Riven and CLI Debrid
-
-
-### Manually
-  1. Ensure the `plex` block is properly configured in `dumb_config.json`.
-  2. When starting fresh without the arrangement checklist, provide a short-lived `plex_claim` token immediately before startup.
-  3. Start the container with DUMB orchestration, or manually start the Plex service.
-  4. Access via: `http://<host>:32400/web`
-
----
+<!-- dev:end -->
 
 ## Hardware Transcoding
 
@@ -444,6 +456,8 @@ Plex is designed to serve content collected and maintained by core DUMB services
 
 
 ## Access
+
+Open the service from DUMB's **Embedded UI** tab when available. The native URLs below require the corresponding Docker host port to be published; use the port saved in your running configuration.
 
 * URL: `http://<host>:32400/web`
 * Credentials: Managed through Plex.tv account

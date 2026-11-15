@@ -1,27 +1,26 @@
 ---
 title: Zilean FAQ
+description: Diagnose Zilean import logs, database setup and startup issues in DUMB, and check whether the indexer is ready for your media workflow.
 icon: lucide/book-open
 ---
 
 # Zilean FAQ
 
-Below are some common questions and solutions related to Zilean when used with **DUMB**.
 
 ---
 
-## Frequently Asked Questions (FAQ)
 
-### Why is Zilean spamming my logs!?!
+## Why does Zilean produce so many import logs? { #why-is-zilean-spamming-my-logs }
 
-This is normal for a first-time run of Zilean. 
+An initial hash-list import can be busy. Progress messages are expected; repeated exceptions or failed PostgreSQL connections need investigation.
 
 Zilean parses all the [Debrid Media Manager](https://github.com/debridmediamanager/debrid-media-manager) (DMM) hash lists and saves them into the PostgreSQL database. 
 
 Then, it will run a scheduled update to add/remove any new hash content. 
 
-!!! note "Depending on the system, the first-time run can take hours to days."
+Import time depends on the source lists, database performance, and host. Check that progress continues rather than treating every long run as healthy.
 
-### Why does `dotnet restore` say that no .NET SDKs were found?
+## Why does `dotnet restore` say that no .NET SDKs were found?
 
 The production DUMB image intentionally contains the .NET runtime without the
 full build SDK. The prebuilt Zilean service does not need an SDK to run. DUMB

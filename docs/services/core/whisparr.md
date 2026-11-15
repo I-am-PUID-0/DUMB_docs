@@ -10,6 +10,14 @@ icon: lucide/eye
 
 ---
 
+## First start
+
+1. Choose Whisparr v2 or v3 (Eros) in onboarding. They use different library models and databases.
+2. Open Whisparr and review its indexers, download client, root folder, and profiles.
+3. Add a small intended test item and check that the selected workflow imports it correctly.
+
+Read [Choosing v2 or v3](#choosing-v2-or-v3-eros) before changing an existing installation's version. A version selection does not convert its library.
+
 ## Service Relationships
 
 | Classification | Role                               |
@@ -21,9 +29,13 @@ icon: lucide/eye
 
 ---
 
+<details class="geek-details" markdown="1">
+<summary>Technical details: configuration reference</summary>
+
 ## Configuration in `dumb_config.json`
 
 ```json
+{
 "whisparr": {
   "instances": {
     "Default": {
@@ -59,11 +71,12 @@ icon: lucide/eye
     }
   }
 }
+}
 ```
 
-### Key Configuration Fields
+### Key configuration fields { #key-configuration-fields }
 
-* `whisparr_version`: Choose `v2` or `v3` (Eros), or leave blank to detect and preserve the existing version. DUMB remembers a separate data and release profile for each version when you switch. A new instance with no existing version defaults to v2.
+* `whisparr_version`: Choose `v2` or `v3` (Eros), or leave blank to detect and preserve the existing version. A new instance with no existing version defaults to v2; review the version-specific guidance below before switching.
 * `core_service`: Set to `decypharr`, `infinidysk`, `altmount`, or a list of workflow keys to enable DUMB integration.
 * `use_neutarr`: Opt this instance into NeutArr automation.
 * `postgres_enabled`: Opt this instance into DUMB-managed PostgreSQL config. SQLite is the default; set this to `true` only when you want Whisparr to use PostgreSQL.
@@ -74,11 +87,16 @@ icon: lucide/eye
 * `release_version_enabled` / `release_version`: Select a GitHub release using `latest`, `prerelease`, or an exact tag. When disabled, an unpinned instance still installs the latest official release for its selected version.
 * `branch_enabled` / `branch`: Select an update channel: `v2` or `v2-develop` for v2, and `eros` or `eros-develop` for v3. These select packaged releases; Whisparr source builds are not supported.
 * `commit_sha`: Leave blank. Installing Whisparr from a specific source commit is not supported.
-* `clear_on_update` / `exclude_dirs`: Generic install-cleanup settings. Whisparr stages a replacement of its managed binary directory; keep `config_dir` separate from that directory. These fields do not convert databases or control version profiles.
-* `config_dir`, `config_file`, `log_file`: Paths for the selected version's config and logs. DUMB updates them together when you switch profiles.
+* `clear_on_update` / `exclude_dirs`: Generic install-cleanup settings. Whisparr stages a replacement of its managed binary directory; keep `config_dir` separate from that directory. These fields do not convert databases.
+* `config_dir`, `config_file`, `log_file`: Paths for configuration and logs. Keep different version families in separate data directories.
+<!-- dev:start -->
 * `whisparr_profiles`: Saved v2 and v3 data paths, runtime paths, and release choices managed by DUMB. You normally do not need to edit this field.
+<!-- dev:end -->
+
 
 ---
+
+</details>
 
 ## Choosing v2 or v3 (Eros)
 
@@ -91,6 +109,7 @@ Leaving the setting blank preserves the version indicated by the existing databa
 | v2 | [Whisparr/Whisparr](https://github.com/Whisparr/Whisparr/releases) | `v2` / `v2-develop` | `whisparr2.db`; older installs may use `whisparr.db` |
 | v3 (Eros) | [Whisparr/Whisparr-Eros](https://github.com/Whisparr/Whisparr-Eros/releases) | `eros` / `eros-develop` | `whisparr3.db` |
 
+<!-- dev:start -->
 Both versions use `logs.db` for SQLite logs. Each saved version profile has its own data directory and managed binary directory, so its config, logs and library stay separate.
 
 ### Switching versions on the same instance
@@ -120,6 +139,10 @@ If an older configuration placed both v2 and v3 databases in the same data direc
 When you later select the other version, DUMB can prepare its own profile from the matching original database. After a profile is initialized, returning to it reuses that saved profile rather than recopying the original library.
 
 DUMB stops with an explanation if it cannot safely identify or copy the library, including directories containing only recovery files, conflicting legacy/current v2 filenames, invalid SQLite databases, or data already occupying a proposed profile directory. Preserve those files and resolve the reported ambiguity before retrying.
+<!-- dev:end -->
+<!-- release:start -->
+Both versions use `logs.db` for SQLite logs. DUMB 2.23.0 keeps each instance's binary separate and leaves its configured data directory in place. To use the other version, create a separate instance with its own `config_dir` and port. DUMB refuses a selected version that conflicts with existing data or a directory containing both families; it does not convert or rename the databases.
+<!-- release:end -->
 
 !!! warning "Legacy v2 database filenames require a separate migration"
     Current v2 releases (2.2 and newer) open `whisparr2.db`; they do not automatically discover or rename a legacy `whisparr.db`. Starting a newer binary against only the legacy file could create an empty library. See the [upstream v2 database path](https://github.com/Whisparr/Whisparr/blob/v2.2.0-release.231/src/NzbDrone.Common/Extensions/PathExtensions.cs).
@@ -131,6 +154,7 @@ DUMB stops with an explanation if it cannot safely identify or copy the library,
 To run both versions at the same time, create a separate instance with its own data directory and port. For example, a separate v3 instance using the official stable releases can use:
 
 ```json
+{
 "whisparr": {
   "instances": {
     "Eros": {
@@ -146,6 +170,7 @@ To run both versions at the same time, create a separate instance with its own d
       "log_file": "/whisparr/eros/logs/whisparr.txt"
     }
   }
+}
 }
 ```
 
@@ -206,6 +231,8 @@ Updates replace the managed binary directory after staging the selected release.
 ---
 
 ## Accessing the UI
+
+Open the service from DUMB's **Embedded UI** tab when available. The native URLs below require the corresponding Docker host port to be published; use the port saved in your running configuration.
 
 * Navigate to: `http://<host>:6969`
 

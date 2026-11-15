@@ -1,5 +1,6 @@
 ---
 title: Notifications API
+description: Configure DUMB notification destinations, discover supported events, test or send messages, and inspect delivery history through the API.
 icon: lucide/bell
 ---
 

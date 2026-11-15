@@ -1,102 +1,37 @@
 ---
-
-title: About
-description: Learn what Distributed Unlimited Media Bridge is, why it combines media automation services in one Docker platform, and how the project is maintained.
+title: About DUMB
+description: Learn what DUMB manages, how its bundled services fit together, and where to find source code, support, and contribution information.
 icon: lucide/info
-hide:
-  - navigation
-
 ---
 
-## About DUMB (Distributed Unlimited Media Bridge)
+# About DUMB
 
-**Distributed Unlimited Media Bridge (DUMB)** is an all-in-one, containerized platform for managing and automating media workflows using premium debrid services (like Real-Debrid) and Usenet. Whether you're looking to automate downloads, organize libraries, mount remote content, or just reduce manual steps, DUMB aims to unify it all into a seamless experience.
+**Distributed Unlimited Media Bridge (DUMB)** installs and manages media applications in one container. It supports Debrid and Usenet workflows, Arr applications, media servers, request tools, and supporting databases and mounts.
 
----
+The Python backend coordinates installation, configuration, dependencies, and service processes. The [dmbdb dashboard](frontend/index.md) provides onboarding, configuration, logs, metrics, updates, and embedded application UIs.
 
-## Mission
+## Why put the services together?
 
-DUMB was created with a single goal:
+Running a workflow and its media server in the same container gives them a shared view of library paths and FUSE mounts. It reduces the host mount configuration needed for playback. External Arr applications and media servers are also supported, but their paths, mount propagation, and permissions need separate planning.
 
-**Bridge the gap between debrid or Usenet services and traditional media server ecosystems like Plex, Jellyfin, and Emby — with maximum automation and minimal configuration.**
+DUMB coordinates upstream applications rather than replacing them. You still choose providers, configure application accounts and libraries, and review changes that affect your data. Automatic setup covers supported integrations; account and library tasks still need review.
 
-By directly integrating the **media server itself** (e.g. Plex) within the DUMB container, the platform overcomes long-standing issues like broken bind mount propagation, sync delays, and external scan conflicts common in multi-container setups.
+<!-- dev:start -->
+The retained [setup checklist](features/setup-checklist.md) shows automatic, manual, and unverified integration work.
+<!-- dev:end -->
 
----
+## Project resources
 
-## What Makes DUMB Unique?
+| Resource | Where to go |
+|---|---|
+| Backend and container source | [I-am-PUID-0/DUMB](https://github.com/I-am-PUID-0/DUMB) |
+| Dashboard source | [nicocapalbo/dmbdb](https://github.com/nicocapalbo/dmbdb) |
+| Documentation source | [I-am-PUID-0/DUMB_docs](https://github.com/I-am-PUID-0/DUMB_docs) |
+| Container images | [Docker Hub](https://hub.docker.com/r/iampuid0/dumb) |
+| Bugs and feature requests | [GitHub issues](https://github.com/I-am-PUID-0/DUMB/issues) |
+| Community support | [Discord](https://discord.gg/8dqKUBtbp5) |
+| Financial support | [GitHub Sponsors](https://github.com/sponsors/I-am-PUID-0) |
 
-Unlike other solutions that focus on one piece of the puzzle, **DUMB integrates every step** of the media pipeline:
+DUMB and dmbdb are open source under GPL-3.0. Each bundled application retains its own license and upstream project.
 
-*  *Embedded media servers* — Plex, Jellyfin, and Emby run inside the same container, ensuring seamless access to mounted content and full internal control
-*  *Service coordination* — via the internal DUMB API and real-time config management
-*  *Automated acquisition* — with Riven, CLI Debrid, and Decypharr orchestration plus InfiniDysk and AltMount Usenet workflows
-*  *Cloud storage mounting* — through rclone mounts direct to debrid (e.g., Real-Debrid WebDAV) or utilizing Zurg's WebDAV
-*  *Arr automation* — Sonarr, Radarr, Lidarr, and Whisparr handle queues, renaming, and library organization
-*  *Library management* — using symlinks, metadata enrichment, and optional server updates
-*  *Metadata caching* — with Zilean to reduce latency and boost scraping efficiency
-*  *Visual control* — via the DUMB Frontend for onboarding, live logs, settings, embedded service UIs, and monitoring
-*  *Integrated access layer* — DUMB-owned Traefik embedded UI routes, optional Traefik Proxy Admin user routes, and optional Cloudflared ingress through the same Traefik entrypoint
-
-All services are configured through a centralized file (`dumb_config.json`) and can be dynamically updated at runtime via the DUMB Frontend.
-
-!!! info "Combined workflows"
-
-    You can attach a single Arr instance to multiple workflows by setting
-    `core_service` to a list (for example `["decypharr", "infinidysk", "altmount"]`).
-    Combinations that include Decypharr plus InfiniDysk or AltMount use
-    `/mnt/debrid/combined_symlinks/<slug>` for the Decypharr-managed Arr root.
-    AltMount's own import strategy and Arr path still require operator review.
-
----
-
-## Architecture at a Glance
-
-DUMB is built using a **modular, microservices** architecture, with the following components:
-
-| Service                  | Description                                                                                  |
-| ------------------------ | -------------------------------------------------------------------------------------------- |
-| **DUMB API**             | Core controller and coordination hub                                                         |
-| **DUMB Frontend**        | Graphical interface for managing services, configs, and logs                                 |
-| **Plex Media Server**    | First-class embedded media server for direct playback of collected content                   |
-| **Riven**                | Debrid content orchestration (Plex, Trakt, Seerr, lists)                                     |
-| **CLI Debrid**           | Debrid content orchestration (lists, watchlists, upgrades)                                   |
-| **Decypharr**            | Debrid and native Usenet workflow for Arr download clients and symlink libraries             |
-| **InfiniDysk**               | Usenet WebDAV gateway and Arr download-client integration                                    |
-| **Prowlarr**             | Indexer management and sync to Arr services                                                  |
-| **Sonarr/Radarr/Lidarr/Whisparr** | Arr automation for movies, TV, music, and adult content                             |
-| **NeutArr**              | Backlog search automation and quality upgrades                                               |
-| **Zurg**                 | Handles Real-Debrid content interaction, file repair, and directory structuring              |
-| **rclone**               | Mounts cloud storage into the local container for access by your media server                |
-| **Zilean**               | Caches metadata and file hash lookups for performance                                        |
-| **PostgreSQL / pgAdmin** | Internal databases and optional management UI                                                |
-| **Traefik / TPA / Cloudflared** | Embedded service UI routing, user-managed reverse proxy routes, and optional Cloudflare Tunnel ingress |
-
-You can explore how these services connect in the [Services Overview](services/index.md) page.
-
----
-
-## Community-Driven Development
-
-DUMB is fully open-source and **community-powered**. While development is led by a single maintainer, contributions of all kinds are welcome — not just code!
-
-You can help by:
-
-* ⭐ Starring the [GitHub repo](https://github.com/I-am-PUID-0/DUMB)
-*  Boosting or participating in the [Discord community](https://discord.gg/8dqKUBtbp5)
-*  Submitting feedback, bug reports, or pull requests
-*  Helping others with questions or documentation improvements
-*  Sponsoring the Dev through [GitHub Sponsors](https://github.com/sponsors/I-am-PUID-0)
-
-See the [Contributing Guide](contributing.md) for more details.
-
----
-
-## Learn More
-
-*  [Deployment Options](deployment/index.md)
-*  [Service Configuration](services/index.md)
-*  [Features](features/index.md)
-*  [Frontend](frontend/index.md)
-
----
+For a first installation, [start here](getting-started/index.md). To help improve the project, see [Contributing](contributing.md).

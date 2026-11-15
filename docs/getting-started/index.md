@@ -1,79 +1,61 @@
 ---
-title: Introduction
-description: Learn how DUMB combines Debrid, Usenet, Arr automation, Plex, Jellyfin, Emby, request tools, and service management in one Docker platform.
+title: Start here
+description: Choose a DUMB workflow, understand what runs in the container, and follow the shortest path from deployment to a working media library.
 icon: lucide/rocket
 ---
 
-# Getting Started with DUMB
+# Start here
 
-Welcome to **DUMB – Distributed Unlimited Media Bridge**: a unified media management and automation platform designed for users who want to streamline content discovery, acquisition, organization, playback, and service access using Debrid, Usenet, Arrs, media servers, request tools, and embedded service UIs.
+DUMB (Distributed Unlimited Media Bridge) runs your chosen media services in one container and gives you a dashboard to configure, monitor, and update them. You can use Debrid, Usenet, or both, with a media server inside DUMB or on another machine.
 
----
+You choose the services. You do not need to enable the whole catalog.
 
-## What Is DUMB?
+Use the documentation channel that matches your image: **Latest release** for stable images or **Development** for `dev`. [How documentation versions work](../reference/doc-versions.md).
 
-DUMB combines multiple backend services into a single containerized system to provide:
+## Choose a workflow
 
-- **Search and discovery** using Trakt, Plex watchlists, Seerr, Pulsarr, and other list/request sources.
-- **Debrid and Usenet workflows** through services such as Riven, CLI Debrid, Decypharr, InfiniDysk, and AltMount.
-- **Arr automation** with Sonarr, Radarr, Lidarr, Whisparr, Prowlarr, NeutArr, and Profilarr.
-- **Remote mounting and symlink libraries** using rclone, Zurg, and DUMB-managed path conventions.
-- **Embedded media servers** with Plex, Jellyfin, and Emby inside the same container.
-- **Optional Stremio aggregation** through AIOStreams with supported Debrid, Usenet, Prowlarr, Zilean, InfiniDysk, and AltMount integrations.
-- **Web-based dashboards** for onboarding, service control, logs, metrics, configuration, updates, and embedded service UIs.
-- **Optional access routing** through DUMB Traefik, Traefik Proxy Admin, and Cloudflared.
+| What you want | Start with |
+|---|---|
+| Manage a library with Sonarr or Radarr using Debrid | [Decypharr](../services/core/decypharr.md) |
+| Manage a Usenet library with Arr applications | [InfiniDysk](../services/core/infinidysk.md) or [AltMount](../services/core/altmount.md); Decypharr also supports native Usenet |
+| Use lists, watchlists, or requests with a Debrid workflow | [Riven](../services/core/riven-backend.md) or [CLI Debrid](../services/core/cli-debrid.md) |
+| Run a media server | [Plex](../services/core/plex-media-server.md), [Jellyfin](../services/core/jellyfin.md), or [Emby](../services/core/emby.md) |
+| Aggregate sources for Stremio | [AIOStreams](../services/optional/aiostreams.md) |
+| Add tools to an existing stack | Browse the [service catalog](../services/index.md); onboarding can skip core workflow selection |
 
----
+These are starting points, not interchangeable backends. Each service has its own provider support, accounts, and library behavior. Check its guide before choosing.
 
-## Is This for You?
+## From install to first playback
 
-DUMB is ideal if you:
+1. **Prepare storage and credentials.** Read [Before you install](installation.md).
+2. **Deploy DUMB.** Choose your host in [Deployment](../deployment/index.md).
+3. **Open the dashboard.** The default address is `http://<host>:3005`.
+4. **Complete onboarding.** Select services and enter provider credentials. See [Onboarding](../frontend/onboarding.md).
+<!-- dev:start -->
+5. **Finish application setup.** Review the [setup checklist](../features/setup-checklist.md), including accounts, indexers, root folders, libraries, and any manual tasks.
+<!-- dev:end -->
+<!-- release:start -->
+5. **Finish application setup.** Configure accounts, indexers, download clients, root folders, and media-server libraries in the selected applications.
+<!-- release:end -->
+6. **Check the workflow.** Add a test item through your chosen application, confirm its import, and play it from the media server. A running process alone does not establish this.
 
-- Have a Plex, Jellyfin, or Emby server and want to auto-fill your library from Seerr requests, Trakt, Plex watchlists, MDBList, Listrr, or similar sources
-- Want a guided solution that works with Debrid, Usenet, or hybrid workflows
-- Prefer a containerized, modular deployment
-- Want real-time log viewing, auto-updates, and one-click service control
-- Want embedded access to service UIs without exposing every service port
-- Want an optional path for protected LAN/public routing through Traefik Proxy Admin and Cloudflare Tunnel
-- Don't want or know how to manually configure and deploy all the incorporated [Services](../services/index.md)
-
----
-
-## Architecture at a Glance
+## What runs where
 
 ```mermaid
 flowchart LR
-    USER([Operator]) --> FE[DUMB Frontend :3005]
-    FE --> API[DUMB API]
-    API --> ORCH[Setup + process orchestration]
-    ORCH --> CORE[Debrid / Usenet workflow]
-    ORCH --> ARR[Arr automation]
-    CORE --> LIB[(Mounts + curated libraries)]
-    ARR --> CORE
+    USER([You]) --> FE[Dashboard :3005]
+    FE --> API[DUMB controller]
+    API --> ARR[Arr applications]
+    API --> FLOW[Debrid or Usenet service]
+    ARR --> FLOW
+    FLOW --> LIB[(Mounts and library paths)]
     LIB --> MEDIA[Plex / Jellyfin / Emby]
-    REQUEST[Seerr / lists / watchlists] --> ARR
-    FE -. embedded UI .-> SVC[Managed service UIs]
+    FE -. embedded UI .-> ARR
+    FE -. embedded UI .-> FLOW
 ```
 
-DUMB coordinates the services and their configuration; each upstream service
-still owns its application-specific behavior and data. See the
-[architecture overview](../architecture/index.md) for the control, storage, and
-proxy layers.
+DUMB installs and coordinates services. Each upstream application still owns its accounts, provider behavior, database, and content decisions. The [architecture guide](../architecture/index.md) explains the boundaries.
 
-!!! note  "For details on each service, visit the [Services Overview](../services/index.md)."
+!!! tip "Using a media server outside DUMB?"
 
----
-
-## System Requirements
-
--  Docker or a compatible runtime
--  Linux (recommended) or Windows (WSL)
-- A Debrid or Usenet provider, depending on the workflow you choose
-
----
-
-## What Next?
-
-1. Head to [Installation](installation.md) to get ready.
-2. Choose your platform in [Deployment](../deployment/index.md)
-3. Learn about [Features](../features/index.md), [Services](../services/index.md), and [Configuration](../features/configuration.md)
+    Plan the shared paths before installation. An external application must see the library **and the targets of its symlinks**. FUSE submounts may also require Linux mount propagation. See [rclone and external consumers](../services/dependent/rclone.md).

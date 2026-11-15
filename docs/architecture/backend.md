@@ -1,13 +1,12 @@
 ---
 title: Backend architecture
+description: Understand how the DUMB backend owns configuration, service setup, dependency ordering, process lifecycle, health checks, and live status streams.
 icon: lucide/server
 ---
 
 # Backend architecture
 
 The DUMB backend is a FastAPI service that manages configuration, setup hooks, process lifecycle, dependency ordering, route generation, and real-time updates. It is the control plane for all managed services.
-
----
 
 ## Core components
 
@@ -26,8 +25,6 @@ The DUMB backend is a FastAPI service that manages configuration, setup hooks, p
 | Metrics | Collects system, process, filesystem, network, history, and opt-in database-health telemetry |
 | Notifications | Queues and delivers routed Apprise/webhook events when enabled |
 | AI diagnostics | Builds redacted diagnostic bundles for an optional configured model provider |
-
----
 
 ## Control plane flow
 
@@ -51,8 +48,6 @@ flowchart TD
     WS ==> UI
 ```
 
----
-
 ## Request flow
 
 ```mermaid
@@ -68,8 +63,6 @@ sequenceDiagram
     API-->>UI: WebSocket updates
 ```
 
----
-
 ## Configuration pipeline
 
 1. The API validates configuration updates.
@@ -80,8 +73,6 @@ sequenceDiagram
 !!! warning "Config ownership"
 
     The backend is the source of truth for `dumb_config.json`. Manual edits are allowed, but should be followed by a reload or restart so the process handler picks up changes.
-
----
 
 ## Service orchestration
 
@@ -105,8 +96,6 @@ Service lifecycle is centralized in the process handler, which:
 - Applies auto-update scheduling
 - Enforces shutdown ordering
 
----
-
 ## WebSocket channels
 
 The backend exposes WebSocket endpoints for:
@@ -116,8 +105,6 @@ The backend exposes WebSocket endpoints for:
 - Metrics updates
 
 These streams power the frontend’s real-time dashboard.
-
----
 
 ## Related pages
 

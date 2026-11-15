@@ -1,398 +1,174 @@
 ---
 title: Settings
+description: Find DUMB dashboard preferences, authentication settings, embedded UI controls and system information, with links to each configuration guide.
 icon: lucide/settings
 ---
 
 # Settings
 
-The Settings page provides access to configuration options, user management, and system preferences for the DUMB Frontend and backend services.
+Open **Settings** from the sidebar. Expand a section to change its values. Closing a section changes only the layout; it does not disable the feature.
 
----
+<!-- release:start -->
+Sections start expanded and remember their open/closed state in each browser.
+<!-- release:end -->
+<!-- dev:start -->
+Sections start collapsed until you choose otherwise. Each browser remembers explicit open/closed choices. A direct section link opens it for that visit without replacing the saved choice.
+<!-- dev:end -->
 
-## Overview
+## Find a setting
 
-The Settings page is organized into sections:
+| Section | What to change |
+| --- | --- |
+| Appearance | System, light, or dark theme |
+| About | Review installed API/frontend versions and retained update notices |
+| Onboarding | Launch the setup wizard again |
+| Embedded UIs | Enable proxied service interfaces |
+| Notifications | Destinations, event routing, tests, and delivery history |
+| Tokens | Plex and GitHub credentials |
+| Log Timestamp Format | Date order, 12/24-hour clock, and zero padding |
+| Advanced | Geek Mode |
+| Authentication | Sign-in provider and enabled DUMB users |
+| Support and Contributors | Project and maintainer links |
 
-- **Appearance** - Frontend color theme
-- **About** - Installed service and frontend versions
-- **Onboarding** - Restart the guided setup wizard
-- **Embedded UIs** - Service UI toggle
-- **Notifications** - Outbound destinations, event routing, thresholds, tests, and delivery history
-- **Tokens** - API keys and service tokens
-- **Log Timestamp Format** - Date order, clock format, and zero-padding preferences
-- **Advanced** - Service and instance utilities, plus Geek Mode
-- **Authentication** - Enable or disable auth and manage users when supported
-- **Backups and restore** - Installation archives, schedules, restore previews and shared backup destinations when supported by the backend
-- **Support** - Project community, source, documentation, and image links
-- **Contributors** - Project contributor links
-
-Every top-level section can be expanded or collapsed from its heading. Sections start collapsed until you make a choice; each browser remembers your explicit open/closed choices for the next visit. A direct link to a section opens it for that visit without overwriting your saved choice. Collapsing a section changes only the page layout; it does not disable, reset, or stop the feature inside it.
-
-**Backups and restore** is near the bottom of the page, after Authentication and before Support. A recovery link opens it directly.
-
-### Settings menu
-
-The settings menu also includes quick links for:
-
-- Rerunning onboarding
-- Viewing installed versions
-- Visiting service maintainer sites
-- Jumping to Discord, GitHub, docs, and Docker Hub
-- Viewing contributors
-
-## Backups and restore
-
-Use **Backups and restore** to register mounted storage destinations, preview and
-create installation archives, configure an optional schedule, and review a
-restore or its recovery state. This section requires installation-backup support
-from the backend. A fresh installation can reach its recovery entry before
-application onboarding; normal authentication setup and login still apply.
-
-On supported backends, choose uncompressed `.tar` (the default) or Zstandard
-`.tar.zst` before previewing a manual backup. The schedule has its own saved
-compression choice. Changing the manual choice requires a fresh preview and
-does not alter the schedule. Restore recognizes either format automatically.
-Compression streams to the destination, does not encrypt the archive, and does
-not add incremental backups. Space estimates do not assume a compression ratio.
-
-Supported backends show a tracked **Preview backup** status with the current
-stage, managed root, scanned entries and bytes, and elapsed time. The progress
-notice and completion notification follow the user-run update style. You can
-return to Settings or refresh the browser to reconnect while the same DUMB
-controller is running. **Cancel preview** waits for the scan to stop and clean
-up; it does not cancel by merely closing the page. Applications remain running
-throughout preview, and creating an archive still requires a separate reviewed
-confirmation. Older backends show only a pending-request spinner and elapsed
-time, so keep that page open for its result.
-
-Manual and scheduled installation backups also show an application-wide notice
-while preparing, queued or running, with their stage and elapsed time.
-Preparation is the confirmed backup's coverage/capacity recheck, before
-applications are stopped or an archive job is admitted. The notice remains
-visible when you navigate away from Settings and reconnects after a browser
-refresh. Do not stop the DUMB container or shut
-down its host until the backup finishes. A lost connection leaves the backup's
-state unconfirmed; reconnect to obtain its terminal status. **Recovery required**
-is a separate attention state with retained recovery instructions. Session
-verification and refresh remain available during recovery; a backup hold does
-not itself discard the browser's credentials. Service/setup controls can remain
-blocked while you inspect and complete the retained recovery.
-
-See [Installation backup and restore](../features/installation-backups.md) for
-coverage, preview tracking and cancellation, downtime, capacity, archive
-validation and container-restart steps.
+<!-- dev:start -->
+The **Advanced** section also includes service utilities. **Backups and restore** appears after Authentication when supported by the backend.
+<!-- dev:end -->
 
 ## Appearance
 
-Choose **System Default** to follow the browser/operating-system light or dark preference, or select one of the explicit light/dark palettes shown in the theme grid. The choice is stored in browser local storage as `dmbdb.appearance.theme`; it is a per-browser preference and does not modify backend configuration.
-
----
+Choose **System Default** to follow your operating system, or select a light/dark palette. This preference is stored in the browser and does not change backend configuration.
 
 ## About section
 
 ### Version information
 
-Displays current versions:
+The About section shows the installed API, frontend, and service versions. Select an **Update available** badge to open the **DUMB Updates** dialog. Where GitHub history includes the installed release, it also shows how many releases the component is behind. Moving development builds show **Dev build** instead of an invented release count.
 
-- DUMB API version
-- DUMB Frontend version
-- Individual service versions
+Dismissing a banner hides it only in that browser. The About section retains the backend's update result and can show the banner again.
 
-The DUMB API and DUMB Frontend rows also summarize retained project update state. Published releases show an **Update available** badge and, when the installed tag is present in the bounded GitHub release history, how many releases the component is behind. Select the badge to open the shared **DUMB Updates** dialog. Development versions show a **Dev build** badge; DUMB does not invent a releases-behind count for a moving development build.
-
-Ordinary stable-release notices are suppressed when the installed version is already equal to or ahead of that release. For example, a frontend development build of 1.92.0 does not offer 1.91.0 as an upgrade. Explicitly configured branch/commit targets and deliberate release pins remain available for review; the **Dev build** badge still identifies the running development build.
-
-These About-page indicators remain visible after a browser-local banner dismissal because the update result is retained by the backend. The review dialog marks a dismissed entry as **Hidden in this browser** and lets the operator show its banner again.
+<!-- dev:start -->
+Ordinary stable notices are suppressed when the installed version is equal to or newer than that release. Explicit branch, commit, and release selections remain available for review.
+<!-- dev:end -->
 
 ![About settings](../assets/images/frontend/about_settings.png){ .shadow }
 
 ### Launch Onboarding
 
-Return to the onboarding wizard to reconfigure your setup:
+Choose **Launch Onboarding** and confirm to review services again. If onboarding has already completed, you can go directly to optional services.
 
-1. Click **Launch Onboarding**
-2. Confirm the action
-3. Navigate to `/onboarding` to restart the wizard
-
-!!! warning "Existing configuration"
-
-    Resetting onboarding does not delete existing service configurations. The wizard will apply new settings on top of current ones.
-
-!!! note "Re-enabling previously enabled services"
-
-    If you want onboarding to reselect a non-instance service that is already enabled, set that
-    service's `enabled` flag to `false` in `DUMB Config`, `Save to File`, and stop the service first. The
-    onboarding flow only re-offers non-instance services when they are disabled in the saved config.
-
-### Skip to optional services
-
-If onboarding was previously completed, you can re-run it to add optional services without reconfiguring core services.
-
----
-
+Existing application data is retained, but the wizard can apply new settings over the current configuration. Already enabled non-instance services are not offered as new selections; use their service pages for ordinary configuration changes.
 
 ## Embedded service UIs
 
-Toggle the embedded service UI feature:
-
-| Setting | Effect |
-|---------|--------|
-| **Enabled** | Access service UIs through the frontend proxy and Traefik routes |
-| **Disabled** | Service UIs only accessible on their native ports |
-
-When enabled, the Settings page shows how many UI-capable services are detected. Service pages include an embedded UI tab, a direct link button, and a full-window toggle for iframes.
+Enable **Service UIs** to add embedded application tabs, direct links, and full-window controls to supported service pages. Disabling it removes dashboard access through those routes; native-port access still depends on your deployment's port mappings.
 
 ![Embedded UI settings](../assets/images/frontend/embedded_ui_settings.png){ .shadow }
 
----
+See [Embedded service UIs](../features/embedded-ui.md) for routing, application logins, and Authelia/TPA SSO exceptions.
 
 ## Notifications
 
-The Notifications section appears when the connected backend reports the `notifications` capability. It manages backend-owned outbound notifications independently from browser-local Metrics alert banners.
+This section requires the backend's `notifications` capability. It configures outbound delivery that continues without an open browser.
 
-From this section you can:
+1. Enable notifications and add an Apprise or generic webhook destination.
+2. Choose minimum severity, event types, and intended enabled services.
+3. Save and test the destination.
+4. Review delivery history if a normal event does not arrive.
 
-- Enable or disable outbound delivery globally
-- Configure monitoring, history retention, retry, and persistent-condition thresholds
-- Add multiple Apprise or generic webhook destinations
-- Route destinations by severity, event type, and one or more currently enabled services selected from a dropdown; disabled template services and unknown names are excluded, and saving pauses if enabled-service discovery is unavailable
-- Configure cooldown and recovery behavior
-- Save and test an individual destination
-- Send a manual operator message
-- Review or clear completed delivery history
+The default **Warning** minimum excludes normal **Success** events, including successful auto-restarts. **Save & test** bypasses enable switches and routing filters for that test; it does not prove a normal event matches your rules.
 
-Saved destination URLs and webhook headers are not returned to the browser. The UI displays whether a secret is configured; leave a blank secret field unchanged to preserve it.
+Saved destination URLs and headers stay on the server. A blank secret field preserves its existing value. Apprise normally delivers directly from DUMB to the provider; `apprise://` and `apprises://` explicitly use an Apprise API server.
 
-Each event-routing choice shows its runtime severity, trigger, and prerequisites. The section warns when the selected minimum severity filters otherwise-selected events; the default **Warning** minimum excludes normal `Success` events such as a successful Auto-restart. A service-down guidance callout distinguishes unexpected exits from the dashboard's ordinary `Stopped` display and links directly to Auto-restart configuration. Setup/build helper subprocesses are not treated as managed-service exits. Update-available notices are emitted only when a service first enters that state or its available version changes. **Save & test** explains that its one-time test bypasses enable switches and routing filters, while normal manual messages still skip disabled destinations.
-
-On lifecycle-capable backends, the app displays the current startup phase until
-the stack is ready. Transient automatic health/database/resource events and
-Auto-restart are paused during startup; monitoring establishes a fresh
-baseline afterward, and a degraded startup is reported once as a consolidated
-result.
-
-The setup screen also explains that Apprise is an embedded DUMB library, not a third-party relay: normal provider URLs are delivered directly from the DUMB container. It identifies `apprise://` and `apprises://` as the explicit Apprise API-server exception and links the official Apprise URL Builder beside the destination controls.
-
-See [Notifications](../features/notifications.md) for provider setup, event behavior, payloads, security guidance, and troubleshooting.
-
----
-
+[Notifications](../features/notifications.md) documents events, startup baselining, retries, thresholds, and delivery limitations. Browser-local Metrics banners use separate settings on the Metrics page.
 
 ## Token settings
 
-### Plex token
+| Token | Used for |
+| --- | --- |
+| Plex | Plex API access and selected integrations, such as Riven watchlists/scans |
+| GitHub | Higher API limits and authorized private/sponsored release downloads |
 
-Your Plex authentication token, used for:
-
-- Library access
-- Plex API integration
-- Riven watchlist/library-scan integration when Riven is selected
-
-### GitHub token
-
-Optional GitHub personal access token for:
-
-- Higher API rate limits
-- Access to private repositories
-- Private/sponsored release sources used by update/install workflows
-
-!!! tip "Creating a GitHub token"
-
-    1. Go to GitHub Settings :material-arrow-right: Developer Settings :material-arrow-right: Personal Access Tokens
-    2. Grant only the read access required by the private/sponsored repository. Public release checks normally need no token.
-    3. Paste it in the GitHub Token field
+A GitHub token should grant only the read access required by the selected source. Public release checks normally need no token. Enter tokens here or through a supported [configuration override](../features/configuration.md#configuration-precedence).
 
 ![Token settings](../assets/images/frontend/tokens_settings.png){ .shadow }
 
----
-
 ## UI preferences
 
-### Log timestamp format
-
-Customize how timestamps appear in the log viewer:
-
-| Option | Description |
-|--------|-------------|
-| **Date Order** | MDY (US) or DMY (International) |
-| **Hour Format** | 12-hour or 24-hour |
-| **Zero Padding** | Include leading zeros |
+**Log Timestamp Format** controls MDY/DMY date order, 12/24-hour time, and leading zeros. It changes log presentation, not the backend's timezone or original log timestamps.
 
 ![Log timestamp settings](../assets/images/frontend/log_timestamp_settings.png){ .shadow }
 
-
----
-
-
 ## Advanced
 
+<!-- dev:start -->
 ### Service utilities
 
-Choose **Service or instance** to find the tools available for an enabled or
-running service, or an exact instance with saved utility configuration or
-history. Unconfigured disabled templates are omitted. Availability also depends
-on the connected backend and the selected service's capabilities.
+Choose **Service or instance**, then a tool for that exact target. The selector includes enabled/running services and instances with saved utility state, and omits unconfigured disabled templates.
 
-The supported tools include:
-
-- **Media Protection** for a media server's protection policies, mounts and library settings.
-- **Symlinks** for repairs, snapshots, restores and backup schedules.
-- **Database Health** and guarded **Database Migration** tools.
-- **InfiniDysk 2 migration** and native database conversion when supported.
-- **Rclone Optimizer** for a qualified rclone provider.
-- **Seerr Sync** and **Plex Status** for their respective services.
-
-Select a tool to open its existing controls with the chosen instance. Opening
-the shortcut does not run a repair, migration or restore, and the tool's normal
-preparation checks and confirmations still apply. Database Health remains
-opt-in; visiting its panel does not enable collection. InfiniDysk's FUSE mount
-does not expose an rclone optimization shortcut.
+Available shortcuts include Media Protection, Symlinks, Database Health/Migration, InfiniDysk 2 migration, Rclone Optimizer, Seerr Sync, and Plex Status. They depend on backend and service capabilities. Opening a tool does not run it or accept its confirmations. Viewing Database Health does not enable collection.
+<!-- dev:end -->
 
 ### Geek Mode
 
-Enable Geek Mode to reveal additional power-user information across the UI. When enabled:
+Enable **Geek Mode** for extra diagnostic details:
 
-**Service page header:**
+| Location | Additional information |
+| --- | --- |
+| Service header | Internal config key and process name |
+| Dependencies | API latency, Copy JSON, and Mermaid source in Flow |
+| Process Metrics | PID, uptime, CPU/RSS, I/O, listening ports, paths, and restart history |
+| Dashboard cards | CPU/RSS badges, refreshed every five seconds |
+| Supported database services | Summary of explicitly enabled Database Health collection |
 
-- Displays the internal config key and process name in monospace (e.g. `sonarr:Sonarr`)
+Database Health stays opt-in per service. Geek Mode does not run repair, integrity checks, or migrations.
 
-**Dependency graph panel:**
-
-- **Copy JSON** button copies the full dependency graph response to clipboard
-- **Latency badge** shows the API fetch time in milliseconds
-- The **Flow** view shows raw Mermaid graph source text for troubleshooting
-
-**Process Metrics panel** (DUMB Config tab):
-
-- PID, thread count, and process uptime
-- CPU usage and memory RSS with color-coded gauges (green < 50%, amber < 80%, red >= 80%)
-- Disk I/O read/write totals
-- Listening ports and active connection count
-- Disk path health: existence check (green/red dot), usage bar with percent
-- Container summary: CPU cores, total RAM, used RAM
-- Restart history: total count, last exit reason, last restart timestamp
-- Refresh button to re-fetch metrics on demand
-- A compact **Database Health** subsection for supported services, including provider, pressure score, collection mode, store/WAL size, observed signal count, recommendation, documentation, and a link to the full per-service panel
-
-Geek Mode exposes the Database Health summary but does not automatically enable collection. Database Health remains read-only and opt-in per service.
-
-**Dashboard ServiceCard badges:**
-
-- CPU% badge per service, color-coded by usage level
-- Memory RSS badge per service
-- Database Health pressure and score badge for services explicitly opted into monitoring, with provider, mode, score, and recommendation in its tooltip
-- Metrics polled every 5 seconds while Geek Mode is active
-
-Geek Mode is disabled by default. Toggle it from the **Advanced** section on the Settings page.
-
----
+![Auto-restart controls](../assets/images/frontend/auto_restart.png){ .shadow }
 
 ## Authentication settings
 
 ### Authentication provider
 
-Local authentication settings remain available on older DUMB backends. The
-provider editor is mounted only when the backend advertises `auth_oidc`, so
-dmbdb does not probe unsupported `/api/auth/provider` endpoints. When
-available, choose **Local** or **OIDC only**; **Hybrid** is offered only when
-the backend also advertises `auth_hybrid`. The provider editor supports an
-external Authelia deployment or another OIDC provider, discovery testing,
-claim mapping, optional allowed groups, and explicit connection-safety
-overrides.
+Choose **Local**, **Hybrid**, or **OIDC only** when supported by the connected API. Hybrid retains local login for recovery. OIDC-only requires an explicit lockout-risk confirmation.
 
-Hybrid mode is recommended because it retains local password login for recovery.
-OIDC-only mode requires an explicit lockout-risk confirmation.
+The provider editor supports managed/external Authelia and provider presets including Google, Authentik, Keycloak, Entra ID, Auth0, Okta, ZITADEL, Dex, and generic OIDC. Each external provider needs a web application, client ID/secret, and the exact browser-facing HTTPS callback:
 
-The provider dropdown includes DUMB-managed Authelia, external Authelia,
-Google, Authentik, Keycloak, Microsoft Entra ID, Auth0, Okta, ZITADEL, Dex, and
-a custom OIDC choice. Google has fixed issuer/discovery values; providers with
-a deployment-specific tenant, realm, or domain receive a matching URL example
-instead. Every external provider still requires an OIDC/OAuth web application,
-client ID, client secret, and exact DUMB redirect URI.
+```text
+https://dumb.example.com/api/auth/oidc/callback
+```
 
-The redirect URI must use DUMB's browser-facing HTTPS FQDN and exact
-`/api/auth/oidc/callback` path. If Settings is opened through `localhost` or an
-IP address, dmbdb leaves the field blank and asks for the real FQDN instead of
-silently registering the local origin.
+Opening Settings through localhost or an IP address leaves the callback blank. Enter the real HTTPS FQDN and register the exact value at the provider. Use **Check discovery** before saving.
 
-When the backend reports a bootstrapped managed Authelia instance, that choice
-appears automatically and is preselected when no provider has already been
-saved. Its issuer and client ID are read-only; **Link managed Authelia** creates
-or reuses the dedicated client and stores the generated secret without showing
-it in the browser. The
-[Authelia service-page wizard](../services/optional/authelia.md) remains the
-place to bootstrap Authelia or configure TPA and ForwardAuth integrations.
+For bootstrapped DUMB-managed Authelia, **Link managed Authelia** creates/reuses a dedicated client and transfers its secret without displaying it. Use the [Authelia wizard](../services/optional/authelia.md) for bootstrap and route setup.
 
-The connection-safety checkboxes affect outbound requests from DUMB to the
-identity provider:
-
-| Option | Meaning |
-| --- | --- |
-| **Verify provider TLS** | Verify the HTTPS certificate and hostname; keep enabled |
-| **Allow private endpoint IPs** | Permit loopback/private/reserved targets for a trusted self-hosted provider |
-| **Allow HTTP** | Permit an unencrypted provider endpoint on a trusted isolated network |
-
-Selecting another preset resets these exceptions to their secure defaults.
-**Check discovery** validates the issuer metadata and endpoint policy without
-saving or changing the current login.
+Provider TLS verification stays enabled by default. **Allow private endpoint IPs** and **Allow HTTP** are explicit outbound connection exceptions for a trusted provider; changing presets resets them. The full [authentication guide](../features/authentication.md#configure-an-oidc-provider) covers claim mapping and provider restrictions.
 
 ### Enable/disable authentication
 
-Toggle the authentication requirement for accessing DUMB:
-
-| Setting | Description |
-|---------|-------------|
-| **Enable Auth** | Require login for all access |
-| **Disable Auth** | Allow unauthenticated access |
-
-!!! danger "Security warning"
-
-    Only disable authentication in trusted, isolated environments.
-
-![Authentication settings](../assets/images/frontend/auth_settings.png){ .shadow }
+Enable authentication before allowing untrusted network access. Disabling it exposes DUMB controls to anyone who can reach the API.
 
 ### User management
 
-Manage user accounts when authentication is enabled:
+Add, disable, enable, or delete local users under Authentication. DUMB protects the last active user from disable/delete. All enabled users have the same operator privileges; groups do not create viewer or administrator roles.
 
-| Action | Description |
-|--------|-------------|
-| **Add User** | Create a new user account |
-| **Disable User** | Temporarily block a user |
-| **Enable User** | Re-activate a disabled user |
-| **Delete User** | Permanently remove a user |
+![Authentication settings](../assets/images/frontend/auth_settings.png){ .shadow }
 
-!!! note "Last user protection"
+<!-- dev:start -->
+## Backups and restore
 
-    The last active user cannot be disabled or deleted to prevent lockout.
+1. Register an already-mounted destination.
+2. Choose `.tar` or `.tar.zst`, then run **Preview backup**.
+3. Review coverage, capacity, exclusions, and downtime before confirming archive creation.
+4. Follow the application-wide progress notice until completion.
 
----
+The preview scans while applications remain running. **Cancel preview** waits for its cleanup; closing the page does not cancel backend work. Manual compression and schedule compression are separate choices, and compression does not encrypt an archive.
 
+A fresh installation can reach restore before application onboarding after normal authentication setup/login. **Recovery required** retains instructions and may block service/setup actions until recovery completes. Reconnect after a lost connection to establish the actual terminal state. Do not stop DUMB or the host during a running backup or restore.
 
-### Links
-
-Quick access to:
-
-- [GitHub Repository](https://github.com/I-am-PUID-0/DUMB)
-- [Discord Community](https://discord.gg/8dqKUBtbp5)
-- [Documentation](https://dumbarr.com)
-- [Docker Hub](https://hub.docker.com/r/iampuid0/dumb)
-
-![Support links](../assets/images/frontend/support_settings.png){ .shadow }
-
----
-
-### Contributors
-
-Acknowledgment of project contributors and integrated services.
-
-![Contributors](../assets/images/frontend/contributors_settings.png){ .shadow }
-
-
----
+Use [Installation backup and restore](../features/installation-backups.md) for the complete procedure and [Backup storage](../features/backup-storage.md) for destination identity and mount checks.
+<!-- dev:end -->
 
 ## Related pages
 
-- [Authentication](../features/authentication.md) - Detailed auth guide
-- [Dashboard](dashboard.md) - Main service view
-- [Onboarding](onboarding.md) - Setup wizard
+- [Dashboard](dashboard.md) for service cards and updates.
+- [Service pages](service-pages.md) for per-service controls and configuration editors.
+- [Metrics](metrics.md#alert-thresholds) for browser-local alert thresholds.

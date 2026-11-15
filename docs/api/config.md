@@ -1,34 +1,36 @@
 ---
 title: Configuration API
+description: Read effective DUMB settings, validate and persist configuration updates, edit native service files, and inspect onboarding and embedded UI routes.
 icon: lucide/settings
 ---
 
 # Configuration API
 
-The Configuration API is responsible for exposing endpoints that manage and manipulate DUMB's configuration settings (`dumb_config.json`). These endpoints provide tools for loading, updating, saving, and validating configuration data for all DUMB services.
+Read and update DUMB's effective configuration, inspect its schema, or work with an application's native configuration file. These are different surfaces: a change to DUMB settings does not necessarily apply every native application change immediately.
 
----
+## Choose the right surface
 
-## Module: `config.py`
-Located in: `api/routers/config.py`
+| Task | Endpoint |
+|---|---|
+| Read effective DUMB configuration | `GET /config` |
+| Update a DUMB service or global settings | `POST /config` |
+| Inspect the supported schema | `GET /config/schema` |
+| Read or edit a native application config | `POST /config/service-config` |
+| Inspect embedded UI routes | `GET /config/service-ui` |
 
----
+Paths are backend-native. Add `/api` through the dashboard gateway and include a bearer token when authentication is enabled. Configuration responses can contain credentials; treat them as private.
 
 ## Endpoints
 
 ### `GET /config`
-**Description:**
 Returns the currently loaded in-memory configuration. You can optionally pass `process_name` to fetch a single service block.
 
-**Usage Example:**
+Example:
 ```bash
 curl http://localhost:3005/api/config
 ```
 
----
-
 ### `POST /config`
-**Description:**
 Updates config in memory. When `process_name` is provided, it updates only that service block and can optionally persist to disk. Without `process_name`, it performs a global update.
 
 **Request Body:**
@@ -42,28 +44,22 @@ Updates config in memory. When `process_name` is provided, it updates only that 
 }
 ```
 
-**Usage Example:**
+Example:
 ```bash
 curl -X POST http://localhost:3005/api/config \
   -H "Content-Type: application/json" \
   -d '{"process_name":"Riven Backend","updates":{"log_level":"DEBUG"},"persist":true}'
 ```
 
----
-
 ### `GET /config/schema`
-**Description:**
 Returns the JSON schema used for config validation.
 
-**Usage Example:**
+Example:
 ```bash
 curl http://localhost:3005/api/config/schema
 ```
 
----
-
 ### `POST /config/process-config/schema`
-**Description:**
 Returns the config schema subtree for a specific `process_name`.
 
 **Request Body:**
@@ -73,17 +69,14 @@ Returns the config schema subtree for a specific `process_name`.
 }
 ```
 
-**Usage Example:**
+Example:
 ```bash
 curl -X POST http://localhost:3005/api/config/process-config/schema \
   -H "Content-Type: application/json" \
   -d '{"process_name":"Riven Backend"}'
 ```
 
----
-
 ### `POST /config/service-config`
-**Description:**
 Reads or updates a service-specific config file (JSON/YAML/CONF/Python/XML). If `updates` is omitted, the raw config is returned.
 
 **Request Body:**
@@ -94,14 +87,12 @@ Reads or updates a service-specific config file (JSON/YAML/CONF/Python/XML). If 
 }
 ```
 
-**Usage Example:**
+Example:
 ```bash
 curl -X POST http://localhost:3005/api/config/service-config \
   -H "Content-Type: application/json" \
   -d '{"service_name":"Zurg w/ RealDebrid"}'
 ```
-
----
 
 ### `GET /config/service-ui-map`
 
@@ -114,10 +105,7 @@ Returns the sanitized embedded-UI route name to backend `config_key` mapping use
 }
 ```
 
----
-
 ### `GET /config/service-ui`
-**Description:**
 Returns a list of enabled services with UI ports, proxied paths, and the current service UI toggle state. The list is dynamic and only includes services that are enabled and expose a UI.
 
 **Response:**
@@ -149,10 +137,7 @@ Returns a list of enabled services with UI ports, proxied paths, and the current
 }
 ```
 
----
-
 ### `POST /config/service-ui`
-**Description:**
 Enables or disables the embedded service UI feature. When enabled, DUMB writes Traefik routes for service UIs under `/service/ui/<service>` and the DUMB frontend can embed those routes through iframe-aware `/ui/<service>` paths.
 
 **Request Body:**
@@ -171,32 +156,20 @@ Enables or disables the embedded service UI feature. When enabled, DUMB writes T
 }
 ```
 
----
-
 ### `GET /config/onboarding-status`
-**Description:**
 Returns whether onboarding is required.
 
----
-
 ### `POST /config/onboarding-completed`
-**Description:**
 Marks onboarding as complete.
 
----
-
 ### `POST /config/reset-onboarding`
-**Description:**
 Resets onboarding to incomplete.
 
----
+## Validation and persistence
 
-!!! tip "Developer Notes"
-    - The config is held in memory for fast access and allows the user to experiment or preview changes before committing them to file.
-    - Validation uses internal DUMB schema checks to ensure required keys and structure.
-    - Routes include error handling for malformed config data.
+Updates are validated against DUMB's schema. Service updates can be kept in memory with `persist: false`; they still change effective settings and are not a dry-run preview. A restart discards an unpersisted change. Global updates follow the route's persistence behavior; review the response rather than treating every config request as an inspection.
 
----
+When native application settings are regenerated during service setup, DUMB-owned fields may be reconciled again. Use the application's own UI for fields its service guide leaves operator-managed.
 
 ## Related Pages
 - [Services Overview](../services/index.md)

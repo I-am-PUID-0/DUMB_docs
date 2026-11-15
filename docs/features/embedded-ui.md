@@ -4,100 +4,39 @@ description: Access DUMB-managed service interfaces through Traefik iframe route
 icon: lucide/layout-panel-left
 ---
 
-# Embedded Service UIs
+# Embedded service UIs
 
-DUMB can proxy service web interfaces through Traefik, allowing you to access all service UIs from a single entry point without exposing individual ports.
+Open a managed application's own interface inside DUMB without publishing every native port. The frontend proxies embedded traffic through bundled Traefik. Each application keeps its own login requirements.
 
----
+## Enable and open an application
 
-## Overview
+1. Open **Settings → Embedded UIs** and enable **Service UIs**, or enable them during onboarding.
+2. Open a running service's page and select **Embedded UI**.
+3. Sign in to the application if it asks for its own credentials.
+4. Use split/full-window view or the direct-link action as needed.
 
-The embedded UI feature provides:
+A matching enabled TPA public HTTPS route can supply an external link. AIOStreams' remote Stremio clients need its separately configured public base URL; the embedded operator route is not a replacement for that origin.
 
-- **Unified access** - All service UIs available through one port
-- **Simplified networking** - No need to expose multiple ports
-- **Integrated experience** - Access services without leaving DUMB
-- **Traefik routing** - Dynamic path-based routing to services
-- **Root-app handling** - Services such as InfiniDysk, AltMount, Pulsarr, AIOStreams, Traefik Proxy Admin, and Traefik Dashboard can load root-relative assets, APIs, and WebSockets while staying inside the embedded service context
-
-![Embedded UIs in DUMB](../assets/images/features/embedded_ui.png){ .shadow }
-
----
+![Embedded UIs](../assets/images/features/embedded_ui.png){ .shadow }
 
 ## How it works
 
 ```mermaid
-%%{ init: { "flowchart": { "curve": "basis" } } }%%
-flowchart TD
-    A([Browser])
-    B[[Traefik :18080]]
-    C{Path router}
-    D[Riven :3000]
-    E[pgAdmin :5050]
-    F[Seerr :5055]
-    G[Radarr :7878]
-
-    A ==> B
-    B ==> C
-    C -- /service/ui/riven --> D
-    C -- /service/ui/pgadmin --> E
-    C -- /service/ui/seerr --> F
-    C -- /service/ui/radarr --> G
+flowchart LR
+    Browser[Browser / service page] --> Frontend[DUMB Frontend :3005]
+    Frontend -->|/ui/service context| Traefik[Traefik :18080]
+    Traefik -->|/service/ui/service| App[Application native port]
 ```
 
-1. **Request arrives** at Traefik on port 18080
-2. **Path matching** routes to the appropriate service
-3. **Middleware** strips the prefix and adjusts headers
-4. **Service responds** through the proxy
+The frontend's `/ui/<service>` routes carry the owning service context for assets, API requests, navigation, and WebSockets. Direct navigation to those internal iframe routes can redirect back to DUMB; use the service page or its link action.
 
----
+For direct Traefik access, the default route is:
 
-## Enabling embedded UIs
-
-### During onboarding
-
-The onboarding wizard asks if you want to enable embedded service UIs. Select **Yes** to configure Traefik routing automatically.
-
-### Via settings
-
-1. Navigate to **Settings**
-2. Find the **Embedded UIs** section
-3. Toggle **Enable Service UIs**
-
-### Via API
-
-```bash
-curl -X POST http://localhost:3005/api/config/service-ui \
-  -H "Content-Type: application/json" \
-  -d '{"enabled": true}'
-```
-
----
-
-## Accessing embedded UIs
-
-When enabled, service UIs are available at:
-
-```
+```text
 http://<host>:18080/service/ui/<service_name>
 ```
 
-The DUMB frontend also proxies UI requests through a `/ui/<service_name>` path for iframes and split view. Direct browser navigation to `/ui/<service_name>` is blocked by the frontend proxy; use the service page or the direct-link button instead.
-
-Some embedded services are root-style web apps. Their JavaScript may call paths such as `/api/*`, `/_next/*`, `/dashboard`, or `/auth/login` instead of paths under the service prefix. The dmbdb proxy uses iframe context, referer, and the `dumb_ui_service` cookie to route those requests back to the active service instead of sending them to DUMB's own API.
-
-InfiniDysk's frontend uses root `/api/*` requests and a root `/ws` WebSocket. In an
-embedded InfiniDysk tab, dmbdb routes those paths to InfiniDysk while reserving
-`/ws/status`, `/ws/metrics`, and `/ws/logs` for DUMB's own live updates.
-When you leave a service page, dmbdb clears the embedded-service context before
-the destination page loads so normal DUMB API and metrics requests immediately
-return to the DUMB backend without requiring a full-page refresh.
-
-AIOStreams similarly uses root `/login`, `/dashboard`, `/stremio`, `/api/v1`,
-and `/assets` paths. dmbdb retains those requests only with explicit iframe or
-referer context; a stale service cookie alone must not capture ordinary DUMB
-navigation. AIOStreams live views use server-sent events rather than a service
-WebSocket.
+This listener has its own exposure and authentication requirements. Enabling DUMB login does not add authentication to raw Traefik or application ports.
 
 ### Available services
 
@@ -129,218 +68,80 @@ WebSocket.
 | Traefik Dashboard | `/service/ui/traefik` | 18081 |
 | Traefik Proxy Admin | `/service/ui/traefik_proxy_admin` | 3004 |
 
-!!! note "Dynamic availability"
+These are default ports and example route keys. Enabled instances, current ports, and API-discovered UI paths are authoritative; startup may move a conflicting port. Authelia is a top-level portal launcher rather than an embedded login form.
 
-    Only enabled services appear in the embedded UI list. The paths are generated based on your `dumb_config.json` configuration.
-
----
+<!-- dev:start -->
+InfiniDysk 2 currently requires its own root URL. Use its direct local address or configured public origin; embedded subpath login/playback remain unavailable until the backend advertises a validated adapter. Preserve existing stream URL origins and signed paths. See [InfiniDysk 2 authentication](infinidysk-v2-migration.md#authentication-with-the-retained-backend-port).
+<!-- dev:end -->
 
 ## Traefik configuration
 
-DUMB automatically generates Traefik embedded-UI routing configuration in `/config/traefik/dynamic/services.yaml`. Traefik watches `/config/traefik/dynamic` for DUMB-owned dynamic files and can also poll Traefik Proxy Admin through its HTTP provider when that optional service is enabled.
+DUMB generates its embedded routes in `/config/traefik/dynamic/services.yaml`. Traefik watches that directory. Optional TPA routes come through its separate HTTP provider.
 
-### Example configuration
+Routes use service-specific prefix stripping, entry-path rewriting, and frame headers where appropriate. A media web client may need `/web/index.html`; another application may serve `/` directly. Do not copy one application's rewrite into another route or edit DUMB's generated file as a permanent configuration method.
 
-```yaml
-http:
-  routers:
-    riven_frontend:
-      rule: "PathPrefix(`/service/ui/riven_frontend`)"
-      service: riven_frontend
-      middlewares:
-        - riven_frontend-stripprefix
-        - riven_frontend-replace
-        - ui_frame_headers
-
-  middlewares:
-    riven_frontend-stripprefix:
-      stripPrefix:
-        prefixes:
-          - "/service/ui/riven_frontend"
-
-    riven_frontend-replace:
-      replacePathRegex:
-        regex: "^/$"
-        replacement: "/web/index.html"
-
-    ui_frame_headers:
-      headers:
-        customFrameOptionsValue: "SAMEORIGIN"
-        contentSecurityPolicy: "frame-ancestors 'self'"
-
-  services:
-    riven_frontend:
-      loadBalancer:
-        servers:
-          - url: "http://127.0.0.1:3000"
-```
-
-### Middleware chain
-
-Each service uses a middleware chain:
-
-1. **stripPrefix** - Removes `/service/ui/<name>` from the path
-2. **replacePathRegex** - Rewrites root path to service entry point
-3. **ui_frame_headers** - Adds headers for iframe embedding
-
----
+Use [Traefik Proxy Admin](../services/optional/traefik-proxy-admin.md) for deliberately published routes and [Traefik architecture](../architecture/traefik.md) for provider ownership and configuration.
 
 ## iframe embedding
 
-The DUMB frontend can display service UIs in iframes for a seamless experience:
-
 ### Embedded UI tab
 
-Each service page includes an embedded UI tab when the service exposes a UI. From there you can:
+The tab can choose among supported entry points, open a direct/private or matching public link, and expand to full-window view. Root-style applications remain attached to their own routing context even when they request paths such as `/api`, `/assets`, or `/dashboard`.
 
-- Switch between available UI base paths when the service exposes multiple entry points
-- Open an enabled matching TPA public HTTPS route in a new browser tab
-- Fall back to the local/private direct link when no public route is configured
-- Expand the UI into a full-window view without leaving the service page
-
-Public links are discovered through DUMB's authenticated loopback integration
-with TPA. dmbdb receives only sanitized route names, ports, loopback flags, and
-HTTPS origins; it never receives the integration token or TPA authentication
-configuration. DUMB requires a matching target port and, for non-loopback
-targets, a matching service name before the action appears.
-
-Root-path applications are routed with their active service context so their
-assets, navigation, and APIs remain inside the iframe.
-
-AIOStreams' embedded route is only for local operator access. Its generated
-Stremio manifest and stream URLs use `aiostreams.base_url`, which must be a
-separate stable trusted HTTPS origin when remote Stremio clients use it. See
-[AIOStreams](../services/optional/aiostreams.md#publish-aiostreams-for-stremio).
-
-Authelia is an intentional exception. Its public responses use anti-framing
-controls such as `frame-ancestors 'none'` and `X-Frame-Options: DENY` to protect
-password and 2FA screens from clickjacking. DUMB preserves those protections.
-The Authelia service tab is therefore a secure launcher for the configured
-public HTTPS portal, not an iframe containing the login page.
-
-The same boundary applies to Traefik Proxy Admin admin SSO. The embedded TPA UI
-remains available for local break-glass login and normal administration, but
-**Continue with SSO** must be used from TPA's public HTTPS URL. The Authelia
-authorization page and TPA callback then remain top-level pages on their
-registered public origins.
+InfiniDysk's root WebSocket is routed to InfiniDysk while DUMB retains `/ws/status`, `/ws/metrics`, and `/ws/logs`. AIOStreams uses server-sent events for its live views. The proxy clears document context when navigating away from the service page.
 
 ### Split view mode
 
-1. Open a service from the dashboard
-2. Click the split view button
-3. The service UI loads in a side panel
+Open the split-view control on a service page to keep its application UI beside DUMB's controls or logs. Resize the divider as needed.
 
 ### Full iframe mode
 
-Some pages display the service UI in a full iframe, maintaining DUMB navigation while showing the service interface.
-
----
+Use the full-window control when the application needs more space. DUMB navigation remains available around it.
 
 ## Security considerations
 
 ### Same-origin policy
 
-Embedded UIs are served from the same origin (Traefik port), avoiding cross-origin restrictions.
+Embedded applications share the frontend's browser origin. Service context separates routing; it does not create separate cookie, local-storage, or CacheStorage security boundaries. Use dedicated origins when an application needs that separation.
 
 ### Frame headers
 
-The `ui_frame_headers` middleware sets:
-
-- `X-Frame-Options: SAMEORIGIN` - Only allow framing from same origin
-- `Content-Security-Policy: frame-ancestors 'self'` - Modern browsers CSP
+DUMB supplies compatible frame headers for supported embedded routes. Authelia deliberately retains `frame-ancestors 'none'` and `X-Frame-Options: DENY`. Do not remove those protections to embed its password or two-factor screens.
 
 ### Authentication passthrough
 
-When DUMB authentication is enabled:
+DUMB authentication protects its own API/frontend flows. Applications can still require their own accounts, and directly exposed Traefik/native ports need their own access policy.
 
-- The DUMB frontend handles auth
-- Service UIs may have their own auth (e.g., Plex, pgAdmin)
-- Traefik does not add authentication to proxied services
-
-!!! warning "Service-level authentication"
-
-    Embedded UIs inherit their own authentication requirements. Configure service-specific credentials as needed.
-
----
+For Authelia, select **Open Authelia Portal** and use the public HTTPS URL. For TPA admin SSO, use **Open TPA for SSO** and finish login in the top-level public tab. Embedded TPA remains available for its local recovery login and administration.
 
 ## Troubleshooting
 
-### Service UI not loading
+| Symptom | Check |
+| --- | --- |
+| No Embedded UI tab | Service is enabled/running, exposes a UI, and Service UIs is enabled |
+| Blank page or 404 | API-discovered path, current Traefik port, and routing logs; reopen from the service page |
+| Direct app works, embedded login fails | Sign in on the frontend origin; check current frontend version and the application's frame policy |
+| Jellyfin/Emby library is empty | Application account permissions and frontend update; see [library troubleshooting](../frontend/service-pages.md#jellyfin-and-emby-libraries) |
+| Authelia refuses framing | Expected: use its public portal launcher |
+| TPA SSO fails inside the tab | Use the public TPA HTTPS origin and its registered callback |
+| Direct URL is unreachable | Check Docker port publication, network access, and application listener separately |
 
-1. Verify the service is running
-2. Check the service appears in `/api/config/service-ui`
-3. Verify Traefik configuration in `/config/traefik/dynamic/services.yaml`
-4. Check Traefik logs for routing errors
-
-### "Refused to display in frame" error
-
-- Ensure `ui_frame_headers` middleware is applied
-- Some services have their own frame protection - check service settings
-- Try accessing the service directly to verify it works
-
-### 404 errors on service paths
-
-- Verify the service name matches the configuration
-- Check if the path prefix is correct
-- Ensure Traefik has reloaded the configuration
-- For root-style apps, reload from the service page so the frontend can refresh the active embedded UI context cookie
-
-### TPA SSO started from Embedded UI fails or Authelia refuses to connect
-
-- Use **Open TPA for SSO** and complete authentication in the new top-level tab.
-- Do not remove or override Authelia's `frame-ancestors` or `X-Frame-Options`
-  protections to make the identity provider render inside DUMB.
-- Verify TPA's configured callback is its browser-facing HTTPS FQDN, for example
-  `https://proxy.example.com/api/auth/sso/callback`.
-
-### Authelia is not shown inside the Embedded UI frame
-
-- This is expected. Select **Open Authelia Portal** to use its public HTTPS URL.
-- If no launch button is available, finish Step 1 of the managed Authelia setup
-  and publish its public route first.
-- Never add ForwardAuth, TPA Service SSO, or another authentication middleware
-  to the Authelia route itself.
-
-### Slow loading
-
-- Services load their full UI through the proxy
-- Initial load may be slower than direct access
-- Consider the service's native performance
-
----
+For a missing Authelia launch button, finish its bootstrap and public route. Never attach ForwardAuth or TPA Service SSO to the Authelia portal's own route.
 
 ## Proxy behavior and restrictions
 
-The frontend proxy enforces iframe-only access to `/ui/<service>` routes. If you try to visit those paths directly, the proxy redirects you back to the main app. This keeps service UI cookies scoped to the embedded context and prevents navigation loops.
-
-Use one of these paths instead:
-
-- The embedded UI tab on the service page
-- The direct link button (opens a new tab safely through the proxy)
-- The Traefik route (`/service/ui/<service>`) if you want to bypass the frontend
-
----
+Use the Embedded UI tab, its direct-link action, or the deliberate Traefik route. Internal `/ui/<service>` paths are for the embedded proxy. Supported workers retain service ownership, but browser notifications still need browser/OS permissions. See [service workers](../frontend/service-pages.md#service-workers-and-browser-notifications).
 
 ## Disabling embedded UIs
 
-To disable and revert to direct port access:
+Turn off **Service UIs** in Settings. Native-port access then depends on your existing port publication and application authentication; disabling embedding does not publish those ports.
 
-1. Go to **Settings** :material-arrow-right: **Embedded UIs**
-2. Toggle **Disable Service UIs**
-3. Access services on their native ports
-
-Or via API:
+The configuration API can toggle the same setting:
 
 ```bash
 curl -X POST http://localhost:3005/api/config/service-ui \
-  -H "Content-Type: application/json" \
+  -H 'Content-Type: application/json' \
   -d '{"enabled": false}'
 ```
 
----
-
-## Related pages
-
-- [Frontend Overview](../frontend/index.md) - Web interface guide
-- [Settings](../frontend/settings.md) - Configuration options
-- [Configuration API](../api/config.md) - API endpoints
+Add an Authorization header when authentication is enabled. See [Configuration API](../api/config.md).

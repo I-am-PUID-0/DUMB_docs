@@ -1,13 +1,12 @@
 ---
 title: Configuration schema
+description: Find the DUMB configuration template and JSON schema, distinguish runtime settings from defaults, and check validation and source selection rules.
 icon: lucide/file-code
 ---
 
 # Configuration schema
 
 DUMB uses a JSON schema to validate `/config/dumb_config.json` and keep service definitions consistent.
-
----
 
 ## Schema location
 
@@ -21,8 +20,6 @@ utils/dumb_config_schema.json
 `utils/dumb_config.json` is a template; `/config/dumb_config.json` is the persistent runtime file. On startup DUMB copies the template when needed, adds missing defaults to existing configs, prunes keys removed from the supported template, and validates the result against the schema before creating the effective environment-overridden configuration.
 
 The API exposes the current schema at native `GET /config/schema` (frontend proxy: `GET /api/config/schema`) and a process-specific subtree at `POST /config/process-config/schema`.
-
----
 
 ## Top-level structure
 
@@ -43,8 +40,6 @@ The API exposes the current schema at native `GET /config/schema` (frontend prox
 
     Each service has its own schema definition (for example `decypharr`, `infinidysk`, `cli_debrid`). This ensures consistent required fields and defaults.
 
----
-
 ## Validation tips
 
 - Validate JSON changes before restart to avoid startup failures.
@@ -55,8 +50,6 @@ The API exposes the current schema at native `GET /config/schema` (frontend prox
 - A non-empty `commit_sha` takes precedence over release and branch settings and
   disables automatic updates until changed or cleared.
 - Do not edit `utils/dumb_config.json` expecting a persistent runtime change.
-
----
 
 ## Related pages
 

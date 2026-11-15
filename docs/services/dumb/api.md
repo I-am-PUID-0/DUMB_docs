@@ -1,5 +1,6 @@
 ---
 title: DUMB API
+description: Find the DUMB API through the dashboard proxy, understand native listener access, check capabilities, and locate health and interactive API schemas.
 icon: lucide/code
 ---
 
@@ -30,6 +31,10 @@ was used.
 ---
 
 ## Development and release versions
+
+Use the documentation channel that matches your installed DUMB backend. A development image can include a newer API version and features absent from the latest stable release; check **Settings → About** and the backend capability response before using them.
+
+<!-- dev:start -->
 
 DUMB's `dev` branch records the version planned for the next stable release.
 The source/API version is a plain semantic version such as `2.24.0`; a
@@ -89,15 +94,21 @@ version even when synchronization has not yet landed. The build keeps that
 requested source SHA; it does not silently check out a newer `dev` commit.
 See [building a development image](dumb-frontend.md#build-a-development-image-with-a-chosen-frontend)
 for frontend selection and image digest checks.
+<!-- dev:end -->
+
+<details class="geek-details" markdown="1">
+<summary>Technical details: configuration reference</summary>
 
 ## Configuration Settings in `dumb_config.json`
 Located in `dumb.api_service`:
 ```json
+{
 "enabled": true,
 "process_name": "DUMB API",
 "log_level": "INFO",
 "host": "127.0.0.1",
 "port": 8000
+}
 ```
 
 ### Configuration Key Descriptions
@@ -109,6 +120,8 @@ Located in `dumb.api_service`:
     !!! note "`0.0.0.0` allows access to the API from all addresses"
 
 - **`port`** – Internal backend listener port. It is not automatically published to the Docker host.
+
+</details>
 
 ## What the API owns
 

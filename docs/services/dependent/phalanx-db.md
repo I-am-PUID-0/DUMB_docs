@@ -1,5 +1,6 @@
 ---
 title: Phalanx DB
+description: Add Phalanx DB to a CLI Debrid workflow, understand its optional distributed metadata role, and locate its persistent data and API.
 icon: lucide/database
 ---
 
@@ -8,6 +9,10 @@ icon: lucide/database
 **Phalanx DB** is an optional decentralized metadata service that can enhance CLI Debrid by providing distributed data capabilities through Hyperswarm. It runs independently and is not required for CLI Debrid to function.
 
 ---
+
+## First start
+
+Select Phalanx DB only when your CLI Debrid workflow uses its distributed metadata. DUMB prepares its storage and runtime. After startup, check the Phalanx and CLI Debrid logs to confirm the intended connection; Phalanx DB has no separate browser interface.
 
 ## Service relationships
 
@@ -19,9 +24,13 @@ icon: lucide/database
 
 ---
 
+<details class="geek-details" markdown="1">
+<summary>Technical details: configuration reference</summary>
+
 ## Configuration settings in `dumb_config.json`
 
 ```json
+{
 "phalanx_db": {
   "enabled": false,
   "process_name": "Phalanx DB",
@@ -47,7 +56,8 @@ icon: lucide/database
   "config_dir": "/phalanx_db",
   "log_file": "/log/phalanx_db.log",
   "env": {}
-},
+}
+}
 ```
 
 ### Configuration Key Descriptions
@@ -58,7 +68,7 @@ icon: lucide/database
 * **`release_version_enabled`** / **`release_version`**: Targets a specific version release.
 * **`commit_sha`**: Builds an exact Phalanx DB revision from its full 40-character GitHub SHA.
 * **`branch_enabled`** / **`branch`**: If true, uses a GitHub branch instead of a release.
-* **`suppress_logging`**: Suppresses logs from this service.
+- **`suppress_logging`**: Suppresses service messages in the main DUMB output.
 * **`log_level`**: Verbosity level.
 * **`port`**: Port Phalanx DB listens on.
 * **`auto_update`** / **`auto_update_interval`**: Pull latest changes from GitHub.
@@ -75,6 +85,8 @@ icon: lucide/database
 * `DEBUG`: Debug logging toggle (`true` when `log_level` is `DEBUG`).
 
 ---
+
+</details>
 
 ## When to Use
 
@@ -104,18 +116,12 @@ When Phalanx DB starts, DUMB:
 ---
 
 ## Commit / Branch / Version Targeting
-You can control which source revision is deployed by setting:
 
-- `commit_sha` to a full 40-character SHA for an immutable source pin
-- `branch_enabled: true` and specifying a `branch`
-- or `release_version_enabled: true` and specifying a `release_version`
-
-The commit pin overrides the release and branch selectors and disables
-automatic updates until changed or cleared.
-
----
+Choose a full `commit_sha`, a release selector, or an enabled branch in this service's DUMB settings. A commit pin takes precedence over the other selectors and disables automatic updates until you clear it. Review [source selection and update modes](../../features/auto-update.md) before changing a running service.
 
 ## Access
+
+Open the service from DUMB's **Embedded UI** tab when available. The native URLs below require the corresponding Docker host port to be published; use the port saved in your running configuration.
 
 - REST API: `http://<host>:8888` (default)
 

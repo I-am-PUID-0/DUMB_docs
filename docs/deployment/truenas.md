@@ -64,6 +64,10 @@ network access.
 
 ## FUSE and external media servers
 
+Prepare the producer host path as a shared Linux mount before relying on
+`rshared`/`rslave`. Compose propagation flags alone do not change the host
+mount. Check both the producer and consumer mount namespaces.
+
 The maintained Compose file includes `/dev/fuse`, `SYS_ADMIN`, and an unconfined
 AppArmor profile. Keep them for mount-producing workflows. Remove `/dev/dri`
 only if that device is absent and no configured service needs it.

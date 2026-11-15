@@ -6,16 +6,26 @@ icon: lucide/shield
 
 # Decypharr (Core Service)
 
-**Decypharr** is a self-hosted, Go-based content orchestrator that integrates multiple Debrid services, provides stable DFS and native Usenet support in Decypharr 2.0+, and acts as mock qBittorrent/Sabnzbd clients for Arr applications like Sonarr and Radarr. It is a core component in DUMB for automating Debrid and Usenet downloads with seamless library linking.
+Decypharr exposes qBittorrent-compatible Debrid clients and SABnzbd-compatible Usenet clients to Arr applications. Choose DFS, built-in rclone, DUMB-managed external rclone, or no mount to match your library layout. DFS and native Usenet are available in Decypharr 2.0+; they do not require a beta branch.
 
 ---
 
+## First start
+
+1. Choose Decypharr during onboarding and select Debrid, Usenet, or both.
+2. Add the provider credentials and choose the mount mode that fits your library layout.
+3. Open Decypharr to review native settings, then check the linked Arr download clients and root folders.
+4. Test an intended import and playback before enabling broad automatic acquisition.
+
+For an existing library, preview the symlink migration tools before changing mount paths.
+
+<!-- dev:start -->
 ## Setup checklist and remaining work
 
 The checklist separates Debrid-only, Usenet and hybrid decisions. Enter a Usenet account or reference another selected client with its own allocation. Arr/client/root wiring is reconciled after both endpoints are ready. Missing credentials or choices remain visible instead of requiring restarts to discover missed links.
 
 Requires the backend setup-arrangement capability. See [Setup checklist and automation](../../features/setup-checklist.md) for retained tasks, coverage and safe retries.
-
+<!-- dev:end -->
 
 ## Workflow diagram
 
@@ -73,9 +83,13 @@ flowchart TD
 
 ---
 
+<details class="geek-details" markdown="1">
+<summary>Technical details: configuration reference</summary>
+
 ## Configuration in `dumb_config.json`
 
 ```json
+{
 "decypharr": {
     "enabled": false,
     "process_name": "Decypharr",
@@ -115,10 +129,11 @@ flowchart TD
     "mount_type": "dfs",
     "mount_path": "/mnt/debrid/decypharr",
     "api_keys": {}
-},
+}
+}
 ```
 
-### Key Configuration Fields
+### Key configuration fields { #key-configuration-fields }
 
 * `enabled`: Toggle to run Decypharr via DUMB.
 * `process_name`: Used for display and logs.
@@ -144,6 +159,8 @@ Because `release_version_enabled` is `false`, the stored `v1.0.0` value is only 
 
 ---
 
+</details>
+
 ## What Decypharr does
 
 
@@ -153,7 +170,7 @@ Decypharr acts as both a torrent manager and a renaming/organizing engine:
 
 * Handles torrent links via Debrid services
 * Handles NZB/Usenet downloads through Decypharr 2.0+ native Usenet support
-* Mimics qBittorrent and Sabnzbd-compatible APIs for seamless \*Arr integration
+* Mimics qBittorrent and Sabnzbd-compatible APIs for Arr download-client integration
 * Renames and organizes files into structured symlink folders
 * Provides a Web UI and WebDAV endpoints for remote management
 
@@ -252,11 +269,15 @@ For Sonarr/Radarr/Lidarr/Whisparr instances you want wired to Decypharr, set
 `core_service` to `decypharr` or include it in a list:
 
 ```json
+{
 "core_service": "decypharr"
+}
 ```
 
 ```json
+{
 "core_service": ["decypharr", "infinidysk", "altmount"]
+}
 ```
 
 This tells DUMB to auto-configure Arr integration around Decypharr’s WebDAV and symlink workflows.
@@ -271,9 +292,11 @@ Decypharr 2.0+ includes DFS and native Usenet support in stable releases. You no
 Choose the mount behavior with `mount_type`:
 
 ```json
+{
 "decypharr": {
   "mount_type": "dfs",
   "mount_path": "/mnt/debrid/decypharr"
+}
 }
 ```
 
@@ -306,11 +329,13 @@ DUMB creates this Sabnzbd-compatible client automatically for Arr instances whos
 Use `api_keys` to define provider credentials:
 
 ```json
+{
 "api_keys": {
   "realdebrid": "rd_...",
   "torbox": "tb_...",
   "alldebrid": "ad_...",
   "debridlink": "dl_..."
+}
 }
 ```
 

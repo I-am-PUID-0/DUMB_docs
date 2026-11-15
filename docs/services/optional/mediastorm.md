@@ -10,6 +10,50 @@ mediastorm is a self-hosted streaming server and client ecosystem for Debrid, to
 
 ---
 
+## Initial setup
+
+<!-- dev:start -->
+With the setup-arrangement capability, the retained checklist supports the MediaStorm 1.5 settings contract. Its account task accepts your current primary administrator login; when MediaStorm confirms the default password is still active, you can explicitly authorize a replacement. DUMB retains the resulting administrator session privately and removes both submitted password inputs after authenticated readback. It preserves an already initialized account.
+
+Source tasks can add selected managed Prowlarr indexers, Zilean, InfiniDysk/Decypharr/AltMount playback-engine settings, chosen Debrid credentials and native NNTP accounts. Shared NNTP references use a separate MediaStorm connection allocation within the account budget. Provide the selected engine's authorized WebDAV account, path and category. Preview proposed changes and explicitly authorize connection tests; existing unowned settings need approval of that exact preview. Existing entries keep their order and unrelated fields. Native engine tests use the basic connection check and never submit a test NZB.
+
+The metadata task can save and test supplied TMDB/TVDB keys through the supported administrator API. Connection/settings readback does not establish download, import or playback success. Unrecognized versions retain guidance for native setup. See [Setup checklist and automation](../../features/setup-checklist.md).
+<!-- dev:end -->
+
+!!! warning "First login credentials"
+
+    - **Username:** `admin`
+    - **Password:** `admin` on current mediastorm builds
+
+    This is a public bootstrap credential. Current mediastorm builds require the first-login form
+    to include a new password and confirmation; the default is replaced atomically before the
+    first admin session is created. This flow works through Docker and reverse proxies.
+
+    mediastorm writes the active first-login password to its protected bootstrap credential file.
+    DUMB displays that value on the mediastorm service page while the file exists, which keeps
+    pinned builds and installations using `STRMR_INITIAL_ADMIN_PASSWORD` compatible. mediastorm
+    deletes the file after the password changes, and the DUMB warning then disappears automatically.
+    DUMB recognizes both `initial_admin_password.txt` and the current extensionless
+    `initial_admin_password` filename.
+
+1. Select **mediastorm** under Optional Services during onboarding, or enable it from its DUMB service configuration.
+2. Start mediastorm. On first install, DUMB downloads and verifies the architecture-specific OCI layers, builds the local Python subtitle-helper environment, starts PostgreSQL, and waits for it before launching the service. The initial download is several hundred MiB.
+3. Open the mediastorm embedded UI. It starts at `/admin`.
+4. Sign in as `admin` with the password shown on the DUMB service page. For current builds this is `admin`; enter and confirm a replacement password in the additional first-login fields. Pinned builds without those fields should be changed immediately under **Admin UI → Accounts → Change Password**.
+5. Add the required TMDB API key in mediastorm's metadata settings. TVDB is optional enrichment for alternate episode orders and related metadata.
+6. Configure the Debrid, torrent, or Usenet providers you intend to use.
+7. Open `/watch` for the browser client, or point a supported mediastorm mobile/TV client at the reachable DUMB host and mediastorm port.
+
+!!! warning "Secure the administrative interface"
+
+    The `admin` / `admin` bootstrap is publicly known, and `/admin` controls providers and users.
+    Change it before exposing mediastorm beyond a trusted network. Do not copy a customized
+    first-login password into logs, screenshots, or support bundles. Prefer a VPN or a carefully
+    tested authenticated reverse-proxy route; never publish the raw port before completing
+    first-login setup.
+
+---
+
 ## What DUMB manages
 
 - mediastorm listens on port `7777`.
@@ -28,9 +72,13 @@ mediastorm is a self-hosted streaming server and client ecosystem for Debrid, to
 
 ---
 
+<details class="geek-details" markdown="1">
+<summary>Technical details: configuration reference</summary>
+
 ## Configuration in `dumb_config.json`
 
 ```json
+{
 "mediastorm": {
   "enabled": false,
   "process_name": "mediastorm",
@@ -69,6 +117,7 @@ mediastorm is a self-hosted streaming server and client ecosystem for Debrid, to
     "VK_ICD_FILENAMES": "/usr/share/vulkan/icd.d/lavapipe_icd.json"
   }
 }
+}
 ```
 
 DUMB fills `DATABASE_URL` from the managed PostgreSQL credentials during setup. Do not copy the generated credential-bearing value into documentation, screenshots, or support logs. The installer always uses the fixed official `godver3/mediastorm` repository and does not accept an arbitrary registry URL from service configuration.
@@ -90,47 +139,7 @@ Pinned releases, commits, and digests disable automatic updates through DUMB's s
 
 ---
 
-## Initial setup
-
-With the setup-arrangement capability, the retained checklist supports the MediaStorm 1.5 settings contract. Its account task accepts your current primary administrator login; when MediaStorm confirms the default password is still active, you can explicitly authorize a replacement. DUMB retains the resulting administrator session privately and removes both submitted password inputs after authenticated readback. It preserves an already initialized account.
-
-Source tasks can add selected managed Prowlarr indexers, Zilean, InfiniDysk/Decypharr/AltMount playback-engine settings, chosen Debrid credentials and native NNTP accounts. Shared NNTP references use a separate MediaStorm connection allocation within the account budget. Provide the selected engine's authorized WebDAV account, path and category. Preview proposed changes and explicitly authorize connection tests; existing unowned settings need approval of that exact preview. Existing entries keep their order and unrelated fields. Native engine tests use the basic connection check and never submit a test NZB.
-
-The metadata task can save and test supplied TMDB/TVDB keys through the supported administrator API. Connection/settings readback does not establish download, import or playback success. Unrecognized versions retain guidance for native setup. See [Setup checklist and automation](../../features/setup-checklist.md).
-
-!!! warning "First login credentials"
-
-    - **Username:** `admin`
-    - **Password:** `admin` on current mediastorm builds
-
-    This is a public bootstrap credential. Current mediastorm builds require the first-login form
-    to include a new password and confirmation; the default is replaced atomically before the
-    first admin session is created. This flow works through Docker and reverse proxies.
-
-    mediastorm writes the active first-login password to its protected bootstrap credential file.
-    DUMB displays that value on the mediastorm service page while the file exists, which keeps
-    pinned builds and installations using `STRMR_INITIAL_ADMIN_PASSWORD` compatible. mediastorm
-    deletes the file after the password changes, and the DUMB warning then disappears automatically.
-    DUMB recognizes both `initial_admin_password.txt` and the current extensionless
-    `initial_admin_password` filename.
-
-1. Select **mediastorm** under Optional Services during onboarding, or enable it from its DUMB service configuration.
-2. Start mediastorm. On first install, DUMB downloads and verifies the architecture-specific OCI layers, builds the local Python subtitle-helper environment, starts PostgreSQL, and waits for it before launching the service. The initial download is several hundred MiB.
-3. Open the mediastorm embedded UI. It starts at `/admin`.
-4. Sign in as `admin` with the password shown on the DUMB service page. For current builds this is `admin`; enter and confirm a replacement password in the additional first-login fields. Pinned builds without those fields should be changed immediately under **Admin UI → Accounts → Change Password**.
-5. Add the required TMDB API key in mediastorm's metadata settings. TVDB is optional enrichment for alternate episode orders and related metadata.
-6. Configure the Debrid, torrent, or Usenet providers you intend to use.
-7. Open `/watch` for the browser client, or point a supported mediastorm mobile/TV client at the reachable DUMB host and mediastorm port.
-
-!!! warning "Secure the administrative interface"
-
-    The `admin` / `admin` bootstrap is publicly known, and `/admin` controls providers and users.
-    Change it before exposing mediastorm beyond a trusted network. Do not copy a customized
-    first-login password into logs, screenshots, or support bundles. Prefer a VPN or a carefully
-    tested authenticated reverse-proxy route; never publish the raw port before completing
-    first-login setup.
-
----
+</details>
 
 ## Backups and updates
 
