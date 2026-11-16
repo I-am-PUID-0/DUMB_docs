@@ -30,6 +30,10 @@ of those new-operation controls.
 |--------|-------|---------|
 | `GET` | `/process/infinidysk-v2/status` | Current generation, fresh/migration mode, mount choices, eligibility and latest retained job |
 | `POST` | `/process/infinidysk-v2/preview` | Review a source-bound plan and receive a short-lived authorization |
+| `POST` | `/process/infinidysk-v2/preview/start` | Start a background preview using the same options as `/preview` |
+| `GET` | `/process/infinidysk-v2/preview/task` | Retrieve the latest preview task |
+| `GET` | `/process/infinidysk-v2/preview/task/{task_id}` | Poll one preview task and retrieve its completed result |
+| `POST` | `/process/infinidysk-v2/preview/task/{task_id}/cancel` | Request cancellation of that preview without stopping services |
 | `POST` | `/process/infinidysk-v2/rehearse` | Run the actual contained native importer against retained source snapshots |
 | `POST` | `/process/infinidysk-v2/start` | Start an eligible fresh install or guarded major cutover |
 | `GET` | `/process/infinidysk-v2/jobs/{job_id}` | Retrieve one persisted job as `{"job": {...}}` |
@@ -141,6 +145,43 @@ remains retained. A missing, changed or otherwise unremovable staging copy can
 leave `job.staging_cleanup_required: true` without invalidating an accepted
 import or blocking restoration from the valid archive. Preserve the warning
 and retained evidence; it does not authorize deleting a replacement directory.
+
+#### Background preview
+
+Use the background routes only when the strict boolean
+`infinidysk_v2_async_preview: true` is advertised. The existing synchronous
+`POST /preview` remains available for older clients.
+
+Starting and polling return `{"protocol": 1, "task": {...}}`. Each task includes
+`task_id`, `status`, `stage`, `message`, `created_at`, `updated_at`, the selected
+`options`, `options_fingerprint`, `can_cancel` and `cancel_requested`. Major
+workflow status also includes `preview_task`, so reopening the panel can reconnect
+without submitting another scan. Only the latest task is retained; requesting a
+different or no-longer-retained identity returns HTTP 409.
+
+An identical request reuses the active task; changing options while it is running
+is refused. An optional `request_id` (16–128 letters, digits, underscores or
+hyphens) also deduplicates a retry of the latest request after a lost response.
+Reusing that identity with different options is refused. Wait for the active task
+to finish or cancel it before requesting a different preview.
+
+Preview performs metadata and prerequisite checks while services remain running.
+It does not stop services, copy source data or start the native importer. There is
+no overall preview time limit. Cancellation is cooperative: follow the task until
+it stops. A controller restart marks an unfinished preview as interrupted; it
+does not automatically rerun it or enter migration recovery.
+
+Task states are `queued`, `running`, `completed`, `cancelled`, `failed` and
+`interrupted`. Only a completed task returns the normal result in `task.preview`,
+with `preview_available: true`. An expired or consumed authorization returns
+`preview: null`, `preview_available: false` and `preview_unavailable_reason` of
+`expired` or `consumed`; generate a fresh preview before continuing. Status and
+result responses use `Cache-Control: no-store, private` because a completed
+preview contains its short-lived authorization token.
+
+The authorization period starts at completion, not when scanning begins. Task
+identity and progress alone never authorize rehearsal or cutover; review that
+completed result and its required acknowledgements first.
 
 #### Preview contract
 

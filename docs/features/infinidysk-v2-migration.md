@@ -221,6 +221,17 @@ a safety margin. The review shows local and external requirements separately;
 paths on the same filesystem share one budget. An unavailable estimate does not
 pass the capacity check.
 
+On supporting builds, **Preview migration** starts a background check and shows
+its current stage. Large installations can take several minutes to scan. Services
+keep running during preview; DUMB does not copy, move or remove source files.
+You can close the panel and reopen it to follow the same check. Use **Cancel
+preview scan** to stop it; this does not start migration recovery.
+
+A completed preview remains available for review until its authorization expires.
+The review period starts when the scan finishes. If a connection fails, use
+**Refresh status** before starting another preview; a lost response does not mean
+the check stopped.
+
 These estimates do not reserve space. DUMB checks capacity again before copying;
 keep enough space available throughout the operation.
 

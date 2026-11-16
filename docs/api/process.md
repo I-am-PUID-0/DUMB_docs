@@ -463,6 +463,7 @@ Common capability groups:
 | `backup_storage_shared_permissions` | Explicit shared-permissions consent per storage profile |
 | `infinidysk_v2`, `infinidysk_v2_migration`, `infinidysk_v2_migration_protocol` | Native generation 2 workflow; protocol `1` |
 | `infinidysk_v2_postgres` | Native generation 2 PostgreSQL conversion |
+| `infinidysk_v2_async_preview` | Background migration preview with progress, cancellation and result retrieval |
 | `infinidysk_v2_consumer_recovery`, `infinidysk_v2_consumer_recovery_protocol` | Retained target/consumer recovery; protocol `1` |
 | `infinidysk_v2_cleanup`, `infinidysk_v2_cleanup_protocol` | Guarded v1 retirement; protocol `1` |
 | `infinidysk_v2_low_space_migration`, `infinidysk_v2_external_blob_staging` | Explicit capacity-saving migration choices |
