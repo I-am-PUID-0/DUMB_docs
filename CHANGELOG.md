@@ -1,6 +1,13 @@
 # Changelog
 
 
+## [1.25.2](https://github.com/I-am-PUID-0/DUMB_docs/compare/1.25.1...1.25.2) (2026-11-16)
+
+
+### 📖 Documentation
+
+* **infinidysk:** describe background migration previews ([f2106f9](https://github.com/I-am-PUID-0/DUMB_docs/commit/f2106f9889ec9ba1bc1389b3314d77d46a274c30))
+
 ## [1.25.1](https://github.com/I-am-PUID-0/DUMB_docs/compare/1.25.0...1.25.1) (2026-11-15)
 
 
