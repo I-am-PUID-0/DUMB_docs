@@ -229,8 +229,8 @@ paths on the same filesystem share one budget. An unavailable estimate does not
 pass the capacity check.
 
 On supporting builds, **Preview migration** shows the request immediately,
-then follows the background check's current stage. Large installations can take
-several minutes to scan. Services keep running during preview; DUMB does not
+then follows the background check's current stage. Scanning a large installation
+can take time, especially on slower storage. Services keep running during preview; DUMB does not
 copy, move or remove source files. You can close the panel and reopen it to
 follow the same check. Use **Cancel preview scan** to stop it; this does not
 start migration recovery.
@@ -305,6 +305,20 @@ finished; DUMB still needs to reconcile its report and database identities.
 A rehearsal then restores v1 and its previous consumers, while a cutover must
 validate the target before starting normal v2 work.
 
+Before pausing applications, supporting builds show the current filesystem
+scan's entries, measured pace and, when possible, approximate time remaining
+**in that scan**. An earlier review can supply its approximate entry total.
+Each new scan starts a separate estimate; the operation's elapsed timer keeps
+counting across phases.
+
+DUMB pauses the time estimate when the total is unknown, the measured pace is
+not ready, the count grows beyond the earlier estimate or measurements are more
+than 30 seconds old. The scanned count and elapsed time remain useful while an
+estimate is unavailable. Later copying, database checks, native import and v1
+recovery have separate work, so this estimate does not predict the whole test's
+finish time. Older backends show their existing stage and message without a
+scan estimate.
+
 For PostgreSQL source snapshots and verification, supporting builds show the
 current phase and observed table or row counts when available. These describe
 database preparation, not how many media files have migrated. Stages without a
@@ -313,7 +327,8 @@ that the worker stopped.
 
 | Result | What to do next |
 | --- | --- |
-| Checks stopped before applications paused | DUMB left the source unchanged. Resolve the reported blocker, then generate a fresh preview and test again. No restore is needed. |
+| Cancelled before applications paused | DUMB left the source unchanged. No restore or recovery action is needed. Generate a fresh preview and complete a test before a later migration. |
+| Checks failed before applications paused | DUMB left the source unchanged. Resolve the reported blocker, then generate a fresh preview and test again. No restore is needed. |
 | Test passed | v1 and its previous managed services were restored. Review the matching preview and start migration while its authorization remains valid. |
 | Test failed or was cancelled, with v1 restoration confirmed | v1 is available again. Read the reported error, resolve its cause, then generate a fresh preview and run another test before migration. No recovery action is needed for the completed restoration. |
 | Recovery required | Restoration or target recovery has not finished. Preserve the job's evidence and use its currently offered recovery action; do not assume that v1 or v2 is ready. |
@@ -338,13 +353,15 @@ stops acceptance and preserves the recovery path.
 
 A supporting backend offers **Cancel migration** while its current job permits
 restoring v1. Use that job's exact confirmation. Cancellation is cooperative:
-DUMB records the request, waits for an owned checkpoint, stops the contained
-native writer and restores v1 before reporting completion. Once the live v2
-target has been exposed and may have accepted writes, cancellation cannot
-silently restore v1. Closing the panel does not request cancellation.
+DUMB records the request and waits for an owned checkpoint. If cancelled before
+applications were paused, the job confirms that the source was unchanged; no
+restore is needed. Once execution has begun, DUMB stops the contained native
+writer and restores v1 before reporting completion. Once the live v2 target has
+been exposed and may have accepted writes, cancellation cannot silently restore
+v1. Closing the panel does not request cancellation.
 A slow or blocked operating-system I/O call can delay a cancellation checkpoint;
-wait for the job to confirm recovery rather than assuming the request completed.
-Keep imports, scans and playback stopped while cancellation or recovery runs.
+wait for the job's confirmed outcome rather than assuming the request completed.
+Keep imports, scans and playback stopped while source restoration or recovery runs.
 
 After a controller restart, or if recovery fails, review the retained job's
 current authorized actions. A pre-activation job can offer **Rollback** with its

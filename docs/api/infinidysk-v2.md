@@ -274,10 +274,14 @@ For a job advertising `can_cancel: true` or `actions.cancel: true`, send
 `{"job_id": "SERVER_JOB_ID", "confirmation": "SERVER_CANCEL_CONFIRMATION"}` to
 `/process/infinidysk-v2/cancel`, using its exact `cancel_confirmation_text`.
 The response can set `cancel_requested: true` while the owned worker reaches a
-checkpoint and restores the source. Repeating that same accepted cancellation
-is idempotent. Do not treat the acknowledgement as completed recovery: poll the
-job until its terminal state and recovery flags confirm the outcome. If source
-recovery fails, retain the evidence and use the offered rollback action.
+checkpoint. Repeating that same accepted cancellation is idempotent. If the job
+stops before execution begins, it finishes with `status: "cancelled"`,
+`error: null` and `result.source_untouched: true`: applications were not paused,
+the source was not changed and no restore is needed. Once execution has begun,
+cancellation stops the contained writer and restores the source before reporting
+completion. Poll until the terminal state and recovery flags confirm the
+outcome; the acknowledgement alone does not establish it. If source recovery
+fails, retain the evidence and use the offered rollback action.
 Once `activation_exposed: true`, cancellation cannot implicitly restore v1;
 follow the current exposed-target recovery actions instead.
 
@@ -292,8 +296,35 @@ The outer `stage` and `message` describe the current DUMB phase.
 
 A terminal job can expose `result.source_untouched: true` when it stopped before
 migration execution began. DUMB did not pause applications or change the source
-for that attempt. This requires resolving the reported blocker and a fresh
-preview/test; it does not prove a successful rehearsal or authorize cutover.
+for that attempt, so no restore is needed. A pre-execution cancellation is
+`cancelled` with `error: null`; failed preflight checks instead report their
+blocker. Resolve any reported blocker, then obtain a fresh preview and successful
+test before migration. Untouched-source evidence does not prove a successful
+rehearsal or authorize cutover.
+
+Supporting builds can expose optional `scan_progress` during `revalidating`.
+It describes one existing metadata traversal, without an extra scan to calculate
+progress. An opaque `scan_id` identifies that scan. Supported `phase`
+values are `reuse_eligibility`, `source_data`, `source_runtime` and
+`legacy_blob_allocation`.
+
+The object contains `entries_processed`, nullable `entries_total`,
+`total_is_estimate`, `logical_bytes_processed`, `elapsed_seconds`,
+nullable `rate_entries_per_second` and `estimated_remaining_seconds`,
+`updated_at` and `complete`. Counts and elapsed/remaining seconds are
+nonnegative integers; a reported rate is finite and positive.
+`logical_bytes_processed` sums inspected file sizes, not bytes copied or read.
+Prior-review per-root counts are optional estimates; an older aggregate spanning
+multiple roots cannot establish a total for one root.
+
+`estimate_scope` is always `current_scan`. An unknown total, insufficient pace
+measurements, an overrun or progress older than 30 seconds suppresses the
+remaining-time estimate. Clients must also suppress it for an unconfirmed,
+completed or different phase/job observation. `updated_at` records observed
+scan progress, not status polling. These fields never authorize skipping source,
+capacity, cancellation or recovery checks and do not predict the entire test
+or migration duration. Older jobs can omit the object. Preview tasks can also
+expose these bounded observations; unknown totals leave their estimate null.
 
 Supporting builds additionally expose optional `snapshot_progress`. Its bounded
 fields can include `phase`, `restore_phase`, `table`, `table_index`, `table_count`,
