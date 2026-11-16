@@ -1,6 +1,13 @@
 # Changelog
 
 
+## [1.25.5](https://github.com/I-am-PUID-0/DUMB_docs/compare/1.25.4...1.25.5) (2026-11-16)
+
+
+### 📖 Documentation
+
+* **infinidysk:** explain scan estimates and cancellation outcomes ([0b54da6](https://github.com/I-am-PUID-0/DUMB_docs/commit/0b54da6a5f88df3dc9a565ea7cba6887ad19cbd9))
+
 ## [1.25.4](https://github.com/I-am-PUID-0/DUMB_docs/compare/1.25.3...1.25.4) (2026-11-16)
 
 
