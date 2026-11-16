@@ -1,6 +1,13 @@
 # Changelog
 
 
+## [1.25.3](https://github.com/I-am-PUID-0/DUMB_docs/compare/1.25.2...1.25.3) (2026-11-16)
+
+
+### 📖 Documentation
+
+* **infinidysk:** explain migration status and recovery outcomes ([9f6884b](https://github.com/I-am-PUID-0/DUMB_docs/commit/9f6884beb71a8605764d5524f61b71a5df3a8cde))
+
 ## [1.25.2](https://github.com/I-am-PUID-0/DUMB_docs/compare/1.25.1...1.25.2) (2026-11-16)
 
 
