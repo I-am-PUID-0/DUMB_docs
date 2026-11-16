@@ -86,6 +86,13 @@ resumes the previously running consumers in dependency order. Sonarr/Radarr
 therefore resume before a dependent Prowlarr. Configured consumers that were
 already stopped remain stopped; DUMB does not enable unrelated applications.
 
+The recorded migration scope determines downtime. Review its source, mount and
+managed consumers before starting. Shared PostgreSQL, the DUMB API and frontend,
+proxies and utilities outside that scope can remain running. A v1 PostgreSQL
+source needs its database server available while DUMB captures and verifies the
+snapshot. Green indicators for those other services do not mean that the
+affected Arr, request or media applications are still running.
+
 With a native FUSE target, the old associated rclone process stays stopped.
 Rehearsal recovery or rollback restores the original transport when it was
 previously running. An upstream start failure or uncertain original-process
@@ -281,6 +288,12 @@ Only job identities are saved for browser recovery; preview authorizations and
 database passwords are not. A transport error does not prove that a job stopped.
 Refresh status before retrying, and retain an unconfirmed job's recovery evidence.
 
+The migration view refreshes status automatically while visible and rechecks it
+when you return. These checks do not repeat the preview, test or migration
+request. Use **Refresh status** if a connection is interrupted. Supporting builds
+also refresh the affected services from their actual process status; if that
+read fails, their indicators become unknown until status can be confirmed.
+
 ### Progress, cancellation and recovery
 
 The displayed phase distinguishes native import, DUMB validation and source
@@ -292,8 +305,15 @@ finished; DUMB still needs to reconcile its report and database identities.
 A rehearsal then restores v1 and its previous consumers, while a cutover must
 validate the target before starting normal v2 work.
 
+For PostgreSQL source snapshots and verification, supporting builds show the
+current phase and observed table or row counts when available. These describe
+database preparation, not how many media files have migrated. Stages without a
+measurable total remain indeterminate; a quiet counter alone does not establish
+that the worker stopped.
+
 | Result | What to do next |
 | --- | --- |
+| Checks stopped before applications paused | DUMB left the source unchanged. Resolve the reported blocker, then generate a fresh preview and test again. No restore is needed. |
 | Test passed | v1 and its previous managed services were restored. Review the matching preview and start migration while its authorization remains valid. |
 | Test failed or was cancelled, with v1 restoration confirmed | v1 is available again. Read the reported error, resolve its cause, then generate a fresh preview and run another test before migration. No recovery action is needed for the completed restoration. |
 | Recovery required | Restoration or target recovery has not finished. Preserve the job's evidence and use its currently offered recovery action; do not assume that v1 or v2 is ready. |

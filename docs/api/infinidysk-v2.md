@@ -290,6 +290,23 @@ native conversion rather than the entire validation/cutover/recovery pipeline.
 
 The outer `stage` and `message` describe the current DUMB phase.
 
+A terminal job can expose `result.source_untouched: true` when it stopped before
+migration execution began. DUMB did not pause applications or change the source
+for that attempt. This requires resolving the reported blocker and a fresh
+preview/test; it does not prove a successful rehearsal or authorize cutover.
+
+Supporting builds additionally expose optional `snapshot_progress`. Its bounded
+fields can include `phase`, `restore_phase`, `table`, `table_index`, `table_count`,
+`rows`, `elapsed_seconds`, `idle_seconds` and `stall_warning`. These are observations
+of source snapshot and verification work, not an overall migration percentage.
+Unavailable observations are omitted. Older jobs can omit this object entirely.
+
+Optional `affected_services` contains the deduplicated managed process names
+retained for this job. It describes historical scope, not proof that those
+services are currently stopped. Clients must read current service status before
+updating indicators; a failed status read must not be treated as confirmed
+running or stopped. Polling status must not replay migration mutations.
+
 Bulk native import, file copy and database snapshot/restore have no fixed
 overall deadline. Thirty minutes without observable native progress or provider
 reads produces a warning while the worker continues; polling heartbeats alone
