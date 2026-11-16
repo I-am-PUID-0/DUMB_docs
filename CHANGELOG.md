@@ -1,6 +1,13 @@
 # Changelog
 
 
+## [1.25.4](https://github.com/I-am-PUID-0/DUMB_docs/compare/1.25.3...1.25.4) (2026-11-16)
+
+
+### 📖 Documentation
+
+* **infinidysk:** explain live migration progress and service scope ([28765e9](https://github.com/I-am-PUID-0/DUMB_docs/commit/28765e9458c48534aa6110bde3ddf4fe56b119cd))
+
 ## [1.25.3](https://github.com/I-am-PUID-0/DUMB_docs/compare/1.25.2...1.25.3) (2026-11-16)
 
 
