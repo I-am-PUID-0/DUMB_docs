@@ -1,6 +1,13 @@
 # Changelog
 
 
+## [1.25.7](https://github.com/I-am-PUID-0/DUMB_docs/compare/1.25.6...1.25.7) (2026-11-17)
+
+
+### 📖 Documentation
+
+* **infinidysk:** explain queued-download omission and preservation ([7d45325](https://github.com/I-am-PUID-0/DUMB_docs/commit/7d4532545fa3c7c24504e5226056757f1f38e2a6))
+
 ## [1.25.6](https://github.com/I-am-PUID-0/DUMB_docs/compare/1.25.5...1.25.6) (2026-11-17)
 
 
