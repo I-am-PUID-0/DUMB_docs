@@ -1,6 +1,13 @@
 # Changelog
 
 
+## [1.25.8](https://github.com/I-am-PUID-0/DUMB_docs/compare/1.25.7...1.25.8) (2026-11-17)
+
+
+### 📖 Documentation
+
+* **infinidysk:** explain closed-file checks on SMB staging ([075ff0d](https://github.com/I-am-PUID-0/DUMB_docs/commit/075ff0df795bf1285cc6ec47248b7e4d282baae1))
+
 ## [1.25.7](https://github.com/I-am-PUID-0/DUMB_docs/compare/1.25.6...1.25.7) (2026-11-17)
 
 
