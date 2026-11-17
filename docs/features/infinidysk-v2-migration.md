@@ -382,6 +382,11 @@ that the worker stopped.
 A failed test does not become a successful test because v1 was restored.
 Likewise, a retained archive or an available rollback control does not by itself
 mean that recovery is running. Follow the job's result and reported error.
+
+CIFS/SMB shares can finalize file timestamps when an upload closes. Supporting
+builds record those closed-file values before later checks; every copied file
+still needs complete content verification before local blobs are removed.
+
 A failed input check can identify the source or staged copy, entry type, changed
 metadata fields and a digest reference without exposing the original path.
 Preserve that reference and the job evidence when reporting a failure; do not
