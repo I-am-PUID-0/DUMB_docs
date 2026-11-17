@@ -61,6 +61,46 @@ only `import_strategy: "preserve"`; it does not regenerate existing outputs.
 The exact consumer-visible mount path is retained. Generation 2 uses separate
 runtime/data directories and the verified beta artifact.
 
+#### Queued-download policy
+
+For a backend advertising the strict boolean
+`infinidysk_v2_queue_omission: true`, an existing-source preview can request
+`omit_queued_downloads: true`. This optional boolean defaults to `false`. Selecting it requires
+`mode: "migrate"`. It is not an option for fresh installation or
+native v2 PostgreSQL conversion. Clients must hide the choice and omit the field
+when the capability is absent, even if a stale form value remains selected.
+
+The default requires an empty v1 `QueueItems` table. Known live queued work blocks
+the preview before large inventory/capacity walks. A second authoritative check
+runs after quiescence, before PostgreSQL snapshot and full source fingerprints.
+An unavailable live observation is not an empty queue.
+
+Optional `preview.source_queue` and `job.source_queue` contain:
+
+| Field | Meaning |
+| --- | --- |
+| `policy` | `require_empty` or explicit `omit_from_v2` |
+| `observed_count` | Nonnegative count, or `null` when unavailable |
+| `observed_at` | Observation time in Unix seconds, or `null` |
+| `observation` | `live`, `unavailable` or authoritative `captured` |
+| `omitted_count` | `null` until the separate importer input is verified, then the actual nonnegative omitted count |
+| `source_queue_preserved` | `true`: the original/recovery queue records remain preserved |
+
+The live count can change before capture. Omission applies to the whole captured
+queue and is bound to the reviewed option; it is not a failed-job heuristic.
+The backend records the captured identities/digest privately. It derives a
+separate closed, queue-free native importer database while preserving the
+original source database, complete archive/dump, media and history. Native
+acceptance still requires zero imported queued jobs. No live API/SQL deletion
+or blob cleanup is part of this option.
+
+The explicit choice uses the existing preview, confirmation and successful-test
+requirements; it adds no extra acknowledgement. Changing it invalidates an older
+review/test. Rehearsal and rollback restore the original queued work. A successful
+v2 cutover does not carry those jobs over; external Arr producers can submit them
+again. `source_queue_preserved` is specific to queue evidence and does not claim
+that low-space reuse kept every original file locally.
+
 #### Low-space migration
 
 A supporting backend advertises

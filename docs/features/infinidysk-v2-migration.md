@@ -57,11 +57,10 @@ signing keys, symlink trees and existing STRM files. DUMB's retained migration
 state is useful recovery evidence, not a replacement for those backups.
 
 An existing source must meet the 1.3-era database schema floor checked by the
-backend and have an empty **InfiniDysk 1 download-task queue** after quiescence.
-The preview identifies that queue; a stopped-source snapshot refusal reports
-its remaining task count. Review and finish those tasks, or explicitly remove
-tasks you intend to discard, before retrying. Failed history records alone do
-not block this queue check.
+backend. By default its **InfiniDysk 1 download-task queue** must be empty after
+applications stop. Supporting builds offer an explicit
+[option to continue without queued downloads](#queued-downloads).
+Failed history records alone do not block this queue check.
 
 This check does not require deleting Sonarr history or media-library files.
 If an Arr application reports a separate failed-download problem, review that
@@ -124,6 +123,31 @@ A v1 PostgreSQL source also needs a backend-supported source snapshot adapter
 and successful dump/restore proof. If that path is unavailable or unverified,
 the preview blocks it. The major importer does not directly reuse the v1
 PostgreSQL database as a generation 2 database.
+
+### Queued downloads
+
+DUMB checks the available live queue before large preview scans. It checks again
+after stopping the affected applications, before PostgreSQL backup and full file
+checks. A live count is advisory and can change before that stopped-source
+check. If the live queue cannot be inspected, its count is unknown.
+
+By default, finish the pending tasks before migrating. On a supporting backend,
+**Continue without queued downloads** instead excludes the entire captured queue
+from the private database supplied to the v2 importer. It does not cancel jobs
+through the live v1 API or delete the original queue, completed/failed history,
+library files or blobs. The original database and recovery backup retain those
+queued jobs.
+
+Review the displayed policy and count in the fresh preview. Changing the option
+invalidates the previous review and test. The running job reports its captured
+count; an omitted count is confirmed only after the private importer database
+has been verified. This choice applies to the whole queue, rather than guessing
+which jobs are failed.
+
+A completed test or rollback restores v1 with its original pending queue.
+After successful migration those jobs are absent from v2, and Arr applications
+may submit them again. This option is for an existing v1-to-v2 upgrade only;
+older backends keep the empty-queue requirement.
 
 ## Choose migration storage
 
@@ -259,7 +283,8 @@ source locations and available space, and resolve the blocker before retrying.
    database and exact mount path.
 2. Keep **historical rclone over WebDAV**, or explicitly choose **native FUSE**.
    The backend must verify ownership, prerequisites and consumer visibility.
-3. Generate a preview. Review its checks, blockers, warnings and recorded scope.
+3. Generate a preview. Review its checks, blockers, warnings and recorded scope,
+   including the queued-download policy and any observed count.
    Existing migrations preserve the exact mount path; they do not rename the
    virtual library namespace or change import strategy.
 4. Confirm the independent backup, downtime, beta, login/OIDC policy and
