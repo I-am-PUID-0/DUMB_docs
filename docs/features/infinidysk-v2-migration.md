@@ -175,6 +175,13 @@ projected release is an estimate, not free space already available to use.
 The importer reads that expanded legacy input without changing it while writing
 the new v2 database locally.
 
+Copying, preparing access permissions, reading back the staged files, checking
+the retained local input and releasing the verified local files are separate
+steps. A completed copy does not mean its readback has finished. Network storage
+can spend substantial time checking many small files even after all bytes have
+been transferred. DUMB can read the input and archive again at later verification
+boundaries; keep the share available until the job reaches its confirmed result.
+
 The recovery archive and expanded input have different jobs: the archive can
 restore v1, while the expanded files let the importer read individual legacy
 blobs. DUMB needs space for both on the share. Moving only the archive does not
@@ -319,6 +326,19 @@ recovery have separate work, so this estimate does not predict the whole test's
 finish time. Older backends show their existing stage and message without a
 scan estimate.
 
+Supporting builds also show bytes or entries processed for the current archive,
+input-copy, verification or restoration pass, with measured pace and approximate
+time remaining when available. Archive writing can use an estimated total;
+archive readback and restoration use the retained archive's size. Each new pass
+starts its own counters and estimate. These numbers do not predict the whole
+test or migration's finish time, and reaching the byte total does not establish
+that integrity checks or service recovery have passed.
+
+An unknown total, a new or stale measurement, or work exceeding an earlier
+estimate can leave time remaining unavailable. A test can still need a lengthy
+v1 restoration after native import or a failure. Wait for the terminal result
+rather than treating the end of copying as completion.
+
 For PostgreSQL source snapshots and verification, supporting builds show the
 current phase and observed table or row counts when available. These describe
 database preparation, not how many media files have migrated. Stages without a
@@ -337,6 +357,10 @@ that the worker stopped.
 A failed test does not become a successful test because v1 was restored.
 Likewise, a retained archive or an available rollback control does not by itself
 mean that recovery is running. Follow the job's result and reported error.
+A failed input check can identify the source or staged copy, entry type, changed
+metadata fields and a digest reference without exposing the original path.
+Preserve that reference and the job evidence when reporting a failure; do not
+change timestamps, move files or delete retained input to make a check pass.
 
 Bulk migration work has **no fixed overall time limit**. Large file copies,
 PostgreSQL dump and restore verification, and native import can take longer on

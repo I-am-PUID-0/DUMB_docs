@@ -326,6 +326,54 @@ capacity, cancellation or recovery checks and do not predict the entire test
 or migration duration. Older jobs can omit the object. Preview tasks can also
 expose these bounded observations; unknown totals leave their estimate null.
 
+Supporting builds can also expose optional `io_progress` for an existing copy,
+archive or verification pass. Its fixed fields are `phase_id`, `phase`, `unit`,
+`processed`, nullable `total`, `total_is_estimate`, `elapsed_seconds`,
+nullable `rate_per_second` and `estimated_remaining_seconds`, `updated_at` and
+`complete`. Counts and timestamps are nonnegative integers; a rate is finite and
+positive in the selected unit per second. `phase_id` is opaque and changes for
+each pass, including repeated checks of the same archive or input.
+
+| `phase` | Outer `stage` | `unit` |
+| --- | --- | --- |
+| `source_fingerprint` | `snapshotting` | `bytes` |
+| `archive_inventory` | `archive_inventory` | `entries` |
+| `archive_write` | `archiving` | `bytes` |
+| `archive_readback`, `archive_recheck` | `verifying_archive` | `bytes` |
+| `archive_restore` | `restoring_archive` | `bytes` |
+| `restore_metadata` | `restoring_metadata` | `entries` |
+| `restore_verify` | `verifying_restored_source` | `bytes` |
+| `blob_copy` | `staging_blobs` | `bytes` |
+| `blob_metadata` | `preparing_blob_staging` | `entries` |
+| `blob_verify_staged` | `verifying_blob_staging` | `bytes` |
+| `blob_verify_source` | `verifying_blob_staging` | `entries` |
+| `blob_release` | `releasing_local_blobs` | `entries` |
+| `blob_verify_input` | `verifying_blob_input` | `bytes` |
+| `blob_cleanup` | `cleaning_blob_staging` | `entries` |
+
+Archive writing estimates physical output from the existing manifest and tar
+metadata; `total_is_estimate` distinguishes it from an exact archive-size bound
+used for readback or restoration. Counters observe the existing operation
+without another scan or read solely for progress.
+
+These observations describe the current pass, not overall completion or
+acceptance. Clients must require a confirmed active job and matching outer stage,
+and suppress rate/ETA for completed, stale or mismatched observations. Pace needs
+at least ten seconds in the phase and measured progress; observations older than
+30 seconds are stale.
+Unknown totals cannot provide remaining time; an overrun suppresses the estimate.
+Status polling does not refresh `updated_at`. Byte completion alone is not
+verified integrity, successful restoration or permission to start services.
+Older jobs can omit this object.
+
+A failed input check can expose optional `input_integrity` with authored `code`
+equal to `recorded_entry_changed` or `input_content_mismatch`, `side` equal to
+`source` or `staged`, `entry_type` equal to `file`, `directory` or `other`, and a
+64-character lowercase hexadecimal `path_digest`. `changed_fields` contains only
+`dev`, `inode`, `mode`, `size`, `mtime_ns`, `ctime_ns`, `nlink` or `sha256`.
+Raw paths and expected/actual values are not public fields. The digest helps
+correlate private evidence; it does not authorize retry, cleanup or acceptance.
+
 Supporting builds additionally expose optional `snapshot_progress`. Its bounded
 fields can include `phase`, `restore_phase`, `table`, `table_index`, `table_count`,
 `rows`, `elapsed_seconds`, `idle_seconds` and `stall_warning`. These are observations
