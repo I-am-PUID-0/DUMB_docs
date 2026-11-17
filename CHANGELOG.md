@@ -1,6 +1,13 @@
 # Changelog
 
 
+## [1.25.6](https://github.com/I-am-PUID-0/DUMB_docs/compare/1.25.5...1.25.6) (2026-11-17)
+
+
+### 📖 Documentation
+
+* **infinidysk:** explain migration I/O progress and input checks ([7026156](https://github.com/I-am-PUID-0/DUMB_docs/commit/7026156e0165adaf73c74ce93bf7cf834a129e74))
+
 ## [1.25.5](https://github.com/I-am-PUID-0/DUMB_docs/compare/1.25.4...1.25.5) (2026-11-16)
 
 
