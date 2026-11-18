@@ -522,6 +522,21 @@ Updated jobs can expose `import_report` with `status` equal to `accepted`,
 The optional sample counts and truncation flags explain bounded public details;
 the complete native report remains in private job storage.
 
+Supporting jobs also expose optional `provider_diagnostics` with
+`schema_version: 1`, `recorded_at`, `final`, `providers` and `unbound_failures`.
+Each provider has a one-based `provider_ordinal`, `requests`, `bytes_received`,
+`retries` and a `failures` count map. Counts are nonnegative safe integers;
+there are at most 64 provider rows. `final: true` means the bridge stopped and
+the observation was retained, not that migration or recovery finished.
+Failure keys are restricted to `dns`, `connect`, `tls`, `authentication`,
+`connection_limit`, `timeout`, `connection_closed`, `protocol`, `response_limit`,
+`provider_reply`, `article_missing`, `bridge_capacity` and `bridge_handshake`.
+Unbound failures happened before a provider was selected. No addresses,
+credentials, article IDs or raw exception text are included. These are attempt
+counters: a retry or another provider may have succeeded. They do not change
+import-report acceptance or replace its per-file reasons. The last observation
+remains available during recovery and after failure; older jobs may omit it.
+
 Supporting reports also expose a bounded `import_report.history` summary with
 `source_rows`, `completed`, `failed`, `unsupported_status`, `invalid_identity`
 and `imported_this_attempt`. Verified history adds `verified_present` and

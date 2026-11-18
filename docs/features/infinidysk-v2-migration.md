@@ -559,6 +559,15 @@ source exclusions: the restricted relay can recover missing metadata only when
 the configured provider permits the required reads. An acknowledgement does not
 override unavailable providers or unexplained omissions.
 
+Supporting builds show **Provider activity** while importing and retain those
+observations after the importer stops. Provider numbers follow the captured
+provider order. The counts distinguish requests, retries, article-not-found
+replies, and connection or protocol errors without showing server addresses or
+credentials. Expand **Connection and protocol errors** to see which step failed.
+An attempt can recover through a retry or another provider, so these counters
+alone do not mean a file was lost. Use the native import report to see whether
+any files remain blocked. Older jobs may not contain these observations.
+
 The dashboard bounds its path/reason samples and identifies truncated details;
 DUMB retains the full native report privately with the migration job. The
 job's report action retrieves that plain-text report through the authenticated
