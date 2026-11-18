@@ -23,8 +23,8 @@ recovery information remain visible. The supported native artifact is currently
 
 | Starting point | Workflow |
 | --- | --- |
-| Empty eligible installation | Open the same wizard in fresh-install mode |
-| Existing InfiniDysk 1.x data | Back up independently, review storage, rehearse, then validate before cutover |
+| Empty eligible installation | Preview the empty target, prepare it, then explicitly activate it |
+| Existing InfiniDysk 1.x data | Back up independently, preview, prepare once, then review and activate that same converted candidate |
 | Running InfiniDysk 2 with SQLite | Use the separate [native PostgreSQL conversion](#native-postgresql-conversion) only if wanted |
 | Interrupted or failed work | Open [recovery guidance](#progress-cancellation-and-recovery) before changing settings |
 
@@ -39,9 +39,11 @@ Keep this page open for the complete procedure. Migration can interrupt storage 
 | Database | Import v1 SQLite or v1 PostgreSQL into a separate generation 2 SQLite database first; PostgreSQL conversion is optional afterward |
 | Import strategy | Preserve existing outputs; changing generation or mount does not regenerate symlinks or STRM files |
 
-SQLite-to-SQLite migration converts the generation 1 schema and data into the
-generation 2 format while retaining a recoverable original source. PostgreSQL is optional;
-you can keep generation 2 SQLite or convert it separately after validation.
+InfiniDysk's native importer converts the generation 1 schema and data into the
+generation 2 format while DUMB retains a recoverable original source. You can
+keep generation 2 SQLite or later use InfiniDysk's native SQLite-to-PostgreSQL
+engine. DUMB coordinates the backups, checks, service lifecycle and recovery
+around those native engines.
 
 The original 1.x runtime, configuration and data remain the rollback source,
 locally by default or in the verified archive when local storage is reused.
@@ -93,14 +95,14 @@ snapshot. Green indicators for those other services do not mean that the
 affected Arr, request or media applications are still running.
 
 With a native FUSE target, the old associated rclone process stays stopped.
-Rehearsal recovery or rollback restores the original transport when it was
-previously running. An upstream start failure or uncertain original-process
+Rollback, or an older backend's test recovery, restores the original transport
+when it was previously running. An upstream start failure or uncertain original-process
 termination keeps recovery held instead of starting downstream consumers over
 an unverified mount.
 
 !!! warning "Contained import and provider reads"
 
-    DUMB rehearses the actual upstream importer in a private environment.
+    DUMB runs the actual upstream importer in a private environment.
     Writes outside its working candidate and general external networking remain
     denied. The host must support the required Linux namespaces, `nsenter` and
     Landlock ABI 3 or newer. Failed containment checks block the operation.
@@ -139,15 +141,16 @@ library files or blobs. The original database and recovery backup retain those
 queued jobs.
 
 Review the displayed policy and count in the fresh preview. Changing the option
-invalidates the previous review and test. The running job reports its captured
+requires a new review before preparation. The running job reports its captured
 count; an omitted count is confirmed only after the private importer database
 has been verified. This choice applies to the whole queue, rather than guessing
 which jobs are failed.
 
-A completed test or rollback restores v1 with its original pending queue.
-After successful migration those jobs are absent from v2, and Arr applications
-may submit them again. This option is for an existing v1-to-v2 upgrade only;
-older backends keep the empty-queue requirement.
+Preparation retains the original pending queue for recovery. Rollback restores
+that queue to v1; the older separate test flow also restores v1 when it ends.
+After activation those jobs are absent from v2, and Arr applications may submit
+them again. This option is for an existing v1-to-v2 upgrade only; older backends
+keep the empty-queue requirement.
 
 ## Choose migration storage
 
@@ -227,7 +230,7 @@ directory is kept for review; do not delete it just to clear that warning.
 ### Recovery when v1 storage is reused
 
 The verified archive is the v1 recovery source for both low-space choices.
-A rehearsal or rollback can need to remove the owned v2 candidate before
+Source recovery or rollback can need to remove the owned v2 candidate before
 restoring v1 from that archive. Keep the selected storage mounted and readable
 through migration and any recovery.
 
@@ -292,27 +295,55 @@ source locations and available space, and resolve the blocker before retrying.
    The downstream review confirms existing Arr/media mount paths, remote path
    mappings, symlinks and STRM origins, and that external writers/scanners are
    stopped. It is an operator review, not an automatic audit of external players.
-5. For existing data, select **Test migration** to run the isolated rehearsal.
-   The panel shows the pending request immediately, then the accepted job's
-   current phase. Wait for its result; submitting a request is not proof that
-   services have stopped or that the test has finished.
-   Cutover requires a successful test matching the reviewed plan. A fresh
-   installation must instead prove that it will not overwrite existing data.
-6. Start the installation or migration and follow the persistent job. A changed
-   source or expired preview requires another review; a successful rehearsal can
-   be reused only when its public plan fingerprint still matches. Successful
-   rehearsal refreshes the reviewed authorization for 30 minutes, allowing time
-   to review cutover after a long import.
+5. Select **Prepare migration**, or **Prepare InfiniDysk 2** for a fresh
+   installation. DUMB captures the recovery state, runs InfiniDysk's native
+   conversion in the isolated candidate and verifies it. A fresh installation
+   prepares an eligible empty target instead. Follow the persistent job;
+   accepting the request does not mean preparation has finished.
+6. When the job is ready for activation, review the import report for existing
+   data, any omitted items, the mount choice and recovery information. The candidate is kept
+   for this job. **v1 and its affected managed applications remain paused during
+   this review.** Keep external writers stopped and required storage connected.
+7. Select **Activate prepared InfiniDysk 2** and type its exact confirmation.
+   DUMB activates **the same converted candidate**, checks live delivery and
+   resumes the previously running managed consumers. It does not repeat the
+   native conversion. Complete the playback and downstream checks below before
+   resuming external imports and scans.
 
-After a validated rehearsal, DUMB confirms that the native candidate and its
-process group have stopped and that v1 and its managed consumers were restored.
-It then removes only that job's full private candidate copy, retaining the
-verification receipts, source archive or backup and minimal database evidence.
-In the default mode, failed rehearsals retain their candidate for investigation.
-The low-space choices recover v1 from the verified archive as described above.
-Cutover prepares the selected working layout after source checks pass again.
-Allow for that choice's peak local and external use even after a successful
-rehearsal has released its candidate.
+Preparation does not select v2 for normal use. Closing the panel leaves the
+prepared job waiting for your explicit decision; it does not restore v1 or
+activate v2. To return instead, use **Restore v1**, or **Restore previous setup**
+for a fresh installation. Do not change the source, candidate or migration options
+while review is held. The backend rechecks the retained job and its proofs before
+activation.
+
+The prepared job and recovery evidence survive reloading and controller restarts.
+After a restart, DUMB serves the installed API and frontend while holding normal
+applications and background workers. Reopen the same prepared job; it remains
+waiting for your guarded activation or restore decision. Use the direct frontend
+address if a stopped proxy is unavailable. A restart does not activate v2.
+
+If the completed activation or restore asks for a DUMB restart, restart the
+container once, then verify normal startup. The affected v2 consumers may already
+be running after activation, but unrelated applications and normal workers still
+need that final restart. **Waiting for review alone does not require a restart.**
+If the prepared state cannot be confirmed, preserve its evidence and follow the
+offered recovery path.
+
+### Older backend: separate test and migration
+
+A backend without prepared-activation support keeps the earlier
+**Test migration → Start migration** workflow. For existing data, a successful
+test matching the reviewed plan is required. DUMB stops the test candidate,
+restores v1 and its previously running consumers, and can remove the job's full
+private candidate while retaining backup and verification evidence. Starting the
+migration later repeats native conversion in its new working candidate.
+
+A successful test refreshes its matching preview authorization for 30 minutes.
+Changed options or source facts require a fresh review and test. Failed tests
+retain investigation evidence; low-space recovery can remove the owned candidate
+before restoring v1 from its verified archive. A fresh installation still has to
+prove that its target is eligible and will not overwrite existing data.
 
 Closing the panel or visiting another page does not cancel the backend job.
 The global notice reopens progress or recovery after navigation and reload.
@@ -321,7 +352,7 @@ database passwords are not. A transport error does not prove that a job stopped.
 Refresh status before retrying, and retain an unconfirmed job's recovery evidence.
 
 The migration view refreshes status automatically while visible and rechecks it
-when you return. These checks do not repeat the preview, test or migration
+when you return. These checks do not repeat preview, preparation, activation or legacy test
 request. Use **Refresh status** if a connection is interrupted. Supporting builds
 also refresh the affected services from their actual process status; if that
 read fails, their indicators become unknown until status can be confirmed.
@@ -334,8 +365,9 @@ result and next step. Native counts and any time estimate describe that phase
 only, rather than an overall completion percentage. Unknown counts do not
 establish completion. **Native stage: done** means the upstream conversion
 finished; DUMB still needs to reconcile its report and database identities.
-A rehearsal then restores v1 and its previous consumers, while a cutover must
-validate the target before starting normal v2 work.
+A prepared candidate waits for explicit activation with its affected applications
+paused. Activation must validate the live target before normal v2 work starts.
+Only the older separate test flow restores v1 automatically after a passed test.
 
 Before pausing applications, supporting builds show the current filesystem
 scan's entries, measured pace and, when possible, approximate time remaining
@@ -356,13 +388,13 @@ input-copy, verification or restoration pass, with measured pace and approximate
 time remaining when available. Archive writing can use an estimated total;
 archive readback and restoration use the retained archive's size. Each new pass
 starts its own counters and estimate. These numbers do not predict the whole
-test or migration's finish time, and reaching the byte total does not establish
+operation's finish time, and reaching the byte total does not establish
 that integrity checks or service recovery have passed.
 
 An unknown total, a new or stale measurement, or work exceeding an earlier
-estimate can leave time remaining unavailable. A test can still need a lengthy
-v1 restoration after native import or a failure. Wait for the terminal result
-rather than treating the end of copying as completion.
+estimate can leave time remaining unavailable. A failed or cancelled attempt can
+still need a lengthy v1 restoration. Follow the job's confirmed outcome.
+Copy completion alone does not mean preparation or recovery has finished.
 
 For PostgreSQL source snapshots and verification, supporting builds show the
 current phase and observed table or row counts when available. These describe
@@ -372,14 +404,16 @@ that the worker stopped.
 
 | Result | What to do next |
 | --- | --- |
-| Cancelled before applications paused | DUMB left the source unchanged. No restore or recovery action is needed. Generate a fresh preview and complete a test before a later migration. |
-| Checks failed before applications paused | DUMB left the source unchanged. Resolve the reported blocker, then generate a fresh preview and test again. No restore is needed. |
-| Test passed | v1 and its previous managed services were restored. Review the matching preview and start migration while its authorization remains valid. |
-| Test failed or was cancelled, with v1 restoration confirmed | v1 is available again. Read the reported error, resolve its cause, then generate a fresh preview and run another test before migration. No recovery action is needed for the completed restoration. |
-| Recovery required | Restoration or target recovery has not finished. Preserve the job's evidence and use its currently offered recovery action; do not assume that v1 or v2 is ready. |
-| Migration completed | Validate the running v2 installation, downstream paths and playback before resuming normal imports and scans. |
+| Cancelled before applications paused | DUMB left the source unchanged. No restore is needed. Obtain a fresh preview before another preparation. |
+| Checks failed before applications paused | Resolve the blocker and obtain a fresh preview. No source restore is needed. |
+| Prepared; waiting for activation | Conversion and preparation checks passed. Applications remain paused. Review this job and explicitly activate its candidate, or restore the previous setup. |
+| Preparation failed or was cancelled, with v1 restoration confirmed | v1 is available again. Resolve the reported error and obtain a fresh preview before trying again. No additional recovery action is needed. |
+| Older backend: test passed | v1 and its previous managed services were restored. Review the matching preview and start migration while its authorization remains valid. |
+| Older backend: test failed with v1 restored | Resolve its error, obtain a fresh preview and repeat the test. No additional source recovery is needed. |
+| Recovery required | Restoration or target recovery has not finished. Preserve the evidence and use the job's offered action; do not assume either installation is ready. |
+| Migration completed | Validate running v2, downstream paths and playback before resuming normal imports and scans. |
 
-A failed test does not become a successful test because v1 was restored.
+Restoring v1 after a failure does not make the preparation or legacy test successful.
 Likewise, a retained archive or an available rollback control does not by itself
 mean that recovery is running. Follow the job's result and reported error.
 
@@ -418,8 +452,8 @@ wait for the job's confirmed outcome rather than assuming the request completed.
 Keep imports, scans and playback stopped while source restoration or recovery runs.
 
 After a controller restart, or if recovery fails, review the retained job's
-current authorized actions. A pre-activation job can offer **Rollback** with its
-exact confirmation to recover v1. A job that still blocks new work takes priority
+current authorized actions. A pre-activation job can offer **Restore v1**
+(**Rollback** on the older flow) with its exact confirmation to recover v1. A job that still blocks new work takes priority
 over newer completed attempts in the migration panel; its current recovery
 actions determine what can proceed. Low-space recovery
 also requires the selected migration backup location to be mounted and readable.
@@ -433,7 +467,7 @@ Deleting a database or job file to clear a lock can destroy the recovery path.
 ### Recover v2 activation or pending consumers
 
 Starting the live v2 target establishes a different recovery boundary from the
-isolated rehearsal. It may already contain new writes. DUMB retains that target
+isolated prepared candidate. It may already contain new writes. DUMB retains that target
 and the original v1 recovery evidence instead of automatically restoring v1
 because a later activation check or downstream start failed.
 
@@ -490,12 +524,14 @@ The job's import report distinguishes imported files, omitted files and their
 reported reasons. Omitted files are absent from v2; a completed native import does
 not establish that those files will be repaired or replaced automatically.
 
-A known, fully accounted source incompatibility can require a separate review
-before cutover. Read the reasons and affected paths, then explicitly accept the
-reviewed omissions. This acceptance is bound to the validated rehearsal's full
-private evidence, not the dashboard's limited path samples.
+A known, fully accounted source incompatibility can require review before
+activation. Read the reasons and affected paths, then explicitly accept the
+prepared job's omissions. Acceptance is bound to that candidate's full private
+evidence and exact report digest; the dashboard's limited path samples cannot
+replace it. Activating the prepared candidate does not run another import.
 
-Cutover can omit the same items or fewer, including none, when the complete
+On the older separate test workflow, cutover can omit the same items or fewer,
+including none, when the complete
 canonical source media and history census is unchanged. Every remaining omitted
 identity, name, path and exact reason must match the reviewed evidence. An item
 that succeeds at cutover no longer needs omission consent. New omissions or
@@ -508,7 +544,8 @@ can therefore read many metadata files from the retained source. This proof uses
 filesystem reads rather than adding NNTP requests. Keep its full private
 evidence with the job; a bounded public sample cannot replace it.
 Volatile health scheduling is excluded from this census. Changed source facts
-or stale private proof require a fresh isolated rehearsal and review.
+or stale private proof require a fresh preparation and review, or a new test on
+an older backend.
 
 A lower count in one native import report is not accepted as a history-loss
 tolerance. Every required completed and failed source-history identity must
@@ -566,7 +603,8 @@ filesystem requirements.
 
 ## Native PostgreSQL conversion
 
-After generation 2 is validated, open **Tools → InfiniDysk 2 database
+After activating generation 2 and validating the running installation, open
+**Tools → InfiniDysk 2 database
 conversion**. This uses the native copy, synchronization and cutover engine,
 not DUMB's generation 1 SQLite-to-PostgreSQL adapter.
 
@@ -711,8 +749,8 @@ v1-to-v2 migration: native section replacement can hide the retained download AP
 key. Remove that override or express the settings as individual
 `INFINIDYSK__SAB__...` fields. An explicit `INFINIDYSK__SAB__API_KEY` must match
 the retained v1 key; other individual SAB fields remain supported. If DUMB
-requests renewed key proof, generate and review a fresh preview, then run a new
-isolated rehearsal before cutover.
+requests renewed key proof, generate and review a fresh preview, then prepare a
+new candidate. An older backend requires its separate test before migration.
 
 DUMB does not edit Arr applications' settings. If v2 is already running after an
 earlier migration or manual credential changes, compare the Arr download client's

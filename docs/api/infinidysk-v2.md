@@ -24,6 +24,13 @@ Clients require a valid `api_version >= 2.24.0`, explicit boolean
 protocols disable mutations. Retained job/recovery displays remain independent
 of those new-operation controls.
 
+The strict boolean `infinidysk_v2_prepared_activation: true` selects the default
+prepare-once workflow. Clients prepare and review one candidate, then explicitly
+activate that same job. With the capability absent, retain the legacy separate
+test/start workflow. InfiniDysk's native engines perform the major data-format
+conversion and the later optional v2 SQLite-to-PostgreSQL conversion; DUMB
+coordinates snapshots, checks, containment, activation and recovery.
+
 ### Major installation and upgrade
 
 | Method | Route | Purpose |
@@ -34,8 +41,10 @@ of those new-operation controls.
 | `GET` | `/process/infinidysk-v2/preview/task` | Retrieve the latest preview task |
 | `GET` | `/process/infinidysk-v2/preview/task/{task_id}` | Poll one preview task and retrieve its completed result |
 | `POST` | `/process/infinidysk-v2/preview/task/{task_id}/cancel` | Request cancellation of that preview without stopping services |
-| `POST` | `/process/infinidysk-v2/rehearse` | Run the actual contained native importer against retained source snapshots |
-| `POST` | `/process/infinidysk-v2/start` | Start an eligible fresh install or guarded major cutover |
+| `POST` | `/process/infinidysk-v2/prepare` | Prepare and verify one retained candidate for explicit activation |
+| `POST` | `/process/infinidysk-v2/activate` | Activate that same prepared job after current proof and confirmation checks |
+| `POST` | `/process/infinidysk-v2/rehearse` | Legacy separate test using the contained native importer |
+| `POST` | `/process/infinidysk-v2/start` | Legacy eligible fresh install or guarded major cutover |
 | `GET` | `/process/infinidysk-v2/jobs/{job_id}` | Retrieve one persisted job as `{"job": {...}}` |
 | `GET` | `/process/infinidysk-v2/jobs/{job_id}/report` | Read the retained native import report as plain text with `Cache-Control: no-store` |
 | `POST` | `/process/infinidysk-v2/cancel` | Request cooperative cancellation of the exact active major job and protected source recovery |
@@ -94,11 +103,12 @@ original source database, complete archive/dump, media and history. Native
 acceptance still requires zero imported queued jobs. No live API/SQL deletion
 or blob cleanup is part of this option.
 
-The explicit choice uses the existing preview, confirmation and successful-test
-requirements; it adds no extra acknowledgement. Changing it invalidates an older
-review/test. Rehearsal and rollback restore the original queued work. A successful
-v2 cutover does not carry those jobs over; external Arr producers can submit them
-again. `source_queue_preserved` is specific to queue evidence and does not claim
+The explicit choice uses the current preview and confirmation requirements; it
+adds no extra acknowledgement. Its value is pinned to the prepared job; changing
+it needs a new review and preparation. The legacy flow also invalidates the old
+test proof when options change. Rollback restores the original queued work, as
+does a completed legacy test. Successful v2 activation does not carry those jobs
+over; external Arr producers can submit them again. `source_queue_preserved` is specific to queue evidence and does not claim
 that low-space reuse kept every original file locally.
 
 #### Low-space migration
@@ -115,7 +125,7 @@ backends or treat archive selection alone as permission to reuse source data.
 A low-space preview includes `source_storage` with
 `mode: "archive_recovery"`, `reclaim_source_space: true` and
 `rollback_requires_archive: true`. Its `required_acknowledgements` additionally
-requires `archive_recovery`. Both rehearsal and rollback can release the exact
+requires `archive_recovery`. Source recovery or rollback can release the exact
 owned candidate before restoring original v1 files from the retained archive.
 Recovery refuses an unavailable/replaced archive or changed owned path.
 The capacity review retains actual free-space readings and includes remaining
@@ -153,7 +163,7 @@ using its explicit capability rather than the backend version alone.
 The preview retains `source_storage.mode: "archive_recovery"` and adds
 `source_storage.offload_legacy_blobs: true` for the chosen mode.
 `required_acknowledgements` additionally requires `external_blob_staging`.
-Use the acknowledgements returned by that preview for rehearsal and start.
+Use the acknowledgements returned by that preview for preparation, or for the legacy test/start flow.
 
 DUMB verifies the cold recovery archive, copies and verifies a separate expanded
 legacy blob input at the destination, then releases only the corresponding owned
@@ -220,7 +230,7 @@ result responses use `Cache-Control: no-store, private` because a completed
 preview contains its short-lived authorization token.
 
 The authorization period starts at completion, not when scanning begins. Task
-identity and progress alone never authorize rehearsal or cutover; review that
+identity and progress alone never authorize preparation or activation; review that
 completed result and its required acknowledgements first.
 
 #### Preview contract
@@ -228,9 +238,11 @@ completed result and its required acknowledgements first.
 The preview returns `protocol`, `ready`, `preview_token`, `expires_at`,
 `plan_fingerprint`, `confirmation_text`, `current`, `target`, `checks`,
 `blockers`, `warnings`, `inventory`, `required_acknowledgements` and
-`rehearsal_required`. The public fingerprint binds a rehearsal to its plan;
-it is not an authorization token. Recorded inventory is not proof that
-unmanaged consumers or STRM URLs are absent.
+`rehearsal_required`. The public fingerprint binds the job to its reviewed plan;
+it is not an authorization token. `rehearsal_required` describes the legacy
+test/start contract; prepared-activation clients select their workflow using the
+strict capability above. Recorded inventory is not proof that unmanaged
+consumers or STRM URLs are absent.
 
 #### Compatibility authentication policy
 
@@ -243,8 +255,76 @@ native launch, not a runtime settings probe or a mutation option. With no relay 
 The backend rejects conflicting explicit authentication overrides before native
 setup or migration. Older backends may omit the object.
 
-#### Rehearse and start
+#### Prepare once, review, then activate
 
+With `infinidysk_v2_prepared_activation: true`, post the current preview's token,
+exact confirmation and required acknowledgements to `/process/infinidysk-v2/prepare`:
+
+```json
+{
+  "preview_token": "<current-preview-token>",
+  "confirmation": "<server-confirmation>",
+  "acknowledgements": {
+    "backup": true,
+    "downtime": true,
+    "beta": true,
+    "oidc_policy": true,
+    "downstream": true
+  }
+}
+```
+
+Use only the acknowledgements required by that preview, including any selected
+storage options. Do not send a `rehearsal_job_id`. Both supported fresh
+installation and existing-source migration can use preparation.
+
+The persisted job uses `mode: "prepare"` and `prepare_mode: "fresh"` or
+`"migrate"`. After native conversion and DUMB's verification, it reports
+`status: "prepared"`, `stage: "awaiting_activation"` and `result.validated: true`.
+Existing-source jobs retain the verified import report; a fresh installation has
+no legacy import report. This is a deliberate paused review session: the candidate is retained and affected managed applications stay
+stopped. It is neither an activated installation nor a source-restoration error.
+
+Only a fresh confirmed job advertising `can_activate: true` admits activation.
+Post its `job_id` and exact `activate_confirmation` as `confirmation` to
+`/process/infinidysk-v2/activate`:
+
+```json
+{
+  "job_id": "<prepared-job-id>",
+  "confirmation": "ACTIVATE INFINIDYSK V2 <prepared-job-id>"
+}
+```
+
+For a report requiring omission review, also send
+`acknowledgements: {"skipped_media": true}` and `skip_review_digest` matching that
+prepared job's current report. Public samples cannot replace the full retained
+proof. Activation returns the **same job**, still `mode: "prepare"`, with
+`status: "queued"` or `"running"` and `stage: "activating"`. It uses the already converted
+candidate; it does not rebuild it or repeat native conversion.
+
+Poll the existing job/status routes through live delivery validation and
+consumer resumption. Acknowledgement alone does not establish completed
+activation. The existing advertised rollback action restores the retained v1
+state when eligible. A missing or invalid proof keeps activation unavailable;
+retain the candidate and recovery evidence.
+
+A controller restart preserves `status: "prepared"` and
+`stage: "awaiting_activation"`. It boots the installed API/frontend in a minimal
+control plane; normal applications and background workers remain held.
+Reconcile the retained job and current guards before offering activation or
+rollback. Neither action is automatic.
+
+If activation or restoration completes in that minimal boot, the result exposes
+`restart_required: true`. Activation itself starts the verified target and
+retained affected consumers; the user must then restart DUMB once to initialize
+normal workers and unrelated applications. A prepared review hold alone does not
+request a restart. Retain this instruction on the completed or restored job
+instead of treating its terminal status as proof of full normal startup.
+
+#### Legacy separate test and start
+
+Use this compatibility flow when prepared activation is not advertised.
 Rehearse and start body, using values from the current preview:
 
 ```json
@@ -286,8 +366,9 @@ path mappings, symlinks/STRM origins and stopped external writers/scanners.
 OIDC-configured sources remain blocked until their target policy is verified;
 the acknowledgement is not an authorization to bypass a blocker.
 
-Start/rehearse responses and `status.job` expose a public job, including its
-identity, mode, status, stage, message, fingerprint and result. A successful
+Prepare/activate and legacy start/rehearse responses, plus `status.job`, expose
+a public job, including its identity, mode, status, stage, message, fingerprint
+and result. A successful
 cutover uses `status: "completed"`. The terminal `status: "failed_restored"`
 confirms the source was restored and permits a fresh preview; recovery flags
 remain authoritative for available actions. Rollback is available only when
@@ -338,9 +419,9 @@ A terminal job can expose `result.source_untouched: true` when it stopped before
 migration execution began. DUMB did not pause applications or change the source
 for that attempt, so no restore is needed. A pre-execution cancellation is
 `cancelled` with `error: null`; failed preflight checks instead report their
-blocker. Resolve any reported blocker, then obtain a fresh preview and successful
-test before migration. Untouched-source evidence does not prove a successful
-rehearsal or authorize cutover.
+blocker. Resolve any reported blocker, then obtain a fresh preview before
+preparing again, or before the legacy test/start sequence. Untouched-source
+evidence does not prove successful preparation or authorize activation.
 
 Supporting builds can expose optional `scan_progress` during `revalidating`.
 It describes one existing metadata traversal, without an extra scan to calculate
@@ -448,8 +529,14 @@ and `imported_this_attempt`. Verified history adds `verified_present` and
 and `missing_failed` counts. These diagnostics distinguish a per-attempt report
 count from actual preserved history; they do not relax identity checks.
 
-Known source incompatibilities may complete a validated rehearsal with
-`import_report.status: "review_required"`. Starting its cutover also requires
+A prepared job can report `import_report.status: "review_required"` for fully
+accounted known source incompatibilities. Activating that same candidate requires
+its current `review_digest` as `skip_review_digest` and
+`acknowledgements.skipped_media: true`. These values authorize only that retained
+candidate and its full verified omission evidence.
+
+In the legacy flow, known incompatibilities may complete a validated rehearsal
+with `import_report.status: "review_required"`. Starting its cutover also requires
 `acknowledgements.skipped_media: true` and `skip_review_digest` matching that
 rehearsal's server-issued `review_digest`. The digest covers every omitted
 identity, path and reason, including entries beyond a public sample. Actual
@@ -460,11 +547,12 @@ and failed history identity must still exist in the actual native database;
 a lower per-attempt report count alone is not a history-loss allowance.
 The private complete census also binds referenced metadata/NZB blob contents
 while excluding volatile health scheduling. Changed source facts or stale proof
-require a fresh isolated rehearsal; public samples cannot reauthorize it.
+require a fresh preparation and review, or a fresh isolated test in the legacy
+flow; public samples cannot reauthorize it.
 Unknown/provider failures, ambiguous identities and unrecognized reports remain blockers; the
 acknowledgement is not a general skip override.
 
-A successful rehearsal can record `candidate_discarded=true` after the native
+Only the legacy separate-test flow can record `candidate_discarded=true` after the native
 candidate/group is proven stopped and v1 plus managed consumers are restored.
 Only its full job-owned candidate is removed; receipts, the source archive or
 backup and minimal database proof remain. Default-mode failed rehearsal
@@ -560,6 +648,12 @@ See [Retire the old v1 installation](../features/infinidysk-v2-migration.md#reti
 for operator checks and recovery limits.
 
 ### Native generation 2 PostgreSQL
+
+This existing workflow delegates copy, incremental synchronization and cutover
+to InfiniDysk's built-in database API. It is separate from major prepared
+activation and remains optional after the generation 2 SQLite installation is
+activated and validated. DUMB guards the destination, retains recovery state and observes the
+native engine.
 
 | Method | Route | Purpose |
 |--------|-------|---------|
