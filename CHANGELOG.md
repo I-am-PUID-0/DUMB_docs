@@ -1,6 +1,13 @@
 # Changelog
 
 
+## [1.25.11](https://github.com/I-am-PUID-0/DUMB_docs/compare/1.25.10...1.25.11) (2026-11-18)
+
+
+### 📖 Documentation
+
+* **proxmox:** explain legacy Intel OpenCL setup ([3adcc5d](https://github.com/I-am-PUID-0/DUMB_docs/commit/3adcc5d0ab81e7e40c0625afa5fb82bdfb8c40aa))
+
 ## [1.25.10](https://github.com/I-am-PUID-0/DUMB_docs/compare/1.25.9...1.25.10) (2026-11-18)
 
 
