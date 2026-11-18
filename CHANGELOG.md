@@ -1,6 +1,13 @@
 # Changelog
 
 
+## [1.25.12](https://github.com/I-am-PUID-0/DUMB_docs/compare/1.25.11...1.25.12) (2026-11-18)
+
+
+### 📖 Documentation
+
+* explain InfiniDysk 2 upgrade invitation controls ([1e6e674](https://github.com/I-am-PUID-0/DUMB_docs/commit/1e6e67444a88a8220c5ed3c08a89c10a0dc57c9f))
+
 ## [1.25.11](https://github.com/I-am-PUID-0/DUMB_docs/compare/1.25.10...1.25.11) (2026-11-18)
 
 
