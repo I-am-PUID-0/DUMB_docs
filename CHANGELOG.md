@@ -1,6 +1,13 @@
 # Changelog
 
 
+## [1.25.10](https://github.com/I-am-PUID-0/DUMB_docs/compare/1.25.9...1.25.10) (2026-11-18)
+
+
+### 📖 Documentation
+
+* **infinidysk:** explain provider activity diagnostics ([f60ed28](https://github.com/I-am-PUID-0/DUMB_docs/commit/f60ed28766b7805aff627858b53206bcf1b89d28))
+
 ## [1.25.9](https://github.com/I-am-PUID-0/DUMB_docs/compare/1.25.8...1.25.9) (2026-11-18)
 
 
