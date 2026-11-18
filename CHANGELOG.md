@@ -1,6 +1,13 @@
 # Changelog
 
 
+## [1.25.9](https://github.com/I-am-PUID-0/DUMB_docs/compare/1.25.8...1.25.9) (2026-11-18)
+
+
+### 📖 Documentation
+
+* **infinidysk:** document prepared migration and activation ([37e403e](https://github.com/I-am-PUID-0/DUMB_docs/commit/37e403e7915e82a84ce90a3fe2d7e75cf1d4d8fb))
+
 ## [1.25.8](https://github.com/I-am-PUID-0/DUMB_docs/compare/1.25.7...1.25.8) (2026-11-17)
 
 
