@@ -38,6 +38,27 @@ sending you to an app that has not started yet.
 
 ## Connect the running apps
 
+The guide retains incomplete work when a prerequisite or account still needs attention:
+
+```mermaid
+flowchart TD
+    accTitle: Finish connections without losing unfinished tasks
+    accDescr: Refresh prerequisites, apply or check an exact connection, and retain incomplete work when it must be finished later.
+    Open["Open Walk me through setup"] --> Task["Review the current task and its result"]
+    Task --> Ready{"Required app choices available?"}
+    Ready -->|No| Prepare["Finish the app's account or prerequisite setup"]
+    Prepare --> Refresh["Refresh app choices and status"]
+    Refresh --> Task
+    Ready -->|Yes| Choices["Choose the exact instances, paths and options"]
+    Choices --> Action["Apply or check this step deliberately"]
+    Action --> Result{"Task still needs attention?"}
+    Result -->|No| Next["Continue to another task"]
+    Result -->|Yes| Now{"Can you finish it now?"}
+    Now -->|Yes| Choices
+    Now -->|No| Later["Do this later: keep the unfinished task"]
+    Later --> Next
+```
+
 Choose **Walk me through setup** on the saved setup panel to work through one
 task at a time. From onboarding, it opens the separate **Connect your apps** page
 without discarding the saved run or unfinished work. The dashboard and service

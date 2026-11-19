@@ -1,0 +1,103 @@
+---
+title: Environment variables
+description: Look up DUMB startup variables, derive override names, understand Docker secret precedence, and distinguish service environments from controller settings.
+icon: lucide/terminal
+---
+
+# Environment variables
+
+DUMB reads startup overrides for supported configuration leaf values from environment variables or Docker secrets. Override names follow the existing configuration tree; they do not create new service instances or arbitrary keys. Service subprocess variables are separately defined under each service's `env` block.
+
+<details class="geek-details" markdown="1">
+<summary>How an override is selected</summary>
+
+For each supported leaf key, DUMB uses the highest-priority supplied override. Blank environment values do not replace an existing setting.
+
+```mermaid
+flowchart TD
+    Key["Supported configuration leaf"] --> Secret{"Docker secret supplied?"}
+    Secret -->|Yes| Use["Use the override value"]
+    Secret -->|No| Environment{"Nonblank process environment value?"}
+    Environment -->|Yes| Use
+    Environment -->|No| Dotenv{"Value in /config/.env?"}
+    Dotenv -->|Yes| Use
+    Dotenv -->|No| Config["Use the saved configuration value"]
+```
+
+</details>
+
+## Container variables
+
+| Variable | Default | Description |
+|----------|---------|-------------|
+| `PUID` | `1000` | Managed-service user ID; must be greater than `0` |
+| `PGID` | `1000` | Managed-service group ID; must be greater than `0` |
+| `TZ` | unset | Time zone (for example `America/New_York`) |
+| `DUMB_PNPM_STORE_ROOT` | `/config/.pnpm-store` | Persistent pnpm package store root used during service setup/builds. Override only if `/config` is not suitable. |
+| `DUMB_BUN_CACHE_ROOT` | `/config/.bun-cache` | Persistent Bun package cache root used during Bun-based service setup/builds, such as Pulsarr. Override only if `/config` is not suitable. |
+| `DUMB_YARN_CACHE_ROOT` | `/config/.yarn-cache` | Persistent Yarn package cache root used during source builds, such as Maintainerr. Override when `/config` is on slower network storage. |
+
+!!! warning "Root IDs are rejected"
+
+    DUMB's controller starts with the container privileges needed to prepare users, ownership, devices, and mounts, then launches managed services with `PUID` and `PGID`. DUMB refuses to start when either value is `0`; choose a non-root host user and group that can access the mounted paths.
+
+!!! tip "Complete generated reference"
+
+    The repository's [`.env.example`](https://github.com/I-am-PUID-0/DUMB/blob/dev/.env.example) is generated from the current config template and contains the complete default set. The table above calls out bootstrap/cache variables operators commonly set directly.
+
+## Config override naming
+
+DUMB joins a configuration path with underscores and uppercases it:
+
+| Config path | Override name |
+|---|---|
+| `puid` | `PUID` |
+| `dumb.github_token` | `DUMB_GITHUB_TOKEN` |
+| `dumb.api_service.host` | `DUMB_API_SERVICE_HOST` |
+| `altmount.port` | `ALTMOUNT_PORT` |
+| `infinidysk.frontend_port` | `INFINIDYSK_FRONTEND_PORT` |
+| `sonarr.instances.Default.port` | `SONARR_INSTANCES_DEFAULT_PORT` |
+
+List values use valid JSON, such as `DUMB_METRICS_FILESYSTEM_PATHS=["/","/mnt/debrid"]`. Set dictionary members through their individual leaf names; edit JSON configuration or use the API for structural changes.
+
+## Sources and precedence
+
+For a config override named `DUMB_API_SERVICE_HOST`, DUMB checks:
+
+1. `/run/secrets/DUMB_API_SERVICE_HOST`
+2. The process/container environment
+3. `/config/.env`
+4. The value in `/config/dumb_config.json`
+
+Blank environment values do not replace configured values. Docker secrets are read as trimmed text and have the highest priority.
+
+!!! note "InfiniDysk upgrade compatibility"
+
+    Fresh configurations use the `INFINIDYSK_*` prefix. Existing deployments
+    may continue supplying legacy `NZBDAV_*` overrides or Docker secrets;
+    DUMB checks those names as fallbacks until the deployment opts into the
+    canonical persisted identity.
+
+## Service environment variables
+
+Each service can define variables passed to that subprocess under its `env` block in `/config/dumb_config.json`. These are service runtime variables, not names for overriding DUMB's own config tree.
+
+Example:
+
+```json
+"infinidysk": {
+  "env": {
+    "WEBDAV_USER": "admin",
+    "WEBDAV_PASSWORD": "change-me"
+  }
+}
+```
+
+!!! warning "Secrets in config files"
+
+    Treat tokens and passwords in `dumb_config.json` as secrets. Avoid committing them to source control.
+
+## Related pages
+
+- [Configuration guide](../features/configuration.md)
+- [Config schema](config-schema.md)

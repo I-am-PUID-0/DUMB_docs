@@ -12,6 +12,24 @@ The optimizer is currently limited to InfiniDysk. It appears on the specific **r
 
 ## Run a bounded comparison
 
+Treat the measurements as a review step before deciding whether to change the production mount:
+
+```mermaid
+flowchart TD
+    accTitle: Review an optimizer result before applying it
+    accDescr: Run a bounded comparison while idle, inspect its evidence, then deliberately apply or retain the current profile and verify playback.
+    Idle["Stop media activity and wait for imports"] --> Limits["Choose files, test depth and resource limits"]
+    Limits --> Run["Start background optimization"]
+    Run --> Review["Review samples, failures, provider evidence and cleanup"]
+    Review --> Useful{"Recommendation suitable for this deployment?"}
+    Useful -->|No| Keep["Keep the current profile and investigate the results"]
+    Useful -->|Yes| Apply["Apply deliberately: the production mount is interrupted"]
+    Apply --> Test["Check mount health, startup and seeking"]
+    Test --> Problem{"Result acceptable?"}
+    Problem -->|Yes| Retain["Keep the reviewed profile"]
+    Problem -->|No| Rollback["Use rollback and recheck the mount"]
+```
+
 1. Open the InfiniDysk-backed **rclone** service page and select **Rclone Optimizer**.
 2. Stop media activity and wait for imports and unrelated provider reads to finish.
 3. Review one to eight representative files and choose a test depth.

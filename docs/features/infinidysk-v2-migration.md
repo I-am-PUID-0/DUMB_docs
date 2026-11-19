@@ -32,6 +32,26 @@ recovery information remain visible. The supported native artifact is currently
 
 ## Choose your path
 
+Keep major installation, recovery and the optional database conversion as separate decisions:
+
+```mermaid
+flowchart TD
+    accTitle: Choose an InfiniDysk 2 installation or recovery path
+    accDescr: Fresh installs and existing 1.x data use a preview and prepared candidate; failed work needs recovery, while an existing 2.x runtime has a separate optional database conversion.
+    Start{"Current installation"}
+    Start -->|Empty and eligible| Preview["Preview the fresh or migration target"]
+    Start -->|Existing 1.x data| Backup["Keep independent backups"]
+    Backup --> Preview
+    Preview --> Passed{"Preview checks allow preparation?"}
+    Passed -->|No| Blocker["Resolve the blocker without changing source data"]
+    Blocker --> Preview
+    Passed -->|Yes| Prepare["Prepare the generation 2 candidate"]
+    Prepare --> Activate["Review and explicitly activate that candidate"]
+    Activate --> Validate["Check accounts, mounts, imports and playback"]
+    Start -->|Already on 2.x| Current["Keep the current runtime; review database conversion separately"]
+    Start -->|Failed or interrupted| Recovery["Follow retained job recovery first"]
+```
+
 | Starting point | Workflow |
 | --- | --- |
 | Empty eligible installation | Preview the empty target, prepare it, then explicitly activate it |
@@ -644,6 +664,23 @@ not DUMB's generation 1 SQLite-to-PostgreSQL adapter.
    provider state and service health.
 
 ### Prepare a PostgreSQL destination
+
+Copying prepares a destination while SQLite stays current; switching providers is a later confirmation:
+
+```mermaid
+flowchart TD
+    accTitle: Copy before confirming native PostgreSQL cutover
+    accDescr: Verify the dedicated destination, copy while SQLite remains active and confirm the offered provider cutover separately.
+    SQLite["Validate the running generation 2 SQLite installation"] --> Database["Have an administrator prepare an empty C-collation database"]
+    Database --> Preview["Preview the exact destination"]
+    Preview --> Valid{"Destination checks passed?"}
+    Valid -->|No| Correct["Resolve the reported destination problem"]
+    Correct --> Preview
+    Valid -->|Yes| Copy["Confirm backups and start native copying"]
+    Copy --> Sync["Wait for synchronization and offered cutover"]
+    Sync --> Confirm["Review and confirm cutover separately"]
+    Confirm --> Verify["Verify provider state, service health and playback"]
+```
 
 The conversion needs a separate, empty PostgreSQL database with DUMB's supported `C` locale. Selecting managed PostgreSQL fills connection settings; it does not create that destination for you. Ask the person managing PostgreSQL to prepare it, then enter the same database name and role in the conversion form. Keep the existing v1 database and every other application's database intact.
 

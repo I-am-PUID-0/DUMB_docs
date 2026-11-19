@@ -8,6 +8,25 @@ icon: lucide/code
 
 Endpoint paths below are backend-native. Add `/api` when using the dashboard gateway, for example `http://localhost:3005/api/process/capabilities`.
 
+<details class="geek-details" markdown="1">
+<summary>Review changes before applying them</summary>
+
+Use a dry run to inspect the proposed link changes. Asynchronous operations expose a job to poll; keep its final report with the backup used for recovery.
+
+```mermaid
+flowchart TD
+    Request["Choose repair, migration or restore inputs"] --> Dry["Request a dry run"]
+    Dry --> Review["Review paths, conflicts and proposed changes"]
+    Review --> Apply["Submit the intended non-dry-run operation"]
+    Apply --> Async{"Asynchronous route?"}
+    Async -->|Yes| Poll["Poll /process/symlink-job-status"]
+    Async -->|No| Response["Inspect the operation response"]
+    Poll --> Verify["Read the final report and verify representative links"]
+    Response --> Verify
+```
+
+</details>
+
 ### `POST /process/symlink-repair`
 
 Runs symlink target rewrites for service symlink trees (Decypharr, InfiniDysk, CLI Debrid, Riven).

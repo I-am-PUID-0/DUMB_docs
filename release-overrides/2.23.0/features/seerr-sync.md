@@ -26,12 +26,12 @@ Configuration is stored in the top-level `seerr_sync` block and each managed See
 
 
 
-![Seerr Sync overview](../assets/images/features/seerr_sync.png){ .shadow }
-
 ## Example: Debrid and Usenet stacks
 
 ```mermaid
 flowchart LR
+    accTitle: One-way Seerr request replication
+    accDescr: The primary Seerr copies requests to a subordinate. Each instance sends requests to its own independent Arr stack.
     Primary[Primary Seerr] --> Debrid[Debrid Sonarr/Radarr]
     Primary --> Sync[Seerr Sync]
     Sync --> Secondary[Subordinate Seerr]

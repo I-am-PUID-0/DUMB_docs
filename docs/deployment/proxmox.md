@@ -23,6 +23,21 @@ Because every consumer is in the same LXC, DUMB-created FUSE mounts only need
 to exist inside that LXC. No mount propagation back to the Proxmox host is
 required.
 
+## Native LXC installation boundaries
+
+The native helper keeps DUMB and its managed applications in one LXC. Applications in another LXC need an explicit storage-sharing plan.
+
+```mermaid
+flowchart TD
+    Host["Proxmox host: run the reviewed helper"] --> LXC["Dedicated DUMB LXC"]
+    LXC --> Controller["DUMB controller and dashboard"]
+    Controller --> Apps["Managed workflow apps and media servers"]
+    Controller --> Storage["Persistent config, data and media paths"]
+    Browser["Your browser"] --> Dashboard["LXC address on port 3005"]
+    Dashboard --> Controller
+    External["Apps in another LXC"] -. "Separate sharing plan required" .-> Storage
+```
+
 ## Install the validation build
 
 While the helper is awaiting upstream acceptance, run the maintainer-fork build from the **Proxmox VE host shell**:

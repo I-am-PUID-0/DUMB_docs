@@ -54,10 +54,19 @@ errors make the manifest incomplete. Supported UI preference saves affect only
 the in-memory fixture. Cleanup closes its browser and servers, then waits for its
 own frontend child to exit.
 
-Review every still and both complete WebM recordings before packaging. Confirm
+The recordings add a visible pointer, a yellow outline around the next control
+and a short click pulse. These recording-only cues identify existing controls;
+they do not add application controls or change the frontend. Tools menus remain
+open for 2.5 seconds, the next menu choice is highlighted for 1.6 seconds before
+selection, and results remain visible for at least 2.2 seconds. The manifest
+records chapter labels, timing and pacing. Still images omit these cues.
+
+Review every still and all six complete WebM recordings before packaging. Confirm
 the controls and text are readable, filters and version checks behave as shown,
 and no private identifiers or unrelated application content appear. The
-walkthroughs filter/pause logs and check/review an update; they do not install an
+walkthroughs filter/pause logs, check/review an update, switch appearance, and
+review dependencies, configuration and auto-restart guardrails. The latter three
+leave configuration and service state unchanged. No walkthrough installs an
 update. Example progress is not evidence of a completed real operation.
 
 ## Package the approved captures
@@ -71,7 +80,7 @@ node "$runner_dir/package.mjs" \
 ```
 
 Packaging rejects incomplete/error-bearing manifests and mismatched source
-identity. It converts five selected PNG frames to quality-90 WebP without
+identity. It converts twelve selected PNG frames to quality-90 WebP without
 resizing, checks the resulting dimensions, and copies the original short WebMs:
 
 | Output | Captured source |
@@ -80,9 +89,27 @@ resizing, checks the resulting dimensions, and copies the original short WebMs:
 | `service-controls.webp` | `service-controls.png` |
 | `service-logs.webp` | `service-logs-poster.png` |
 | `updates.webp` | `updates-check-poster.png` |
-| `appearance.webp` | `appearance-settings.png` |
+| `appearance.webp` | `appearance-poster.png` |
+| `metrics.webp` | `metrics.png` |
+| `embedded-ui-settings.webp` | `embedded-ui-settings.png` |
+| `disabled-services.webp` | `disabled-services.png` |
+| `about.webp` | `about.png` |
+| `configuration.webp` | `configuration-poster.png` |
+| `dependencies.webp` | `dependencies-poster.png` |
+| `auto-restart.webp` | `auto-restart-poster.png` |
 | `service-logs.webm` | `service-logs.webm` |
 | `updates.webm` | `updates-check.webm` |
+| `appearance.webm` | `appearance.webm` |
+| `configuration.webm` | `configuration.webm` |
+| `dependencies.webm` | `dependencies.webm` |
+| `auto-restart.webm` | `auto-restart.webm` |
+
+The Metrics view contains synthetic system/history measurements. The disabled
+services image shows the sidebar's **Show Disabled** option and a filtered
+example Tautulli entry; it does not enable that service. Embedded UI settings are
+shown without enabling or embedding another application. About shows independent
+DUMB and frontend versions. Newer setup, migration and backup flows are outside
+this released frontend capture set.
 
 The clean package manifest records the frontend repository/tag/full commit,
 example-data scope, viewport, theme, route, actions, byte size and SHA-256 for
@@ -91,7 +118,49 @@ separate review steps; rerun packaging from the reviewed capture set after a
 change so hashes describe the actual published bytes.
 
 After review, copy the package to
-`docs/assets/images/guides/frontend/v1.91.0/`. Use the stills as video posters and
+`docs/assets/images/guides/frontend/v1.91.0/tour-2/`. Keep the earlier media paths
+unchanged so updated walkthroughs have a distinct URL. Use the stills as video posters and
 show native playback controls; avoid autoplay. Captions should identify the
 released frontend version and example responses. Keep the raw captures until
 review and publication are complete, then clean only the task-owned directory.
+
+## Build the homepage overview
+
+`overview-scenes.json` defines the caption text, chapter order and timing of the
+114-second visual tour. Its application scenes use the reviewed capture package
+at normal speed. Introductory cards explain the workflow and deployment choices;
+they are illustrations rather than application screens.
+
+The frontend container also needs FFmpeg with `ffprobe` and the `libx264`
+encoder, plus ImageMagick WebP support. Run the composer against the reviewed
+package and the existing public DUMB logo:
+
+```bash
+node "$runner_dir/overview.mjs" \
+  --frontend-root "$capture_root/frontend" \
+  --media "$capture_root/packaged" \
+  --logo "$capture_root/logo.png" \
+  --out "$capture_root/overview"
+```
+
+Review every chapter and the transitions. Check that menus and selected actions
+stay readable, the captions match the visible actions, and essential controls
+are not cropped. The composer verifies the input hashes and records the actual
+clip ranges. It emits a silent H.264 MP4 with captions in the picture, an image
+poster, optional English captions and chapter tracks, and a provenance manifest.
+It checks duration, dimensions, absence of audio, the 25 MB size limit and the
+MP4's fast-start layout. See the [FFmpeg MP4 documentation](https://ffmpeg.org/ffmpeg-formats.html#mov_002c-mp4_002c-ismv)
+for the encoding container.
+
+Publish only `dumb-overview.mp4`, `poster.webp`, `captions.vtt`, `chapters.vtt` and
+`manifest.json` under a new `docs/assets/images/guides/overview/<revision>/`
+directory. Keep the raw recording out of Git. Update the homepage transcript,
+chapter times and video metadata together when scenes change. The SEO audit
+checks the homepage's `VideoObject` against its real source, poster and anchor.
+
+The stable sharing link is `https://dumbarr.com/#overview`. A repository README
+can link a poster to that page, while the homepage can move to a later revision:
+
+```markdown
+[![Watch the captioned DUMB overview](https://dumbarr.com/assets/images/guides/overview/v1/poster.webp)](https://dumbarr.com/#overview)
+```

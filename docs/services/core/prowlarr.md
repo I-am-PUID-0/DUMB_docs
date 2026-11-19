@@ -8,6 +8,21 @@ icon: lucide/search
 
 **Prowlarr** is an indexer manager for the Arr ecosystem. It centralizes indexer configuration and syncs them to Sonarr, Radarr, Lidarr, and Whisparr.
 
+<!-- visual:service-flow -->
+## At a glance
+
+Prowlarr supplies indexer settings to the Arr apps you connect; the download workflow is configured separately.
+
+```mermaid
+flowchart TD
+    A["Add an indexer in Prowlarr"] --> B
+    B["Test its connection"] --> C
+    C["Connect the intended Arr apps"] --> D
+    D["Review the sync result in each Arr"] --> E
+    E["Test a search from the Arr app"]
+```
+
+
 ---
 
 ## First start

@@ -12,6 +12,21 @@ Flask application. Newer layouts include it inside the CLI Debrid process.
 This service's separate process, port, and web interface apply to the older
 standalone layout.
 
+<!-- visual:service-flow -->
+## At a glance
+
+This flow is for the standalone Battery layout. Check the CLI Debrid version guidance before enabling a separate process.
+
+```mermaid
+flowchart TD
+    A["Confirm the installed standalone layout"] --> B
+    B["Start the required supporting services"] --> C
+    C["Start CLI Battery"] --> D
+    D["Complete the intended authorization"] --> E
+    E["Verify CLI Debrid metadata access"]
+```
+
+
 <!-- dev:start -->
 <details class="geek-details" markdown="1">
 <summary>Technical details: installed CLI Battery layout</summary>

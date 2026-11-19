@@ -8,6 +8,21 @@ icon: lucide/hard-drive
 
 rclone exposes a remote source as files inside DUMB. Depending on the selected workflow, that source can be Zurg, a direct Debrid endpoint, InfiniDysk, or Decypharr WebDAV. DUMB prepares the managed mount; the source service must be ready before it can serve files.
 
+<!-- visual:service-flow -->
+## At a glance
+
+A healthy mount process is not proof that files can be read. Verify the actual library path before scanning it.
+
+```mermaid
+flowchart TD
+    A["Start and test the provider service"] --> B
+    B["Review the selected rclone remote"] --> C
+    C["Start the matching mount"] --> D
+    D["Browse the mounted library folder"] --> E
+    E["Test a read and sample playback"]
+```
+
+
 ---
 
 ## First start

@@ -8,6 +8,23 @@ icon: lucide/shield-check
 
 Paths below are backend-native; prefix them with `/api` through the frontend gateway. All endpoints use the normal DUMB authentication policy and are capability-gated by `media_library_protection`. Plex preference controls additionally require `plex_library_settings`.
 
+<details class="geek-details" markdown="1">
+<summary>Preflight a protected lifecycle operation</summary>
+
+The default safe operation can be blocked when media protection requires a decision. Inspect that result before explicitly choosing another policy.
+
+```mermaid
+flowchart TD
+    Request["Plan stop, restart or update"] --> Preflight["Read media-protection preflight"]
+    Preflight --> Safe["Submit the lifecycle request with safe policy"]
+    Safe --> Decision{"Protection required?"}
+    Decision -->|No| Proceed["Operation may proceed"]
+    Decision -->|Yes| Blocked["Receive protection_required and current preflight"]
+    Blocked --> Review["Review activity before an explicit policy choice"]
+```
+
+</details>
+
 | Method | Endpoint | Purpose |
 |---|---|---|
 | `GET` | `/process/media-protection/status` | Active/recent incidents and global recovery timing. Optional `process_name`. |

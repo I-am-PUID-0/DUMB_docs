@@ -10,6 +10,21 @@ Answers about storage, service choices, backups, and media paths.
 
 ---
 
+## Find the next check
+
+Start with the part that is failing. Opening the dashboard, starting an app, importing an item and playing it are separate checks.
+
+```mermaid
+flowchart TD
+    Problem["What is not working?"] --> Page["DUMB dashboard will not open"]
+    Problem --> Service["An application will not start"]
+    Problem --> Import["An item does not import"]
+    Problem --> Playback["An imported item will not play"]
+    Page --> Network["Check container status, address and published port"]
+    Service --> Logs["Open the affected service's logs"]
+    Import --> App["Check the workflow app's status and settings"]
+    Playback --> Paths["Check library paths and access from the media server"]
+```
 
 ## Where do I configure services?
 

@@ -8,6 +8,27 @@ icon: lucide/radio
 
 DUMB provides three WebSocket endpoints for real-time streaming of logs, service status, and system metrics.
 
+<details class="geek-details" markdown="1">
+<summary>A live connection carries one stream</summary>
+
+Choose the status, metrics or logs endpoint for the data needed by the client. After disconnection, reconnect deliberately and handle authentication failure rather than retrying indefinitely with an expired token.
+
+```mermaid
+sequenceDiagram
+    participant Client
+    participant Gateway as Frontend WebSocket gateway
+    participant DUMB as DUMB WebSocket endpoint
+    Client->>Gateway: Connect to /ws/status, /ws/metrics or /ws/logs
+    Gateway->>DUMB: Forward the connection and token when required
+    DUMB-->>Client: Endpoint-specific live messages
+    DUMB-->>Client: Further live messages
+    Note over Client,DUMB: If the connection closes
+    Client->>Client: Check authentication and reconnect policy
+    Client->>Gateway: Reconnect to the selected endpoint
+```
+
+</details>
+
 ## Overview
 
 | Endpoint | Purpose | Data Type |

@@ -8,6 +8,21 @@ icon: lucide/traffic-cone
 
 Traefik provides optional reverse-proxy routing for service UIs and user-managed external routes. When enabled, it exposes a single entry point and maps requests to services through DUMB-generated dynamic config and, optionally, Traefik Proxy Admin. Cloudflared can then carry Cloudflare Tunnel traffic to that same entrypoint.
 
+## Route owners and request paths
+
+DUMB owns embedded UI routes. Traefik Proxy Admin owns optional user-managed routes; Cloudflared can carry external traffic to the Traefik entrypoint.
+
+```mermaid
+flowchart TD
+    Browser["Browser"] --> Frontend["DUMB frontend"]
+    Frontend --> Embedded["Embedded service UI request"]
+    Embedded --> Traefik["Traefik entrypoint"]
+    Tunnel["Optional Cloudflared tunnel"] --> Traefik
+    Traefik --> App["Selected service UI"]
+    DUMB["DUMB-generated embedded route files"] -. "File provider" .-> Traefik
+    TPA["Optional Traefik Proxy Admin routes"] -. "HTTP provider" .-> Traefik
+```
+
 ## What Traefik does in DUMB
 
 - Builds dynamic routes for enabled embedded service UIs

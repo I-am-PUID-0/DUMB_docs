@@ -21,6 +21,14 @@ Include the DUMB image/version, relevant application version, what you expected,
 
 Use logs exported through DUMB where possible. Review logs, configuration, screenshots, and URLs for credentials and personal information before attaching them. Do not upload a whole configuration directory or database to a public issue.
 
+```mermaid
+flowchart TD
+    A["Find the repository that owns the problem"] --> B["Write the smallest reproduction"]
+    B --> C["Add versions and redacted evidence"]
+    C --> D["Report the issue or propose a focused fix"]
+    D --> E["Check the result and describe remaining limits"]
+```
+
 - [Backend issues](https://github.com/I-am-PUID-0/DUMB/issues)
 - [Dashboard issues](https://github.com/nicocapalbo/dmbdb/issues)
 - [Documentation issues](https://github.com/I-am-PUID-0/DUMB_docs/issues)

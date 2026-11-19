@@ -10,6 +10,19 @@ QNAP Container Station can create a Docker Compose application from YAML. The
 labels can vary slightly by Container Station/QTS version, but the official flow
 is **Create** → **Create Application** → paste and validate the Compose YAML.
 
+## Create the QNAP application
+
+Container Station creates the application from Compose. Review the host paths and permissions before starting it.
+
+```mermaid
+flowchart TD
+    Share["Prepare persistent shared folders"] --> Create["Container Station: Create Application"]
+    Create --> YAML["Paste the maintained Compose YAML"]
+    YAML --> Settings["Replace share paths and set user IDs"]
+    Settings --> Validate["Validate YAML and create the application"]
+    Validate --> Dashboard["Open the QNAP address on port 3005"]
+```
+
 ## Prerequisites
 
 - A QNAP model/architecture supported by the DUMB image (`amd64` or `arm64`)

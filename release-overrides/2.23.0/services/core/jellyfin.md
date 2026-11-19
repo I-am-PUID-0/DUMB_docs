@@ -8,6 +8,21 @@ icon: lucide/play
 
 **Jellyfin** is an open-source media server for organizing and streaming your media library. It can be used as an alternative to Plex or Emby.
 
+<!-- visual:service-flow -->
+## At a glance
+
+Use the same curated library folder in your collector and media server. A running server is only the first check.
+
+```mermaid
+flowchart TD
+    A["Open Jellyfin and finish sign-in"] --> B
+    B["Choose the curated library folder"] --> C
+    C["Check the mount before scanning"] --> D
+    D["Scan a small library"] --> E
+    E["Play and seek through one item"]
+```
+
+
 ---
 
 ## First start

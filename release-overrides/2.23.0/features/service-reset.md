@@ -36,6 +36,24 @@ You must type the exact process name before DUMB accepts either operation.
 
 ## Choose an operation
 
+Both choices stop and disable the selected service. Removal needs a separate review of the files at risk:
+
+```mermaid
+flowchart TD
+    accTitle: Choose reset or removal after reviewing the preview
+    accDescr: Reset keeps application files; removal deletes only previewed managed paths. Back up and cancel if the target or paths are unexpected.
+    Target["Open Reset / Remove for the exact service"] --> Choice{"Keep the application's files?"}
+    Choice -->|Yes| Reset["Reset DUMB configuration"]
+    Choice -->|No| Backup["Keep an independent application backup"]
+    Backup --> Remove["Remove service files"]
+    Reset --> Preview["Review warnings, retained paths and dependencies"]
+    Remove --> Preview
+    Preview --> Expected{"Preview matches your intention?"}
+    Expected -->|No| Cancel["Cancel and investigate"]
+    Expected -->|Yes| Confirm["Type the exact process name and confirm"]
+    Confirm --> Verify["Check the result before enabling the service again"]
+```
+
 ### Reset DUMB configuration
 
 This option keeps the service's application files and data. DUMB disables the selected service/instance and restores its DUMB configuration fields to the current defaults.

@@ -9,6 +9,23 @@ development_only: true
 
 Endpoint paths below are backend-native. Add `/api` when using the dashboard gateway, for example `http://localhost:3005/api/process/capabilities`.
 
+<details class="geek-details" markdown="1">
+<summary>A reviewed plan becomes a retained run</summary>
+
+A setup run reports automatic work and manual actions separately. Deferring an action does not make required work complete.
+
+```mermaid
+flowchart TD
+    Capability["Check setup capability and advertised schema"] --> Plan["POST setup plan with current selections"]
+    Plan --> Review["Review choices, actions and missing inputs"]
+    Review --> Start["Start the reviewed plan with an idempotency key"]
+    Start --> Automatic["Inspect automatic work and retained action state"]
+    Automatic --> Action["Preview, explicitly apply or complete manual actions"]
+    Action --> Recheck["Recheck and read independent verification evidence"]
+```
+
+</details>
+
 ## Routes
 
 Available when `GET /process/capabilities` advertises `setup_arrangements=true`. Browser requests use the usual `/api` prefix.

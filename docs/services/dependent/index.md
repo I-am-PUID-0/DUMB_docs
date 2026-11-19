@@ -8,6 +8,20 @@ icon: lucide/box
 
 These services provide databases, mounted files, or metadata to another application. The dependencies you need depend on that application's configuration and installed layout.
 
+<!-- visual:service-flow -->
+## At a glance
+
+Supporting services need to match the workflow that uses them. A running unrelated instance is not a substitute for the intended dependency.
+
+```mermaid
+flowchart TD
+    A["Choose a core workflow"] --> B["Check its required dependencies"]
+    B --> C["Start the matching database or provider"]
+    C --> D["Start the matching mount if required"]
+    D --> E["Verify the core application connection"]
+```
+
+
 ## Dependent Service Index
 
 | Service                                    | Description                                         | Required By                               |

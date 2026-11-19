@@ -6,6 +6,8 @@ icon: lucide/zap
 
 # Zurg FAQ
 
+**Visual guide:** [Distinguish provider throttling from mount problems](rclone.md#separate-provider-throttling-from-mount-visibility).
+
 ## `ERROR - rclone w/ RealDebrid subprocess: : IO error: File is temporarily unavailable: 423 Locked`
 
 The remote WebDAV source returned `423 Locked`. Read the accompanying Zurg/provider logs to distinguish unavailable or preparing content from provider throttling. The status code alone does not prove a rate limit.

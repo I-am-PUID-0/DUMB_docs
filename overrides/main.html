@@ -108,6 +108,21 @@
             "image": "https://dumbarr.com/assets/images/DUMB.png",
             "description": "An open-source, all-in-one Docker platform for deploying and managing Debrid and Usenet media automation workflows."
           }
+          {% if page.meta.overview_video %},
+          {
+            "@type": "VideoObject",
+            "@id": {{ (seo_url ~ '#overview-video') | tojson }},
+            "name": {{ page.meta.overview_video.name | tojson }},
+            "description": {{ page.meta.overview_video.description | tojson }},
+            "thumbnailUrl": {{ (config.site_url ~ page.meta.overview_video.thumbnail) | tojson }},
+            "contentUrl": {{ (config.site_url ~ page.meta.overview_video.content) | tojson }},
+            "embedUrl": {{ (seo_url ~ '#overview') | tojson }},
+            "uploadDate": {{ page.meta.overview_video.upload_date | tojson }},
+            "duration": {{ page.meta.overview_video.duration | tojson }},
+            "inLanguage": "en",
+            "isAccessibleForFree": true
+          }
+          {% endif %}
         ]
       }
       </script>

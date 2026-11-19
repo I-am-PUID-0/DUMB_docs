@@ -320,6 +320,25 @@ manual archives and other tools' backups are retained separately.
 
 ## Restore an existing or fresh installation
 
+A preview verifies the archive before you confirm downtime and replacement:
+
+```mermaid
+flowchart TD
+    accTitle: Preview a restore before replacing installation state
+    accDescr: Keep an independent backup, verify a trusted archive and its destination, confirm replacement and follow the retained result or recovery action.
+    Backup["Keep a separate backup of the current installation"] --> Mounts["Prepare the required image and container mounts"]
+    Mounts --> Select["Select a trusted archive or mounted archive file"]
+    Select --> Preview["Request and review restore preview"]
+    Preview --> Compatible{"Archive, paths and compatibility checks passed?"}
+    Compatible -->|No| Resolve["Resolve the blocker; keep existing state intact"]
+    Resolve --> Preview
+    Compatible -->|Yes| Confirm["Confirm downtime, acknowledgements and replacement"]
+    Confirm --> Job["Follow the retained restore job"]
+    Job --> Result{"Restore completed?"}
+    Result -->|No| Recovery["Preserve retained state and follow the offered recovery"]
+    Result -->|Yes| Restart["Restart when instructed and verify login, mounts and apps"]
+```
+
 A restore replaces managed state and requires downtime. Keep a separate backup
 of the current installation and keep external writers stopped throughout the
 operation, including any other DUMB container using the same mounted state.

@@ -8,6 +8,7 @@ import json
 import re
 import xml.etree.ElementTree as ET
 from collections import Counter
+from datetime import date, datetime
 from html import unescape
 from html.parser import HTMLParser
 from pathlib import Path
@@ -35,6 +36,10 @@ class PageParser(HTMLParser):
         self.images: list[dict[str, str | None]] = []
         self.image_sources: list[str] = []
         self.media_sources: list[tuple[str, str]] = []
+        self.has_video = False
+        self.video_sources: list[str] = []
+        self.video_posters: list[str] = []
+        self._video_depth = 0
         self.ids: set[str] = set()
         self.h1_count = 0
         self.json_ld: list[str] = []
@@ -72,8 +77,15 @@ class PageParser(HTMLParser):
         elif tag == "script" and values.get("type") == "application/ld+json":
             self.in_json_ld = True
             self.json_parts = []
-        if tag == "video" and "poster" in values:
-            self.media_sources.append(("video poster", str(values["poster"] or "")))
+        if tag == "video":
+            self.has_video = True
+            self._video_depth += 1
+            if "poster" in values:
+                poster = str(values["poster"] or "")
+                self.media_sources.append(("video poster", poster))
+                self.video_posters.append(poster)
+        if tag in {"video", "source"} and self._video_depth and values.get("src"):
+            self.video_sources.append(str(values["src"]))
         if tag in {"video", "source", "track"} and "src" in values:
             self.media_sources.append((f"{tag} src", str(values["src"] or "")))
         if tag in {"img", "source"} and values.get("srcset"):
@@ -92,6 +104,8 @@ class PageParser(HTMLParser):
         self.handle_endtag(tag)
 
     def handle_endtag(self, tag: str) -> None:
+        if tag == "video":
+            self._video_depth = max(0, self._video_depth - 1)
         if tag == "table":
             self._table_depth = max(0, self._table_depth - 1)
         elif tag in {"pre", "code"}:
@@ -217,6 +231,101 @@ def resolve_local_target(
             cache[target] = parse_page(target)
         return fragment in cache[target].ids
     return True
+
+
+def valid_upload_date(value: object) -> bool:
+    """Accept real ISO dates or timezone-qualified ISO date-times."""
+    if not isinstance(value, str):
+        return False
+    try:
+        if re.fullmatch(r"\d{4}-\d{2}-\d{2}", value):
+            date.fromisoformat(value)
+            return True
+        if re.fullmatch(
+            r"\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:\.\d+)?"
+            r"(?:Z|[+-]\d{2}:\d{2})",
+            value,
+        ):
+            parsed = datetime.fromisoformat(value.replace("Z", "+00:00"))
+            return parsed.utcoffset() is not None
+    except ValueError:
+        pass
+    return False
+
+
+def valid_video_duration(value: object) -> bool:
+    """Require a positive ISO day/time duration suitable for video playback."""
+    if not isinstance(value, str):
+        return False
+    match = re.fullmatch(
+        r"P(?:(\d+)D)?(?:T(?:(\d+)H)?(?:(\d+)M)?(?:(\d+(?:\.\d+)?)S)?)?",
+        value,
+    )
+    if not match or ("T" in value and not any(match.groups()[1:])):
+        return False
+    return any(float(component) > 0 for component in match.groups() if component)
+
+
+def audit_homepage_graph(
+    parser: PageParser,
+    nodes: list[dict],
+    *,
+    site_dir: Path,
+    current_url: str,
+    canonical: str,
+    base_url: str,
+    development: bool,
+) -> list[str]:
+    """Keep homepage video metadata tied to the media readers can play."""
+    errors: list[str] = []
+    types = [node.get("@type") for node in nodes]
+    expected = ["WebSite", "SoftwareSourceCode"]
+    if parser.has_video:
+        expected.append("VideoObject")
+    if any(not isinstance(kind, str) for kind in types) or Counter(types) != Counter(
+        expected
+    ):
+        errors.append(f"homepage structured-data types mismatch: {types}")
+    videos = [node for node in nodes if node.get("@type") == "VideoObject"]
+    if not parser.has_video:
+        return errors
+    if len(videos) != 1:
+        errors.append("homepage: expected exactly one VideoObject for the video")
+        return errors
+    video = videos[0]
+    for field in ("name", "description"):
+        value = video.get(field)
+        if not isinstance(value, str) or not value.strip():
+            errors.append(f"homepage VideoObject: missing {field}")
+    if not valid_upload_date(video.get("uploadDate")):
+        errors.append("homepage VideoObject: invalid ISO uploadDate")
+    if not valid_video_duration(video.get("duration")):
+        errors.append("homepage VideoObject: invalid ISO duration")
+    for field, references in (
+        ("contentUrl", parser.video_sources),
+        ("thumbnailUrl", parser.video_posters),
+    ):
+        value = video.get(field)
+        actual_urls = {urljoin(current_url, reference) for reference in references}
+        if not isinstance(value, str) or value not in actual_urls:
+            errors.append(f"homepage VideoObject: {field} differs from the video")
+        if not isinstance(value, str) or not value:
+            errors.append(f"homepage VideoObject: unresolved local {field}")
+            continue
+        target, _ = local_target(
+            site_dir,
+            current_url,
+            value,
+            base_url=base_url,
+            development=development,
+        )
+        if target is None or not target.is_file():
+            errors.append(f"homepage VideoObject: unresolved local {field}")
+    if video.get("embedUrl") != canonical + "#overview":
+        errors.append("homepage VideoObject: embedUrl must target canonical #overview")
+    if "overview" not in parser.ids:
+        errors.append("homepage VideoObject: missing overview fragment target")
+    return errors
 
 
 def audit_site(
@@ -362,6 +471,7 @@ def audit_site(
             errors.append(f"{relative}: social titles differ")
         if not parser.json_ld:
             errors.append(f"{relative}: missing JSON-LD")
+        homepage_nodes: list[dict] = []
         for raw_json in parser.json_ld:
             try:
                 structured = json.loads(raw_json)
@@ -372,13 +482,13 @@ def audit_site(
                 errors.append(f"{relative}: JSON-LD must be an object")
                 continue
             if relative == "index.html":
-                types = {
-                    item.get("@type")
-                    for item in structured.get("@graph", [])
-                    if isinstance(item, dict)
-                }
-                if types != {"WebSite", "SoftwareSourceCode"}:
-                    errors.append(f"homepage structured-data types mismatch: {types}")
+                graph = structured.get("@graph")
+                if not isinstance(graph, list) or any(
+                    not isinstance(item, dict) for item in graph
+                ):
+                    errors.append("homepage: invalid structured-data graph")
+                else:
+                    homepage_nodes.extend(graph)
                 continue
             if structured.get("@type") != "BreadcrumbList":
                 errors.append(f"{relative}: missing BreadcrumbList type")
@@ -403,6 +513,18 @@ def audit_site(
                     errors.append(f"{relative}: noncanonical breadcrumb URL {item_url}")
                 elif not resolves(current_url, item_url):
                     errors.append(f"{relative}: unresolved breadcrumb URL {item_url}")
+        if relative == "index.html":
+            errors.extend(
+                audit_homepage_graph(
+                    parser,
+                    homepage_nodes,
+                    site_dir=site_dir,
+                    current_url=current_url,
+                    canonical=canonical,
+                    base_url=base_url,
+                    development=development,
+                )
+            )
 
     if not (site_dir / "404.html").is_file():
         errors.append("Missing noindex 404 page")

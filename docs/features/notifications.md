@@ -21,6 +21,24 @@ Use **Settings → Notifications** to configure destinations, send a test or man
 
 ## Configure a destination
 
+A successful destination test is followed by a separate check of normal event delivery:
+
+```mermaid
+flowchart TD
+    accTitle: Test a destination and verify event routing
+    accDescr: The destination test bypasses normal filters. Enable delivery and check a real event to verify severity, event and service routing.
+    Configure["Add the destination and routing choices"] --> Test["Save and test"]
+    Test --> Delivered{"Test delivered?"}
+    Delivered -->|No| History["Review the delivery error"]
+    History --> Configure
+    Delivered -->|Yes| Enable["Enable destination and outbound notifications"]
+    Enable --> Event["Wait for an expected real event"]
+    Event --> Received{"Message received?"}
+    Received -->|No| Filters["Check minimum severity, events and service filters"]
+    Filters --> Enable
+    Received -->|Yes| Done["Confirm normal delivery in history"]
+```
+
 1. Open **Settings → Notifications**.
 2. Select **Add destination**.
 3. Give the destination a recognizable name.

@@ -8,6 +8,18 @@ icon: lucide/help-circle
 
 Common questions and fixes for Seerr in DUMB.
 
+## Follow a request to the library
+
+When a request stalls, check the application at the stage where progress stops. A successful Seerr login does not verify the later Arr import or media-server connection.
+
+```mermaid
+flowchart TD
+    Request["Request an item in Seerr"] --> Arr["Seerr sends the request to the chosen Arr app"]
+    Arr --> Workflow["Arr uses the configured download workflow"]
+    Workflow --> Import["Arr imports into its configured root folder"]
+    Import --> Library["The media server scans the library"]
+    Library --> Seerr["Seerr observes media availability"]
+```
 
 ## Why is the Seerr UI not loading?
 

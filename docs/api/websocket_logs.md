@@ -10,6 +10,28 @@ Connect to `/ws/logs` for DUMB's live log stream. The frontend forwards the path
 
 When DUMB authentication is enabled, provide an access token using the [WebSocket authentication rules](websocket.md#authentication).
 
+<details class="geek-details" markdown="1">
+<summary>Live logs and retained history</summary>
+
+The WebSocket delivers new lines. It does not replay missed lines after reconnection; the REST log endpoint provides the separate retained-history path.
+
+```mermaid
+sequenceDiagram
+    participant Client
+    participant Stream as /ws/logs
+    participant History as GET /logs
+    Client->>Stream: Connect with token when required
+    Stream-->>Client: New text log lines
+    Client->>Stream: ping
+    Stream-->>Client: pong
+    Note over Client,Stream: Connection lost and later reopened
+    Client->>Stream: Reconnect
+    Client->>History: Recover retained lines using cursor and file identity
+    History-->>Client: Available retained history
+```
+
+</details>
+
 ## Messages and filtering
 
 Log messages arrive as text, for example:

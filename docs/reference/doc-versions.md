@@ -32,6 +32,23 @@ one cannot add a missing backend feature to an older DUMB image. Check both
 versions in **About**. Individually pinned service versions may also differ from
 the examples.
 
+## Choose the version, then the level of detail
+
+The release selector chooses which DUMB behavior the guide describes. Geek mode changes how much of that guide is expanded.
+
+```mermaid
+flowchart TD
+    Installed["Check DUMB and dashboard versions in Settings → About"] --> Match{"Which DUMB channel do you run?"}
+    Match -->|Stable| Released["Header: Latest release"]
+    Match -->|Development| Dev["Header: Development"]
+    Released --> Read["Follow the ordinary frontend steps"]
+    Dev --> Read
+    Read --> More{"Want internals or another method?"}
+    More -->|Yes| Geek["Enable Geek mode or open one technical section"]
+    More -->|No| Task["Complete the task with Geek mode off"]
+    Read -. "Reporting a docs issue?" .-> Footer["Include the documentation release from the footer"]
+```
+
 ## Use Geek mode when you want more detail
 
 The main guide is for people using the DUMB frontend. It explains where to go,

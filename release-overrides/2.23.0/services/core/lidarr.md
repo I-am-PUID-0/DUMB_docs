@@ -1,0 +1,173 @@
+---
+title: Lidarr
+description: Configure Lidarr in DUMB for automated music monitoring, indexers, download clients, root folders, profiles, and linked workflow services.
+icon: lucide/music
+---
+
+# Lidarr (Core Service)
+
+**Lidarr** is a music manager that automates searching, grabbing, and organizing albums through indexers and download clients.
+
+<!-- visual:service-flow -->
+## At a glance
+
+Test the connections before adding more requests. The saved root folder must also be visible to your media server.
+
+```mermaid
+flowchart TD
+    A["Open the app from its service page"] --> B
+    B["Test indexers and download client"] --> C
+    C["Choose the music root folder and profile"] --> D
+    D["Add one intended item and follow import"] --> E
+    E["Scan and play it in the media server"]
+```
+
+
+<!-- dev:start -->
+The [setup checklist](../../features/setup-checklist.md) can discover existing music roots and their native quality and metadata profiles. Select the intended defaults, preview the changes and approve saving them. DUMB reads the result back without changing existing artists, monitoring choices or tags. Profile availability depends on the installed Lidarr instance.
+<!-- dev:end -->
+
+
+---
+
+## First start
+
+1. Select Lidarr during onboarding and choose its download workflow.
+2. Open Lidarr and check indexers, download clients, the music root folder, and available quality/metadata profiles.
+3. Choose whether an added artist should monitor existing albums, future albums, or neither.
+4. Test one intended album import before enabling broad artist monitoring.
+
+Keep the default SQLite database unless you are planning a database migration.
+
+## Service Relationships
+
+| Classification | Role                               |
+| -------------- | ---------------------------------- |
+| Core Service   | Music automation                   |
+| Depends On     | None                               |
+| Optional       | Decypharr, InfiniDysk, AltMount, Prowlarr |
+| Exposes UI     | Yes (Web UI)                       |
+
+---
+
+<details class="geek-details" markdown="1">
+<summary>Technical details: configuration reference</summary>
+
+## Configuration in `dumb_config.json`
+
+```json
+{
+"lidarr": {
+  "instances": {
+    "Default": {
+      "enabled": false,
+      "core_service": "",
+      "use_neutarr": false,
+      "postgres_enabled": false,
+      "postgres_main_db": "",
+      "postgres_log_db": "",
+      "process_name": "Lidarr",
+      "repo_owner": "Lidarr",
+      "repo_name": "Lidarr",
+      "release_version_enabled": false,
+      "release_version": "latest",
+      "clear_on_update": false,
+      "exclude_dirs": [],
+      "platforms": [],
+      "suppress_logging": false,
+      "auto_update": false,
+      "auto_update_interval": 24,
+      "auto_update_start_time": "04:00",
+      "pinned_version": "",
+      "port": 8686,
+      "config_dir": "/lidarr/default",
+      "config_file": "/lidarr/default/config.xml",
+      "log_file": "/lidarr/default/logs/lidarr.txt",
+      "command": [],
+      "env": {}
+    }
+  }
+}
+}
+```
+
+### Key configuration fields { #key-configuration-fields }
+
+* `core_service`: Set to `decypharr`, `infinidysk`, `altmount`, or a list of workflow keys to enable DUMB integration.
+* `use_neutarr`: Opt this instance into NeutArr automation.
+* `postgres_enabled`: Opt this instance into DUMB-managed PostgreSQL config. SQLite is the default; set this to `true` only when you want Lidarr to use PostgreSQL.
+* `postgres_main_db` / `postgres_log_db`: Optional database-name overrides. When blank, DUMB uses `lidarr-main` and `lidarr-log` for the default instance, or unique instance-scoped names for additional instances.
+* `port`: Web UI port (default `8686`).
+* `pinned_version`: Optional version pin for Lidarr updates.
+* `repo_owner` / `repo_name`: GitHub repo used for releases or branch builds.
+* `release_version_enabled` / `release_version`: Use GitHub releases (e.g., `latest`, `nightly`, `prerelease`, or a tag).
+* `clear_on_update`: Clear the install directory before updating.
+* `exclude_dirs`: Directories to preserve when clearing.
+* `platforms`: Build platforms (defaults to `["dotnet"]` when using branches).
+* `config_dir`, `config_file`, `log_file`: Paths for config and logs.
+
+---
+
+</details>
+
+## PostgreSQL database mode
+
+When `postgres_enabled` is `true`, DUMB:
+
+* enables the bundled PostgreSQL service if needed;
+* creates the Lidarr main/log databases in `postgres.databases`;
+* starts PostgreSQL before Lidarr; and
+* writes the required `PostgresUser`, `PostgresPassword`, `PostgresHost`, `PostgresPort`, `PostgresMainDb`, and `PostgresLogDb` entries to Lidarr's `config.xml`.
+
+During onboarding, enabling `postgres_enabled` for Lidarr is enough; you do not need to separately select PostgreSQL as an optional service.
+
+!!! danger "This does not migrate existing SQLite data"
+    Setting `postgres_enabled: true` changes the database backend Lidarr starts with. It does **not** copy `lidarr.db` into PostgreSQL.
+
+    If you enable this on an existing SQLite-backed Lidarr instance without doing a manual migration, Lidarr can start against fresh PostgreSQL databases and appear empty or newly initialized.
+
+For an existing instance, use **Database Migration** on the service page. DUMB requires a rehearsal, initializes an isolated Lidarr-owned PostgreSQL schema, imports and validates every table, and preserves SQLite for rollback. Lidarr's upstream documentation still classifies migration as unsupported, so review the rehearsal carefully. See [SQLite to PostgreSQL Migration](../../features/arr-postgres-migration.md).
+
+!!! warning "PostgreSQL is not a temporary toggle"
+    There is no known supported migration path from PostgreSQL back to SQLite for Lidarr. Treat `postgres_enabled: true` as a long-term database choice unless you are willing to recreate the Lidarr instance from scratch.
+
+    DUMB can restore the preserved pre-cutover SQLite state, but it does not copy later PostgreSQL writes back into SQLite.
+
+---
+
+## Repo-based installs and updates
+
+Lidarr now supports the same repository-based controls as other DUMB services.
+
+- **GitHub releases**: Set `release_version_enabled: true` with a valid `repo_owner`/`repo_name`.
+- **Default updater**: Leave `release_version_enabled: false` to use the standard Arr updater.
+
+GitHub sources take priority when enabled and are **not** a fallback. `pinned_version` only applies to the traditional Arr updater.
+
+---
+
+## Integration with DUMB
+
+* For Decypharr integration, set `core_service` to `decypharr` and follow the [Decypharr guide](decypharr.md).
+* For InfiniDysk integration, set `core_service` to `infinidysk` and follow the [InfiniDysk guide](infinidysk.md).
+* For AltMount integration, set `core_service` to `altmount` and follow the [AltMount guide](altmount.md).
+* For combined workflows, set `core_service` to a list such as `["decypharr", "infinidysk", "altmount"]`.
+* Use [Prowlarr](prowlarr.md) to centrally manage indexers and sync them to Lidarr.
+* DUMB enables Arr folder permission updates and applies permissions to configured root folders during integration.
+* See [Core Service Routing](../../reference/core-service.md) for how `core_service` affects automation.
+
+---
+
+## Accessing the UI
+
+Open the service from DUMB's **Embedded UI** tab when available. The native URLs below require the corresponding Docker host port to be published; use the port saved in your running configuration.
+
+* Navigate to: `http://<host>:8686`
+
+---
+
+## Resources
+
+* [Lidarr Website](https://lidarr.audio/)
+* [Lidarr GitHub](https://github.com/Lidarr/Lidarr)
+* [Lidarr PostgreSQL setup](https://wiki.servarr.com/lidarr/postgres-setup)

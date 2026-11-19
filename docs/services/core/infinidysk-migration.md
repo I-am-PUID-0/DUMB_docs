@@ -8,6 +8,22 @@ icon: lucide/cloud
 
 [Back to InfiniDysk setup](infinidysk.md).
 
+<!-- visual:service-flow -->
+## At a glance
+
+Only eligible legacy installations need this migration. Keep the backup and review the full procedure before authorizing downtime.
+
+```mermaid
+flowchart TD
+    A{"Legacy installation?"} -->|No| B["Keep the canonical installation"]
+    A -->|Yes| C["Back up and run preflight"]
+    C --> D["Review targets and downtime"]
+    D --> E["Authorize the namespace migration"]
+    E --> F["Verify paths, scans and playback"]
+    F --> G["Keep recovery data until verified"]
+```
+
+
 ## Migration from NzbDAV
 
 Fresh DUMB installations use the canonical `infinidysk` service key,

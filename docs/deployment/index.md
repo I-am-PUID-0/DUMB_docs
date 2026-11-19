@@ -24,6 +24,26 @@ After installation, you will use the [DUMB dashboard](../frontend/index.md) for 
 
 The native Proxmox helper has its own validation status and runtime requirements; read its guide before treating it as equivalent to the Docker image.
 
+## Choose an installation path
+
+Start with the host you already use. The platform links below provide the exact storage and installation steps.
+
+```mermaid
+flowchart TD
+    Host["Where will DUMB run?"] --> Linux["Linux or a Docker host"]
+    Host --> Windows["Windows: prepare WSL2 first"]
+    Host --> NAS["NAS: use its Compose editor"]
+    Host --> Proxmox["Proxmox: review native LXC validation"]
+    Linux --> Terminal["Terminal: Docker Compose"]
+    Linux --> Web["Web management: Portainer or Dockge"]
+    Windows --> Linux
+    NAS --> Editors["Synology, QNAP, TrueNAS or Unraid guide"]
+    Terminal --> Dashboard["Open DUMB and complete onboarding"]
+    Web --> Dashboard
+    Editors --> Dashboard
+    Proxmox --> Dashboard
+```
+
 ## Before starting
 
 Read [Before you install](../getting-started/installation.md) for credentials, sizing, permissions, and persistence. Every normal deployment preserves these paths:

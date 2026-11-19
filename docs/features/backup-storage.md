@@ -25,6 +25,23 @@ Registering a destination does not make it the default or move an existing backu
 
 ## Register an existing destination
 
+Make the directory visible to DUMB before registering or selecting it:
+
+```mermaid
+flowchart TD
+    accTitle: Register storage before selecting it for backups
+    accDescr: Expose an existing directory to the container, pass the destination preview, register it, and explicitly select it for an operation or schedule.
+    Host["Prepare local or mounted NAS storage"] --> Visible["Expose its existing directory inside DUMB"]
+    Visible --> Enter["Enter a unique destination ID and container-visible path"]
+    Enter --> Preview["Preview destination"]
+    Preview --> Passed{"Checks passed?"}
+    Passed -->|No| Fix["Resolve the path, mount or permission blocker"]
+    Fix --> Preview
+    Passed -->|Yes| Register["Register destination"]
+    Register --> Select["Select it for the operation or save the schedule"]
+    Select --> Verify["Review the chosen destination before running"]
+```
+
 The directory must already exist inside the DUMB container. A host-only path
 is insufficient. Mount NFS/SMB storage on the host and expose it to the container
 through your normal deployment configuration before registration. DUMB does not

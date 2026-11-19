@@ -8,6 +8,21 @@ icon: lucide/radio
 
 **Sonarr** is a TV series manager that automates monitoring, searching, and organizing episodes through configured indexers and download clients.
 
+<!-- visual:service-flow -->
+## At a glance
+
+Test the connections before adding more requests. The saved root folder must also be visible to your media server.
+
+```mermaid
+flowchart TD
+    A["Open the app from its service page"] --> B
+    B["Test indexers and download client"] --> C
+    C["Choose the TV root folder and profile"] --> D
+    D["Add one intended item and follow import"] --> E
+    E["Scan and play it in the media server"]
+```
+
+
 ---
 
 ## First start

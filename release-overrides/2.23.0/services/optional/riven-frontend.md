@@ -8,6 +8,21 @@ icon: lucide/layout-dashboard
 
 Riven Frontend is an optional interface for Riven Backend. Use it to configure Riven and manage its content; the backend and its database must be running first.
 
+<!-- visual:service-flow -->
+## At a glance
+
+Use the Riven settings and workflow diagram for provider, scraper, content and media-server choices.
+
+```mermaid
+flowchart TD
+    A["Start Riven and its required dependencies"] --> B
+    B["Open Riven Frontend"] --> C
+    C["Configure providers, content and scrapers"] --> D
+    D["Review paths and the media-server updater"] --> E
+    E["Follow one request through playback"]
+```
+
+
 DUMB handles automatic installation and updates of the frontend, including versioning and branch targeting. It is served by a lightweight web server and pre-configured to communicate with the backend at startup.
 
 ---

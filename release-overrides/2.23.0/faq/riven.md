@@ -6,6 +6,8 @@ icon: lucide/database
 
 # Riven FAQ
 
+**Visual guide:** [Follow the Riven workflow from setup to playback](../services/core/riven-backend.md).
+
 ## Do I need both Riven Backend and Riven Frontend?
 
 For browser-based setup, select both. **Riven Backend** performs acquisition and library work; **Riven Frontend → Embedded UI → Settings** lets you configure it. Starting the frontend alone does not provide a working Riven stack. The backend can also be managed without this frontend using its API, which is an advanced alternative.

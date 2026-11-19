@@ -8,6 +8,21 @@ icon: lucide/captions
 
 [Bazarr](https://www.bazarr.media/) is an optional subtitle manager for movies and TV shows. It reads library information from Sonarr and Radarr, searches configured subtitle providers, and writes downloaded subtitles beside the media files.
 
+<!-- visual:service-flow -->
+## At a glance
+
+Bazarr needs working Sonarr or Radarr connections, subtitle providers and access to the same media files.
+
+```mermaid
+flowchart TD
+    A["Open Bazarr"] --> B
+    B["Connect and test Sonarr or Radarr"] --> C
+    C["Choose languages and subtitle profiles"] --> D
+    D["Configure and test subtitle providers"] --> E
+    E["Check subtitles beside one media item"]
+```
+
+
 ## First-time Bazarr setup
 
 Open Bazarr from its service page or browse to:

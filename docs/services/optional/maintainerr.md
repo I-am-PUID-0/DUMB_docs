@@ -8,6 +8,21 @@ icon: lucide/archive-restore
 
 Maintainerr helps keep a media library lean by finding content that matches your rules, presenting it in a media-server collection, and optionally removing or unmonitoring it after a delay. It supports Plex, Jellyfin, or Emby as the media server and can use Sonarr, Radarr, Seerr, and Tautulli data when evaluating rules.
 
+<!-- visual:service-flow -->
+## At a glance
+
+Begin with a collection-only rule. Deletion and unmonitoring require a separate, deliberate choice after reviewing the results.
+
+```mermaid
+flowchart TD
+    A["Connect the intended media server"] --> B
+    B["Add the integrations used by your rule"] --> C
+    C["Create a collection-only rule"] --> D
+    D["Review matching items and the collection"] --> E
+    E["Choose any later removal action deliberately"]
+```
+
+
 ---
 
 ## Initial setup

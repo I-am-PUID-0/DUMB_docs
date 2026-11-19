@@ -8,6 +8,28 @@ icon: lucide/code
 
 Endpoint paths below are backend-native. Add `/api` when using the dashboard gateway, for example `http://localhost:3005/api/process/capabilities`.
 
+<details class="geek-details" markdown="1">
+<summary>Check, install and inspect an update</summary>
+
+A check reports availability. Installation is a separate request that returns its result after the operation; a client can also read retained update status while the operation runs or after reconnecting.
+
+```mermaid
+sequenceDiagram
+    participant Client
+    participant API as DUMB API
+    Client->>API: POST /process/update-check
+    API-->>Client: Update availability
+    Note over Client: Review the intended service and version
+    Client->>API: POST /process/update-install
+    loop While the installation request is running
+        Client->>API: GET /process/update-status
+        API-->>Client: Recorded progress
+    end
+    API-->>Client: Installation result, failure or blocked response
+```
+
+</details>
+
 ## Updates and scheduling
 
 ### `GET /process/update-status`

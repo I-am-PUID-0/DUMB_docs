@@ -8,6 +8,21 @@ icon: lucide/bar-chart-3
 
 Tautulli is a monitoring and statistics application for Plex Media Server. It tracks what has been watched, who watched it, when and where they watched it, and how it was watched, providing detailed analytics and notifications.
 
+<!-- visual:service-flow -->
+## At a glance
+
+Connect Tautulli to the intended Plex server before configuring notifications or retention.
+
+```mermaid
+flowchart TD
+    A["Open Tautulli"] --> B
+    B["Authorize the intended Plex server"] --> C
+    C["Check server connection and activity"] --> D
+    D["Play one item in Plex"] --> E
+    E["Verify the activity appears in Tautulli"]
+```
+
+
 ---
 
 ## Initial setup

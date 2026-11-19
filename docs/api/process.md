@@ -10,6 +10,8 @@ Use these endpoints to list services, inspect startup state, and start, stop, or
 
 All paths are backend-native. When calling through port `3005`, prefix REST paths with `/api`. Authentication is enforced by the backend.
 
+**Visual guide:** [See the backend control-plane and request flows](../architecture/backend.md#control-plane-flow).
+
 ## Find the right workflow
 
 | Task | Reference |

@@ -21,7 +21,12 @@ The metrics dashboard shows:
 - **Plex cloud status** - Optional cached status for Plex-operated services
 - **System information** - Container and host details
 
-![Metrics dashboard](../assets/images/frontend/metrics.png)
+<figure class="docs-visual docs-frontend-figure" markdown="1">
+
+![DUMB Metrics page with resource gauges, history controls and process information.](../assets/images/guides/frontend/v1.91.0/tour-2/metrics.webp){ loading=lazy decoding=async }
+
+<figcaption class="docs-visual-caption">Use the gauges for a current sample and the charts to look for a sustained pattern. DUMB Frontend 1.91.0 · example data. Other versions may look different.</figcaption>
+</figure>
 
 ---
 

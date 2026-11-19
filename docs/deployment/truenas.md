@@ -10,6 +10,19 @@ TrueNAS SCALE 24.10 and later use Docker for Apps and can deploy a custom
 application from Docker Compose YAML. Older 24.04 and earlier releases use the
 archived Kubernetes app model and are not covered by this Compose procedure.
 
+## From datasets to the DUMB app
+
+The dataset holds persistent state. Installing or updating the custom app should continue using that same dataset.
+
+```mermaid
+flowchart TD
+    Dataset["Create a DUMB dataset and subdirectories"] --> ACL["Set dataset access for the chosen UID and GID"]
+    ACL --> Apps["Apps → Discover Apps → Install via YAML"]
+    Apps --> Compose["Paste Compose and replace dataset paths"]
+    Compose --> Save["Save the custom app and inspect startup"]
+    Save --> Dashboard["Open port 3005 and complete onboarding"]
+```
+
 ## Prerequisites
 
 - TrueNAS SCALE 24.10 or later with an Apps pool selected

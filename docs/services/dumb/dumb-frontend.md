@@ -10,6 +10,21 @@ The **DUMB Frontend** is the web UI for managing and monitoring the DUMB ecosyst
 It provides service controls, real-time logs, embedded UIs, onboarding, settings,
 and metrics in a single interface.
 
+<!-- visual:service-flow -->
+## At a glance
+
+The dashboard is the starting point for everyday tasks. Each application still has its own setup inside its service interface.
+
+```mermaid
+flowchart TD
+    A["Open the DUMB dashboard"] --> B
+    B["Choose a service card"] --> C
+    C["Use its configuration, logs or embedded UI"] --> D
+    D["Review health and task results"] --> E
+    E["Open the relevant guide if a check fails"]
+```
+
+
 ## Open the dashboard
 
 Open `http://<host>:3005` using your DUMB host address and published frontend port. Finish the initial account/onboarding prompts, then use the dashboard to open service pages, logs, and settings. If the page does not load, check the container's frontend log and [networking guide](../../deployment/networking.md).

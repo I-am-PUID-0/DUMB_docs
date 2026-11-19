@@ -10,6 +10,20 @@ Deploy DUMB from the Community Applications template when it is available, or
 add it as a Compose stack/container using the maintained settings below. The
 same persistence and path rules apply to both methods.
 
+## Install and check the Unraid container
+
+The application template sets up the container. The first import and playback check happens after DUMB and the selected apps have been configured.
+
+```mermaid
+flowchart TD
+    Apps["Apps: find the DUMB template"] --> Review["Review image, persistent paths and user IDs"]
+    Review --> Apply["Apply the template"]
+    Apply --> Logs["Follow the container log through startup"]
+    Logs --> Dashboard["Open DUMB on port 3005"]
+    Dashboard --> Setup["Complete onboarding and app setup"]
+    Setup --> Test["Test import and playback"]
+```
+
 ## Prerequisites
 
 - Unraid with Docker enabled

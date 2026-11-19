@@ -10,6 +10,23 @@ Seerr Sync provides one-way request replication from a **primary** Seerr instanc
 
 It polls the primary at a configurable interval, fingerprints requests using `{mediaType}:{tmdbId}:{is4k}`, and persists sync state in `/config/seerr_sync_state.json` to survive restarts.
 
+<details class="geek-details" markdown="1">
+<summary>One-way request replication</summary>
+
+Requests flow from the primary to each subordinate. Persisted fingerprints and results let the sync worker remember completed and failed work across restarts.
+
+```mermaid
+flowchart TD
+    Primary["Primary Seerr requests"] --> Poll["Poll and fingerprint requests"]
+    Poll --> A["Subordinate Seerr A"]
+    Poll --> B["Subordinate Seerr B"]
+    A --> State["Persist synchronization results"]
+    B --> State
+    State --> Inspect["Inspect status, failed requests and retained state"]
+```
+
+</details>
+
 ## Endpoints
 
 ### GET `/seerr-sync/status`

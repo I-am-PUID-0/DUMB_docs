@@ -8,6 +8,20 @@ icon: lucide/cpu
 
 Choose core services around the library workflow you want. A media server can use files you already own; a download workflow usually also needs provider accounts, library paths, and one or more dependencies.
 
+<!-- visual:service-flow -->
+## At a glance
+
+A complete media workflow connects acquisition, a curated library folder and playback. Use only the parts you need.
+
+```mermaid
+flowchart TD
+    A["Request or search"] --> B["Chosen acquisition workflow"]
+    B --> C["Curated library folder"]
+    C --> D["Plex, Jellyfin or Emby"]
+    D --> E["Play and verify"]
+```
+
+
 Several core services can run together. Check shared paths, provider connection limits, and assigned ports before adding a second workflow.
 
 ## Core Service Index

@@ -6,6 +6,22 @@ icon: lucide/hard-drive
 
 # rclone FAQ
 
+## Separate provider throttling from mount visibility
+
+An HTTP 423 response and a missing nested mount are different problems. Follow the matching branch before changing mount flags or provider settings.
+
+```mermaid
+flowchart TD
+    Symptom["What does the error show?"] --> Locked["HTTP 423 or provider rate limiting"]
+    Symptom --> Shared["Host path is not a shared mount"]
+    Symptom --> Consumer["Another app cannot see the mounted files"]
+    Locked --> Provider["Review provider limits and the existing rclone guidance"]
+    Shared --> Host["Prepare the intended Linux host mount"]
+    Consumer --> Boundary["Check paths and mount propagation in both containers"]
+    Host --> Verify["Verify the actual mount and reader access"]
+    Boundary --> Verify
+```
+
 ## I think I might be rate limited by the debrid service - seeing `423` errors.
 
 HTTP `423 Locked` means the requested resource is locked or unavailable. It can appear while a provider is preparing content as well as during provider-side limits. Check Zurg or the source service's logs alongside rclone's error before deciding which limit applies.

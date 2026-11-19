@@ -8,6 +8,21 @@ icon: lucide/link
 
 The backend API and dashboard provide the management interface for the stack. They start with the container when enabled; the default configuration enables both.
 
+<!-- visual:service-flow -->
+## At a glance
+
+The frontend is where you work; the API coordinates the managed applications behind it.
+
+```mermaid
+flowchart TD
+    A["Your browser"] --> B["DUMB Frontend"]
+    B --> C["DUMB API"]
+    C --> D["Managed services"]
+    D --> E["Health, logs and task results"]
+    E --> B
+```
+
+
 ## DUMB service index
 
 | Service | Default port | Purpose |

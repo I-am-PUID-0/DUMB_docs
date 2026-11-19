@@ -8,6 +8,23 @@ icon: lucide/layers
 
 Several DUMB services support multiple instances (for example Sonarr, Radarr, Lidarr, Whisparr, and rclone). This guide shows how to configure instances safely.
 
+<details class="geek-details" markdown="1">
+<summary>Keep each instance separate</summary>
+
+The instance name identifies a separate configuration. Ports, native configuration paths and log files must remain distinct.
+
+```mermaid
+flowchart TD
+    Sonarr["Sonarr instances map"] --> Default["Default instance"]
+    Sonarr --> Anime["Anime instance"]
+    Default --> First["Its own port, config directory and log"]
+    Anime --> Second["A different port, config directory and log"]
+    First --> Workflow["Select the intended workflow with core_service"]
+    Second --> Workflow
+```
+
+</details>
+
 ## Instance pattern
 
 Services that support instances use an `instances` map keyed by a friendly name:

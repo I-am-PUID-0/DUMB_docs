@@ -20,6 +20,22 @@ New policies created by arrangement setup stay disabled until you review their m
 
 ## Planned stop, restart, or update
 
+The ordinary safe-maintenance path waits for known idle activity and checks recovery afterward:
+
+```mermaid
+flowchart TD
+    accTitle: Protect a library during planned storage maintenance
+    accDescr: Defer when activity is active or unknown; otherwise use protection, wait for stable storage and verify restored library access.
+    Review["Review playback and scan activity"] --> Idle{"Known idle or stopped?"}
+    Idle -->|No or unknown| Defer["Defer the operation"]
+    Idle -->|Yes| Protect["Protect & continue"]
+    Protect --> Work["DUMB guards scans and performs storage maintenance"]
+    Work --> Healthy{"Storage and mounts stable?"}
+    Healthy -->|No| Recovery["Read protection status and recovery guidance"]
+    Healthy -->|Yes| Restore["Restore only settings and processes DUMB changed"]
+    Restore --> Test["Check the library and sample playback"]
+```
+
 Before DUMB changes a storage dependency it:
 
 1. checks active playback and library-scan activity;

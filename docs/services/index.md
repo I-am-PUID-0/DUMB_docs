@@ -8,6 +8,22 @@ icon: lucide/layers
 
 Start with the workflow you want, then enable its services in onboarding. You do not need every service in this catalog. DUMB runs managed applications as processes inside its container; they share the container's network and mounted paths.
 
+<!-- visual:service-flow -->
+## At a glance
+
+Choose the result you want first, then add only the services and dependencies that workflow needs.
+
+```mermaid
+flowchart TD
+    A["Choose a goal"] --> B["Play an existing library"]
+    A --> C["Build an acquisition workflow"]
+    A --> D["Add a supporting tool"]
+    B --> E["Media server and library paths"]
+    C --> F["Provider, collector, Arr apps and media server"]
+    D --> G["Monitoring, subtitles, requests or access"]
+```
+
+
 ## How the services work together
 
 | You want to… | Start with | Also review |

@@ -9,6 +9,19 @@ icon: simple/synology
 DSM 7.2 Container Manager supports Docker Compose through **Projects**. A project
 can upload a Compose file or use the built-in YAML editor.
 
+## Create the Synology project
+
+Use the persistent shared folder in the Compose mappings so a project update keeps DUMB's settings and application data.
+
+```mermaid
+flowchart TD
+    Folders["Create the DUMB folders in a persistent share"] --> Permissions["Grant access to the chosen UID and GID"]
+    Permissions --> Project["Container Manager: Project → Create"]
+    Project --> Compose["Upload or paste Compose and replace host paths"]
+    Compose --> Start["Create and start the project"]
+    Start --> Dashboard["Open the NAS address on port 3005"]
+```
+
 ## Prerequisites
 
 - A Synology model/architecture supported by the DUMB image (`amd64` or `arm64`)

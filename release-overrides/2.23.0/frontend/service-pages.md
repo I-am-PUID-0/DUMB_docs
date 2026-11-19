@@ -34,7 +34,7 @@ The header shows process status, application health, and restart information. Ho
 
 <figure class="docs-visual docs-frontend-figure" markdown="1">
 
-![Service page showing its status, command bar, configuration tabs and Tools menu.](../assets/images/guides/frontend/v1.91.0/service-controls.webp){ loading=lazy decoding=async }
+![Service page showing its status, command bar, configuration tabs and Tools menu.](../assets/images/guides/frontend/v1.91.0/tour-2/service-controls.webp){ loading=lazy decoding=async }
 
 <figcaption class="docs-visual-caption">Choose a tab for configuration, logs or the application's interface; open Tools for additional tasks. DUMB Frontend 1.91.0 · example data. Other versions may look different.</figcaption>
 </figure>
@@ -98,6 +98,14 @@ Open **Tools → Dependencies** to inspect startup order, missing prerequisites,
 
 Instance links are scoped to the current workflow. An unrelated rclone or Zurg instance is not treated as a valid dependency when the intended mapping is missing. Conditional startup dependencies apply only when the relevant services are enabled. Signals distinguish runtime waits, configured `core_service` links, and optional integrations.
 
+<figure class="docs-visual docs-frontend-figure">
+<video class="docs-frontend-video" controls playsinline preload="none" poster="../../assets/images/guides/frontend/v1.91.0/tour-2/dependencies.webp" aria-label="Review a service's dependencies" aria-describedby="dependencies-demo-caption">
+  <source src="../assets/images/guides/frontend/v1.91.0/tour-2/dependencies.webm" type="video/webm">
+  <p><a href="../assets/images/guides/frontend/v1.91.0/tour-2/dependencies.webm">Download the demonstration</a>, or follow the written steps above.</p>
+</video>
+<figcaption id="dependencies-demo-caption" class="docs-visual-caption">Watch: open Dependencies and compare Details with Flow. Review the named prerequisite before using a Fix now action. DUMB Frontend 1.91.0 · example data. Other versions may look different. <a href="../assets/images/guides/frontend/v1.91.0/tour-2/dependencies.webp">Open the full-size screenshot</a>.</figcaption>
+</figure>
+
 With [Geek Mode](settings.md#geek-mode), the panel also exposes API latency, **Copy JSON**, and raw Mermaid source. Use Details if the browser cannot render Flow.
 
 ## Process Metrics panel
@@ -118,7 +126,7 @@ Use **Tools → Auto-restart** to select the current service and set its policy.
 
 Monitoring pauses during stack startup. A restart is counted as successful only after the service passes its health check. **Starting** and **Degraded** states remain visible without incrementing the unhealthy threshold. See [Auto-restart](../features/auto-restart.md) before changing limits.
 
-![Auto-restart controls](../assets/images/frontend/auto_restart.png){ .shadow }
+Use the [auto-restart controls walkthrough](../features/auto-restart.md#enable-it-for-a-service) to locate the policy before changing and saving it.
 
 ## Auto-update settings
 
@@ -163,7 +171,7 @@ On the DUMB API page, **DUMB API Logging** can temporarily enable DEBUG without 
 
 Application settings and DUMB-managed settings are separate. Use the [service guide](../services/index.md) to find the correct editor and restart requirements.
 
-![Edit Service Config](../assets/images/frontend/edit_service_config.png){ .shadow }
+Compare the two tabs in the [configuration-editor walkthrough](../features/configuration.md#change-a-setting) before choosing which setting to change.
 
 ## AI Assist
 
@@ -188,11 +196,11 @@ You can also change the line limit. Service-aware parsing retains application ti
 DUMB applies its sensitive-data redactor to logs viewed or downloaded here. Review a download before sharing it; arbitrary application output can contain values the redactor does not recognize.
 
 <figure class="docs-visual docs-frontend-figure">
-<video class="docs-frontend-video" controls playsinline preload="none" poster="../../assets/images/guides/frontend/v1.91.0/service-logs.webp" aria-label="Filter service logs demonstration" aria-describedby="service-logs-demo-caption">
-  <source src="../assets/images/guides/frontend/v1.91.0/service-logs.webm" type="video/webm">
-  <p><a href="../assets/images/guides/frontend/v1.91.0/service-logs.webm">Download the demonstration</a>, or follow the written steps above.</p>
+<video class="docs-frontend-video" controls playsinline preload="none" poster="../../assets/images/guides/frontend/v1.91.0/tour-2/service-logs.webp" aria-label="Filter service logs demonstration" aria-describedby="service-logs-demo-caption">
+  <source src="../assets/images/guides/frontend/v1.91.0/tour-2/service-logs.webm" type="video/webm">
+  <p><a href="../assets/images/guides/frontend/v1.91.0/tour-2/service-logs.webm">Download the demonstration</a>, or follow the written steps above.</p>
 </video>
-<figcaption id="service-logs-demo-caption" class="docs-visual-caption">Watch the log filters, refresh interval and Follow tail controls. DUMB Frontend 1.91.0 · example data. Other versions may look different. <a href="../assets/images/guides/frontend/v1.91.0/service-logs.webp">Open the full-size screenshot</a>.</figcaption>
+<figcaption id="service-logs-demo-caption" class="docs-visual-caption">Watch the log filters, refresh interval and Follow tail controls. DUMB Frontend 1.91.0 · example data. Other versions may look different. <a href="../assets/images/guides/frontend/v1.91.0/tour-2/service-logs.webp">Open the full-size screenshot</a>.</figcaption>
 </figure>
 
 ## Embedded UI

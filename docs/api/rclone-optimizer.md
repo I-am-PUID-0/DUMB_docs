@@ -8,6 +8,22 @@ icon: lucide/code
 
 Endpoint paths below are backend-native. Add `/api` when using the dashboard gateway, for example `http://localhost:3005/api/process/capabilities`.
 
+<details class="geek-details" markdown="1">
+<summary>Measure before changing settings</summary>
+
+Benchmark and trace results are evidence for a settings decision. A comparison result does not by itself prove that the whole media workflow will perform better.
+
+```mermaid
+flowchart TD
+    Discover["Discover available mounts and benchmark inputs"] --> Start["Start the selected benchmark"]
+    Start --> Poll["Inspect retained job status and trace results"]
+    Poll --> Compare["Compare measured settings and failures"]
+    Compare --> Decide["Choose whether to change the rclone configuration"]
+    Decide --> Playback["Verify the actual playback workload"]
+```
+
+</details>
+
 ## Rclone streaming optimizer
 
 These authenticated process routes are available when capability

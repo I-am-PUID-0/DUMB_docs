@@ -46,6 +46,9 @@ export async function createFixture({ WebSocketServer }) {
     dashboard_bulk_updates: true,
     auto_update_mode: true,
     auto_update_start_time: true,
+    metrics_history_storage: true,
+    metrics_filesystem_selection: true,
+    metrics_network_interface_selection: true,
     installation_backup: false,
     notifications: false,
     ai_assistant: false,
@@ -65,13 +68,14 @@ export async function createFixture({ WebSocketServer }) {
     ['Prowlarr', 'prowlarr', '1.0.0', 9696],
     ['Radarr', 'radarr', '5.0.0', 7878],
     ['Sonarr', 'sonarr', '4.0.0', 8989],
+    ['Tautulli', 'tautulli', '2.0.0', 8181, false],
   ]
   const status = name => ({
     process_name: name,
-    status: 'running',
-    healthy: true,
-    health_status: 'healthy',
-    health_reason: 'Example application is reachable.',
+    status: definitions.find(row => row[0] === name)?.[4] === false ? 'stopped' : 'running',
+    healthy: definitions.find(row => row[0] === name)?.[4] === false ? null : true,
+    health_status: definitions.find(row => row[0] === name)?.[4] === false ? null : 'healthy',
+    health_reason: definitions.find(row => row[0] === name)?.[4] === false ? 'Disabled in the example configuration.' : 'Example application is reachable.',
     health_details: { process: true, ports: true },
   })
   const update = name => ({
@@ -84,16 +88,17 @@ export async function createFixture({ WebSocketServer }) {
     message: state.checked ? 'Example update check completed. No update was installed.' : 'Ready to check for updates.',
     release_url: 'https://github.com/Sonarr/Sonarr/releases',
   })
-  const processes = () => definitions.map(([name, key, version, port]) => ({
+  const processes = () => definitions.map(([name, key, version, port, enabled = true]) => ({
     process_name: name, name, config_key: key, version,
+    enabled,
     supports_manual_update: ['sonarr', 'radarr', 'prowlarr'].includes(key),
     repo_url: key.startsWith('dumb') ? FRONTEND.repository : 'https://github.com/Sonarr/Sonarr',
     config: {
-      enabled: true, process_name: name, onboarding_completed: true, port,
+      enabled, process_name: name, onboarding_completed: true, port,
       log_file: `/log/${key}.log`, log_level: 'INFO',
       auto_update: false, auto_update_mode: 'check_only',
       auto_update_interval: 24, auto_update_start_time: '04:00',
-      ...(key === 'sonarr' ? { config_dir: '/data/sonarr', core_service: 'infinidysk' } : {}),
+      ...(key === 'sonarr' ? { config_dir: '/data/sonarr', core_service: 'infinidysk', wait_for_url: ['http://127.0.0.1:3000/health'] } : {}),
     },
     ...status(name),
     update_status: update(name),
@@ -102,7 +107,12 @@ export async function createFixture({ WebSocketServer }) {
     dumb: {
       onboarding_completed: true,
       plex_token: '', github_token: '', github_username: '',
-      auto_restart: { enabled: false, services: [] },
+      auto_restart: { enabled: false, restart_on_unhealthy: true, healthcheck_interval: 30,
+        unhealthy_threshold: 3, grace_period_seconds: 30, max_restarts: 3,
+        window_seconds: 300, backoff_seconds: [5, 15, 45, 120], services: [] },
+      metrics: { system_scope: 'auto', filesystem_paths: ['/data', '/config'], network_interfaces: ['eth0'],
+        history_enabled: true, history_interval_sec: 5, history_retention_days: 7,
+        history_max_total_mb: 100, storage: { provider: 'sqlite', sqlite_path: '/config/metrics/metrics.sqlite' } },
       ui: {
         log_timestamp: { dateOrder: 'MDY', hourFormat: '24', zeroPad: true },
         sidebar: { auto_hide_on_navigation: false, geek_mode: false, show_all_services: false },
@@ -122,13 +132,48 @@ export async function createFixture({ WebSocketServer }) {
   const metrics = {
     timestamp,
     system: {
-      cpu_percent: 12.4, cpu_count: 4, uptime: 3600,
+      cpu_percent: 12.4, cpu_count: 4, uptime: 3600, scope_effective: 'cgroup',
+      hostname: 'example', platform: 'Linux', load_avg: [0.38, 0.42, 0.36],
       mem: { total: 8 * 1024 ** 3, used: 2 * 1024 ** 3, available: 6 * 1024 ** 3, percent: 25 },
+      swap: { total: 1024 ** 3, used: 0, free: 1024 ** 3, percent: 0 },
       disk: { path: '/data', total: 500 * 1024 ** 3, used: 125 * 1024 ** 3, free: 375 * 1024 ** 3, percent: 25 },
-      filesystems: [], network_interfaces: [],
+      inode: { total: 1000000, used: 120000, free: 880000, percent: 12 },
+      disk_io: { read_bytes: 8 * 1024 ** 3, write_bytes: 2 * 1024 ** 3 },
+      net_io: { sent_bytes: 2 * 1024 ** 3, recv_bytes: 12 * 1024 ** 3 },
+      filesystems: [], network_interfaces: [{ name: 'eth0', available: true, isup: true,
+        bytes_sent: 2 * 1024 ** 3, bytes_recv: 12 * 1024 ** 3, speed_mbps: 1000, mtu: 1500 }],
     },
-    processes: [],
+    dumb_managed: definitions.filter(row => row[4] !== false).map(([name], index) => ({
+      name, process_name: name, pid: 1000 + index, status: 'running', uptime: 3600,
+      cpu_percent: 1.2 + index * 0.4, rss: (90 + index * 20) * 1024 ** 2,
+      num_threads: 4, disk_io: { read_bytes: index * 1024 ** 2, write_bytes: index * 256 * 1024 },
+    })), external: [],
   }
+  metrics.system.filesystems = ['/data', '/config'].map(containerPath => ({
+    ...metrics.system.disk, path: containerPath, mount_point: containerPath,
+    fs_type: 'ext4', available: true, inode: metrics.system.inode,
+  }))
+  const history = Array.from({ length: 72 }, (_, index) => ({
+    ...structuredClone(metrics), timestamp: timestamp - (71 - index) * 300,
+    system: { ...structuredClone(metrics.system), cpu_percent: 18 + Math.sin(index / 4) * 7,
+      mem: { ...metrics.system.mem, percent: 25 + Math.sin(index / 9) * 3 },
+      net_io: { sent_bytes: (index + 1) * 25 * 1024 ** 2, recv_bytes: (index + 1) * 100 * 1024 ** 2 },
+      disk_io: { read_bytes: (index + 1) * 90 * 1024 ** 2, write_bytes: (index + 1) * 10 * 1024 ** 2 } },
+  }))
+  const dependencyGraph = scope => ({
+    scope, updated_at: FIXED_TIME,
+    context: { mode: 'core', key: 'sonarr', core: { key: 'sonarr', name: 'Sonarr', dependencies: ['infinidysk'] } },
+    core_services: [{ key: 'sonarr', name: 'Sonarr', dependencies: ['infinidysk'] }, { key: 'infinidysk', name: 'InfiniDysk', dependencies: [] }],
+    processes: processes(), statuses: Object.fromEntries(definitions.map(row => [row[0], status(row[0]).status])),
+    startup_order: [{ key: 'infinidysk', label: 'InfiniDysk', state: 'running' }, { key: 'sonarr', label: 'Sonarr', state: 'running' }],
+    dependency_rows: [{ key: 'infinidysk', label: 'InfiniDysk', state: 'running', process_count: 1,
+      starter_process_name: 'InfiniDysk', signals: ['core_service_fields', 'wait_for_url'] }],
+    dependent_rows: [], linked_outgoing_rows: [{ key: 'infinidysk', process_name: 'InfiniDysk',
+      label: 'InfiniDysk', signals: ['wait_for_url'], classification: 'hard_configured' }], linked_incoming_rows: [],
+    nodes: ['InfiniDysk', 'Sonarr'].map(name => ({ key: name.toLowerCase(), process_name: name, label: name, state: 'running' })),
+    edges: [{ source: 'InfiniDysk', target: 'Sonarr', strength: 'hard_configured', signals: ['wait_for_url'] }],
+    parallel_groups: [], dependency_truth_table: [],
+  })
   const globalSchema = { type: 'object', properties: { dumb: { type: 'object', properties: { auto_restart: { type: 'object' } } } } }
   const processSchema = { type: 'object', additionalProperties: true, properties: {
     enabled: { type: 'boolean' }, process_name: { type: 'string' }, port: { type: 'integer' },
@@ -170,6 +215,7 @@ export async function createFixture({ WebSocketServer }) {
       if (get && path === '/api/auth/users') return send({ users: [{ username: 'example', disabled: false }] })
       if (get && path === '/api/auth/provider') return send({ mode: 'local', oidc: { enabled: false } })
       if (get && path === '/api/process/capabilities') return send(capabilities)
+      if (get && path === '/api/process/dependency-graph') return send(dependencyGraph(url.searchParams.get('scope') || 'runtime'))
       if (get && path === '/api/process/processes') return send({ processes: processes() })
       if (get && path === '/api/process/') {
         const service = processes().find(row => row.process_name === url.searchParams.get('process_name'))
@@ -217,6 +263,12 @@ export async function createFixture({ WebSocketServer }) {
       if (get && path === '/api/config/service-ui') return send({ enabled: false, services: [] })
       if (get && path === '/api/config/service-ui-map') return send({})
       if (get && path === '/api/metrics') return send(metrics)
+      if (get && ['/api/metrics/history', '/api/metrics/history_series'].includes(path)) return send({ items: history, truncated: false, bucket_seconds: 300 })
+      if (get && path === '/api/metrics/filesystems') return send({ filesystems: metrics.system.filesystems, candidates: metrics.system.filesystems })
+      if (get && path === '/api/metrics/network-interfaces') return send({ interfaces: metrics.system.network_interfaces, candidates: metrics.system.network_interfaces })
+      if (get && path === '/api/metrics/history/storage') return send({ configured_provider: 'sqlite', active_provider: 'sqlite', fallback_active: false,
+        sqlite: { path: '/config/metrics/metrics.sqlite', sample_count: history.length, size_bytes: 2 * 1024 ** 2 },
+        legacy: { files: 0, imported: 0, skipped: 0 } })
       if (get && path === '/api/logs') {
         const text = url.searchParams.get('process_name') === 'DUMB' ? controllerLogs : logs
         if (!url.searchParams.has('tail_bytes')) return send({ log: text })
@@ -268,6 +320,12 @@ export async function createFixture({ WebSocketServer }) {
   return {
     origin, state,
     resetChecks() { state.checked = false },
+    resetPreferences() {
+      configuration.dumb.ui = {
+        log_timestamp: { dateOrder: 'MDY', hourFormat: '24', zeroPad: true },
+        sidebar: { auto_hide_on_navigation: false, geek_mode: false, show_all_services: false },
+      }
+    },
     async close() {
       for (const socket of sockets.clients) socket.terminate()
       await new Promise(resolve => sockets.close(resolve))

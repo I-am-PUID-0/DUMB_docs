@@ -1,0 +1,314 @@
+---
+title: DUMB Frontend
+description: Open the DUMB dashboard, find user guides, and review frontend build requirements, update settings, source selections, and development image choices.
+icon: lucide/layout-dashboard
+---
+
+# DUMB Frontend
+
+The **DUMB Frontend** is the web UI for managing and monitoring the DUMB ecosystem.
+It provides service controls, real-time logs, embedded UIs, onboarding, settings,
+and metrics in a single interface.
+
+<!-- visual:service-flow -->
+## At a glance
+
+The dashboard is the starting point for everyday tasks. Each application still has its own setup inside its service interface.
+
+```mermaid
+flowchart TD
+    A["Open the DUMB dashboard"] --> B
+    B["Choose a service card"] --> C
+    C["Use its configuration, logs or embedded UI"] --> D
+    D["Review health and task results"] --> E
+    E["Open the relevant guide if a check fails"]
+```
+
+
+## Open the dashboard
+
+Open `http://<host>:3005` using your DUMB host address and published frontend port. Finish the initial account/onboarding prompts, then use the dashboard to open service pages, logs, and settings. If the page does not load, check the container's frontend log and [networking guide](../../deployment/networking.md).
+
+!!! tip "Frontend documentation"
+
+    For detailed guides on using the frontend, see the [Frontend Documentation](../../frontend/index.md) section:
+
+    - [Dashboard](../../frontend/dashboard.md) - Service overview and control
+    - [Onboarding](../../frontend/onboarding.md) - Setup wizard guide
+    - [Settings](../../frontend/settings.md) - Configuration and preferences
+    - [Service pages](../../frontend/service-pages.md) - Per-service controls, logs, and config
+    - [Metrics](../../frontend/metrics.md) - System monitoring
+
+---
+
+<details class="geek-details" markdown="1">
+<summary>Technical details: frontend build requirements</summary>
+
+## Build and update requirements
+
+Installing or rebuilding the current frontend requires **Node.js `>=24.15.0 <25`** and **pnpm 10**. This matches the [Nuxt 4.6 toolchain requirements](https://github.com/nuxt/nuxt/releases/tag/v4.6.0). An older frontend pin follows the engine requirement declared by that selected source.
+
+New DUMB image builds and release validation enforce the current Node range. Frontend updates use the runtime already bundled in the running image; updating frontend source alone does not upgrade Node. Before rebuilding from an older image with Node below 24.15, update the DUMB image and recreate its container using your existing persistent volumes. Separately deployed frontends must provide a compatible Node and pnpm installation.
+
+The frontend source includes a dependency-free Node check in its install and build commands, so those commands can detect an incompatible runtime even on an older DUMB backend. The check reads that source's own `package.json`; with strict engine validation, pnpm may reject the requirement first with an expected/actual version error. Neither check upgrades Node.
+
+Production starts the compiled Nitro server with `node .output/server/index.mjs`, which does not run the source check. The version floor above applies to dependency installation and source builds; it does not establish the minimum runtime for every previously compiled frontend.
+
+</details>
+
+<!-- dev:start -->
+<details class="geek-details" markdown="1">
+<summary>Technical details: frontend version synchronization</summary>
+
+## Frontend development versions
+
+The frontend has its own release history. dmbdb releases from `main`; DUMB API
+releases from `master`. Their candidate versions are calculated independently.
+For example, with frontend stable `1.91.0`, dmbdb `dev` can declare `1.92.0` in
+`package.json` while `.github/.release-please-manifest.json` stays at `1.91.0`.
+Normal promotion through `main` then releases `1.92.0`. The DUMB API version
+does not determine the frontend version.
+
+The dmbdb **Sync dev version** workflow runs after `dev` pushes, published
+stable frontend releases, and manual requests. It uses dmbdb's actual stable
+release and subsequent commits to update only the candidate package version
+and stable release-manifest baseline. After `1.92.0` is released, the next
+candidate is normally `1.92.1`, or `1.93.0` when later feature commits require
+it. Repeating the same plan creates no commit.
+
+Maintainers can open **Actions → Sync dev version → Run workflow** in the
+**dmbdb repository**, select **dev**, and enable
+**Calculate the dev version without committing it** to preview the plan.
+Leave that option disabled to apply a needed update. The existing
+`RELEASE_PLEASE_TOKEN` supplies the authenticated GitHub commit identity and
+must have repository-content access permitted by the `dev` branch rules.
+Head checks prevent an outdated plan from replacing newer branch work.
+Token-created commits run normal CI; the follow-on synchronization makes no
+further version change.
+
+This workflow creates no image, release PR, stable tag, or GitHub release.
+DUMB image builds still use the released frontend by default; select
+**dmbdb dev** or an exact frontend commit when testing unreleased changes.
+In **Settings → About**, the frontend row shows the candidate package version
+with its **Dev build** badge and branch/SHA when the installed source metadata
+matches that package and compiled output. Backend and frontend build identities
+remain separate.
+
+</details>
+
+<!-- dev:end -->
+
+<!-- dev:start -->
+<details class="geek-details" markdown="1">
+<summary>Technical details: development image builds</summary>
+
+## Build a development image with a chosen frontend
+
+Maintainers with workflow access can build a DUMB `dev` image containing
+unreleased frontend changes without creating a frontend release tag.
+
+1. In the DUMB GitHub repository, open **Actions → Docker Image CI → Run workflow**.
+2. Under **Use workflow from**, select **dev**.
+3. Choose **Frontend source**:
+
+   | Choice | Frontend selected |
+   |---|---|
+   | **Latest release** (default) | Latest tagged dmbdb release |
+   | **dmbdb dev** | The dmbdb `dev` commit resolved for this build |
+   | **Exact commit** | The specified dmbdb source revision |
+
+4. For **Exact commit**, enter its complete 40-character hexadecimal SHA in
+   **Frontend commit SHA (Exact commit only)**. Leave that field empty for the
+   other choices.
+5. Run the workflow. After it completes, check **Build Summary** for the frontend
+   repository, requested reference, full resolved SHA, package version and
+   published image tags.
+
+Both architectures use the same resolved frontend SHA. **dmbdb dev** and
+**Exact commit** are available only for a manual run on DUMB's `dev` branch.
+Every frontend choice on that branch publishes the normal **`:dev`** image tag
+to Docker Hub and GHCR. It identifies the most recently published DUMB
+development backend/frontend combination. Automatic builds keep the
+**Latest release** selection. Production builds on `master` keep their existing
+tags and release behavior.
+
+The `:dev` tag can move. Selecting an exact frontend commit does not pin the
+backend revision or the whole image. Record the published registry digest when
+testing an exact backend/frontend image pair. Pull and recreate the container
+with that digest and your existing persistent volumes. The frontend package
+version can remain the same across unreleased commits. In **Settings → About**,
+the **DUMB Frontend** row shows the **Dev build** badge and source/SHA details
+when the installed development build has verified source metadata.
+
+Both architecture builds also use one calculated DUMB API version for the
+requested immutable backend commit. The calculated API core is passed to both
+architecture builds and stamped inside each final image, even before the
+branch's version-synchronization commit lands. The selected backend SHA stays
+unchanged. **Build Summary** records the source identity and
+version. Source-version synchronization does not automatically build an image.
+See [development and release versions](api.md#development-and-release-versions)
+for how the candidate version and stable release baseline relate.
+
+### Image selection and saved frontend settings
+
+The build choice sets the frontend baked into the image. It leaves your saved
+`dumb.frontend` configuration intact. A saved commit, branch or release target
+can trigger a different frontend installation at startup, even with
+`auto_update: false`. Automatic frontend updates default to disabled; enabling
+release updates or manually installing a release can replace the baked
+development frontend.
+
+For an exact image test, check both the image digest and the installed
+frontend's source details after startup. If you instead want to test only a
+frontend revision in an existing image, set `dumb.frontend.commit_sha` to its full
+SHA and install that configured target using the
+[commit targeting settings](#commit--branch--version-targeting). This rebuilds
+the frontend using the image's existing Node runtime and leaves the backend
+image unchanged.
+
+</details>
+
+<!-- dev:end -->
+
+<details class="geek-details" markdown="1">
+<summary>Technical details: configuration reference</summary>
+
+## Configuration Settings in `dumb_config.json`
+
+This block is nested at `dumb.frontend` in `/config/dumb_config.json`:
+
+```json
+{
+"frontend": {
+    "enabled": true,
+    "process_name": "DUMB Frontend",
+    "repo_owner": "nicocapalbo",
+    "repo_name": "dmbdb",
+    "release_version_enabled": false,
+    "release_version": "v1.2.0",
+    "commit_sha": "",
+    "branch_enabled": false,
+    "branch": "main",
+    "suppress_logging": false,
+    "log_level": "INFO",
+    "log_file": "/log/dumb_frontend.log",
+    "origins": [
+        "http://0.0.0.0:3005"
+    ],
+    "host": "0.0.0.0",
+    "port": 3005,
+    "auto_update": false,
+    "auto_update_interval": 24,
+    "auto_update_start_time": "04:00",
+    "clear_on_update": true,
+    "exclude_dirs": [],
+    "platforms": ["pnpm"],
+    "command": ["node",".output/server/index.mjs"],
+    "config_dir": "/dumb/frontend",
+    "env": {}
+}
+}
+```
+
+### Configuration Key Descriptions
+
+- **`enabled`**: Determines whether the DUMB Frontend service is active.
+- **`process_name`**: Name used in logs and process tracking.
+- **`repo_owner`** / **`repo_name`**: Specifies the GitHub repository to clone for the frontend.
+- **`release_version_enabled`** / **`release_version`**: Indicates if a specific release version should be used.
+- **`commit_sha`**: Builds an exact GitHub revision. Use the complete 40-character hexadecimal SHA.
+- **`branch_enabled`** / **`branch`**: Specifies the branch to use if enabled.
+- **`suppress_logging`**: Suppresses service messages in the main DUMB output.
+- **`log_level`**: Logging verbosity level (e.g., `DEBUG`, `INFO`).
+- **`host`**: IP address the frontend should bind to.
+- **`port`**: Port the frontend is served on.
+- **`auto_update`**: Enables DUMB's scheduled update checks; `auto_update_mode` determines whether a detected update is installed.
+- **`auto_update_interval`**: How often (in hours) to check for updates.
+- **`clear_on_update`**: Clears build artifacts or cache during updates.
+- **`exclude_dirs`**: Prevents specific directories from being affected by updates when using `clear_on_update`
+- **`platforms`**: Specifies the runtime environment required (`pnpm`).
+- **`command`**: Command to start the frontend service.
+- **`config_dir`**: Directory where configuration files are stored.
+- **`env`**: Environment variables for the frontend.
+
+---
+
+</details>
+
+## Commit / Branch / Version Targeting { #commit--branch--version-targeting }
+You can control which source revision of the frontend is deployed by setting:
+
+- `commit_sha` to a full 40-character SHA for an immutable source pin
+- `branch_enabled: true` and specifying a `branch`
+- or `release_version_enabled: true` and specifying a `release_version`
+
+`commit_sha` takes precedence over release and branch settings. Automatic
+updates remain disabled until the commit pin is changed or cleared.
+
+---
+
+## Accessing the DUMB Frontend
+- Navigate to: `http://<host>:<port>`
+    - default port `3005`
+
+## Startup behavior
+
+DUMB starts its API before the enabled-service preinstall phase. When the
+frontend runtime is already built and its configured version does not require a
+new install, DUMB also starts the frontend before that phase. This makes the UI
+available while the remaining services are still being prepared and started.
+
+Frontend startup remains after the service preinstall phase when any of the
+following applies:
+
+- The configured frontend entrypoint is missing.
+- A branch install is enabled.
+- A floating release such as `latest`, `nightly`, or `prerelease` must be resolved.
+- The installed frontend version does not match the configured release version.
+
+In those cases, DUMB keeps the existing install/update path and starts the
+frontend after its runtime is ready.
+
+## Self-update behavior
+
+Current DUMB releases prepare manual and scheduled frontend updates transactionally.
+DUMB downloads, builds, and validates the candidate in an adjacent directory while
+the installed frontend continues serving the dashboard. Only the final atomic
+directory swap, process restart, and readiness check create frontend downtime.
+
+If the candidate cannot be built or validated, including an unsupported Node
+version during preparation, DUMB removes it and leaves the current frontend
+running. If the replacement cannot configure, start, or become ready after
+activation, DUMB restores and verifies the previous runtime. The frontend's Node
+check does not add these update or rollback guarantees to older DUMB backends.
+
+An update started from the frontend can briefly interrupt its own HTTP request
+during the final restart. Current dmbdb clients recognize that transport break,
+wait for the proxy to return, read the final update status retained by the DUMB
+API, and reload to pick up the new assets. If automatic confirmation times out,
+refresh the page and reopen **Updates**; do not assume the installation failed
+solely from the interrupted browser request.
+
+## Frontend usage guides
+
+For UI walkthroughs, use the frontend section:
+
+- [Dashboard](../../frontend/dashboard.md) - Service cards, toolbar, and logs
+- [Settings](../../frontend/settings.md) - Preferences and config editors
+- [Service pages](../../frontend/service-pages.md) - Per-service controls and logs
+- [Onboarding](../../frontend/onboarding.md) - Setup wizard
+- [Metrics](../../frontend/metrics.md) - System monitoring
+
+---
+
+## Tips
+
+- **Automatic Updates**: Enable `auto_update` to keep the frontend up-to-date with the latest features.
+- **Log Monitoring**: Utilize the service logs functionality for effective monitoring and troubleshooting.
+
+---
+
+## Resources
+
+- [DUMB Frontend GitHub Repository](https://github.com/nicocapalbo/dmbdb)
+- [DUMB Frontend CHANGELOG](https://github.com/nicocapalbo/dmbdb/blob/main/CHANGELOG.md)

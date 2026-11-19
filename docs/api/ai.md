@@ -10,6 +10,28 @@ The AI API manages provider settings and service diagnostics. Authentication fol
 
 The backend makes provider requests from inside the DUMB container. Use provider URLs that are reachable from that container, not just from your browser.
 
+<details class="geek-details" markdown="1">
+<summary>Review diagnostic context before sending it</summary>
+
+The dry run previews redacted context. A provider response is a diagnosis to review; it does not apply the suggested repairs.
+
+```mermaid
+sequenceDiagram
+    participant Client
+    participant DUMB as DUMB AI API
+    participant Provider as Configured AI provider
+    Client->>DUMB: Diagnostic request with dry_run enabled
+    DUMB-->>Client: Redacted context preview
+    Note over Client: Review what would be shared
+    Client->>DUMB: Explicit diagnostic request
+    DUMB->>Provider: Send the configured diagnostic context
+    Provider-->>DUMB: Analysis
+    DUMB-->>Client: Diagnosis and session information
+    Note over Client: Review recommendations before making changes
+```
+
+</details>
+
 ## Choose an endpoint
 
 | Task | Route |

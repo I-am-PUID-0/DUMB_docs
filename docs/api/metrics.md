@@ -8,6 +8,8 @@ icon: lucide/activity
 
 The Metrics API provides live snapshots, optional Plex cloud status, database-health observations, historical series, storage status, and legacy-history migration. Authentication follows the normal DUMB API configuration.
 
+**Visual guide:** [See live monitoring and historical charts](../features/metrics.md).
+
 ## Current snapshot
 
 ```http

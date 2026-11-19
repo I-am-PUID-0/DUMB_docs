@@ -23,6 +23,14 @@ Use the dashboard to change DUMB settings and the settings of individual applica
 
     Changing user/group IDs, data paths, or ports can prevent an existing service from starting. Follow the service's guide and keep a backup before changing these values. Configuration and backups may contain live credentials; keep them private and redact values before sharing them.
 
+<figure class="docs-visual docs-frontend-figure">
+<video class="docs-frontend-video" controls playsinline preload="none" poster="../../assets/images/guides/frontend/v1.91.0/tour-2/configuration.webp" aria-label="Choose the correct configuration editor" aria-describedby="configuration-demo-caption">
+  <source src="../assets/images/guides/frontend/v1.91.0/tour-2/configuration.webm" type="video/webm">
+  <p><a href="../assets/images/guides/frontend/v1.91.0/tour-2/configuration.webm">Download the demonstration</a>, or follow the written steps above.</p>
+</video>
+<figcaption id="configuration-demo-caption" class="docs-visual-caption">Watch: compare DUMB Config with Service Config and locate Save to File. This tour reviews the controls without saving a change. DUMB Frontend 1.91.0 · example data. Other versions may look different. <a href="../assets/images/guides/frontend/v1.91.0/tour-2/configuration.webp">Open the full-size screenshot</a>.</figcaption>
+</figure>
+
 ## Add an integration token
 
 1. Open **Settings → Tokens**.

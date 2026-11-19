@@ -8,6 +8,23 @@ icon: lucide/code
 
 Endpoint paths below are backend-native. Add `/api` when using the dashboard gateway, for example `http://localhost:3005/api/process/capabilities`.
 
+<details class="geek-details" markdown="1">
+<summary>Namespace migration request order</summary>
+
+Review preflight findings before applying a namespace change. Cleanup is a later, separately reviewed operation after the migrated installation has been validated.
+
+```mermaid
+flowchart TD
+    Status["Read migration status"] --> Preflight["Request full-namespace preflight"]
+    Preflight --> Review["Review blockers, affected paths and recovery data"]
+    Review --> Apply["Apply the reviewed migration"]
+    Apply --> Poll["Poll the retained job status"]
+    Poll --> Validate["Validate services, paths and playback"]
+    Validate --> Cleanup["Separately preview and approve recovery-data cleanup"]
+```
+
+</details>
+
 ## InfiniDysk migration
 
 ### `GET /process/infinidysk-migration/status`

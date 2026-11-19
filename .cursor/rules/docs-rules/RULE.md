@@ -37,6 +37,14 @@ to check the result. Define unfamiliar terms where they first matter.
   front matter. Preserve existing URLs and linked heading IDs.
 - Use real links and descriptive image alt text. Link Markdown pages relatively.
   Do not insert raw HTML links ending in `.md`; use Markdown links.
+- Choose visuals for the task: real screenshots for orientation, deliberately
+  paced recordings for dashboard actions, and diagrams for relationships or
+  decisions. Narrow field references can link to the relevant visual guide.
+  Do not invent application screens or add repeated diagrams without a purpose.
+- Record from an isolated, version-pinned frontend with labeled example data.
+  Hold an open menu for at least 2.5 seconds, emphasize the selected item before
+  clicking it, and allow time to read the result. Use posters and native playback
+  controls with no autoplay. Keep text steps or a transcript available.
 - Use icons sparingly. Avoid decorative emoji in authored guides.
   Synced upstream changelogs retain their original formatting.
 - Use labeled code fences and blank lines around headings, lists, tabs, and

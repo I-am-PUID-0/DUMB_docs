@@ -10,6 +10,8 @@ Use the [frontend guides](../frontend/index.md) for everyday tasks. This referen
 is for understanding the internals or using a different method: configuration
 files, environment variables, APIs, networking, and process dependencies.
 
+**Visual guide:** [See DUMB's components and storage boundaries](../architecture/index.md).
+
 The frontend workflow remains the main path. These references explain the
 settings and behavior behind it; they do not add extra required setup steps.
 

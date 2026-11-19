@@ -8,6 +8,21 @@ icon: lucide/clapperboard
 
 AIOStreams combines Stremio addons, search sources, Debrid services, and Usenet playback services into one configurable Stremio addon. DUMB manages the AIOStreams runtime and lifecycle; you choose the addons, indexers, and playback services from the AIOStreams dashboard.
 
+<!-- visual:service-flow -->
+## At a glance
+
+DUMB hosts AIOStreams; Stremio uses the addon configuration you install. Keep the generated configuration link private when it contains account information.
+
+```mermaid
+flowchart TD
+    A["Open AIOStreams and sign in"] --> B
+    B["Configure the intended addons or sources"] --> C
+    C["Test the chosen provider connections"] --> D
+    D["Install your addon configuration in Stremio"] --> E
+    E["Test an intended stream"]
+```
+
+
 ---
 
 ## Before you enable it

@@ -8,6 +8,21 @@ icon: lucide/radar
 
 NeutArr schedules missing-content and upgrade searches in selected Radarr, Sonarr, Lidarr, and Whisparr instances. It is disabled by default. Review targets, schedules, and limits before enabling searches against your indexers.
 
+<!-- visual:service-flow -->
+## At a glance
+
+NeutArr acts on connected libraries according to your chosen rules. Check exact instances and limits before scheduling work.
+
+```mermaid
+flowchart TD
+    A["Open NeutArr"] --> B
+    B["Connect the intended Arr instances"] --> C
+    C["Review searches and limits"] --> D
+    D["Enable the intended automation"] --> E
+    E["Inspect its activity and Arr queues"]
+```
+
+
 ---
 
 ## First start

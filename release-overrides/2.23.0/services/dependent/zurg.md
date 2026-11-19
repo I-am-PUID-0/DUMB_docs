@@ -1,0 +1,229 @@
+---
+title: Zurg
+description: Connect Zurg to a Debrid provider in DUMB, review its rclone mount, configure release choices, and find persistent settings and logs.
+icon: lucide/zap
+---
+
+# Zurg
+
+Zurg is the debrid content fetcher that powers file discovery and caching for DUMB. It mounts content made available by debrid services like Real-Debrid and exposes them over WebDAV for rclone to access. Zurg is designed to run quietly in the background and can be configured to run multiple instances.
+
+<!-- visual:service-flow -->
+## At a glance
+
+Zurg exposes Debrid content to the matching mount. Keep provider credentials private and test the consumer path.
+
+```mermaid
+flowchart TD
+    A["Configure the Debrid account"] --> B
+    B["Start Zurg and inspect its logs"] --> C
+    C["Check the matching rclone mount"] --> D
+    D["Verify the library folder is readable"] --> E
+    E["Test playback through the media server"]
+```
+
+
+!!! info "Current Debrid Support"
+    As of this posting, **Zurg only supports Real-Debrid**. Additional debrid services may be supported in future updates.
+
+---
+
+## First start
+
+1. Choose the Zurg-backed provider path in onboarding and supply the provider credentials.
+2. Wait for Zurg, then its associated rclone mount, to become ready.
+3. Review provider/account errors in the Zurg log before changing rclone settings.
+4. Test a representative media file through the intended library path.
+
+## Zurg Repositories
+
+There are **two official Zurg repositories**:
+
+- **[`zurg-testing`](https://github.com/debridmediamanager/zurg-testing)** – The **default** public repo used by DUMB. It contains stable builds accessible to all users.
+- **[`zurg`](https://github.com/debridmediamanager/zurg)** – The **sponsored-only** repo that includes the latest features, nightly builds, and premium support. DUMB can access it by setting the `DUMB_GITHUB_TOKEN` and changing the `repo_name` to `zurg`.
+
+!!! tip "GitHub Token Setup"
+    See [Integration Tokens & Credentials](../../features/configuration.md#integration-tokens-credentials) for details on setting up the `DUMB_GITHUB_TOKEN`.
+
+---
+
+<details class="geek-details" markdown="1">
+<summary>Technical details: configuration reference</summary>
+
+## Configuration in `dumb_config.json`
+
+Zurg is configured using the `instances` model to support multiple debrid services (e.g., RealDebrid, AllDebrid, Premiumize).
+
+```json
+{
+"zurg": {
+  "instances": {
+    "RealDebrid": {
+      "enabled": false,
+      "core_service": "",
+      "process_name": "Zurg w/ RealDebrid",
+      "repo_owner": "debridmediamanager",
+      "repo_name": "zurg-testing",
+      "release_version_enabled": false,
+      "release_version": "v0.9.3-final",
+      "suppress_logging": false,
+      "log_level": "INFO",
+      "host": "127.0.0.1",
+      "port": 9090,
+      "auto_update": false,
+      "auto_update_interval": 24,
+      "auto_update_start_time": "04:00",
+      "clear_on_update": false,
+      "exclude_dirs": ["/zurg/RD"],
+      "key_type": "RealDebrid",
+      "config_dir": "/zurg/RD",
+      "config_file": "/zurg/RD/config.yml",
+      "command": "/zurg/RD/zurg",
+      "user": "",
+      "password": "",
+      "api_key": ""
+    }
+  }
+}
+}
+```
+
+### Configuration Key Descriptions
+
+- **`enabled`**: Whether to start the Zurg instance.
+- **`process_name`**: Label used for log files and process display.
+- **`repo_owner`** / **`repo_name`**: GitHub repo to pull Zurg from.
+- **`release_version_enabled`** / **`release_version`**: Use a specific release tag if enabled.
+- **`suppress_logging`**: Suppresses service messages in the main DUMB output.
+- **`log_level`**: Logging verbosity level (e.g., `DEBUG`, `INFO`).
+- **`host`** / **`port`**: IP/Port to serve the WebDAV interface.
+- **`auto_update`**: Enables DUMB's scheduled update checks; `auto_update_mode` determines whether a detected update is installed.
+- **`auto_update_interval`**: How often (in hours) to check for updates.
+- **`clear_on_update`**: Clears build artifacts or cache during updates.
+- **`exclude_dirs`**: Prevents specific directories from being affected by updates when using `clear_on_update`
+- **`key_type`**: Debrid service this Zurg instance connects to (`RealDebrid`, `AllDebrid`, etc).
+- **`config_dir`** / **`config_file`**: Location of the Zurg YAML config.
+- **`command`**: Full path to the Zurg binary.
+- **`user`** / **`password`**: Optional basic auth credentials for WebDAV.
+- **`api_key`**: Debrid API key (used by Zurg for account authentication).
+
+---
+
+</details>
+
+## YAML configuration
+
+DUMB updates the root `port`, `token`, `username`, and `password` settings in
+each instance's `config_file`. Nested provider settings, including their ports
+and credentials, remain separate. Disabling WebDAV authentication removes only
+the root username and password.
+
+Indented or quoted root keys are supported. Existing comments are retained,
+although YAML spacing and indentation can normalize when the file is saved.
+Invalid YAML is reported without applying these configuration edits.
+
+---
+
+## Version Targeting
+You can control which version of Zurg is deployed by setting:
+
+- `release_version_enabled: true` and specifying a `release_version`
+
+---
+
+## Adding Multiple Zurg Instances
+
+You can define additional instances in the same `zurg.instances` block by copying the structure and:
+
+- Each `instance name` is **unique**
+- Each `process_name` is **unique**
+- Each `config_dir` is **unique**
+- Each `port` is **unique**
+- The `key_type` must match the type of Debrid service used - Limited to `RealDebrid` until Zurg adds support for others
+
+Example:
+<details class="geek-details" markdown="1">
+<summary>Technical details: configuration example</summary>
+
+```json
+{
+"zurg": {
+    "instances": {
+        "RealDebrid": {
+            "enabled": false,
+            "core_service": "",
+            "process_name": "Zurg w/ RealDebrid",
+            "repo_owner": "debridmediamanager",
+            "repo_name": "zurg-testing",
+            "release_version_enabled": false,
+            "release_version": "v0.9.3-final",
+            "suppress_logging": false,
+            "log_level": "INFO",
+            "host": "127.0.0.1",
+            "port": 9090,
+            "auto_update": false,
+            "auto_update_interval": 24,
+            "auto_update_start_time": "04:00",
+            "clear_on_update": false,
+            "exclude_dirs": ["/zurg/RD"],
+            "key_type": "RealDebrid",
+            "config_dir": "/zurg/RD",
+            "config_file": "/zurg/RD/config.yml",
+            "command": "/zurg/RD/zurg",
+            "user": "",
+            "password": "",
+            "api_key": ""
+        },
+        "RealDebrid_2": {
+            "enabled": false,
+            "core_service": "",
+            "process_name": "Zurg w/ RealDebrid 2",
+            "repo_owner": "debridmediamanager",
+            "repo_name": "zurg-testing",
+            "release_version_enabled": false,
+            "release_version": "v0.9.3-final",
+            "suppress_logging": false,
+            "log_level": "INFO",
+            "host": "127.0.0.1",
+            "port": 9091,
+            "auto_update": false,
+            "auto_update_interval": 24,
+            "auto_update_start_time": "04:00",
+            "clear_on_update": false,
+            "exclude_dirs": ["/zurg/RD2"],
+            "key_type": "RealDebrid",
+            "config_dir": "/zurg/RD2",
+            "config_file": "/zurg/RD2/config.yml",
+            "command": "/zurg/RD2/zurg",
+            "user": "",
+            "password": "",
+            "api_key": ""
+        }
+    }
+}
+}
+```
+
+</details>
+
+---
+
+!!! tip "Best Practices"
+    - The Zurg WebDAV endpoint will be used by rclone to mount files
+    - Always set the correct `api_key` to avoid auth issues
+    - Avoid using the same port or overlapping directories across instances
+
+---
+
+## Database Health visibility
+
+Each enabled Zurg instance appears in DUMB's optional [Database Health monitoring](../../features/metrics.md#database-health-monitoring). The public Zurg build calls its live in-memory torrent catalog a database, but that catalog is not an exposed SQLite or PostgreSQL file. DUMB therefore labels Zurg as `zurg-state` and uses a bounded, passive sample of the instance's `data/` directory—including `fixers.json` in the public build—to report state size, file count, filesystem pressure, and any available database-related log signals without assuming that version-specific files are SQLite.
+
+Standard and Enhanced modes are both passive for Zurg. DUMB does not open the state files, query the live torrent catalog, repair Zurg state, or claim that state-directory pressure represents end-to-end Zurg performance.
+
+---
+
+## Resources
+- [Zurg Testing (default repo)](https://github.com/debridmediamanager/zurg-testing)
+- [Zurg (premium repo)](https://github.com/debridmediamanager/zurg)
+- [DUMB GitHub Token Setup](https://github.com/I-am-PUID-0/DUMB#environment-variables)

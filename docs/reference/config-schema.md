@@ -8,6 +8,8 @@ icon: lucide/file-code
 
 DUMB uses a JSON schema to validate `/config/dumb_config.json` and keep service definitions consistent.
 
+**Visual guide:** [See how settings are read, applied and saved](../features/configuration.md).
+
 ## Schema location
 
 The default template and schema live in the backend repository/image:

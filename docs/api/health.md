@@ -12,6 +12,8 @@ icon: lucide/heart-pulse
 curl http://localhost:3005/api/health
 ```
 
+**Visual guide:** [See the backend request and control flow](../architecture/backend.md#request-flow).
+
 ## Responses
 
 | HTTP status | Body | Meaning |

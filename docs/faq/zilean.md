@@ -9,6 +9,7 @@ icon: lucide/book-open
 
 ---
 
+**Visual guide:** [See the service-page log walkthrough](../frontend/service-pages.md).
 
 ## Why does Zilean produce so many import logs? { #why-is-zilean-spamming-my-logs }
 

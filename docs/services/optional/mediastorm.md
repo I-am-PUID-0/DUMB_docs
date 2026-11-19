@@ -8,6 +8,21 @@ icon: lucide/clapperboard
 
 mediastorm is a self-hosted streaming server and client ecosystem for Debrid, torrent, and Usenet sources. DUMB installs its server, browser client, subtitle helpers, Deno runtime, and Iroh companion from mediastorm's official OCI image, then runs it as an optional PostgreSQL-backed service.
 
+<!-- visual:service-flow -->
+## At a glance
+
+Keep the administrator credential private. Provider settings, library access and actual playback each need their own check.
+
+```mermaid
+flowchart TD
+    A["Open mediastorm and replace bootstrap password"] --> B
+    B["Configure the intended sources and providers"] --> C
+    C["Test the selected connections"] --> D
+    D["Review library and playback settings"] --> E
+    E["Play one intended item"]
+```
+
+
 ---
 
 ## Initial setup

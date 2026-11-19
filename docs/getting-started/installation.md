@@ -8,6 +8,26 @@ icon: lucide/download
 
 Have a host, persistent storage, and credentials for the services you plan to use. DUMB creates its initial configuration at startup; you do not need to write a complete `dumb_config.json` first.
 
+## Plan the library boundary
+
+Choose the layout before configuring host mounts. Seeing the same folder name in two applications does not prove that they can read the same files.
+
+```mermaid
+flowchart TD
+    Consumers["Where will the library be read?"] --> Inside["Only apps inside DUMB"]
+    Consumers --> Container["Another container on this host"]
+    Consumers --> Remote["Another machine"]
+    Inside --> Normal["Use the normal media bind"]
+    Container --> Paths["Match library and symlink target paths"]
+    Paths --> FUSE{"Must it see DUMB-created FUSE submounts?"}
+    FUSE -->|Yes| Shared["Prepare a shared host mount and propagation"]
+    FUSE -->|No| Files["Verify ordinary file and link access"]
+    Remote --> Export["Plan an explicit sharing method"]
+    Shared --> Test["Verify access from the actual reader"]
+    Files --> Test
+    Export --> Test
+```
+
 ## Choose your platform first
 
 These guides explain the installation steps for each platform. Use this page to prepare, then follow your selected guide.

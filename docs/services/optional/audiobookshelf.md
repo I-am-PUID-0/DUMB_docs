@@ -9,6 +9,21 @@ icon: lucide/book-open
 
 [Audiobookshelf](https://www.audiobookshelf.org/) serves audiobook and podcast libraries, tracks listening progress, and provides basic ebook reading. DUMB runs it inside the DUMB container as an optional managed service.
 
+<!-- visual:service-flow -->
+## At a glance
+
+Use folders mounted inside DUMB. Audiobookshelf library setup is separate from acquiring new book files.
+
+```mermaid
+flowchart TD
+    A["Open Audiobookshelf"] --> B
+    B["Create or sign in to its administrator account"] --> C
+    C["Add the mounted book or podcast folders"] --> D
+    D["Scan and review identified items"] --> E
+    E["Test listening or reading"]
+```
+
+
 DUMB handles installation, updates, process control, and web access. Add existing book files through your media mounts and configure libraries in Audiobookshelf. Book acquisition and download-client integration remain separate workflows; podcast subscriptions and episode downloads are configured in Audiobookshelf.
 
 ## First-time setup

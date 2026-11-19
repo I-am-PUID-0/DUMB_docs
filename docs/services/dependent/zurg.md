@@ -8,6 +8,21 @@ icon: lucide/zap
 
 Zurg is the debrid content fetcher that powers file discovery and caching for DUMB. It mounts content made available by debrid services like Real-Debrid and exposes them over WebDAV for rclone to access. Zurg is designed to run quietly in the background and can be configured to run multiple instances.
 
+<!-- visual:service-flow -->
+## At a glance
+
+Zurg exposes Debrid content to the matching mount. Keep provider credentials private and test the consumer path.
+
+```mermaid
+flowchart TD
+    A["Configure the Debrid account"] --> B
+    B["Start Zurg and inspect its logs"] --> C
+    C["Check the matching rclone mount"] --> D
+    D["Verify the library folder is readable"] --> E
+    E["Test playback through the media server"]
+```
+
+
 !!! info "Current Debrid Support"
     As of this posting, **Zurg only supports Real-Debrid**. Additional debrid services may be supported in future updates.
 

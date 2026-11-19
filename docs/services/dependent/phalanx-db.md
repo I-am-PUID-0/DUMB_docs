@@ -8,6 +8,21 @@ icon: lucide/database
 
 **Phalanx DB** is an optional decentralized metadata service that can enhance CLI Debrid by providing distributed data capabilities through Hyperswarm. It runs independently and is not required for CLI Debrid to function.
 
+<!-- visual:service-flow -->
+## At a glance
+
+Phalanx DB supports CLI Debrid metadata. Check the consumer as well as the database process.
+
+```mermaid
+flowchart TD
+    A["Enable the matching CLI Debrid workflow"] --> B
+    B["Start Phalanx DB"] --> C
+    C["Inspect startup logs"] --> D
+    D["Verify the CLI Debrid connection"] --> E
+    E["Check metadata from the consumer"]
+```
+
+
 ---
 
 ## First start

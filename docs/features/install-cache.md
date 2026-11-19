@@ -29,6 +29,24 @@ merges, while replaceable source and runtime output can still be refreshed.
 
 ## Use the cache controls
 
+When **Install cache** is offered by your backend, wait for any active update to finish, then choose the action that matches your goal:
+
+```mermaid
+flowchart TD
+    accTitle: Choose an install-cache action
+    accDescr: Wait for active updates, choose verification, pruning or clearing rebuildable artifacts, and inspect the result.
+    Updates["Dashboard: Updates, then Install cache"] --> Busy{"Update already active?"}
+    Busy -->|Yes| Wait["Wait for the update to finish"]
+    Wait --> Updates
+    Busy -->|No| Goal{"What do you need?"}
+    Goal -->|Check integrity| Verify["Verify downloads"]
+    Goal -->|Reclaim space| Prune["Prune to limit"]
+    Goal -->|Rebuild next install| Clear["Clear build artifacts"]
+    Verify --> Result["Review the result and refresh usage"]
+    Prune --> Result
+    Clear --> Result
+```
+
 Open **Dashboard → Updates → Install cache** when supported by your backend. Check usage and fallback state, then choose an action deliberately:
 
 | Task | Action |

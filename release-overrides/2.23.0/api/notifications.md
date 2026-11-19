@@ -1,0 +1,118 @@
+---
+title: Notifications API
+description: Configure DUMB notification destinations, discover supported events, test or send messages, and inspect delivery history through the API.
+icon: lucide/bell
+---
+
+# Notifications API
+
+Backend-native notification endpoints are available under `/notifications`. Through the DUMB Frontend proxy they are under `/api/notifications`. They follow the same optional authentication behavior as the other protected DUMB API routes.
+
+If the persistent notification SQLite database is temporarily locked, DUMB
+continues running and retries storage initialization in the background. Endpoints
+that require queue or history access return HTTP `503` until storage recovers;
+configuration and supported-event discovery remain available.
+
+<details class="geek-details" markdown="1">
+<summary>Configure, test and inspect delivery</summary>
+
+Testing a destination verifies a specific delivery attempt. Use history to inspect its result and later event delivery.
+
+```mermaid
+flowchart TD
+    Discover["GET supported events"] --> Config["Save notification settings and destinations"]
+    Config --> Test["POST a destination test"]
+    Test --> History["GET delivery history"]
+    History --> Result{"Delivery succeeded?"}
+    Result -->|No| Fix["Review the failure and destination settings"]
+    Fix --> Test
+    Result -->|Yes| Monitor["Monitor enabled event deliveries"]
+```
+
+</details>
+
+## Configuration
+
+### `GET /notifications/config`
+
+Returns notification settings with destination URLs and headers removed. Each destination includes `url_configured` and `headers_configured` booleans.
+
+### `POST /notifications/config`
+
+```json
+{
+  "config": {
+    "enabled": true,
+    "monitor_interval_sec": 30,
+    "history_retention_days": 30,
+    "max_attempts": 3,
+    "retry_base_sec": 30,
+    "destinations": [],
+    "thresholds": {
+      "cpu_percent": 85,
+      "memory_percent": 85,
+      "disk_percent": 90,
+      "inode_percent": 90,
+      "database_pressure": "high",
+      "duration_sec": 60
+    }
+  }
+}
+```
+
+A blank URL or headers object preserves an existing saved secret for the same destination ID. Destination `service_names` must contain exact process names that are currently enabled in DUMB; disabled template services and unknown names are rejected with `400` rather than retained as hidden filters. An empty list matches all events.
+
+Disk and inode thresholds are evaluated independently for every path in `dumb.metrics.filesystem_paths`. Notification titles identify the affected container path, and cooldown state is kept per threshold condition so simultaneous pressure on two selected filesystems is not collapsed into one event.
+
+## Supported events
+
+### `GET /notifications/events`
+
+Returns the backend-supported event types and severity values. Frontends should use this endpoint instead of hard-coding future event support.
+
+## Test a destination
+
+### `POST /notifications/test`
+
+```json
+{
+  "destination_id": "destination-id",
+  "title": "Optional test title",
+  "body": "Optional test body"
+}
+```
+
+Tests bypass the global enable switch, destination enable switch, severity filters, event filters, and cooldowns.
+
+## Send a manual notification
+
+### `POST /notifications/send`
+
+```json
+{
+  "title": "Maintenance starting",
+  "body": "DUMB services will be restarted.",
+  "severity": "info",
+  "destination_ids": ["destination-id"]
+}
+```
+
+Omit `destination_ids` or set it to `null` to send to every enabled destination with a configured URL. Manual sends bypass the global notification switch and routing/cooldown filters, but they do not override an individual destination's disabled state. Use the explicit destination test endpoint when validating a disabled destination.
+
+## Delivery history
+
+### `GET /notifications/history`
+
+Query parameters:
+
+| Parameter | Description |
+|-----------|-------------|
+| `limit` | 1-500 records; default 100 |
+| `status` | Optional exact status filter |
+| `event_type` | Optional exact event-type filter |
+
+History responses never contain destination URLs or request headers.
+
+### `DELETE /notifications/history`
+
+Deletes completed, failed, and suppressed records. Queued and retrying deliveries are preserved.

@@ -10,6 +10,19 @@ icon: lucide/box
 stacks. DUMB does not need a Dockge-specific image: use the maintained DUMB
 Compose file and replace its example host paths.
 
+## Create the Dockge stack
+
+Dockge manages the Compose stack; DUMB's dashboard manages the selected applications after the stack starts.
+
+```mermaid
+flowchart TD
+    Storage["Prepare folders on the Docker host"] --> Stack["Dockge: create a new stack"]
+    Stack --> Paste["Paste the maintained DUMB Compose file"]
+    Paste --> Edit["Set host paths, TZ, PUID and PGID"]
+    Edit --> Deploy["Deploy and read the stack terminal"]
+    Deploy --> Dashboard["Open port 3005 and complete onboarding"]
+```
+
 ## Prerequisites
 
 - Docker Engine and Docker Compose v2

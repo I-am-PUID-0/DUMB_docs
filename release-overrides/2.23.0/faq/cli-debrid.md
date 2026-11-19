@@ -6,6 +6,8 @@ icon: lucide/terminal
 
 # CLI Debrid FAQ
 
+**Visual guide:** [Follow CLI Debrid's setup and library workflow](../services/core/cli-debrid.md).
+
 ## What does DUMB start with CLI Debrid?
 
 The stable/older CLI Debrid workflow includes standalone CLI Battery and Phalanx

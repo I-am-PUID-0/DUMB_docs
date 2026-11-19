@@ -8,6 +8,21 @@ icon: lucide/music
 
 **Lidarr** is a music manager that automates searching, grabbing, and organizing albums through indexers and download clients.
 
+<!-- visual:service-flow -->
+## At a glance
+
+Test the connections before adding more requests. The saved root folder must also be visible to your media server.
+
+```mermaid
+flowchart TD
+    A["Open the app from its service page"] --> B
+    B["Test indexers and download client"] --> C
+    C["Choose the music root folder and profile"] --> D
+    D["Add one intended item and follow import"] --> E
+    E["Scan and play it in the media server"]
+```
+
+
 <!-- dev:start -->
 The [setup checklist](../../features/setup-checklist.md) can discover existing music roots and their native quality and metadata profiles. Select the intended defaults, preview the changes and approve saving them. DUMB reads the result back without changing existing artists, monitoring choices or tags. Profile availability depends on the installed Lidarr instance.
 <!-- dev:end -->

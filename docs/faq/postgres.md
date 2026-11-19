@@ -6,6 +6,7 @@ icon: lucide/database
 
 # PostgreSQL FAQ
 
+**Visual guide:** [Follow the SQLite-to-PostgreSQL migration workflow](../features/arr-postgres-migration.md).
 
 ## How PostgreSQL is used in DUMB
 

@@ -10,6 +10,21 @@ Run Docker Engine inside a WSL2 Linux distribution. This gives DUMB the Linux mo
 
 Avoid running both Docker Desktop integration and a separate Docker Engine against the same distribution without an explicit plan. Check which Docker daemon your CLI targets before deploying.
 
+## Windows and Linux responsibilities
+
+Run the Docker commands and keep application data inside WSL's Linux filesystem. Windows reaches the published dashboard through the configured WSL network.
+
+```mermaid
+flowchart TD
+    Windows["Windows: install or update WSL"] --> Linux["WSL2 Linux distribution"]
+    Linux --> Docker["Install Docker Engine inside Linux"]
+    Linux --> Storage["Keep config and databases in Linux storage"]
+    Docker --> DUMB["Deploy DUMB with Compose or Portainer"]
+    Storage --> DUMB
+    DUMB --> Browser["Windows browser: try localhost:3005"]
+    Browser --> LAN["For LAN access: review WSL networking and firewall"]
+```
+
 ## 1. Install or update WSL
 
 In **PowerShell as administrator**, install WSL if needed:

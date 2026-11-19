@@ -8,6 +8,23 @@ icon: lucide/puzzle
 
 Add these tools when you need their specific function. They are not required by every DUMB installation, but other applications or users may depend on them once configured.
 
+<!-- visual:service-flow -->
+## At a glance
+
+Add an optional tool for a specific job and verify its connections before relying on its automation.
+
+```mermaid
+flowchart TD
+    A["Choose a job"] --> B["Requests or watchlists"]
+    A --> C["Subtitles or monitoring"]
+    A --> D["Remote access or sign-in"]
+    B --> E["Connect only the intended applications"]
+    C --> E
+    D --> E
+    E --> F["Test the complete task"]
+```
+
+
 ## Optional Service Index
 
 | Service                           | Description                                                 | Used By                        |

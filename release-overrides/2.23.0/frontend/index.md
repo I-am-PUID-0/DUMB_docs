@@ -38,6 +38,20 @@ You can follow the tasks below without editing files or running API commands.
 
 Each task guide explains the controls to use, what to save, and how to check the result. Service-specific account and library setup is covered in the [service guides](../services/index.md).
 
+## Watch a task
+
+The guides below include short recordings with time to read the menus and controls. Choose Play when you are ready; the videos do not start automatically. They show DUMB Frontend 1.91.0 with example data. Your installed version and enabled services can change which tools appear.
+
+| See how to… | Open the illustrated guide |
+| --- | --- |
+| Review the right configuration editor | [Configuration](../features/configuration.md) |
+| Filter logs and pause their refresh | [Service logs](service-pages.md#logs) |
+| Open Tools, check an update and review its version | [Check one service for updates](../features/auto-update.md#check-and-install-one-update) |
+| Inspect a service's dependencies | [Dependency graph](service-pages.md#dependency-graph-view) |
+| Review an automatic restart policy | [Auto-restart](../features/auto-restart.md) |
+| Choose a dashboard appearance | [Settings](settings.md) |
+| Find CPU, memory and disk information | [Metrics](metrics.md) |
+
 ## DUMB and application accounts are separate
 
 A DUMB account gives operator access to its dashboard, including service and user management. Opening an app inside DUMB does not sign you into that app: Plex, Jellyfin, pgAdmin, and other services may ask for their own account.

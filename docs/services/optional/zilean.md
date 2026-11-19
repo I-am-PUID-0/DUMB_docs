@@ -8,6 +8,21 @@ icon: lucide/book-open
 
 Zilean indexes shared [Debrid Media Manager](https://github.com/debridmediamanager/debrid-media-manager) hash lists and exposes search and Torznab interfaces. It can also ingest supported Zurg and Zilean sources. DUMB manages its runtime and PostgreSQL database; configure consumers such as CLI Debrid, Riven, or AIOStreams to use its search endpoint.
 
+<!-- visual:service-flow -->
+## At a glance
+
+Zilean provides search data to other applications. Check a search from the consumer before relying on automated acquisition.
+
+```mermaid
+flowchart TD
+    A["Start PostgreSQL and Zilean"] --> B
+    B["Review the startup and import log"] --> C
+    C["Configure the intended search consumer"] --> D
+    D["Test a search from that consumer"] --> E
+    E["Review its returned results"]
+```
+
+
 ---
 
 ## First start

@@ -6,6 +6,8 @@ icon: lucide/shield
 
 # Decypharr FAQ
 
+**Visual guide:** [Compare Decypharr's setup and library path](../services/core/decypharr.md).
+
 ## Which mount mode should I choose?
 
 | Mode | Mount owner | DUMB behavior |

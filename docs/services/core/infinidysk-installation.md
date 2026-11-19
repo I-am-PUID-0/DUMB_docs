@@ -8,6 +8,22 @@ icon: lucide/cloud
 
 [Back to InfiniDysk setup](infinidysk.md).
 
+<!-- visual:service-flow -->
+## At a glance
+
+Review the saved source target before checking for an update. A service update can interrupt active readers.
+
+```mermaid
+flowchart TD
+    A["Review release, branch or commit target"] --> B{"Use saved target or check availability?"}
+    B -->|Check| C["Check for updates and review the result"]
+    B -->|Saved target| D["Choose the intended install action"]
+    C --> D
+    D --> E["Wait for the result and recheck health"]
+    E --> F["Verify sample playback"]
+```
+
+
 ## Tracking a moving InfiniDysk release tag
 
 InfiniDysk tags do not need a matching GitHub Release. To track a tag such as

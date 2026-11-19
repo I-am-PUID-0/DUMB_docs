@@ -1,0 +1,398 @@
+---
+title: AI Assistant API
+description: Configure DUMB AI providers and saved profiles, preview redacted diagnostic bundles, request service or stack analysis, and continue diagnosis sessions.
+icon: lucide/brain
+---
+
+# AI Assistant API
+
+The AI API manages provider settings and service diagnostics. Authentication follows the same DUMB API authentication behavior as the rest of the backend.
+
+The backend makes provider requests from inside the DUMB container. Use provider URLs that are reachable from that container, not just from your browser.
+
+<details class="geek-details" markdown="1">
+<summary>Review diagnostic context before sending it</summary>
+
+The dry run previews redacted context. A provider response is a diagnosis to review; it does not apply the suggested repairs.
+
+```mermaid
+sequenceDiagram
+    participant Client
+    participant DUMB as DUMB AI API
+    participant Provider as Configured AI provider
+    Client->>DUMB: Diagnostic request with dry_run enabled
+    DUMB-->>Client: Redacted context preview
+    Note over Client: Review what would be shared
+    Client->>DUMB: Explicit diagnostic request
+    DUMB->>Provider: Send the configured diagnostic context
+    Provider-->>DUMB: Analysis
+    DUMB-->>Client: Diagnosis and session information
+    Note over Client: Review recommendations before making changes
+```
+
+</details>
+
+## Choose an endpoint
+
+| Task | Route |
+|---|---|
+| Read or save active settings | `GET` / `PUT /ai/settings` |
+| Save, activate, or remove provider profiles | `/ai/profiles`, `/ai/profiles/{profile_id}/activate`, `/ai/profiles/{profile_id}` |
+| Discover prompts or models | `GET /ai/presets`, `POST /ai/models` |
+| Test provider connectivity | `POST /ai/test` |
+| Preview or run service diagnostics | `POST /ai/diagnose` |
+| Preview or run stack diagnostics | `POST /ai/diagnose-stack` |
+| Continue an earlier diagnosis | `POST /ai/follow-up` |
+
+Use a diagnostic dry run to review the redacted context before sending it to a provider. Provider calls use the configured account and may have provider-side usage costs.
+
+## `GET /ai/settings`
+
+Returns the active AI settings without exposing the stored API key.
+
+Response includes `api_key_configured: true` when the active key is stored. It also includes `active_profile_id` and a `profiles` array. Each public profile contains provider metadata and `api_key_configured`, but never the stored `api_key`.
+
+## `PUT /ai/settings`
+
+Updates the `dumb.ai` settings block. Omit `api_key` to keep the existing stored key.
+
+When `active_profile_id` identifies a saved profile, that profile is authoritative when settings are loaded, and changes to provider, base URL, model, API key, timeout, or temperature are synchronized back into it when settings are saved. Send `active_profile_id` as an empty string to save the top-level provider fields as an unsaved provider without modifying any saved profile.
+
+Example payload:
+
+```json
+{
+  "enabled": true,
+  "provider": "ollama",
+  "base_url": "http://127.0.0.1:11434",
+  "model": "llama3.1",
+  "max_log_chars": 20000,
+  "include_logs": true,
+  "include_service_config": true,
+  "include_dependency_graph": true
+}
+```
+
+Settings fields:
+
+| Field | Description |
+| --- | --- |
+| `enabled` | Allows non-dry-run provider calls. Dry-run previews work even when this is false. |
+| `provider` | `ollama`, `gemini` (or `google_gemini`), `open_webui`, `openai`, `openai_compatible`, `compatible`, `litellm`, `anthropic`, or `claude`. |
+| `base_url` | Provider endpoint reachable from the DUMB backend container. For native Gemini, OpenAI, and Anthropic, DUMB ignores custom values and uses the corresponding official endpoint. |
+| `model` | Provider model name. |
+| `api_key` | Optional for local providers; required for Gemini and hosted OpenAI/Anthropic modes. Omit to preserve a stored key. |
+| `timeout_sec` | Provider request timeout, clamped by the backend. |
+| `temperature` | Provider temperature setting where supported. Native Gemini, OpenAI Responses, and Anthropic adapters leave sampling at the model default for compatibility with current models. |
+| `max_log_chars` | Default maximum recent log characters included in diagnostic bundles. |
+| `include_logs` | Default for including redacted service logs. |
+| `include_service_config` | Default for including redacted service config. |
+| `include_dependency_graph` | Default for including dependency graph context. |
+| `include_docs_context` | Default for including selected DUMB_docs snippets in diagnostic bundles. |
+| `include_process_list` | Default for including compact stack status context. |
+| `max_docs_chars` | Maximum documentation characters included across selected docs snippets. |
+| `diagnostic_window_hours` | Default analysis window from `0.25` through `720` hours. |
+| `comparison_mode` | `previous_period`, `since_change`, or `none`. |
+| `deep_log_scan` | Enables bounded scanning of retained and rotated service logs. |
+| `max_log_scan_mb` | Maximum retained-log data read per service request, or shared across targeted stack scans. |
+| `include_metrics` | Includes current-versus-baseline process metrics when history is available. |
+| `include_change_history` | Includes redacted configuration changes saved through DUMB. |
+| `include_native_diagnostics` | Includes allowlisted read-only native service telemetry where supported. |
+
+## Provider Profile Endpoints
+
+Provider profiles store multiple named AI providers while preserving the existing top-level active-provider fields for backward compatibility. A maximum of 20 profiles can be saved.
+
+Frontend clients should gate this UI with process capability `ai_provider_profiles`.
+
+### `POST /ai/profiles`
+
+Creates a new profile when `id` is omitted, or updates an existing profile when its `id` is supplied. The saved profile becomes active.
+
+```json
+{
+  "name": "Gemini",
+  "provider": "gemini",
+  "model": "gemini-3.5-flash-lite",
+  "api_key": "YOUR_GEMINI_API_KEY",
+  "timeout_sec": 60,
+  "temperature": 0.2
+}
+```
+
+Profile names must be unique and no longer than 80 characters. Omit `api_key`, or send it blank, to preserve an existing profile key during an update. Native Gemini, OpenAI, and Anthropic profiles always store and use DUMB's managed official endpoints; use the `litellm` or `openai_compatible` provider for gateway URLs.
+
+The response is the complete public AI settings object with keys removed and `api_key_configured` flags added.
+
+### `POST /ai/profiles/{profile_id}/activate`
+
+Activates a saved profile and mirrors its provider-specific values into the top-level active AI settings used by tests, diagnostics, and follow-ups.
+
+### `DELETE /ai/profiles/{profile_id}`
+
+Deletes a saved profile. If the deleted profile was active, DUMB activates the first remaining profile. If none remain, it clears the active profile and restores the default Ollama provider fields.
+
+Profile operations follow the normal DUMB API authentication policy and are recorded in the redacted AI configuration-change ledger.
+
+## `GET /ai/presets`
+
+Returns backend-provided prompt presets grouped under `service` and `stack`. Each item contains `id`, `label`, and `question`.
+
+## `POST /ai/test`
+
+Tests the configured provider using a short connectivity prompt. The request can include unsaved provider fields, so the frontend can test current form values before saving them.
+
+This endpoint does not include service logs, service configuration, dependency graph data, or diagnostic bundle content.
+
+Example payload:
+
+```json
+{
+  "provider": "ollama",
+  "base_url": "http://ollama:11434",
+  "model": "llama3.1",
+  "timeout_sec": 60
+}
+```
+
+Response fields:
+
+| Field | Description |
+| --- | --- |
+| `ok` | True when the provider returned a response. |
+| `provider` | Provider used for the test. |
+| `model` | Model used for the test. |
+| `response` | Provider response text. |
+| `usage` | Best-effort token usage reported by the provider, when available. |
+
+## `POST /ai/models`
+
+Lists available models for providers with a compatible model-list endpoint. The request can include unsaved provider fields.
+
+Supported discovery modes:
+
+| Provider | Endpoint called from the DUMB backend |
+| --- | --- |
+| `ollama` | `{base_url}/api/tags` |
+| `gemini` / `google_gemini` | Official Google Gemini `/models?pageSize=1000`, filtered to `generateContent` models |
+| `anthropic` / `claude` | Managed official `https://api.anthropic.com/v1/models?limit=1000` endpoint |
+| `open_webui` | `{base_url}/api/models` |
+| `openai` | Managed official `https://api.openai.com/v1/models` endpoint |
+| `litellm` | `{base_url}/models` |
+| `openai_compatible` / `compatible` | `{base_url}/models` |
+
+Example payload:
+
+```json
+{
+  "provider": "ollama",
+  "base_url": "http://ollama:11434",
+  "timeout_sec": 60
+}
+```
+
+Example response:
+
+```json
+{
+  "provider": "ollama",
+  "models": [
+    {
+      "name": "llama3.1:latest",
+      "size": 4661224676,
+      "modified_at": "2026-06-18T00:00:00Z"
+    }
+  ]
+}
+```
+
+Native Gemini, OpenAI, and Anthropic model entries can include a `lifecycle` object when the model appears in that provider's published retirement schedule:
+
+```json
+{
+  "name": "gemini-2.0-flash-lite",
+  "source": "external",
+  "source_detail": "google",
+  "lifecycle": {
+    "model": "gemini-2.0-flash-lite",
+    "status": "retired",
+    "shutdown_date": "2026-06-01",
+    "replacement": "gemini-3.1-flash-lite",
+    "source_url": "https://ai.google.dev/gemini-api/docs/deprecations"
+  }
+}
+```
+
+`status` is `deprecated` before the published shutdown date and `retired` on or after that date. DUMB preserves lifecycle-marked entries in discovery results because providers can continue returning shut-down IDs, but calls using a known retired model are rejected with HTTP 400 and replacement guidance before contacting the provider. DUMB's weekly `AI model lifecycle` workflow compares the maintained catalog with the official Google, OpenAI, and Anthropic tables.
+
+Native provider model entries can also include:
+
+```json
+{
+  "compatibility": {
+    "model": "text-embedding-3-small",
+    "status": "unsupported",
+    "api_surface": "responses",
+    "reason": "This is an embedding or moderation model. DUMB AI Assist requires a model that returns diagnostic text."
+  }
+}
+```
+
+The frontend marks incompatible entries and disables provider tests/analysis for them. Native OpenAI text and Codex requests use `POST https://api.openai.com/v1/responses`; Open WebUI, LiteLLM, and generic OpenAI-compatible providers retain `/chat/completions`.
+
+## `POST /ai/diagnose`
+
+Builds a redacted service diagnostic bundle. If `dry_run` is true, or if AI is disabled, the endpoint returns the bundle without calling a provider. If AI is enabled and `dry_run` is false, DUMB sends the bundle to the configured provider and returns the analysis.
+
+Use `dry_run: true` before enabling provider calls to inspect the exact bundle that would be shared.
+
+Example payload:
+
+```json
+{
+  "process_name": "Traefik Proxy Admin",
+  "question": "Why is this service failing during startup?",
+  "dry_run": true,
+  "include_logs": true,
+  "include_service_config": true,
+  "include_dependency_graph": true,
+  "include_docs_context": true,
+  "max_log_chars": 20000,
+  "window_hours": 24,
+  "comparison": "previous_period",
+  "deep_log_scan": true,
+  "max_log_scan_mb": 128,
+  "include_metrics": true,
+  "include_change_history": true,
+  "include_native_diagnostics": true
+}
+```
+
+Response fields:
+
+| Field | Description |
+| --- | --- |
+| `enabled` | Whether provider calls are enabled. |
+| `provider` | Configured provider. |
+| `model` | Configured model. |
+| `analysis` | Provider response, empty for dry runs. |
+| `bundle` | Redacted diagnostic bundle. |
+| `usage` | Best-effort token usage reported by the provider, empty for dry runs or providers that do not return usage. |
+| `dry_run` | True when no provider call was made. |
+| `session_id` | Short-lived in-memory session identifier returned after a provider analysis. Empty for previews. |
+
+### Diagnostic Bundle Context
+
+The bundle can include `docs_context` when `include_docs_context` is enabled. This block contains selected DUMB_docs excerpts with source paths and public documentation URLs. The backend chooses snippets using the service/config key, status, question text, and included logs.
+
+DUMB prefers local Markdown from `DUMB_DOCS_PATH`, the Markdown-only snapshot bundled in official images at `/usr/share/dumb/docs`, or common sibling-repo workbench paths. Documentation images and other site assets are not included in the image snapshot.
+
+If local docs are unavailable, DUMB falls back to matching public pages on `https://dumbarr.com`. The fallback extracts article content and removes navigation, scripts, page chrome, and whitespace-only lines before building excerpts. The raw response is processed in memory and is not cloned or cached to disk.
+
+The bundle also includes DUMB product facts. API clients can use dry-run responses to verify that `dumb_product.expansion` is `Distributed Unlimited Media Bridge` before sending a provider request.
+
+Evidence-enabled service bundles may also include:
+
+| Field | Description |
+| --- | --- |
+| `diagnostic_window` | Current and baseline boundaries plus the selected comparison mode. |
+| `log_analysis` | Bounded retained-log coverage, severity counts, restart markers, error signatures, and cited excerpts. |
+| `runtime_metrics` | Process CPU, RSS, disk activity, PID observations, sample coverage, and calculated changes. |
+| `database_health` | Existing read-only Database Health evidence when available. |
+| `change_history` | Redacted configuration changes recorded when settings are saved through DUMB. |
+| `native_diagnostics` | Allowlisted service-specific evidence. InfiniDysk currently includes metrics SQLite and queue-log comparisons. |
+| `diagnostic_coverage` | Source availability and a deterministic confidence hint. |
+| `recommendations` | Review-only deterministic next-action context. No action is applied automatically. |
+
+## `POST /ai/diagnose-stack`
+
+Builds a stack-wide diagnostic bundle. Use this when the question is about the whole deployment instead of one service.
+
+If `dry_run` is true, or if AI is disabled, the endpoint returns the bundle without calling a provider. If AI is enabled and `dry_run` is false, DUMB sends the stack bundle to the configured provider and returns the analysis.
+
+Example payload:
+
+```json
+{
+  "question": "What is blocking startup?",
+  "dry_run": true,
+  "include_logs": true,
+  "include_service_config": false,
+  "include_dependency_graph": true,
+  "include_docs_context": true,
+  "include_process_list": true,
+  "max_log_chars": 20000,
+  "max_docs_chars": 12000,
+  "window_hours": 24,
+  "comparison": "previous_period",
+  "deep_log_scan": true,
+  "max_log_scan_mb": 128,
+  "include_metrics": true,
+  "include_change_history": true,
+  "include_native_diagnostics": true
+}
+```
+
+Stack bundles include:
+
+| Field | Description |
+| --- | --- |
+| `scope` | Always `stack`. |
+| `stack_summary` | Status counts plus services needing attention. |
+| `processes` | Compact process list when enabled. |
+| `dumb_service_catalog` | DUMB-specific workflow guidance used for planning questions such as Usenet service selection. |
+| `dependency_graph` | Aggregated runtime dependency graph across enabled services when enabled. |
+| `logs` | Short targeted log tails for services needing attention when enabled. |
+| `service_configs` | Optional redacted configs for enabled services. Disabled by default for stack requests. |
+| `docs_context` | Selected DUMB_docs snippets when enabled and available. |
+| `runtime_metrics` | One bounded Metrics-history read summarized per enabled process. |
+| `log_analysis` | Bounded retained-log summaries for attention services and services selected by the question. |
+| `change_history` | Redacted stack-wide configuration events in the analysis and baseline windows. |
+| `native_diagnostics` | Available native collector output for enabled supported services. |
+| `diagnostic_coverage` | Counts and availability for the evidence sources used. |
+
+When `dry_run` is false, DUMB compacts stack bundles before sending them to the provider. The API response still includes the full built bundle, but the provider prompt uses shortened docs excerpts, targeted log snippets, capped graph nodes/edges, and omits full service configs with a note. This avoids common context-length failures with local models.
+
+Provider responses include a `usage` object when the provider reports token or evaluation counts. OpenAI-compatible providers usually return `prompt_tokens`, `completion_tokens`, and `total_tokens`. Ollama native responses return `prompt_eval_count` and `eval_count`; DUMB maps those to prompt/completion/total token fields and preserves timing fields such as `total_duration`.
+
+Native OpenAI Responses usage (`input_tokens`, `output_tokens`, and `total_tokens`) is mapped into the same common fields. DUMB sends `store: false` and converts system messages to Responses API developer messages.
+
+Gemini native responses expose `usageMetadata`. DUMB maps `promptTokenCount`, `candidatesTokenCount`, and `totalTokenCount` to the common prompt/completion/total fields and preserves cached/thought-token counts when Google returns them. Gemini requests use `POST https://generativelanguage.googleapis.com/v1beta/models/{model}:generateContent` with the API key in the `x-goog-api-key` header.
+
+### Deterministic Finalizers
+
+For selected stack questions, DUMB may post-process the provider response before returning `analysis`:
+
+- Product identity questions such as `What does DUMB stand for?` return the canonical product fact, `Distributed Unlimited Media Bridge`, even if the provider invents another acronym expansion.
+- DUMB Usenet planning questions are grounded around Decypharr, InfiniDysk, AltMount, Arr apps, Prowlarr, and rclone. If a provider recommends SABnzbd, NZBGet, or NZBHydra as the primary DUMB path, DUMB replaces that with the DUMB-native workflow answer.
+
+The original diagnostic bundle remains available in the response for review. Token `usage` still reflects the provider request when a provider call was made.
+
+## `POST /ai/follow-up`
+
+Continues a completed provider analysis using the same cached evidence bundle and recent conversation turns.
+
+```json
+{
+  "session_id": "8d9f5a...",
+  "question": "Did the service recover after those errors?"
+}
+```
+
+The response contains `analysis`, `usage`, `provider`, `model`, and the same `session_id`.
+
+Sessions:
+
+- Exist in backend memory only
+- Expire after one hour
+- Keep at most eight recent turns
+- Are bounded to 50 active sessions per backend process
+- Are cleared by a backend restart
+
+A follow-up does not rescan logs. Run a new diagnosis when you need a newer time window or additional evidence.
+
+## Safety Boundary
+
+The AI provider receives a redacted bundle, not runtime tools. The API does not expose unrestricted shell execution, arbitrary SQL, arbitrary filesystem paths, or configuration mutation to the model.
+
+Retained logs are scanned on demand within the byte budget. The small `/config/ai-diagnostics/events.sqlite` ledger stores redacted change metadata only; it does not duplicate full logs. InfiniDysk native database access opens fixed service databases in SQLite read-only/query-only mode.

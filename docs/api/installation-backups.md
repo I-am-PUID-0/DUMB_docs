@@ -9,6 +9,23 @@ development_only: true
 
 Endpoint paths below are backend-native. Add `/api` when using the dashboard gateway, for example `http://localhost:3005/api/process/capabilities`.
 
+<details class="geek-details" markdown="1">
+<summary>Preview, acknowledge and track an archive job</summary>
+
+This is the reviewed-preview backup path. Direct start and restore have separate admission rules below; an accepted job still needs its final verification result.
+
+```mermaid
+flowchart TD
+    Preview["Preview coverage, destination, capacity and downtime"] --> Review["Review exclusions and required acknowledgements"]
+    Review --> Start["Start the backup using the reviewed preview"]
+    Start --> Poll["Poll the retained job"]
+    Poll --> Result{"Terminal result"}
+    Result -->|Verified| Catalog["Inspect the verified archive catalog"]
+    Result -->|Failed or interrupted| Recovery["Inspect retained operation and recovery state"]
+```
+
+</details>
+
 ## Routes and admission
 
 These routes require `installation_backup=true` and numeric

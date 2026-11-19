@@ -8,6 +8,26 @@ icon: lucide/settings
 
 Read and update DUMB's effective configuration, inspect its schema, or work with an application's native configuration file. These are different surfaces: a change to DUMB settings does not necessarily apply every native application change immediately.
 
+<details class="geek-details" markdown="1">
+<summary>Choose the configuration surface</summary>
+
+DUMB configuration and an application's native file are separate surfaces. Persistence is an explicit part of the DUMB configuration update.
+
+```mermaid
+flowchart TD
+    Task["What are you changing?"] --> DUMB["DUMB service or global settings"]
+    Task --> Native["Application-native configuration file"]
+    DUMB --> Schema["Inspect GET /config/schema"]
+    Schema --> Update["POST /config with updates"]
+    Update --> Memory["Update loaded configuration"]
+    Update --> Persist{"Persist requested?"}
+    Persist -->|Yes| Disk["Save configuration to disk"]
+    Native --> File["POST /config/service-config"]
+    File --> Review["Review the application's apply or restart requirements"]
+```
+
+</details>
+
 ## Choose the right surface
 
 | Task | Endpoint |

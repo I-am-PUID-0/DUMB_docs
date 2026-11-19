@@ -12,9 +12,20 @@ const specifications = [
   { input: 'service-controls.png', file: 'service-controls.webp', kind: 'image', scenario: 'service-controls' },
   { input: 'service-logs-poster.png', file: 'service-logs.webp', kind: 'image', scenario: 'service-logs', actionsFrom: 'service-logs.webm' },
   { input: 'updates-check-poster.png', file: 'updates.webp', kind: 'image', scenario: 'updates-review', actionsFrom: 'updates-check.webm' },
-  { input: 'appearance-settings.png', file: 'appearance.webp', kind: 'image', scenario: 'appearance-settings' },
+  { input: 'appearance-poster.png', file: 'appearance.webp', kind: 'image', scenario: 'appearance-settings', actionsFrom: 'appearance.webm' },
+  { input: 'metrics.png', file: 'metrics.webp', kind: 'image', scenario: 'metrics' },
+  { input: 'embedded-ui-settings.png', file: 'embedded-ui-settings.webp', kind: 'image', scenario: 'embedded-ui-settings' },
+  { input: 'disabled-services.png', file: 'disabled-services.webp', kind: 'image', scenario: 'disabled-services' },
+  { input: 'about.png', file: 'about.webp', kind: 'image', scenario: 'about' },
+  { input: 'configuration-poster.png', file: 'configuration.webp', kind: 'image', scenario: 'configuration', actionsFrom: 'configuration.webm' },
+  { input: 'dependencies-poster.png', file: 'dependencies.webp', kind: 'image', scenario: 'dependencies', actionsFrom: 'dependencies.webm' },
+  { input: 'auto-restart-poster.png', file: 'auto-restart.webp', kind: 'image', scenario: 'auto-restart', actionsFrom: 'auto-restart.webm' },
   { input: 'service-logs.webm', file: 'service-logs.webm', kind: 'video', scenario: 'service-logs', poster: 'service-logs.webp' },
   { input: 'updates-check.webm', file: 'updates.webm', kind: 'video', scenario: 'updates-check', poster: 'updates.webp' },
+  { input: 'appearance.webm', file: 'appearance.webm', kind: 'video', scenario: 'appearance', poster: 'appearance.webp' },
+  { input: 'configuration.webm', file: 'configuration.webm', kind: 'video', scenario: 'configuration', poster: 'configuration.webp' },
+  { input: 'dependencies.webm', file: 'dependencies.webm', kind: 'video', scenario: 'dependencies', poster: 'dependencies.webp' },
+  { input: 'auto-restart.webm', file: 'auto-restart.webm', kind: 'video', scenario: 'auto-restart', poster: 'auto-restart.webp' },
 ]
 const sha256 = bytes => createHash('sha256').update(bytes).digest('hex')
 
@@ -115,6 +126,7 @@ async function main() {
     schema_version: 1,
     complete: true,
     frontend: FRONTEND,
+    series: 'tour-2',
     source_verification: 'The caller verified the immutable release tag and archived its full commit before building. This packager validates that pinned capture identity.',
     scope: 'Real released frontend rendered with public example HTTP and WebSocket responses. No live backend, provider account, media library or installation was used.',
     fixed_time: manifest.fixed_time,
@@ -135,6 +147,12 @@ async function main() {
       viewport, theme: row.theme, route: row.route, actions,
       ...(specification.poster ? { poster: specification.poster } : {}),
       ...(specification.kind === 'image' ? { quality: 90 } : {}),
+      ...(specification.kind === 'video' ? {
+        start_route: row.start_route,
+        chapters: row.chapters,
+        pointer_emphasis: row.pointer_emphasis === true,
+        pacing: row.pacing,
+      } : {}),
     })
   }
   await fs.writeFile(path.join(out, 'manifest.json'), JSON.stringify(packaged, null, 2) + '\n', { flag: 'wx' })

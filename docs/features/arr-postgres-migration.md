@@ -126,6 +126,24 @@ Existing Sonarr/Radarr job history and rollback backups therefore remain visible
 
 ## Recommended flow
 
+A rehearsal and a cutover are separate jobs. Keep the backup until the application has been checked:
+
+```mermaid
+flowchart TD
+    accTitle: Rehearse before database cutover
+    accDescr: Back up, pass preflight and rehearsal, then explicitly cut over and validate the application. Failed jobs require recovery review.
+    Backup["Keep an independent application backup"] --> Preflight["Run preflight"]
+    Preflight --> Checks{"Checks allow migration?"}
+    Checks -->|No| Resolve["Resolve the reported blocker"]
+    Resolve --> Preflight
+    Checks -->|Yes| Rehearse["Run rehearsal and wait for a passed result"]
+    Rehearse --> Confirm["Review downtime and confirm guarded cutover"]
+    Confirm --> Result{"Cutover completed?"}
+    Result -->|No| Recover["Preserve the job and follow its recovery action"]
+    Result -->|Yes| Validate["Check application data, integrations and playback"]
+    Validate --> Retain["Retain SQLite backup and test PostgreSQL backups"]
+```
+
 Plan downtime for cutover and keep a tested independent backup. Rehearsal verifies a staged conversion; it does not switch the application. After cutover, validate real application behavior before accepting PostgreSQL as the working provider.
 
 ### 1. Run preflight

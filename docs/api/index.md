@@ -8,6 +8,8 @@ icon: lucide/code
 
 Use the API to inspect configuration, control services, read logs and metrics, and run supported maintenance workflows.
 
+**Visual guide:** [See how the dashboard and API exchange data](../architecture/frontend.md#data-flow).
+
 ## Connect through the dashboard
 
 The dashboard server on port `3005` is also the normal API gateway.

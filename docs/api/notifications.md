@@ -13,6 +13,24 @@ continues running and retries storage initialization in the background. Endpoint
 that require queue or history access return HTTP `503` until storage recovers;
 configuration and supported-event discovery remain available.
 
+<details class="geek-details" markdown="1">
+<summary>Configure, test and inspect delivery</summary>
+
+Testing a destination verifies a specific delivery attempt. Use history to inspect its result and later event delivery.
+
+```mermaid
+flowchart TD
+    Discover["GET supported events"] --> Config["Save notification settings and destinations"]
+    Config --> Test["POST a destination test"]
+    Test --> History["GET delivery history"]
+    History --> Result{"Delivery succeeded?"}
+    Result -->|No| Fix["Review the failure and destination settings"]
+    Fix --> Test
+    Result -->|Yes| Monitor["Monitor enabled event deliveries"]
+```
+
+</details>
+
 ## Configuration
 
 ### `GET /notifications/config`

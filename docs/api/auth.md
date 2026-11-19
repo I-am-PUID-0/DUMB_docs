@@ -9,6 +9,27 @@ icon: lucide/key
 The Authentication API provides local login, OIDC Authorization Code with PKCE,
 DUMB token handling, provider configuration, and user management.
 
+<details class="geek-details" markdown="1">
+<summary>Password login and access-token renewal</summary>
+
+This sequence covers local password login. OIDC uses its separate start, callback and exchange routes described below.
+
+```mermaid
+sequenceDiagram
+    participant Client
+    participant Auth as DUMB authentication API
+    participant Protected as Protected API route
+    Client->>Auth: POST /auth/login with credentials
+    Auth-->>Client: Access token and refresh token
+    Client->>Protected: Request with bearer access token
+    Protected-->>Client: Authorized response
+    Note over Client,Auth: Before the access token expires
+    Client->>Auth: POST /auth/refresh with refresh token
+    Auth-->>Client: Renewed tokens
+```
+
+</details>
+
 ## Endpoint groups
 
 | Task | Routes |

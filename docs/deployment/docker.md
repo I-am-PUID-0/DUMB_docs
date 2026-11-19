@@ -8,6 +8,21 @@ icon: fontawesome/brands/docker
 
 Use Docker Compose to run DUMB on a Linux host. If you already manage containers with [Portainer](portainer.md) or [Dockge](dockge.md), use that guide instead. Windows users should prepare [WSL2](wsl.md) first.
 
+## From Compose to the dashboard
+
+Prepare the folders before starting the container. A running container is the start of application setup, rather than the final playback check.
+
+```mermaid
+flowchart TD
+    Engine["Check Docker Engine and Compose"] --> Storage["Create config, log, data and media folders"]
+    Storage --> Compose["Edit host paths, user IDs and published port"]
+    Compose --> Validate["Validate the Compose file"]
+    Validate --> Start["Start DUMB and follow startup logs"]
+    Start --> Open["Open the dashboard on port 3005"]
+    Open --> Setup["Complete onboarding and app setup"]
+    Setup --> Test["Import and play one test item"]
+```
+
 ## 1. Check Docker Engine and Compose
 
 You need Docker Engine, the Compose plugin, a supported 64-bit host (`amd64` or `arm64`), and a non-root account with permission to use Docker. Commands below use `sudo` for Docker operations.

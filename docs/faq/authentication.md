@@ -8,6 +8,21 @@ icon: lucide/key
 
 Common questions and troubleshooting for DUMB's authentication system.
 
+## Choose the right login recovery path
+
+A rejected password, an expired session and a complete lockout have different recovery paths. Use another active account where one is available before considering the manual reset procedure.
+
+```mermaid
+flowchart TD
+    Issue["What happens when you sign in?"] --> Password["Invalid credentials"]
+    Issue --> Disabled["Account is disabled"]
+    Issue --> Session["A previous session expired"]
+    Issue --> Lockout["No usable account remains"]
+    Password --> Check["Check username, password and case"]
+    Disabled --> Active["Ask an active account holder to review the user"]
+    Session --> Login["Sign in again and check system time if expiry repeats"]
+    Lockout --> Recovery["Follow the documented lockout recovery procedure"]
+```
 
 ## Setup and configuration
 

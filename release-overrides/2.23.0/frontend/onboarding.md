@@ -20,6 +20,24 @@ A compatible backend retains a setup checklist after you leave the wizard. It re
 
 ## Wizard steps
 
+Plan the complete workflow, then check the applications after they start:
+
+```mermaid
+flowchart TD
+    accTitle: From service selection to a working media workflow
+    accDescr: Resolve preflight blockers, review the intended setup, start applications and then verify their accounts, connections, imports and playback.
+    Apps["Choose workflow apps and companions"] --> Check["Run preflight checks"]
+    Check --> Allowed{"Blocking checks resolved?"}
+    Allowed -->|No| Correct["Correct the reported problem"]
+    Correct --> Check
+    Allowed -->|Yes| Inputs["Enter provider details and installation choices"]
+    Inputs --> Review["Review services, paths and requested changes"]
+    Review --> Apply["Apply the setup"]
+    Apply --> Start["Follow startup results and service logs"]
+    Start --> Finish["Finish app accounts and connections"]
+    Finish --> Test["Test an import and playback"]
+```
+
 ### Step 1: Choose services
 
 Select your workflow applications and supporting services, or use **Guided setup**:

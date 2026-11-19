@@ -8,6 +8,21 @@ icon: lucide/radio-tower
 
 Pulsarr monitors Plex watchlists and routes requested movies and shows to Sonarr and Radarr. It is useful when Plex is the front door for requests and you want watchlist-driven automation, approvals, quotas, and notifications without running a separate request portal.
 
+<!-- visual:service-flow -->
+## At a glance
+
+A successful connection does not activate watchlist processing. Review approvals and quotas before turning on the workflow.
+
+```mermaid
+flowchart TD
+    A["Open Pulsarr and create its account"] --> B
+    B["Connect Plex and the intended Arr apps"] --> C
+    C["Review watchlists, approvals and quotas"] --> D
+    D["Start the intended workflow"] --> E
+    E["Follow one request through import"]
+```
+
+
 ---
 
 ## Initial setup

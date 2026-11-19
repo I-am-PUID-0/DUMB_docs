@@ -10,14 +10,19 @@ Open a managed application's own interface inside DUMB without publishing every 
 
 ## Enable and open an application
 
-1. Open **Settings → Embedded UIs** and enable **Service UIs**, or enable them during onboarding.
+1. Open **Settings → Embedded UIs** and select **Enable embedded service iFrames**, or enable embedded UIs during onboarding.
 2. Open a running service's page and select **Embedded UI**.
 3. Sign in to the application if it asks for its own credentials.
 4. Use split/full-window view or the direct-link action as needed.
 
 A matching enabled TPA public HTTPS route can supply an external link. AIOStreams' remote Stremio clients need its separately configured public base URL; the embedded operator route is not a replacement for that origin.
 
-![Embedded UIs](../assets/images/features/embedded_ui.png){ .shadow }
+<figure class="docs-visual docs-frontend-figure" markdown="1">
+
+![Settings page showing the Enable embedded service iFrames checkbox.](../assets/images/guides/frontend/v1.91.0/tour-2/embedded-ui-settings.webp){ loading=lazy decoding=async }
+
+<figcaption class="docs-visual-caption">Enable embedded service iFrames here, then open a supported application from its service page. DUMB Frontend 1.91.0 · example data. Other versions may look different.</figcaption>
+</figure>
 
 <details class="geek-details" markdown="1">
 <summary>Technical details: frontend proxy and direct Traefik routes</summary>

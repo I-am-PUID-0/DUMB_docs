@@ -8,6 +8,21 @@ icon: lucide/cloud
 
 [Back to InfiniDysk setup](infinidysk.md).
 
+<!-- visual:service-flow -->
+## At a glance
+
+Keep the independent backup and original SQLite recovery data until the new database and playback have been verified.
+
+```mermaid
+flowchart TD
+    A["Back up the full data directory"] --> B
+    B["Resolve preflight blockers"] --> C
+    C["Run and pass the rehearsal"] --> D
+    D["Review and authorize cutover"] --> E
+    E["Verify the database and playback"]
+```
+
+
 This guide covers the InfiniDysk **1.x main database**. SQLite remains the default. A migration changes the main store; it does not move the separate local helper databases or application files.
 
 ## Before you start

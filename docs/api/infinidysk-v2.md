@@ -9,6 +9,24 @@ development_only: true
 
 Endpoint paths below are backend-native. Add `/api` when using the dashboard gateway, for example `http://localhost:3005/api/process/capabilities`.
 
+<details class="geek-details" markdown="1">
+<summary>Prepared activation keeps review tied to one candidate</summary>
+
+Use this path only when prepared activation is advertised. The candidate that is reviewed is the same retained job later activated; cleanup is a separate decision after cutover verification.
+
+```mermaid
+flowchart TD
+    Gate["Check API version, protocol and capabilities"] --> Preview["Preview the source-bound upgrade plan"]
+    Preview --> Prepare["Prepare and verify a retained candidate"]
+    Prepare --> Review["Review that job's proof and import report"]
+    Review --> Activate["Explicitly activate the same prepared job"]
+    Activate --> Verify["Inspect retained status and verify consumers and playback"]
+    Verify --> Recovery["Resolve any retained consumer recovery"]
+    Recovery --> Cleanup["Separately review v1 retirement and recovery limits"]
+```
+
+</details>
+
 ## InfiniDysk 2 workflows
 
 These routes are independent of the existing NzbDAV namespace migration and

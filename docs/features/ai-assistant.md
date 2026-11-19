@@ -78,6 +78,21 @@ Native collectors are allowlisted and read-only. Services without a native colle
 
 ## Guided Workflow
 
+With a provider configured, keep evidence review separate from the decision to send it:
+
+```mermaid
+flowchart TD
+    accTitle: Review evidence before AI analysis
+    accDescr: Preview the selected bundle, adjust anything unsuitable, then explicitly analyze it and verify the advice.
+    Focus["Choose the service or stack and question"] --> Preview["Preview bundle"]
+    Preview --> Review{"Is this evidence suitable to share?"}
+    Review -->|No| Adjust["Change the selected context"]
+    Adjust --> Preview
+    Review -->|Yes| Analyze["Enable provider calls and Analyze"]
+    Analyze --> Report["Check the report against logs and measurements"]
+    Report --> Verify["Review any proposed change and verify its result"]
+```
+
 Both service and stack assistants provide presets for health, performance, recent changes, errors, and dependencies. Choose a time window and baseline, preview the evidence, then analyze it.
 
 Provider results render as sanitized Markdown, including tables. You can copy or download the report, download the redacted JSON bundle, and ask follow-up questions using a short-lived in-memory diagnostic session. Follow-ups reuse the same evidence instead of rescanning logs or silently changing the comparison window.

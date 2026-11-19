@@ -6,6 +6,8 @@ icon: lucide/tv
 
 # Plex FAQ
 
+**Visual guide:** [See the library and symlink storage boundaries](../architecture/index.md#storage-and-mounts).
+
 ## Recommended library settings
 
 Background analysis can read substantial amounts of remote content. For a Debrid/Usenet mount, review these Plex settings before the first scan:

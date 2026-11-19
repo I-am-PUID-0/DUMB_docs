@@ -8,6 +8,17 @@ icon: lucide/help-circle
 
 Common questions and fixes for Tautulli in DUMB.
 
+## Tautulli needs a working Plex connection
+
+Check Plex reachability and its token separately from the Tautulli process. Monitoring history depends on the configured Plex connection.
+
+```mermaid
+flowchart TD
+    Start["Confirm Tautulli is running"] --> UI["Open the Tautulli application"]
+    UI --> Connection["Review its Plex server address and token"]
+    Connection --> Reachable["Verify Plex is reachable from DUMB"]
+    Reachable --> History["Check Tautulli activity, history and logs"]
+```
 
 ## Why is the Tautulli UI not loading?
 

@@ -1,0 +1,116 @@
+{
+  "schema_version": 1,
+  "title": "Meet DUMB",
+  "duration_seconds": 114,
+  "scenes": [
+    {
+      "id": "intro",
+      "kind": "card",
+      "layout": "intro",
+      "title": "Meet DUMB",
+      "duration_seconds": 7,
+      "headline": "Your media tools, together",
+      "description": "Set up and manage the applications that find, organize and play your media.",
+      "caption": ["DUMB brings your media tools into one dashboard.", "Choose the applications and workflow you need."]
+    },
+    {
+      "id": "workflow",
+      "kind": "card",
+      "layout": "workflow",
+      "title": "How the pieces work together",
+      "duration_seconds": 12,
+      "headline": "From a request to playback",
+      "steps": [
+        { "title": "Find or request", "detail": "Search directly or use an optional request app." },
+        { "title": "Prepare the library", "detail": "Your selected workflow handles the item and its library path." },
+        { "title": "Watch or listen", "detail": "A media server reads the configured library." }
+      ],
+      "note": "You provide the accounts, provider access and library choices.",
+      "caption": ["Start with one workflow and one media server.", "DUMB manages the apps; you choose how your library works."]
+    },
+    {
+      "id": "install",
+      "kind": "card",
+      "layout": "steps",
+      "title": "Install on the host you use",
+      "duration_seconds": 10,
+      "headline": "Choose your deployment guide",
+      "steps": [
+        { "title": "Pick your host", "detail": "Docker, a NAS, Windows with WSL2, or native Proxmox LXC." },
+        { "title": "Keep your data", "detail": "Prepare persistent folders and the required access." },
+        { "title": "Open DUMB", "detail": "Follow first-run setup in the dashboard." }
+      ],
+      "caption": ["Use the deployment guide for your platform.", "Keep configuration and application data in persistent storage."]
+    },
+    {
+      "id": "dashboard",
+      "kind": "image",
+      "media": "dashboard.webp",
+      "fit": "cover-top",
+      "title": "See your selected services",
+      "duration_seconds": 10,
+      "caption": ["The dashboard shows the services in your DUMB installation.", "Open a service to review its status and controls."]
+    },
+    {
+      "id": "service",
+      "kind": "image",
+      "media": "service-controls.webp",
+      "fit": "cover-top",
+      "title": "Work with one application",
+      "duration_seconds": 10,
+      "caption": ["A service page brings its controls, settings and logs together.", "Use the embedded application to finish its own setup."]
+    },
+    {
+      "id": "logs",
+      "kind": "video",
+      "media": "service-logs.webm",
+      "fit": "cover-top",
+      "media_start_seconds": 0,
+      "title": "Read and filter service logs",
+      "duration_seconds": 16,
+      "caption": ["Logs show what the selected service is doing.", "Filter messages by name or level to focus on the problem."]
+    },
+    {
+      "id": "updates",
+      "kind": "video",
+      "media": "updates.webm",
+      "fit": "contain",
+      "media_start_seconds": 0,
+      "title": "Check an update before installing",
+      "duration_seconds": 20,
+      "caption": ["Open Tools → Updates and check for an available version.", "Review the result before choosing to install; this example only checks."]
+    },
+    {
+      "id": "appearance",
+      "kind": "image",
+      "media": "appearance.webp",
+      "fit": "cover-top",
+      "title": "Make the dashboard comfortable",
+      "duration_seconds": 10,
+      "caption": ["Use appearance settings to choose a comfortable dashboard view.", "These preferences change how the frontend is displayed."]
+    },
+    {
+      "id": "metrics",
+      "kind": "image",
+      "media": "metrics.webp",
+      "fit": "contain",
+      "title": "Check resource use",
+      "duration_seconds": 10,
+      "caption": ["Metrics help you review resource use and spot pressure.", "Use the charts alongside the affected service's logs."]
+    },
+    {
+      "id": "closing",
+      "kind": "card",
+      "layout": "steps",
+      "title": "Try one complete workflow",
+      "duration_seconds": 9,
+      "headline": "Make the first test a small one",
+      "steps": [
+        { "title": "Install DUMB", "detail": "Follow the guide for your host." },
+        { "title": "Set up your apps", "detail": "Add the accounts, providers and library paths they need." },
+        { "title": "Test one item", "detail": "Check an import and playback before adding more services." }
+      ],
+      "caption": ["Follow the deployment guide, then complete first-run setup.", "Test one import and playback before expanding your stack."]
+    }
+  ]
+}

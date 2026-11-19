@@ -8,6 +8,21 @@ icon: lucide/sliders
 
 Profilarr is a profile and custom format manager for **Sonarr** and **Radarr**. DUMB supports both the legacy v1 application and the redesigned v2 application, and can auto-link either generation to matching Arr instances.
 
+<!-- visual:service-flow -->
+## At a glance
+
+Connecting an Arr app and applying profiles are separate actions. Review the selected repository and proposed changes first.
+
+```mermaid
+flowchart TD
+    A["Open Profilarr"] --> B
+    B["Review profile repository"] --> C
+    C["Check the intended Sonarr or Radarr connection"] --> D
+    D["Select and apply the intended profiles"] --> E
+    E["Review the result in the Arr app"]
+```
+
+
 ---
 
 <!-- dev:start -->

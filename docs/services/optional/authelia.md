@@ -11,6 +11,21 @@ portal. DUMB can install and manage one Authelia instance, use it as an OpenID
 Connect (OIDC) provider for DUMB and Traefik Proxy Admin (TPA), and publish a
 reusable Traefik ForwardAuth middleware for selected application routes.
 
+<!-- visual:service-flow -->
+## At a glance
+
+Keep a working administrator access path while testing sign-in. OIDC sign-in and ForwardAuth route protection are separate choices.
+
+```mermaid
+flowchart TD
+    A["Plan DNS and HTTPS addresses"] --> B
+    B["Bootstrap Authelia and verify its notifier"] --> C
+    C["Enroll and test the first user"] --> D
+    D["Configure the intended sign-in or route protection"] --> E
+    E["Test the final protected application"]
+```
+
+
 Authelia is optional. You can instead connect DUMB authentication to an
 external Authelia deployment or another standards-compatible OIDC provider.
 

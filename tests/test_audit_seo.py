@@ -48,6 +48,7 @@ class AuditSiteTests(unittest.TestCase):
         base_url=BASE_URL,
         robots=INDEX_ROBOTS,
         body="",
+        video_nodes=(),
     ):
         path = channel / relative
         path.parent.mkdir(parents=True, exist_ok=True)
@@ -62,6 +63,7 @@ class AuditSiteTests(unittest.TestCase):
                 "@graph": [
                     {"@type": "WebSite"},
                     {"@type": "SoftwareSourceCode"},
+                    *video_nodes,
                 ],
             }
         else:
@@ -203,6 +205,164 @@ class AuditSiteTests(unittest.TestCase):
             ),
         )
         self.assertTrue(any("unresolved track src" in error for error in self.audit()))
+
+    def write_homepage_video(
+        self,
+        *,
+        channel=None,
+        base_url=BASE_URL,
+        robots=INDEX_ROBOTS,
+        schema_changes=None,
+        schema_count=1,
+        body=None,
+    ):
+        (self.root / "assets/overview.mp4").write_bytes(b"overview video fixture")
+        (self.root / "assets/poster.webp").write_bytes(b"overview poster fixture")
+        node = {
+            "@type": "VideoObject",
+            "name": "See how DUMB works",
+            "description": "Review the released frontend using public example data.",
+            "uploadDate": "2026-11-19T12:00:00Z",
+            "duration": "PT1M35S",
+            "contentUrl": BASE_URL + "assets/overview.mp4",
+            "thumbnailUrl": BASE_URL + "assets/poster.webp",
+            "embedUrl": base_url + "#overview",
+            **(schema_changes or {}),
+        }
+        if body is None:
+            body = (
+                '<section id="overview"><video controls poster="'
+                + BASE_URL
+                + 'assets/poster.webp"><source src="'
+                + BASE_URL
+                + 'assets/overview.mp4" type="video/mp4"></video></section>'
+            )
+        return self.write_page(
+            channel or self.root,
+            "index.html",
+            "DUMB video overview",
+            base_url=base_url,
+            robots=robots,
+            body=body,
+            video_nodes=[node] * schema_count,
+        )
+
+    def test_homepage_video_schema_matches_inline_and_child_sources(self):
+        for attributes, source in (
+            ('src="assets/overview.mp4"', ""),
+            ("", '<source src="assets/overview.mp4" type="video/mp4">'),
+        ):
+            with self.subTest(attributes=attributes):
+                self.write_homepage_video(
+                    body=(
+                        '<section id="overview"><video controls poster="assets/poster.webp" '
+                        + attributes
+                        + ">"
+                        + source
+                        + "</video></section>"
+                    )
+                )
+                self.assertEqual(self.audit(), [])
+
+    def test_development_homepage_video_uses_its_own_embed_and_shared_assets(self):
+        dev = self.root / "dev"
+        dev_url = BASE_URL + "dev/"
+        self.write_homepage_video(
+            channel=dev,
+            base_url=dev_url,
+            robots=NOINDEX_ROBOTS,
+            body=(
+                '<section id="overview"><video controls poster="../assets/poster.webp">'
+                '<source src="../assets/overview.mp4" type="video/mp4">'
+                "</video></section>"
+            ),
+        )
+        self.write_404(dev)
+        self.write_sitemap(dev, [dev_url])
+        self.assertEqual(self.audit(dev, development=True), [])
+
+    def test_homepage_video_requires_exactly_one_video_object(self):
+        for count in (0, 2):
+            with self.subTest(count=count):
+                self.write_homepage_video(schema_count=count)
+                self.assertTrue(
+                    any("expected exactly one VideoObject" in error for error in self.audit())
+                )
+
+    def test_homepage_without_video_rejects_video_object(self):
+        self.write_homepage_video(body="<p>No playable video.</p>")
+        self.assertTrue(
+            any("structured-data types mismatch" in error for error in self.audit())
+        )
+
+    def test_homepage_video_schema_must_reference_actual_local_media(self):
+        (self.root / "assets/other.mp4").write_bytes(b"unrelated video fixture")
+        cases = (
+            ("contentUrl", BASE_URL + "assets/other.mp4", "differs from the video"),
+            ("thumbnailUrl", BASE_URL + "assets/image.png", "differs from the video"),
+            ("contentUrl", BASE_URL + "assets/missing.mp4", "unresolved local"),
+            ("thumbnailUrl", BASE_URL + "assets/missing.webp", "unresolved local"),
+            ("contentUrl", "https://example.com/overview.mp4", "unresolved local"),
+        )
+        for field, value, expected in cases:
+            with self.subTest(field=field, value=value):
+                self.write_homepage_video(schema_changes={field: value})
+                self.assertTrue(
+                    any(
+                        "VideoObject" in error and field in error and expected in error
+                        for error in self.audit()
+                    )
+                )
+
+    def test_homepage_video_schema_assets_must_exist_even_when_urls_match(self):
+        for name, field in (
+            ("overview.mp4", "contentUrl"),
+            ("poster.webp", "thumbnailUrl"),
+        ):
+            with self.subTest(field=field):
+                self.write_homepage_video()
+                (self.root / "assets" / name).unlink()
+                self.assertTrue(
+                    any(f"unresolved local {field}" in error for error in self.audit())
+                )
+
+    def test_homepage_video_upload_date_must_be_a_real_iso_date(self):
+        for value in (
+            "",
+            "November 19, 2026",
+            "2026-02-30",
+            "2026-11-19T12:00:00",
+            "2026-11-19T25:00:00Z",
+            "2026-11-19T12:00:00+25:00",
+        ):
+            with self.subTest(value=value):
+                self.write_homepage_video(schema_changes={"uploadDate": value})
+                self.assertTrue(any("invalid ISO uploadDate" in error for error in self.audit()))
+        for value in ("2026-11-19", "2026-11-19T12:00:00+00:00"):
+            with self.subTest(value=value):
+                self.write_homepage_video(schema_changes={"uploadDate": value})
+                self.assertEqual(self.audit(), [])
+
+    def test_homepage_video_duration_must_be_positive_iso_time(self):
+        for value in ("", "95", "1:35", "P", "PT", "PT0S", "PT-1S", "P1DT"):
+            with self.subTest(value=value):
+                self.write_homepage_video(schema_changes={"duration": value})
+                self.assertTrue(any("invalid ISO duration" in error for error in self.audit()))
+        for value in ("PT95S", "PT1M35.5S", "PT1H2M3S"):
+            with self.subTest(value=value):
+                self.write_homepage_video(schema_changes={"duration": value})
+                self.assertEqual(self.audit(), [])
+
+    def test_homepage_video_needs_descriptive_text_and_canonical_overview_embed(self):
+        for field in ("name", "description"):
+            with self.subTest(field=field):
+                self.write_homepage_video(schema_changes={field: "   "})
+                self.assertTrue(any(f"VideoObject: missing {field}" in error for error in self.audit()))
+        self.write_homepage_video(schema_changes={"embedUrl": BASE_URL + "#start"})
+        self.assertTrue(any("embedUrl must target canonical #overview" in error for error in self.audit()))
+        path = self.write_homepage_video()
+        path.write_text(path.read_text().replace('id="overview"', 'id="elsewhere"'))
+        self.assertTrue(any("missing overview fragment target" in error for error in self.audit()))
 
     def test_release_excludes_dev_subtree_and_noindex_stubs_from_sitemap(self):
         dev = self.root / "dev"

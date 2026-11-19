@@ -8,6 +8,21 @@ icon: lucide/cloud
 
 [Back to InfiniDysk setup](infinidysk.md).
 
+<!-- visual:service-flow -->
+## At a glance
+
+Check the reported state before restarting. A legitimate database migration can accept connections while the application is still starting.
+
+```mermaid
+flowchart TD
+    A["Open status and logs"] --> B{"Migration advancing?"}
+    B -->|Yes| C["Let it finish and watch progress"]
+    B -->|No| D["Check storage and the reported error"]
+    D --> E["Follow targeted recovery guidance"]
+    C --> F["Recheck health, import and playback"]
+```
+
+
 ## InfiniDysk starts but its port is already open
 
 The maintained InfiniDysk fork serves a controlled migration status responder while

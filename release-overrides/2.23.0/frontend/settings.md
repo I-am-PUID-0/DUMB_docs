@@ -38,11 +38,12 @@ The **Advanced** section also includes service utilities. **Backups and restore*
 
 Choose **System Default** to follow your operating system, or select a light/dark palette. This preference is stored in the browser and does not change backend configuration.
 
-<figure class="docs-visual docs-frontend-figure" markdown="1">
-
-![Appearance settings with the dashboard theme choices.](../assets/images/guides/frontend/v1.91.0/appearance.webp){ loading=lazy decoding=async }
-
-<figcaption class="docs-visual-caption">Choose the palette you find easiest to read. DUMB Frontend 1.91.0 · example data. Other versions may look different.</figcaption>
+<figure class="docs-visual docs-frontend-figure">
+<video class="docs-frontend-video" controls playsinline preload="none" poster="../../assets/images/guides/frontend/v1.91.0/tour-2/appearance.webp" aria-label="Choose a dashboard color palette" aria-describedby="appearance-demo-caption">
+  <source src="../assets/images/guides/frontend/v1.91.0/tour-2/appearance.webm" type="video/webm">
+  <p><a href="../assets/images/guides/frontend/v1.91.0/tour-2/appearance.webm">Download the demonstration</a>, or follow the written steps above.</p>
+</video>
+<figcaption id="appearance-demo-caption" class="docs-visual-caption">Watch: open Appearance and select the Light palette. This changes a browser preference. DUMB Frontend 1.91.0 · example data. Other versions may look different. <a href="../assets/images/guides/frontend/v1.91.0/tour-2/appearance.webp">Open the full-size screenshot</a>.</figcaption>
 </figure>
 
 ## About section
@@ -57,7 +58,12 @@ Dismissing a banner hides it only in that browser. The About section retains the
 Ordinary stable notices are suppressed when the installed version is equal to or newer than that release. Explicit branch, commit, and release selections remain available for review.
 <!-- dev:end -->
 
-![About settings](../assets/images/frontend/about_settings.png){ .shadow }
+<figure class="docs-visual docs-frontend-figure" markdown="1">
+
+![About settings showing the DUMB API and frontend versions.](../assets/images/guides/frontend/v1.91.0/tour-2/about.webp){ loading=lazy decoding=async }
+
+<figcaption class="docs-visual-caption">Check both versions before choosing the matching documentation. DUMB Frontend 1.91.0 · example data. Other versions may look different.</figcaption>
+</figure>
 
 ### Launch Onboarding
 
@@ -67,9 +73,14 @@ Existing application data is retained, but the wizard can apply new settings ove
 
 ## Embedded service UIs
 
-Enable **Service UIs** to add embedded application tabs, direct links, and full-window controls to supported service pages. Disabling it removes dashboard access through those routes; native-port access still depends on your deployment's port mappings.
+Select **Enable embedded service iFrames** to add embedded application tabs, direct links, and full-window controls to supported service pages. Disabling it removes dashboard access through those routes; native-port access still depends on your deployment's port mappings.
 
-![Embedded UI settings](../assets/images/frontend/embedded_ui_settings.png){ .shadow }
+<figure class="docs-visual docs-frontend-figure" markdown="1">
+
+![Embedded UIs settings with the Enable embedded service iFrames checkbox.](../assets/images/guides/frontend/v1.91.0/tour-2/embedded-ui-settings.webp){ loading=lazy decoding=async }
+
+<figcaption class="docs-visual-caption">Use Enable embedded service iFrames to control DUMB's application tabs and links. DUMB Frontend 1.91.0 · example data. Other versions may look different.</figcaption>
+</figure>
 
 See [Embedded service UIs](../features/embedded-ui.md) for routing, application logins, and Authelia/TPA SSO exceptions.
 
@@ -97,13 +108,11 @@ Saved destination URLs and headers stay on the server. A blank secret field pres
 
 A GitHub token should grant only the read access required by the selected source. Public release checks normally need no token. Enter the required token here, select **Save**, and wait for **Saved**. Retry the connection or update check that needed it. Technical deployments can also use a supported [configuration override](../features/configuration.md#configuration-precedence).
 
-![Token settings](../assets/images/frontend/tokens_settings.png){ .shadow }
 
 ## UI preferences
 
 **Log Timestamp Format** controls MDY/DMY date order, 12/24-hour time, and leading zeros. It changes log presentation, not the backend's timezone or original log timestamps.
 
-![Log timestamp settings](../assets/images/frontend/log_timestamp_settings.png){ .shadow }
 
 ## Advanced
 
@@ -131,7 +140,7 @@ Open **Settings → Advanced → Geek Mode** and enable it for extra diagnostic 
 
 Database Health stays opt-in per service. Geek Mode does not run repair, integrity checks, or migrations.
 
-![Auto-restart controls](../assets/images/frontend/auto_restart.png){ .shadow }
+The [dependency-panel example](service-pages.md#dependency-graph-view) shows its ordinary views. Geek Mode adds the diagnostic controls listed above.
 
 ## Authentication settings
 
@@ -159,7 +168,7 @@ Enable authentication before allowing untrusted network access. Disabling it exp
 
 Add, disable, enable, or delete local users under Authentication. DUMB protects the last active user from disable/delete. All enabled users have the same operator privileges; groups do not create viewer or administrator roles.
 
-![Authentication settings](../assets/images/frontend/auth_settings.png){ .shadow }
+Follow the [sign-in and access-check diagram](../features/authentication.md#sign-in-and-check-access) when testing an authentication change.
 
 <!-- dev:start -->
 ## Backups and restore

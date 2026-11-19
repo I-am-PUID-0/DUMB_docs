@@ -8,6 +8,21 @@ icon: lucide/tv
 
 Plex organizes and streams media from local folders or mounted remote content. DUMB manages its process and persistent data; you choose the Plex account, library paths, sharing policy, and transcoding settings.
 
+<!-- visual:service-flow -->
+## At a glance
+
+Use the same curated library folder in your collector and media server. A running server is only the first check.
+
+```mermaid
+flowchart TD
+    A["Open Plex and finish sign-in"] --> B
+    B["Choose the curated library folder"] --> C
+    C["Check the mount before scanning"] --> D
+    D["Scan a small library"] --> E
+    E["Play and seek through one item"]
+```
+
+
 ---
 
 ## How to Start

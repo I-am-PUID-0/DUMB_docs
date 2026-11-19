@@ -10,6 +10,8 @@ These are **fresh-configuration defaults**, not a report of your running stack. 
 
 The maintained Compose file publishes **3005 only**. It serves the dashboard, REST gateway (`/api/*`), and WebSockets (`/ws/*`). Embedded UIs use this address too; individual service ports are needed for direct clients and external integrations.
 
+**Visual guide:** [See dashboard access and published-port boundaries](../deployment/networking.md#option-1-publish-selected-ports-recommended).
+
 ## DUMB listeners
 
 | Service | Default port | Access |

@@ -8,6 +8,23 @@ icon: lucide/activity
 
 ## Check startup progress
 
+Use the startup result to decide whether to wait, investigate a service, or test the stack:
+
+```mermaid
+flowchart TD
+    accTitle: Read startup progress before retrying a service
+    accDescr: Wait while startup is progressing, test a ready stack, or diagnose degraded services through health, logs and dependencies.
+    Banner["Read the dashboard startup banner"] --> State{"Normal startup state"}
+    State -->|Work still progressing| Wait["Wait and watch progress"]
+    Wait --> Banner
+    State -->|Ready| Test["Open your apps and test import or playback"]
+    State -->|Degraded| Logs["Read the affected service's health reason and logs"]
+    Logs --> Dependencies["Inspect Tools: Dependencies"]
+    Dependencies --> Fix["Correct the reported problem"]
+    Fix --> Retry["Retry Start for the intended service"]
+    Retry --> Banner
+```
+
 1. Open the dashboard and read the startup banner. DUMB can show the dashboard while larger services are still installing or starting.
 2. Wait while work is progressing. If a service needs attention, open its page, read its health reason, and open **Service Logs**.
 3. Use **Tools → Dependencies** to see whether that service is waiting for storage, a database, or another application. Correct the reported problem before retrying **Start**.

@@ -8,6 +8,24 @@ icon: lucide/terminal
 
 DUMB reads startup overrides for supported configuration leaf values from environment variables or Docker secrets. Override names follow the existing configuration tree; they do not create new service instances or arbitrary keys. Service subprocess variables are separately defined under each service's `env` block.
 
+<details class="geek-details" markdown="1">
+<summary>How an override is selected</summary>
+
+For each supported leaf key, DUMB uses the highest-priority supplied override. Blank environment values do not replace an existing setting.
+
+```mermaid
+flowchart TD
+    Key["Supported configuration leaf"] --> Secret{"Docker secret supplied?"}
+    Secret -->|Yes| Use["Use the override value"]
+    Secret -->|No| Environment{"Nonblank process environment value?"}
+    Environment -->|Yes| Use
+    Environment -->|No| Dotenv{"Value in /config/.env?"}
+    Dotenv -->|Yes| Use
+    Dotenv -->|No| Config["Use the saved configuration value"]
+```
+
+</details>
+
 ## Container variables
 
 | Variable | Default | Description |

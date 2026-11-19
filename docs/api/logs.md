@@ -8,6 +8,8 @@ icon: lucide/file-text
 
 The **Logs API** allows clients to retrieve recent logs captured by DUMB and served through the API.
 
+**Visual guide:** [See how live logs and retained history work together](websocket_logs.md).
+
 ## Endpoint
 
 ```

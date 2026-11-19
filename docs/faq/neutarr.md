@@ -8,6 +8,17 @@ icon: lucide/help-circle
 
 Common questions and fixes for NeutArr in DUMB.
 
+## Check the selected Arr connections
+
+Use the intended NeutArr instance and inspect its configured Arr connections. A running page does not prove that it can reach the selected Arr applications.
+
+```mermaid
+flowchart TD
+    Instance["Choose the intended NeutArr instance"] --> UI["Open its application page"]
+    UI --> Arr["Review the Sonarr, Radarr or other Arr connection"]
+    Arr --> Address["Check address, port, API key and enabled instance"]
+    Address --> Logs["Read NeutArr and Arr logs for the failed connection"]
+```
 
 ## Why is the NeutArr UI not loading?
 

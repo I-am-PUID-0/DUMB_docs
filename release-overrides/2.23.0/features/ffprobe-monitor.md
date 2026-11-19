@@ -10,6 +10,22 @@ When a Sonarr or Radarr import is stuck on media analysis, this automatic monito
 
 ## Check a stalled import
 
+Check the storage path before relying on the monitor to release a stalled analysis:
+
+```mermaid
+flowchart TD
+    accTitle: Investigate a stalled media analysis
+    accDescr: Distinguish unavailable storage from a stalled probe, then inspect the monitor result without repeatedly restarting the application.
+    Logs["Read the affected app's Service Logs"] --> Storage{"Storage healthy and file available?"}
+    Storage -->|No| Fix["Restore storage or provider access first"]
+    Fix --> Logs
+    Storage -->|Yes| Monitor["Read DUMB ffprobe activity in Realtime Logs"]
+    Monitor --> Wait["Allow the bounded check to finish"]
+    Wait --> Progress{"Import progressing?"}
+    Progress -->|Yes| Check["Confirm the item imported correctly"]
+    Progress -->|No| Evidence["Keep the file context and error for diagnosis"]
+```
+
 1. Open the affected Sonarr/Radarr service page and read **Service Logs**. Note the file and error rather than repeatedly restarting the application.
 2. Check that its storage service is healthy and that the file is available in the application's own interface.
 3. Open **Realtime Logs → Logs** from the sidebar and filter for DUMB/ffprobe monitor activity. Allow the monitor's bounded check to finish, then see whether the import progresses.

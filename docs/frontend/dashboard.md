@@ -21,7 +21,7 @@ The dashboard displays service cards for each configured service, showing:
 
 <figure class="docs-visual docs-frontend-figure" markdown="1">
 
-![Dashboard service cards showing each app's status and available controls.](../assets/images/guides/frontend/v1.91.0/dashboard.webp){ loading=lazy decoding=async }
+![Dashboard service cards showing each app's status and available controls.](../assets/images/guides/frontend/v1.91.0/tour-2/dashboard.webp){ loading=lazy decoding=async }
 
 <figcaption class="docs-visual-caption">Use the service cards to check an app and open its page. DUMB Frontend 1.91.0 · example data. Other versions may look different.</figcaption>
 </figure>
@@ -102,6 +102,23 @@ branch, commit, and pinned-version choices are never overridden by this shortcut
     Hover over action buttons to see what each will do.
 
 ## Check and update multiple services
+
+Bulk updates use the dashboard's shared panel. Saved source choices still need an individual review:
+
+```mermaid
+flowchart TD
+    accTitle: Review and install selected dashboard updates
+    accDescr: Check enabled services, review pinned source choices individually and confirm only the available updates you intend to install.
+    Open["Open dashboard Updates"] --> Check["Check all"]
+    Check --> Rows["Review versions and each service result"]
+    Rows --> Source{"Row says Review source?"}
+    Source -->|Yes| Individual["Open that service's Updates panel"]
+    Source -->|No| Available{"Update available?"}
+    Available -->|No| Keep["Keep the current service version"]
+    Available -->|Yes| Select["Select the intended available updates"]
+    Select --> Confirm["Install selected and confirm restarts"]
+    Confirm --> Verify["Review results, health and logs"]
+```
 
 Use **Updates** in the dashboard header to review every enabled service that
 supports DUMB-managed updates.
@@ -186,7 +203,7 @@ The connection status is shown in the header area. If disconnected, the frontend
 
 The toolbar and sidebar provide quick access to service settings and logs.
 
-![Toolbar](../assets/images/frontend/toolbar.png){ .shadow }
+The [service-page screenshot](service-pages.md#status-and-controls) shows the configuration, log and tool controls for one application.
 
 From here you can:
 
@@ -196,7 +213,7 @@ From here you can:
 
 ### Real-time logs
 
-![Real-Time Logs](../assets/images/frontend/real_time_logs.png){ .shadow }
+For one application's log filters and refresh controls, follow the [service-logs demonstration](service-pages.md#logs).
 
 The log viewer supports:
 
@@ -214,7 +231,12 @@ Enabled services are displayed in a grid layout, organized by:
 - **DUMB services first** - The API/frontend lead the default list
 - **Alphabetical order** - Other services follow by name until you save a custom order
 
-![Disabled services toggle](../assets/images/frontend/disabled_services.png){ .shadow }
+<figure class="docs-visual docs-frontend-figure" markdown="1">
+
+![Sidebar search for Tautulli with Show Disabled selected and its disabled entry visible.](../assets/images/guides/frontend/v1.91.0/tour-2/disabled-services.webp){ loading=lazy decoding=async }
+
+<figcaption class="docs-visual-caption">Use sidebar search with Show Disabled to find a configured service. These controls do not start it. DUMB Frontend 1.91.0 · example data. Other versions may look different.</figcaption>
+</figure>
 
 ---
 

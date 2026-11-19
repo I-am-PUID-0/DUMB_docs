@@ -10,6 +10,15 @@ icon: lucide/info
 
 The Python backend coordinates installation, configuration, dependencies, and service processes. The [dmbdb dashboard](frontend/index.md) provides onboarding, configuration, logs, metrics, updates, and embedded application UIs.
 
+<figure class="docs-visual" markdown="1">
+
+![A media workflow connects requests, acquisition, a curated library and the media player.](assets/images/guides/library-workflow.svg)
+
+<figcaption class="docs-visual-caption">DUMB manages the applications around your chosen workflow. Provider accounts, library choices and the final playback check are still yours to review.</figcaption>
+</figure>
+
+Watch the [captioned DUMB overview](index.md#overview), or use the [dashboard task guides](frontend/index.md#watch-a-task) for shorter demonstrations.
+
 ## Why put the services together?
 
 Running a workflow and its media server in the same container gives them a shared view of library paths and FUSE mounts. It reduces the host mount configuration needed for playback. External Arr applications and media servers are also supported, but their paths, mount propagation, and permissions need separate planning.

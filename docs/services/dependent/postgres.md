@@ -8,6 +8,23 @@ icon: lucide/database
 
 PostgreSQL provides separate application databases for services such as Riven, Zilean, and pgAdmin. DUMB's main configuration remains in `/config/dumb_config.json`; it is not stored in this cluster.
 
+<!-- visual:service-flow -->
+## At a glance
+
+DUMB can prepare supported application databases. Existing data needs its documented migration path; enabling PostgreSQL does not migrate a database.
+
+```mermaid
+flowchart TD
+    A{"Existing application data?"} -->|No| B["Review the supported database setting"]
+    B --> C["Let DUMB start the required database"]
+    A -->|Yes| D["Back up the application and current database"]
+    D --> E["Keep the current provider; follow the documented migration"]
+    E --> F["Pass checks and any required rehearsal before cutover"]
+    C --> G["Verify the application and test backups"]
+    F --> G
+```
+
+
 The image includes PostgreSQL, but the service is disabled by default until selected directly or required by an enabled consumer. DUMB initializes the configured cluster and databases when setting it up.
 
 ---

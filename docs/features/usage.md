@@ -19,6 +19,8 @@ On a fresh installation, managed applications are disabled until you choose them
 
 Saving a service's configuration and starting it are separate actions. **Save to File** persists the change; **Apply in Memory**, where offered, changes only the controller's current configuration. An application may still need a restart or an explicit setup action to use new settings.
 
+Use the [service-controls screenshot](../frontend/service-pages.md#status-and-controls) to find these controls and the [log-filter walkthrough](../frontend/service-pages.md#logs) to inspect a failure.
+
 ## Review updates
 
 Use **Updates** on the dashboard to check enabled services and install selected available updates. For a saved release, branch, commit, or version pin, open that service's Updates panel and review its configured target.

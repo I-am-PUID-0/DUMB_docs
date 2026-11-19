@@ -9,6 +9,22 @@ development_only: true
 
 Endpoint paths below are backend-native. Add `/api` when using the dashboard gateway, for example `http://localhost:3005/api/process/capabilities`.
 
+<details class="geek-details" markdown="1">
+<summary>Register storage before selecting an archive destination</summary>
+
+Registration describes an existing directory already mounted inside DUMB. It does not mount a host share or copy a backup by itself.
+
+```mermaid
+flowchart TD
+    Mount["Existing directory mounted inside DUMB"] --> Preview["Preview storage identity and permissions"]
+    Preview --> Register["Register the reviewed destination"]
+    Register --> Select["Select it in a supported archive workflow"]
+    Select --> Workflow["Preview that workflow's coverage and capacity"]
+    Workflow --> Start["Explicitly start the reviewed workflow"]
+```
+
+</details>
+
 ## Capabilities and routes
 
 Clients gate these authenticated routes using explicit

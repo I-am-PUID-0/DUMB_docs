@@ -7,6 +7,21 @@ icon: lucide/code
 # DUMB API
 The **DUMB API** is the central communication layer between the DUMB Frontend and the backend service. It handles requests for logs, service management (start/stop), configuration updates, and health checks.
 
+<!-- visual:service-flow -->
+## At a glance
+
+The dashboard and API clients share the frontend proxy. Direct native listener access is an advanced deployment choice.
+
+```mermaid
+flowchart TD
+    A["Dashboard or API client"] --> B["Frontend proxy on port 3005"]
+    B --> C["DUMB API authentication and capabilities"]
+    C --> D["Managed services, configuration and logs"]
+    D --> C
+    C --> B
+```
+
+
 ## Access model
 
 The maintained Compose file does not publish port `8000`. The API binds to `127.0.0.1:8000` inside the DUMB container and dmbdb proxies it through the normal frontend address:

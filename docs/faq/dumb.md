@@ -33,6 +33,7 @@ To check, click on one of the [Docker Image CI](https://github.com/I-am-PUID-0/D
 Example `Build Summary` below:
 ![Build Summary](../assets/images/build_summary.PNG)
 
+**Visual guide:** [Choose the next check for a failed page, app, import or playback](general.md#find-the-next-check).
 
 ## Authentication
 
