@@ -1,6 +1,14 @@
 # Changelog
 
 
+## [1.25.16](https://github.com/I-am-PUID-0/DUMB_docs/compare/1.25.15...1.25.16) (2026-11-19)
+
+
+### 📖 Documentation
+
+* capture real frontend screens and automate media refreshes ([05ca513](https://github.com/I-am-PUID-0/DUMB_docs/commit/05ca51335ba9941c3a91831b606978d7265deaae))
+* **infinidysk:** explain migration stages and storage tradeoffs ([f19983f](https://github.com/I-am-PUID-0/DUMB_docs/commit/f19983f037af305a2aff7ac4a8d00e792900ac1d))
+
 ## [1.25.15](https://github.com/I-am-PUID-0/DUMB_docs/compare/1.25.14...1.25.15) (2026-11-19)
 
 
