@@ -1,6 +1,13 @@
 # Changelog
 
 
+## [1.25.17](https://github.com/I-am-PUID-0/DUMB_docs/compare/1.25.16...1.25.17) (2026-11-19)
+
+
+### 🐛 Bug Fixes
+
+* **docs:** write gallery copy for readers and show complete GitHub stats ([c529246](https://github.com/I-am-PUID-0/DUMB_docs/commit/c529246c7d3e68a3338cd2b9874d2d1e93232124))
+
 ## [1.25.16](https://github.com/I-am-PUID-0/DUMB_docs/compare/1.25.15...1.25.16) (2026-11-19)
 
 
