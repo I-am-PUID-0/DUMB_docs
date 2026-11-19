@@ -32,12 +32,7 @@ Retained setup tasks are scoped to the current service and instance. Expand **Co
 
 The header shows process status, application health, and restart information. Hover a health badge for the backend's probe reason. **Starting** and **Degraded** are distinct from a restart-relevant **Unhealthy** result.
 
-<figure class="docs-visual docs-frontend-figure" markdown="1">
-
-![Service page showing its status, command bar, configuration tabs and Tools menu.](../assets/images/guides/frontend/v1.91.0/tour-2/service-controls.webp){ loading=lazy decoding=async }
-
-<figcaption class="docs-visual-caption">Choose a tab for configuration, logs or the application's interface; open Tools for additional tasks. DUMB Frontend 1.91.0 · example data. Other versions may look different.</figcaption>
-</figure>
+<!-- docs:visual scenario=service-controls type=image -->
 
 Use **Start**, **Stop**, or **Restart** for the current service. The DUMB API page has no start/stop/restart buttons. A storage operation affecting a protected media server prompts for playback and scan handling before it runs. Dashboard bulk updates use safe mode; use the individual service page to review an override.
 
@@ -98,13 +93,7 @@ Open **Tools → Dependencies** to inspect startup order, missing prerequisites,
 
 Instance links are scoped to the current workflow. An unrelated rclone or Zurg instance is not treated as a valid dependency when the intended mapping is missing. Conditional startup dependencies apply only when the relevant services are enabled. Signals distinguish runtime waits, configured `core_service` links, and optional integrations.
 
-<figure class="docs-visual docs-frontend-figure">
-<video class="docs-frontend-video" controls playsinline preload="none" poster="../../assets/images/guides/frontend/v1.91.0/tour-2/dependencies.webp" aria-label="Review a service's dependencies" aria-describedby="dependencies-demo-caption">
-  <source src="../assets/images/guides/frontend/v1.91.0/tour-2/dependencies.webm" type="video/webm">
-  <p><a href="../assets/images/guides/frontend/v1.91.0/tour-2/dependencies.webm">Download the demonstration</a>, or follow the written steps above.</p>
-</video>
-<figcaption id="dependencies-demo-caption" class="docs-visual-caption">Watch: open Dependencies and compare Details with Flow. Review the named prerequisite before using a Fix now action. DUMB Frontend 1.91.0 · example data. Other versions may look different. <a href="../assets/images/guides/frontend/v1.91.0/tour-2/dependencies.webp">Open the full-size screenshot</a>.</figcaption>
-</figure>
+<!-- docs:visual scenario=dependencies type=video -->
 
 With [Geek Mode](settings.md#geek-mode), the panel also exposes API latency, **Copy JSON**, and raw Mermaid source. Use Details if the browser cannot render Flow.
 
@@ -195,13 +184,7 @@ You can also change the line limit. Service-aware parsing retains application ti
 
 DUMB applies its sensitive-data redactor to logs viewed or downloaded here. Review a download before sharing it; arbitrary application output can contain values the redactor does not recognize.
 
-<figure class="docs-visual docs-frontend-figure">
-<video class="docs-frontend-video" controls playsinline preload="none" poster="../../assets/images/guides/frontend/v1.91.0/tour-2/service-logs.webp" aria-label="Filter service logs demonstration" aria-describedby="service-logs-demo-caption">
-  <source src="../assets/images/guides/frontend/v1.91.0/tour-2/service-logs.webm" type="video/webm">
-  <p><a href="../assets/images/guides/frontend/v1.91.0/tour-2/service-logs.webm">Download the demonstration</a>, or follow the written steps above.</p>
-</video>
-<figcaption id="service-logs-demo-caption" class="docs-visual-caption">Watch the log filters, refresh interval and Follow tail controls. DUMB Frontend 1.91.0 · example data. Other versions may look different. <a href="../assets/images/guides/frontend/v1.91.0/tour-2/service-logs.webp">Open the full-size screenshot</a>.</figcaption>
-</figure>
+<!-- docs:visual scenario=service-logs type=video -->
 
 ## Embedded UI
 
@@ -212,6 +195,8 @@ DUMB login does not replace the application's own login. Root-relative APIs, ass
 <!-- dev:start -->
 InfiniDysk 2 currently opens at its own root URL. Use the direct local/public address until a validated embedded adapter is advertised; do not substitute a subpath URL into signed playback links.
 <!-- dev:end -->
+
+<!-- docs:visual scenario=embedded-sonarr type=image -->
 
 ### Service workers and browser notifications
 

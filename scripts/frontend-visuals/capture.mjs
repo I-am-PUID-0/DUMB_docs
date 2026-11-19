@@ -1,6 +1,5 @@
 #!/usr/bin/env node
-// Run from the frontend devcontainer, using an isolated tagged frontend build:
-// node capture.mjs --frontend-root /tmp/example/frontend --out /tmp/example/captures
+// Render an immutable packaged Nuxt frontend against isolated example transports.
 import fs from 'node:fs/promises'
 import path from 'node:path'
 import { createRequire } from 'node:module'
@@ -8,43 +7,63 @@ import { spawn } from 'node:child_process'
 import { once } from 'node:events'
 import http from 'node:http'
 import { setTimeout as delay } from 'node:timers/promises'
-import { createFixture, FIXED_TIME, FRONTEND } from './fixture.mjs'
+import { createFixture, FIXED_TIME, EXAMPLE_SONARR_KEY } from './fixture.mjs'
+import { readPlan, scenarioById, unavailableReason, sha256 } from './capture-catalog.mjs'
+import { runScenario, settingsSectionId, CaptureBlocked } from './scenarios.mjs'
+import { createMetricsTrace } from './metrics-trace.mjs'
 
 const options = {}
 for (let i = 2; i < process.argv.length; i += 2) {
   const key = process.argv[i]
-  if (!['--frontend-root', '--out'].includes(key) || !process.argv[i + 1]) {
-    throw new Error('Usage: capture.mjs --frontend-root ISOLATED_FRONTEND --out NEW_OUTPUT_DIRECTORY')
+  if (!['--plan', '--frontend-root', '--out', '--scenarios', '--themes', '--embedded-sonarr-origin'].includes(key)
+    || !process.argv[i + 1] || Object.hasOwn(options, key.slice(2))) {
+    throw new Error('Usage: capture.mjs --plan PLAN.json --frontend-root ISOLATED_FRONTEND --out EMPTY_DIRECTORY [--scenarios id,...] [--themes dark,light] [--embedded-sonarr-origin LOOPBACK_URL]')
   }
   options[key.slice(2)] = process.argv[i + 1]
 }
-if (!options['frontend-root'] || !options.out) throw new Error('Both --frontend-root and --out are required')
+if (!options.plan || !options['frontend-root'] || !options.out) throw new Error('Plan, isolated frontend root and output are required')
+const { plan, planHash } = await readPlan(options.plan)
+const selectedIds = options.scenarios ? options.scenarios.split(',') : plan.scenarios
+const themes = options.themes ? options.themes.split(',') : plan.themes
+if (!selectedIds.length || selectedIds.some(id => !plan.scenarios.includes(id))
+  || !themes.length || themes.some(theme => !plan.themes.includes(theme))) throw new Error('Selections must be a nonempty subset of the reviewed plan')
+let sonarrOrigin
+if (options['embedded-sonarr-origin']) {
+  const url = new URL(options['embedded-sonarr-origin'])
+  if (url.protocol !== 'http:' || !['localhost', '127.0.0.1', '[::1]'].includes(url.hostname)
+    || url.username || url.password || url.search || url.hash) throw new Error('The native Sonarr target must be a credential-free loopback HTTP URL')
+  sonarrOrigin = url.href.replace(/\/$/, '')
+}
 const frontendRoot = await fs.realpath(options['frontend-root'])
 const out = path.resolve(options.out)
 if (out === frontendRoot || out.startsWith(frontendRoot + path.sep)) throw new Error('Capture output must be outside the frontend source directory')
 await fs.mkdir(out, { recursive: true })
-if ((await fs.readdir(out)).length) throw new Error('Use an empty capture output directory; existing files will not be overwritten')
+if ((await fs.readdir(out)).length) throw new Error('Use an empty capture output directory')
 const sourcePackage = JSON.parse(await fs.readFile(path.join(frontendRoot, 'package.json'), 'utf8'))
 const builtPackage = JSON.parse(await fs.readFile(path.join(frontendRoot, '.output/server/package.json'), 'utf8'))
-if (sourcePackage.version !== FRONTEND.version || builtPackage.version !== FRONTEND.version) {
-  throw new Error(`Source and packaged frontend must both be ${FRONTEND.tag}`)
-}
-// Dependencies come from this archive's frozen install, never the active checkout.
+if (sourcePackage.version !== plan.frontend.version || builtPackage.version !== plan.frontend.version) throw new Error('Source and compiled frontend versions must match the immutable plan')
 const requireFrontend = createRequire(path.join(frontendRoot, 'package.json'))
 const { chromium } = requireFrontend('playwright')
-const { WebSocketServer } = requireFrontend('ws')
+const { WebSocketServer, WebSocket } = requireFrontend('ws')
 const viewport = { width: 1280, height: 800 }
 const recordings = new WeakMap()
+const pageDiagnostics = new WeakMap()
 const pacing = { menuOpen: 2500, menuChoice: 1600, result: 2200, ordinary: 1400 }
 const manifest = {
-  schema_version: 1, frontend: FRONTEND, fixed_time: FIXED_TIME, viewport,
-  dataset: 'Reserved example data supplied by an isolated in-memory API and WebSocket fixture.',
-  scope: 'Actual packaged frontend; example responses, no live DUMB services or installations.',
-  source_verification: 'The caller must verify and archive the pinned tag SHA before building. Package and compiled output versions are checked by this runner.',
-  captures: [], errors: [], blocked_requests: [], unexpected_fixture_requests: [],
-  config_requests: [], api_calls: [], websocket_paths: [], complete: false,
+  schema_version: 2, channel: plan.channel, frontend: plan.frontend, backend: plan.backend,
+  captured_at: new Date().toISOString(),
+  plan_sha256: planHash, capture_plan_file_sha256: sha256(await fs.readFile(options.plan)),
+  catalog_sha256: plan.catalog_sha256, dataset_sha256: plan.dataset_sha256, tooling_sha256: plan.tooling_sha256,
+  capability_source_sha256: plan.capability_source_sha256, fixed_time: FIXED_TIME, viewport,
+  themes: plan.themes, selected_scenarios: selectedIds,
+  dataset: 'Public example API/WebSocket responses; system CPU/memory and task-owned process counters are sampled from the capture container.',
+  scope: 'Actual packaged Nuxt application. Example service configuration is isolated; no production DUMB installation or provider account is contacted.',
+  source_verification: 'Caller archives verified immutable commits; source and compiled package versions are checked by this runner.',
+  native_apps: plan.native_apps || [], coverage: [], captures: [],
+  errors: [], blocked_requests: [], unexpected_fixture_requests: [], config_requests: [], api_calls: [], websocket_paths: [],
+  complete: false, coverage_complete: false,
 }
-let fixture, child, browser, childOutput = ''
+let fixture, child, browser, metricsTrace, childOutput = ''
 let stopping
 async function cleanup() {
   if (stopping) return stopping
@@ -56,6 +75,7 @@ async function cleanup() {
       if (!exited) { child.kill('SIGKILL'); await once(child, 'exit') }
     }
     await fixture?.close()
+    await metricsTrace?.close()
   })()
   return stopping
 }
@@ -72,21 +92,22 @@ async function freePort() {
   return port
 }
 
-async function contextFor(origin, video = false) {
+async function contextFor(origin, video = false, theme = 'dark', authenticated = false) {
   const context = await browser.newContext({
     viewport, deviceScaleFactor: 1, timezoneId: 'UTC', locale: 'en-US',
-    colorScheme: 'dark', reducedMotion: 'reduce', serviceWorkers: 'block',
+    colorScheme: theme, reducedMotion: 'reduce', serviceWorkers: 'block',
     ...(video ? { recordVideo: { dir: path.join(out, 'raw'), size: viewport } } : {}),
   })
-  await context.addInitScript(({ fixed, recording }) => {
+  await context.addInitScript(({ fixed, recording, theme, authenticated }) => {
     const NativeDate = Date
     const epoch = NativeDate.parse(fixed)
+    const anchoredAt = performance.now()
     class ExampleDate extends NativeDate {
-      constructor(...values) { super(...(values.length ? values : [epoch])) }
-      static now() { return epoch }
+      constructor(...values) { super(...(values.length ? values : [Math.floor(epoch + performance.now() - anchoredAt)])) }
+      static now() { return Math.floor(epoch + performance.now() - anchoredAt) }
     }
     globalThis.Date = ExampleDate
-    try { localStorage.setItem('dmbdb.appearance.theme', 'dark') } catch { /* Initial blank documents have no storage origin. */ }
+    try { localStorage.setItem('dmbdb.appearance.theme', theme); if (authenticated) localStorage.setItem('dumb_access_token', 'example-capture-token') } catch { /* Initial blank documents have no storage origin. */ }
     if (recording) {
       const mount = () => {
         const pointer = document.createElement('div')
@@ -121,22 +142,31 @@ async function contextFor(origin, video = false) {
       if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', mount, { once: true })
       else mount()
     }
-  }, { fixed: FIXED_TIME, recording: video })
+  }, { fixed: FIXED_TIME, recording: video, theme, authenticated })
   const contributorUrls = new Set([
     'https://api.github.com/repos/I-am-PUID-0/DUMB/contributors',
     'https://api.github.com/repos/nicocapalbo/dmbdb/contributors',
   ])
+  // Keep the real Contributors section populated without fetching identities
+  // or avatar images from GitHub. An empty list gives its content zero height.
+  const exampleContributors = [{
+    id: 100000001,
+    login: 'example-contributor',
+    html_url: 'https://example.com/contributors/example-contributor',
+    avatar_url: new URL('/images/dumb-logo.png', origin).href,
+  }]
   await context.route('**/*', route => {
     const url = route.request().url()
     if (new URL(url).origin === origin) return route.continue()
-    if (contributorUrls.has(url)) return route.fulfill({ status: 200, contentType: 'application/json', body: '[]' })
+    if (contributorUrls.has(url)) return route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify(exampleContributors) })
     manifest.blocked_requests.push({ transport: 'HTTP', url: new URL(url).origin })
     return route.abort()
   })
   if (typeof context.routeWebSocket !== 'function') throw new Error('This capture requires Playwright WebSocket routing support')
   await context.routeWebSocket(/.*/, socket => {
     const url = new URL(socket.url())
-    if (url.host === new URL(origin).host && ['/ws/logs', '/ws/status', '/ws/metrics'].includes(url.pathname)) {
+    if (url.host === new URL(origin).host && (['/ws/logs', '/ws/status', '/ws/metrics'].includes(url.pathname)
+      || sonarrOrigin && /^\/(?:ui\/sonarr|sonarr|signalr)(?:\/|$)/.test(url.pathname))) {
       socket.connectToServer()
     } else {
       manifest.blocked_requests.push({ transport: 'WS', url: url.origin })
@@ -148,10 +178,16 @@ async function contextFor(origin, video = false) {
 
 async function openPage(context, origin, route) {
   const page = await context.newPage()
+  const requests = []
+  pageDiagnostics.set(page, requests)
   page.on('pageerror', error => manifest.errors.push({ scenario: route, message: error.message }))
   page.on('response', response => {
     const url = new URL(response.url())
-    if (url.origin === origin && response.status() >= 400) {
+    if (url.origin === origin) {
+      requests.push({ pathname: url.pathname, status: response.status() })
+      if (requests.length > 100) requests.shift()
+    }
+    if (url.origin === origin && response.status() >= 400 && !fixture?.expectedFailure(url.pathname, response.status())) {
       manifest.errors.push({ pathname: url.pathname, status: response.status() })
     }
   })
@@ -165,7 +201,7 @@ async function openPage(context, origin, route) {
 }
 
 async function serviceReady(page) {
-  await page.getByRole('button', { name: /\bRestart(?:\s+Sonarr)?$/i }).first().waitFor()
+  await page.getByRole('button', { name: /\bRestart(?:\s+.+)?$/i }).first().waitFor()
   await page.getByText('DUMB Config', { exact: true }).first().waitFor()
 }
 async function logsTab(page) {
@@ -211,7 +247,10 @@ async function settingsSection(page, label, id) {
   if (await toggle.getAttribute('aria-expanded') === 'false') await hoverClick(page, toggle)
   const section = page.locator('#settings-section-' + id)
   await section.waitFor()
-  await toggle.scrollIntoViewIfNeeded()
+  // Showing only the already-visible toggle can leave most of the form below
+  // the viewport. Use the application's native scroll container and retain its
+  // real section heading at the top of the capture.
+  await toggle.evaluate(element => element.scrollIntoView({ block: 'start', inline: 'nearest' }))
   return section
 }
 async function dependencyPanel(page, flow = false) {
@@ -234,35 +273,89 @@ async function screenshot(page, file, scenario, steps, theme = 'dark') {
   await page.evaluate(() => globalThis.__docsCapturePointerHidden?.(false))
   manifest.captures.push({ kind: 'image', file, scenario, steps, viewport, theme, route: new URL(page.url()).pathname })
 }
-async function record(origin, { id, route = '/services/Sonarr', theme = 'dark', actions, prepare = serviceReady, run }) {
-  fixture.resetPreferences()
-  const context = await contextFor(origin, true)
+
+const ui = { chapter, focusControl, hoverClick, serviceTool, serviceReady, settingsSection }
+const exists = async relative => fs.stat(path.join(frontendRoot, relative)).then(info => info.isFile()).catch(() => false)
+const settingsSource = await fs.readFile(path.join(frontendRoot, 'pages/settings.vue'), 'utf8')
+async function sourceUnavailable(scenario) {
+  for (const filename of scenario.required_frontend_files || []) {
+    if (!await exists(filename)) return 'The immutable frontend source has no file: ' + filename
+  }
+  const sectionId = scenario.settings_section || settingsSectionId(scenario.id)
+  if (sectionId) {
+    const text = scenario.settings_source && scenario.settings_source !== 'pages/settings.vue'
+      ? await fs.readFile(path.join(frontendRoot, scenario.settings_source), 'utf8').catch(() => '') : settingsSource
+    if (!text.includes('section-id="' + sectionId + '"')) return 'The immutable frontend source has no Settings section: ' + sectionId
+  }
+  return null
+}
+async function captureScenario(origin, scenario, theme, row) {
+  fixture.resetScenario(scenario.profile)
+  const recording = scenario.kinds.includes('video')
+  const authenticated = ['settings-authentication', 'settings-auth-provider'].includes(scenario.id)
+  const context = await contextFor(origin, recording, theme, authenticated)
   let page
   try {
     const started = performance.now()
-    page = await openPage(context, origin, route)
-    const recording = { started, chapters: [] }
-    recordings.set(page, recording)
-    if (prepare) await prepare(page)
-    await delay(1500)
-    await run(page, origin)
-    await screenshot(page, id + '-poster.png', id + '-poster', actions, theme)
-    await delay(pacing.result)
-    const finalRoute = new URL(page.url()).pathname
-    const video = page.video()
-    await context.close()
-    const file = id + '.webm'
-    await video.saveAs(path.join(out, file))
-    manifest.captures.push({ kind: 'video', file, poster: id + '-poster.png', scenario: id, viewport, theme,
-      start_route: route.split('#')[0], route: finalRoute, format: 'webm', actions,
-      chapters: recording.chapters, pointer_emphasis: true,
-      pacing: { tools_menu_ms: pacing.menuOpen, menu_choice_ms: pacing.menuChoice, result_ms: pacing.result } })
-    await video.delete()
+    page = await openPage(context, origin, scenario.route)
+    const chapters = { started, chapters: [] }
+    if (recording) recordings.set(page, chapters)
+    await runScenario({ page, scenario, theme, plan, ui, fixture, prerequisites: { sonarr: Boolean(sonarrOrigin) } })
+    await page.evaluate(() => globalThis.__docsCaptureHighlight?.(null))
+    await delay(recording ? pacing.result : 500)
+    const basename = theme + '/' + scenario.id
+    const actions = [scenario.description, ...chapters.chapters.map(chapter => chapter.label)]
+    await screenshot(page, basename + '.png', scenario.id, actions, theme)
+    row.artifacts.push(basename + '.png')
+    if (recording) {
+      await delay(pacing.result)
+      const route = new URL(page.url()).pathname
+      const video = page.video()
+      await context.close()
+      const file = basename + '.webm'
+      await video.saveAs(path.join(out, file))
+      manifest.captures.push({ file, kind: 'video', scenario: scenario.id, theme, viewport,
+        route, start_route: scenario.route.split('#')[0], poster: basename + '.png', actions,
+        chapters: chapters.chapters, pointer_emphasis: true,
+        pacing: { tools_menu_ms: pacing.menuOpen, menu_choice_ms: pacing.menuChoice, result_ms: pacing.result } })
+      row.artifacts.push(file)
+      await video.delete()
+    }
+    row.status = 'captured'
+  } catch (error) {
+    row.status = 'blocked'
+    row.reason = error.message
+    console.error(JSON.stringify({ scenario: scenario.id, theme, status: 'blocked', reason: error.message }))
+    if (page && !page.isClosed()) {
+      const directory = path.join(out, 'diagnostics')
+      await fs.mkdir(directory, { recursive: true })
+      const diagnostic = { scenario: scenario.id, theme, final_url: page.url(),
+        body_excerpt: await page.locator('body').innerText({ timeout: 3000 }).then(text => text.slice(0, 16000)).catch(() => ''),
+        frames: await Promise.all(page.frames().filter(frame => frame !== page.mainFrame()).map(async frame => ({
+          pathname: new URL(frame.url(), page.url()).pathname,
+          body_excerpt: await frame.locator('body').innerText({ timeout: 1500 }).then(text => text.slice(0, 6000)).catch(() => ''),
+        }))),
+        requests: pageDiagnostics.get(page),
+        reason: error.message, local_only: true }
+      await fs.writeFile(path.join(directory, theme + '-' + scenario.id + '.json'), JSON.stringify(diagnostic, null, 2) + '\n')
+      await page.screenshot({ path: path.join(directory, theme + '-' + scenario.id + '.png'), animations: 'disabled', timeout: 3000 }).catch(() => {})
+    }
+    if (!(error instanceof CaptureBlocked)) manifest.errors.push({ scenario: scenario.id, theme, message: error.message })
   } finally { await context.close().catch(() => {}) }
 }
-
 try {
-  fixture = await createFixture({ WebSocketServer })
+  if (sonarrOrigin) {
+    const response = await fetch(sonarrOrigin + '/api/v3/system/status', { headers: { 'X-Api-Key': EXAMPLE_SONARR_KEY } })
+    if (!response.ok) throw new Error('The isolated Sonarr status could not be verified')
+    const observed = await response.json()
+    const expected = Array.isArray(plan.native_apps) ? plan.native_apps.find(app => app.id === 'sonarr') : plan.native_apps?.sonarr
+    if (!expected?.version || observed.version !== expected.version || observed.appName !== 'Sonarr') throw new Error('The actual isolated Sonarr version differs from the immutable capture plan')
+    manifest.native_app_observations = { sonarr: { application: 'Sonarr', version: observed.version, image: expected.image, verified: true,
+      version_verification: 'Observed from the isolated application API.', image_verification: 'Pinned image attested by the demo-service launcher and capture plan.' } }
+  }
+  metricsTrace = await createMetricsTrace()
+  metricsTrace.watchProcess(process.pid, 'Documentation capture fixture')
+  fixture = await createFixture({ WebSocketServer, WebSocket, plan, metricsTrace, sonarrOrigin })
   const port = await freePort()
   const origin = 'http://127.0.0.1:' + port
   child = spawn(process.execPath, [path.join(frontendRoot, '.output/server/index.mjs')], {
@@ -272,6 +365,7 @@ try {
       DMB_TRAEFIK_URL: fixture.origin, DUMB_TRAEFIK_URL: fixture.origin },
     stdio: ['ignore', 'pipe', 'pipe'],
   })
+  metricsTrace.watchProcess(child.pid, 'DUMB Frontend')
   for (const stream of [child.stdout, child.stderr]) stream.on('data', chunk => { childOutput = (childOutput + chunk).slice(-5000) })
   let ready = false
   for (let attempt = 0; attempt < 150; attempt++) {
@@ -281,183 +375,51 @@ try {
   }
   if (!ready) throw new Error('The isolated frontend did not become ready')
   browser = await chromium.launch({ headless: true })
-  const context = await contextFor(origin)
-  try {
-    const page = await openPage(context, origin, '/')
-    await page.locator('[data-service-name="Sonarr"]').waitFor()
-    await screenshot(page, 'dashboard.png', 'dashboard', ['Review example service states on the dashboard'])
-    await page.goto(origin + '/services/Sonarr', { waitUntil: 'networkidle' })
-    await serviceReady(page)
-    await screenshot(page, 'service-controls.png', 'service-controls', ['Open Sonarr', 'Review status and Start, Stop, Restart controls without changing them'])
-    await logsTab(page)
-    await page.getByPlaceholder('Enter text to filter logs', { exact: true }).fill('Example Series')
-    await screenshot(page, 'service-logs.png', 'service-logs-filter', ['Open Service Logs', 'Filter by Example Series'])
-    await page.goto(origin + '/services/Sonarr', { waitUntil: 'networkidle' })
-    await serviceReady(page)
-    await updatesPanel(page)
-    await page.getByRole('button', { name: /Check for updates\b/i }).click()
-    await page.getByText('4.0.1', { exact: true }).waitFor()
-    await screenshot(page, 'updates.png', 'updates-review', ['Open Updates', 'Check for updates', 'Review the example available version without installing'])
-    await page.goto(origin + '/settings#appearance', { waitUntil: 'networkidle' })
-    const appearance = await settingsSection(page, 'Appearance', 'appearance')
-    await appearance.getByRole('button', { name: 'Light', exact: true }).click()
-    await screenshot(page, 'appearance-settings.png', 'appearance-settings', ['Open Settings', 'Expand Appearance', 'Select Light'], 'light')
-    await appearance.getByRole('button', { name: 'Dark', exact: true }).click()
-
-    // The remaining stills show read-only views, not completed operations.
-    await page.goto(origin + '/metrics', { waitUntil: 'networkidle' })
-    await page.getByRole('heading', { name: 'Metrics', exact: true }).waitFor()
-    await page.getByText('12.4%', { exact: true }).first().waitFor()
-    await delay(1000)
-    await screenshot(page, 'metrics.png', 'metrics', ['Open Metrics', 'Review example CPU, memory, disk and history measurements'])
-
-    await page.goto(origin + '/settings#embedded-uis', { waitUntil: 'networkidle' })
-    const embedded = await settingsSection(page, 'Embedded UIs', 'embedded-uis')
-    await embedded.getByLabel('Enable embedded service iFrames', { exact: true }).waitFor()
-    await screenshot(page, 'embedded-ui-settings.png', 'embedded-ui-settings', ['Open Settings', 'Find Embedded UIs', 'Review the disabled embedded-service setting without changing it'])
-
-    await page.goto(origin + '/settings#about', { waitUntil: 'networkidle' })
-    const about = await settingsSection(page, 'About', 'about')
-    await about.getByText('v1.91.0', { exact: true }).waitFor()
-    await screenshot(page, 'about.png', 'about', ['Open Settings', 'Find About', 'Compare the separate example DUMB and frontend version rows'])
-
-    await page.goto(origin + '/', { waitUntil: 'networkidle' })
-    const sidebarTools = page.getByRole('button', { name: /Sidebar tools/ }).first()
-    const showDisabled = page.getByText('Show Disabled', { exact: true }).locator('..').locator('input[type=checkbox]')
-    if (!await showDisabled.isVisible()) await sidebarTools.click()
-    await showDisabled.check()
-    const serviceFilter = page.getByPlaceholder('Filter services...', { exact: true })
-    await serviceFilter.fill('Tautulli')
-    await page.getByText('Tautulli', { exact: true }).first().waitFor()
-    await screenshot(page, 'disabled-services.png', 'disabled-services', ['Open Sidebar tools', 'Enable Show Disabled', 'Filter the sidebar to the disabled example Tautulli service; no service state is changed'])
-    await serviceFilter.clear()
-    await showDisabled.uncheck()
-    await sidebarTools.click()
-  } finally { await context.close() }
-
-  fixture.resetChecks()
-  await record(origin, {
-    id: 'service-logs',
-    actions: ['Open Service Logs', 'Filter by Example Series', 'Review Warning and All levels', 'Choose Every 5s, then Off', 'Disable Follow tail'],
-    run: async page => {
-      chapter(page, 'Open Service Logs')
-      await hoverClick(page, page.getByText('Service Logs', { exact: true }).first())
-      const filter = page.getByPlaceholder('Enter text to filter logs', { exact: true })
-      await filter.waitFor()
-      chapter(page, 'Filter the displayed lines')
-      await hoverClick(page, filter)
-      await filter.pressSequentially('Example Series', { delay: 100 })
-      await delay(pacing.result)
-      const levels = page.locator('select').filter({ has: page.locator('option[value="WARNING"]') }).first()
-      chapter(page, 'Review a log level')
-      await focusControl(page, levels)
-      await levels.selectOption('WARNING')
-      await delay(pacing.result)
-      await levels.selectOption('')
-      await delay(pacing.result)
-      const refresh = page.locator('select').filter({ has: page.locator('option[value="5000"]') }).first()
-      chapter(page, 'Pause automatic refresh')
-      await focusControl(page, refresh)
-      await refresh.selectOption('5000')
-      await delay(pacing.result)
-      await refresh.selectOption('0')
-      await delay(pacing.result)
-      const follow = page.getByLabel('Follow tail', { exact: true })
-      await focusControl(page, follow)
-      await follow.uncheck()
-      await page.evaluate(() => globalThis.__docsCaptureHighlight?.(null))
-      await delay(pacing.result)
-    },
-  })
-  fixture.resetChecks()
-  await record(origin, {
-    id: 'updates-check',
-    actions: ['Open Service tools', 'Choose Updates', 'Check for updates', 'Review example version 4.0.1 without installing it'],
-    run: async page => {
-      await updatesPanel(page)
-      chapter(page, 'Check the example update status')
-      await hoverClick(page, page.getByRole('button', { name: /Check for updates\b/i }))
-      await page.getByText('4.0.1', { exact: true }).waitFor()
-      chapter(page, 'Review the available version; do not install')
-      await focusControl(page, page.getByText('4.0.1', { exact: true }), pacing.result)
-    },
-  })
-  await record(origin, {
-    id: 'appearance', route: '/settings#appearance', theme: 'light', prepare: null,
-    actions: ['Open Settings', 'Find Appearance', 'Select Light', 'Review the changed appearance'],
-    run: async page => {
-      chapter(page, 'Find Appearance settings')
-      const section = await settingsSection(page, 'Appearance', 'appearance')
-      chapter(page, 'Choose the Light appearance')
-      await hoverClick(page, section.getByRole('button', { name: 'Light', exact: true }))
-      await page.evaluate(() => globalThis.__docsCaptureHighlight?.(null))
-    },
-  })
-  await record(origin, {
-    id: 'dependencies',
-    actions: ['Open Service tools', 'Choose Dependencies', 'Read the example dependency details and startup order', 'Switch to Flow to review the same relationships'],
-    run: async page => {
-      await dependencyPanel(page)
-      chapter(page, 'Read dependencies before the dependent service')
-      await focusControl(page, page.getByText('Startup order:', { exact: true }), pacing.result)
-      chapter(page, 'Switch to the dependency flow')
-      await hoverClick(page, page.getByRole('button', { name: 'Flow', exact: true }))
-      await page.getByTitle('Close Dependency graph panel.', { exact: true }).locator('..').locator('svg').first().waitFor()
-      await delay(pacing.result)
-    },
-  })
-  await record(origin, {
-    id: 'auto-restart',
-    actions: ['Open Service tools', 'Choose Auto-restart', 'Review the global switch and healthcheck guardrails', 'Review the separate Sonarr switch; do not apply or save'],
-    run: async page => {
-      await autoRestartPanel(page)
-      const panel = page.getByRole('heading', { name: 'Auto-restart Settings', exact: true }).locator('../../..')
-      chapter(page, 'Review the global recovery switch')
-      await focusControl(page, panel.getByLabel('Enable auto-restart', { exact: true }), pacing.result)
-      chapter(page, 'Review thresholds and the restart window')
-      await focusControl(page, panel.getByText('Healthcheck threshold', { exact: true }).first(), pacing.result)
-      await focusControl(page, panel.getByText('Max restarts (window)', { exact: true }).first(), pacing.result)
-      chapter(page, 'Review the separate service switch without saving')
-      await focusControl(page, panel.getByLabel('Enable auto-restart for Sonarr', { exact: true }), pacing.result)
-      await page.evaluate(() => globalThis.__docsCaptureHighlight?.(null))
-    },
-  })
-  await record(origin, {
-    id: 'configuration',
-    actions: ['Open Sonarr', 'Review DUMB Config', 'Switch to Service Config', 'Return to DUMB Config', 'Locate Save to File without clicking or editing'],
-    run: async page => {
-      chapter(page, 'Review settings managed by DUMB')
-      await focusControl(page, page.getByText('DUMB Config', { exact: true }).first(), pacing.result)
-      chapter(page, 'Find the application configuration')
-      await hoverClick(page, page.getByText('Service Config', { exact: true }).first())
-      chapter(page, 'Return to DUMB configuration')
-      await hoverClick(page, page.getByText('DUMB Config', { exact: true }).first())
-      chapter(page, 'Locate the save action; leave settings unchanged')
-      await focusControl(page, page.getByRole('button', { name: /Save to File\b/ }).first(), pacing.result)
-      await page.evaluate(() => globalThis.__docsCaptureHighlight?.(null))
-    },
-  })
-  manifest.unexpected_fixture_requests = fixture.state.unexpected
-  manifest.api_calls = fixture.state.calls
-  manifest.websocket_paths = [...new Set(fixture.state.websocketPaths)]
-  manifest.complete = !manifest.errors.length && !manifest.unexpected_fixture_requests.length && !manifest.blocked_requests.length
-  if (!manifest.complete) throw new Error('Capture needs review: unexpected requests or browser errors are recorded in manifest.json')
-  console.log(JSON.stringify({ complete: true, frontend: FRONTEND, captures: manifest.captures.map(row => row.file) }))
+  for (const theme of plan.themes) {
+    await fs.mkdir(path.join(out, theme), { recursive: true })
+    for (const id of plan.scenarios) {
+      const scenario = scenarioById.get(id)
+      const row = { id, theme, status: 'skipped', required: plan.required_scenarios.includes(id), features: scenario.features, artifacts: [] }
+      manifest.coverage.push(row)
+      const unresolved = (scenario.required_capabilities || []).filter(key => plan.unresolved_capabilities?.includes(key))
+      if (unresolved.length) { row.status = 'blocked'; row.reason = 'Backend capability source could not be resolved: ' + unresolved.join(', '); continue }
+      const unavailable = unavailableReason(scenario, plan) || await sourceUnavailable(scenario)
+      if (unavailable) { row.availability = 'unavailable'; row.reason = unavailable; continue }
+      if (!themes.includes(theme) || !selectedIds.includes(id)) { row.reason = 'Not selected in this iteration'; continue }
+      if ((scenario.required_prerequisites || []).includes('sonarr') && !sonarrOrigin) {
+        row.status = 'blocked'; row.reason = 'Actual isolated Sonarr prerequisite is missing; no substitute screen was used'; continue
+      }
+      await captureScenario(origin, scenario, theme, row)
+      console.log(JSON.stringify({ scenario: id, theme, status: row.status, artifacts: row.artifacts }))
+    }
+  }
+  const satisfied = row => row.status === 'captured' || row.availability === 'unavailable'
+  manifest.coverage_complete = manifest.coverage.filter(row => row.required).every(satisfied)
+  manifest.complete = manifest.coverage.filter(row => row.required && themes.includes(row.theme) && selectedIds.includes(row.id)).every(satisfied)
 } catch (error) {
   manifest.errors.push({ scenario: 'runner', message: error.message })
-  manifest.unexpected_fixture_requests = fixture?.state.unexpected || []
-  console.error('Frontend capture failed; inspect manifest.json. No live backend was used.')
   process.exitCode = 1
 } finally {
-  try { await cleanup() } catch (error) {
-    manifest.errors.push({ scenario: 'cleanup', message: error.message })
-    process.exitCode = 1
-  }
+  try { await cleanup() } catch (error) { manifest.errors.push({ scenario: 'cleanup', message: error.message }); process.exitCode = 1 }
   manifest.api_calls = fixture?.state.calls || []
   manifest.config_requests = fixture?.state.configRequests || []
   manifest.websocket_paths = [...new Set(fixture?.state.websocketPaths || [])]
   manifest.unexpected_fixture_requests = fixture?.state.unexpected || []
-  manifest.complete = manifest.complete && !manifest.errors.length
-    && !manifest.unexpected_fixture_requests.length && !manifest.blocked_requests.length
+  manifest.measurements = metricsTrace?.metadata()
+  manifest.simulated_operations = fixture?.state.exampleOperations || []
+  manifest.expected_example_failures = fixture?.state.expectedFailures || []
+  for (const capture of manifest.captures) {
+    const bytes = await fs.readFile(path.join(out, capture.file))
+    capture.bytes = bytes.length
+    capture.sha256 = sha256(bytes)
+  }
+  const transportClean = !manifest.errors.length && !manifest.unexpected_fixture_requests.length && !manifest.blocked_requests.length
+  manifest.complete = manifest.complete && transportClean
+  manifest.coverage_complete = manifest.coverage_complete && transportClean
+  if (!manifest.complete) process.exitCode = 1
   await fs.writeFile(path.join(out, 'manifest.json'), JSON.stringify(manifest, null, 2) + '\n')
+  console.log(JSON.stringify({ complete: manifest.complete, coverage_complete: manifest.coverage_complete,
+    channel: plan.channel, captured: manifest.coverage.filter(row => row.status === 'captured').length,
+    skipped: manifest.coverage.filter(row => row.status === 'skipped').length,
+    blocked: manifest.coverage.filter(row => row.status === 'blocked').length }))
 }

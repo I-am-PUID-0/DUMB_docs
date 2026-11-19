@@ -1,0 +1,3 @@
+# Generated caption/chapter cues and their transcript use blank record separators.
+docs/assets/images/guides/showcase/channels/**/*.vtt whitespace=-blank-at-eof
+docs/assets/images/guides/showcase/channels/**/transcript.txt whitespace=-blank-at-eof

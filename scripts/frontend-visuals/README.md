@@ -1,25 +1,57 @@
-# Capture the released DUMB frontend
+# Capture the actual DUMB frontend
 
-These scripts photograph and record the actual packaged dmbdb frontend. A
-loopback fixture supplies public example data; no DUMB backend, provider account,
-media library or installation is contacted. The current baseline is frontend
-`v1.91.0`, commit `66c90b93ea35abe546c07cbf643dc00a184bbd7f`.
+The capture runner renders the full packaged Nuxt application. It does not
+recreate screens in HTML or replace application components. An isolated,
+in-memory HTTP/WebSocket fixture supplies public example responses. The embedded
+Sonarr example uses the actual application from the pinned official image.
 
-## Build an isolated source archive
+[Capture catalog](./capture-catalog.json) lists screens, routes, feature guides,
+required source files and backend capability gates.
+[Example data](./dataset.json) contains no operator configuration or credentials.
+[Automation](./AUTOMATION.md) explains source discovery, refresh PRs and publishing.
 
-Use the frontend's development container as its normal development user. Keep
-the active checkout, controllers, `.nuxt`, `.output`, dependencies and staged
-work untouched. Verify the published release tag resolves to the full commit
-above before building; the capture runner checks package versions but does not
-independently verify the remote tag.
+## Source and coverage contract
 
-Make this scripts directory available inside that container, then archive the
-verified source into a new task directory. For example, from the frontend checkout:
+Each run requires an immutable plan containing independent frontend and backend
+repository, commit, version and release/development identities. Release examples
+use released sources. Development examples use committed development sources;
+they are never relabeled as a release or an uncommitted working tree. Media
+source pins are separate from prose review pins in the documentation builder.
+
+The runner checks source and compiled package versions, validates the canonical
+plan hash and catalog/data hashes, and records the plan fingerprints.
+The caller must verify source refs and archive their exact commits before
+building. Use each project's development container and declared Node/pnpm
+versions. Keep active checkouts, controllers, generated outputs, dependencies
+and staged work untouched.
+
+The catalog covers the dashboard, individual/global logs, service controls,
+configuration, updates, dependencies, recovery settings, Metrics, every Settings
+section, sign-in/account setup, AI provider forms, all onboarding stages, retained
+connection tasks and actual embedded Sonarr. Source-supported differences are
+discovered from the selected archive and verified backend capabilities. The
+empty `pages/home.vue` artifact is excluded: it contains no user-facing feature.
+
+Coverage distinguishes:
+
+- **Captured:** the actual packaged screen rendered and produced expected files.
+- **Unavailable:** the immutable frontend lacks the route/section, or its verified
+  backend does not advertise the required capability/protocol.
+- **Blocked:** a selector, example API contract, prerequisite or browser request
+  failed. A blocked required screen prevents publication.
+
+A selected-scenario probe can complete while full planned coverage remains
+incomplete. Automation requires the full required scenario/theme matrix.
+
+## Build an isolated frontend
+
+Archive the plan's verified frontend commit into a fresh task directory. Do not
+copy an operator `.env` file or reuse active checkout builds/dependencies.
 
 ```bash
 capture_root=$(mktemp -d /tmp/dumb-docs-media.XXXXXX)
 mkdir "$capture_root/frontend"
-git archive --format=tar 66c90b93ea35abe546c07cbf643dc00a184bbd7f |
+git archive --format=tar "$frontend_commit" |
   tar -xf - -C "$capture_root/frontend"
 cd "$capture_root/frontend"
 corepack pnpm install --frozen-lockfile --store-dir "$capture_root/pnpm-store"
@@ -29,138 +61,94 @@ env -i PATH="$PATH" NODE_ENV=production CI=1 COREPACK_ENABLE_DOWNLOAD_PROMPT=0 \
   corepack pnpm build
 ```
 
-Use the archive's declared Node and package-manager versions. If Corepack is not
-available, invoke that exact pnpm version directly. Do not reuse the active
-checkout's dependencies, copy `.env` files, or run its devcontainer setup command.
-The isolated build must produce `.output/server/index.mjs` and package version
-`1.91.0`.
+Use the immutable backend source to generate the plan with the refresh helper;
+do not execute a live backend to obtain configuration or customer data.
 
 ## Capture and review
 
-With `runner_dir` set to the location of these scripts inside the container:
+Make this directory available in the frontend container. The pinned Sonarr demo
+launcher supplies a temporary empty library on loopback; retain its public image
+digest and observed version in the plan. Its runtime origin is an argument only
+and is omitted from published manifests.
 
 ```bash
 node "$runner_dir/capture.mjs" \
+  --plan "$capture_root/plan.json" \
   --frontend-root "$capture_root/frontend" \
-  --out "$capture_root/captures"
+  --out "$capture_root/captures" \
+  --embedded-sonarr-origin http://127.0.0.1:18989/sonarr
 ```
 
-The runner loads Playwright and `ws` from the isolated frozen install and starts
-only its own frontend and fixture on random loopback ports. It explicitly sets
-both `DMB_` and `DUMB_` API/Traefik targets in a minimal child environment. The
-browser uses a fresh profile, a fixed example clock, a 1280×800 viewport and
-local assets. Unplanned API operations, external traffic, HTTP errors and browser
-errors make the manifest incomplete. Supported UI preference saves affect only
-the in-memory fixture. Cleanup closes its browser and servers, then waits for its
-own frontend child to exit.
+For a small iteration, add selections such as:
 
-The recordings add a visible pointer, a yellow outline around the next control
-and a short click pulse. These recording-only cues identify existing controls;
-they do not add application controls or change the frontend. Tools menus remain
-open for 2.5 seconds, the next menu choice is highlighted for 1.6 seconds before
-selection, and results remain visible for at least 2.2 seconds. The manifest
-records chapter labels, timing and pacing. Still images omit these cues.
+```bash
+--scenarios dashboard,metrics,onboarding-review,embedded-sonarr --themes dark
+```
 
-Review every still and all six complete WebM recordings before packaging. Confirm
-the controls and text are readable, filters and version checks behave as shown,
-and no private identifiers or unrelated application content appear. The
-walkthroughs filter/pause logs, check/review an update, switch appearance, and
-review dependencies, configuration and auto-restart guardrails. The latter three
-leave configuration and service state unchanged. No walkthrough installs an
-update. Example progress is not evidence of a completed real operation.
+The browser has a fresh profile, a fixed starting calendar time that advances
+normally, a 1280×800 viewport and actual light/dark application themes. Both
+`DMB_` and `DUMB_` API/Traefik targets point only to the task fixture. Unknown API
+operations, malformed requests, external traffic, unplanned HTTP errors and
+browser errors make the manifest incomplete.
 
-## Package the approved captures
+Allowed writes are restricted to harmless in-memory UI preferences, an example
+update check, setup-plan reads, and scoped in-memory onboarding simulations.
+No application installation, update, service control, acquisition, provider
+call, migration or real backup is performed. Simulated progress, result and error
+views are labeled examples and are not operational validation. Review shows
+selected apps, supporting dependencies, an example existing external app, and
+remaining unverified connection tasks.
 
-ImageMagick `convert` needs WebP support. Run:
+Metrics uses numeric CPU, memory and task-owned process counters sampled inside
+the capture container. It does not inspect operator process command lines,
+addresses or identifiers. Other service identities and API fields remain public
+examples. Primary Metrics captures turn History off through the real control;
+seconds of measurements are never stretched into hours of invented history.
+
+Recording-only pointer, highlight and click cues identify existing controls.
+Tools menus remain open for 2.5 seconds, choices are highlighted for 1.6 seconds,
+and results remain visible for at least 2.2 seconds. Still navigation uses shorter
+waits, and still images omit the cues. The manifest records chapters and pacing.
+
+Review all frames and complete videos. Check readable text, actual action
+results, expected light/dark appearance, representative coverage and absence of
+private identifiers. Local failure evidence is written under `diagnostics/`
+(final route, page/frame text, recent request paths and screenshots); it is never
+included in the package. Cleanup closes only the runner's browser, frontend
+child, fixture and measurement sampler.
+
+Run focused transport/provenance regressions before an expensive capture:
+
+```bash
+node --test "$runner_dir/capture.test.mjs"
+```
+
+## Package approved captures
+
+ImageMagick `convert` needs WebP support. Package only a reviewed capture set:
 
 ```bash
 node "$runner_dir/package.mjs" \
+  --plan "$capture_root/plan.json" \
   --captures "$capture_root/captures" \
   --out "$capture_root/packaged"
 ```
 
-Packaging rejects incomplete/error-bearing manifests and mismatched source
-identity. It converts twelve selected PNG frames to quality-90 WebP without
-resizing, checks the resulting dimensions, and copies the original short WebMs:
+A local-only probe can use `--scope partial`; its incomplete coverage flag remains
+in the package and prevents automatic publication. The packager validates source
+identity, planned coverage, raw inventory and recorded file hashes. It converts
+PNGs to quality-90 WebP without resizing and copies original WebMs.
 
-| Output | Captured source |
-| --- | --- |
-| `dashboard.webp` | `dashboard.png` |
-| `service-controls.webp` | `service-controls.png` |
-| `service-logs.webp` | `service-logs-poster.png` |
-| `updates.webp` | `updates-check-poster.png` |
-| `appearance.webp` | `appearance-poster.png` |
-| `metrics.webp` | `metrics.png` |
-| `embedded-ui-settings.webp` | `embedded-ui-settings.png` |
-| `disabled-services.webp` | `disabled-services.png` |
-| `about.webp` | `about.png` |
-| `configuration.webp` | `configuration-poster.png` |
-| `dependencies.webp` | `dependencies-poster.png` |
-| `auto-restart.webp` | `auto-restart-poster.png` |
-| `service-logs.webm` | `service-logs.webm` |
-| `updates.webm` | `updates-check.webm` |
-| `appearance.webm` | `appearance.webm` |
-| `configuration.webm` | `configuration.webm` |
-| `dependencies.webm` | `dependencies.webm` |
-| `auto-restart.webm` | `auto-restart.webm` |
+Schema-2 files use `dark/<scenario>.webp` and `light/<scenario>.webp`, with matching
+WebM names/posters where the catalog calls for a recording. The package manifest
+records actual capture time, source identities, native application attestation,
+measurement provenance, example-operation scope, routes/actions, coverage,
+dimensions, byte sizes and SHA-256 hashes. It never contains the runtime Sonarr
+origin or operator credentials.
 
-The Metrics view contains synthetic system/history measurements. The disabled
-services image shows the sidebar's **Show Disabled** option and a filtered
-example Tautulli entry; it does not enable that service. Embedded UI settings are
-shown without enabling or embedding another application. About shows independent
-DUMB and frontend versions. Newer setup, migration and backup flows are outside
-this released frontend capture set.
-
-The clean package manifest records the frontend repository/tag/full commit,
-example-data scope, viewport, theme, route, actions, byte size and SHA-256 for
-each file. Runtime duration inspection and any deliberate video trimming remain
-separate review steps; rerun packaging from the reviewed capture set after a
-change so hashes describe the actual published bytes.
-
-After review, copy the package to
-`docs/assets/images/guides/frontend/v1.91.0/tour-2/`. Keep the earlier media paths
-unchanged so updated walkthroughs have a distinct URL. Use the stills as video posters and
-show native playback controls; avoid autoplay. Captions should identify the
-released frontend version and example responses. Keep the raw captures until
-review and publication are complete, then clean only the task-owned directory.
-
-## Build the homepage overview
-
-`overview-scenes.json` defines the caption text, chapter order and timing of the
-114-second visual tour. Its application scenes use the reviewed capture package
-at normal speed. Introductory cards explain the workflow and deployment choices;
-they are illustrations rather than application screens.
-
-The frontend container also needs FFmpeg with `ffprobe` and the `libx264`
-encoder, plus ImageMagick WebP support. Run the composer against the reviewed
-package and the existing public DUMB logo:
-
-```bash
-node "$runner_dir/overview.mjs" \
-  --frontend-root "$capture_root/frontend" \
-  --media "$capture_root/packaged" \
-  --logo "$capture_root/logo.png" \
-  --out "$capture_root/overview"
-```
-
-Review every chapter and the transitions. Check that menus and selected actions
-stay readable, the captions match the visible actions, and essential controls
-are not cropped. The composer verifies the input hashes and records the actual
-clip ranges. It emits a silent H.264 MP4 with captions in the picture, an image
-poster, optional English captions and chapter tracks, and a provenance manifest.
-It checks duration, dimensions, absence of audio, the 25 MB size limit and the
-MP4's fast-start layout. See the [FFmpeg MP4 documentation](https://ffmpeg.org/ffmpeg-formats.html#mov_002c-mp4_002c-ismv)
-for the encoding container.
-
-Publish only `dumb-overview.mp4`, `poster.webp`, `captions.vtt`, `chapters.vtt` and
-`manifest.json` under a new `docs/assets/images/guides/overview/<revision>/`
-directory. Keep the raw recording out of Git. Update the homepage transcript,
-chapter times and video metadata together when scenes change. The SEO audit
-checks the homepage's `VideoObject` against its real source, poster and anchor.
-
-The stable sharing link is `https://dumbarr.com/#overview`. A repository README
-can link a poster to that page, while the homepage can move to a later revision:
-
-```markdown
-[![Watch the captioned DUMB overview](https://dumbarr.com/assets/images/guides/overview/v1/poster.webp)](https://dumbarr.com/#overview)
-```
+Automation stages versioned packages below
+`docs/assets/images/guides/frontend/channels/<channel>/<backend-sha12>-<frontend-sha12>/`.
+It updates the shared media catalog in a reviewed PR. Use native playback
+controls and posters rather than autoplay. Keep raw captures through visual
+review and publication, then clean only task-owned directories. Earlier
+schema-1 packages remain readable for reproducing original released media.

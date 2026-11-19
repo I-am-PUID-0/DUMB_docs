@@ -5,6 +5,7 @@ import path from 'node:path'
 import { createHash } from 'node:crypto'
 import { spawnSync } from 'node:child_process'
 import { FRONTEND } from './fixture.mjs'
+import { readPlan, scenarioById } from './capture-catalog.mjs'
 
 const viewport = { width: 1280, height: 800 }
 const specifications = [
@@ -33,7 +34,7 @@ function parseArguments() {
   const args = {}
   for (let index = 2; index < process.argv.length; index += 2) {
     const name = process.argv[index]
-    if (!['--captures', '--out'].includes(name) || !process.argv[index + 1] || Object.hasOwn(args, name)) {
+    if (!['--captures', '--out', '--plan', '--scope'].includes(name) || !process.argv[index + 1] || Object.hasOwn(args, name)) {
       throw new Error('Usage: package.mjs --captures CAPTURE_DIRECTORY --out NEW_OUTPUT_DIRECTORY')
     }
     args[name] = process.argv[index + 1]
@@ -77,7 +78,7 @@ function convertImage(input, output) {
   }
 }
 
-async function main() {
+async function legacyMain() {
   const args = parseArguments()
   const captures = await fs.realpath(args['--captures'])
   const out = path.resolve(args['--out'])
@@ -157,6 +158,112 @@ async function main() {
   }
   await fs.writeFile(path.join(out, 'manifest.json'), JSON.stringify(packaged, null, 2) + '\n', { flag: 'wx' })
   console.log(JSON.stringify({ complete: true, frontend: FRONTEND, files: packaged.files.map(row => ({ file: row.file, bytes: row.bytes, sha256: row.sha256 })) }))
+}
+
+
+async function packagePlannedCaptures() {
+  const args = parseArguments()
+  if (!args['--plan']) throw new Error('Schema-2 captures require --plan for immutable source and coverage verification')
+  const { plan } = await readPlan(args['--plan'])
+  const captures = await fs.realpath(args['--captures'])
+  const out = path.resolve(args['--out'])
+  if (out === captures || out.startsWith(captures + path.sep) || captures.startsWith(out + path.sep)) throw new Error('Package output must be separate from raw captures')
+  const rawManifest = await regularFile(path.join(captures, 'manifest.json'))
+  const manifest = JSON.parse(rawManifest)
+  if (manifest.schema_version !== 2 || manifest.complete !== true) throw new Error('Only completed schema-2 captures can be packaged')
+  for (const key of ['errors', 'blocked_requests', 'unexpected_fixture_requests']) {
+    if (!Array.isArray(manifest[key]) || manifest[key].length) throw new Error('Capture contains missing or unresolved ' + key)
+  }
+  for (const key of ['channel', 'plan_sha256', 'catalog_sha256', 'dataset_sha256', 'tooling_sha256', 'capability_source_sha256']) {
+    if (manifest[key] !== plan[key]) throw new Error('Capture plan identity mismatch: ' + key)
+  }
+  for (const key of ['frontend', 'backend']) {
+    if (JSON.stringify(manifest[key]) !== JSON.stringify(plan[key])) throw new Error('Capture source identity mismatch: ' + key)
+  }
+  if (manifest.viewport?.width !== viewport.width || manifest.viewport?.height !== viewport.height) throw new Error('Unexpected capture viewport')
+  if (!Array.isArray(manifest.coverage) || !Array.isArray(manifest.captures)) throw new Error('Capture needs explicit scenario coverage and artifact inventory')
+  const partial = args['--scope'] === 'partial'
+  if (args['--scope'] && !['partial', 'complete'].includes(args['--scope'])) throw new Error('Scope is complete or partial')
+  if (!partial && manifest.coverage_complete !== true) throw new Error('Full planned coverage is required; use --scope partial only for local review')
+  for (const id of plan.required_scenarios) {
+    for (const theme of plan.themes) {
+      const rows = manifest.coverage.filter(row => row.id === id && row.theme === theme)
+      if (rows.length !== 1) throw new Error('Missing or ambiguous scenario coverage: ' + id + '/' + theme)
+      if (!partial && rows[0].status !== 'captured' && rows[0].availability !== 'unavailable') throw new Error('Required scenario was not captured: ' + id + '/' + theme)
+    }
+  }
+  const claimed = new Map()
+  for (const row of manifest.coverage.filter(row => row.status === 'captured')) {
+    if (!scenarioById.has(row.id) || !plan.scenarios.includes(row.id) || !plan.themes.includes(row.theme)
+      || !Array.isArray(row.artifacts)) throw new Error('Invalid captured scenario coverage')
+    const expected = scenarioById.get(row.id).kinds.map(kind => row.theme + '/' + row.id + (kind === 'image' ? '.png' : '.webm'))
+    if (JSON.stringify([...row.artifacts].sort()) !== JSON.stringify(expected.sort())) throw new Error('Scenario artifact inventory is incomplete: ' + row.id)
+    for (const filename of row.artifacts) {
+      if (claimed.has(filename)) throw new Error('A capture artifact is claimed twice')
+      claimed.set(filename, row)
+    }
+  }
+  if (!claimed.size || claimed.size !== manifest.captures.length) throw new Error('Capture artifacts and coverage do not agree')
+  const inputs = []
+  for (const row of manifest.captures) {
+    const coverage = claimed.get(row.file)
+    if (!coverage || !/^(dark|light)\/[a-z][a-z0-9-]*\.(png|webm)$/.test(row.file)
+      || row.scenario !== coverage.id || row.theme !== coverage.theme
+      || !['image', 'video'].includes(row.kind)) throw new Error('Invalid artifact identity')
+    if (row.viewport?.width !== viewport.width || row.viewport?.height !== viewport.height) throw new Error('Artifact viewport mismatch')
+    const actions = row.actions || row.steps
+    if (!Array.isArray(actions) || !actions.length || actions.some(value => typeof value !== 'string')) throw new Error('Missing artifact actions')
+    if (typeof row.route !== 'string' || !row.route.startsWith('/') || row.route.startsWith('//') || /[?#]/.test(row.route)) throw new Error('Invalid captured route')
+    const filename = path.join(captures, row.file)
+    const bytes = await regularFile(filename)
+    if (row.sha256 !== sha256(bytes) || row.bytes !== bytes.length) throw new Error('Capture bytes changed after the runner recorded them')
+    if (row.kind === 'image') {
+      const dimensions = pngDimensions(bytes)
+      if (dimensions.width !== viewport.width || dimensions.height !== viewport.height || !row.file.endsWith('.png')) throw new Error('Invalid captured PNG')
+    } else if (!row.file.endsWith('.webm') || !bytes.subarray(0, 4).equals(Buffer.from([0x1a, 0x45, 0xdf, 0xa3]))) throw new Error('Invalid captured WebM')
+    inputs.push({ row, actions, filename, bytes, output: row.file.replace(/\.png$/, '.webp') })
+  }
+  try {
+    const info = await fs.lstat(out)
+    if (!info.isDirectory() || info.isSymbolicLink() || (await fs.readdir(out)).length) throw new Error('Use a new or empty output directory')
+  } catch (error) {
+    if (error.code !== 'ENOENT') throw error
+    await fs.mkdir(out, { recursive: true })
+  }
+  const packaged = {
+    schema_version: 2, channel: plan.channel, frontend: plan.frontend, backend: plan.backend,
+    plan_sha256: plan.plan_sha256, catalog_sha256: plan.catalog_sha256, dataset_sha256: plan.dataset_sha256,
+    tooling_sha256: plan.tooling_sha256, capability_source_sha256: plan.capability_source_sha256,
+    complete: true, coverage_complete: manifest.coverage_complete === true, scope: manifest.scope,
+    captured_at: manifest.captured_at,
+    dataset: manifest.dataset, fixed_time: manifest.fixed_time, viewport, themes: plan.themes,
+    native_apps: manifest.native_apps, native_app_observations: manifest.native_app_observations, measurements: manifest.measurements,
+    capture_manifest_sha256: sha256(rawManifest),
+    simulated_operations: manifest.simulated_operations || [],
+    coverage: manifest.coverage.map(row => ({ ...row, artifacts: row.artifacts.map(filename => filename.replace(/\.png$/, '.webp')) })),
+    files: [],
+  }
+  for (const { row, actions, filename, bytes, output } of inputs) {
+    const destination = path.join(out, output)
+    await fs.mkdir(path.dirname(destination), { recursive: true })
+    if (row.kind === 'image') convertImage(filename, destination)
+    else await fs.writeFile(destination, bytes, { flag: 'wx' })
+    const result = await regularFile(destination)
+    packaged.files.push({
+      path: output, sha256: sha256(result), bytes: result.length, kind: row.kind,
+      media_type: row.kind === 'image' ? 'image/webp' : 'video/webm',
+      scenario: row.scenario, theme: row.theme, viewport, route: row.route, actions,
+      ...(row.kind === 'image' ? { quality: 90 } : { poster: row.poster.replace(/\.png$/, '.webp'), chapters: row.chapters, pointer_emphasis: row.pointer_emphasis, pacing: row.pacing }),
+    })
+  }
+  await fs.writeFile(path.join(out, 'manifest.json'), JSON.stringify(packaged, null, 2) + '\n', { flag: 'wx' })
+  console.log(JSON.stringify({ complete: true, coverage_complete: packaged.coverage_complete, channel: plan.channel, files: packaged.files.map(row => row.path) }))
+}
+async function main() {
+  const args = parseArguments()
+  const raw = JSON.parse(await regularFile(path.join(await fs.realpath(args['--captures']), 'manifest.json')))
+  if (raw.schema_version === 2) return packagePlannedCaptures()
+  return legacyMain()
 }
 
 try { await main() } catch (error) {

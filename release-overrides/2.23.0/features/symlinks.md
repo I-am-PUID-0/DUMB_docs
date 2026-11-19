@@ -29,6 +29,8 @@ Start with a dry run, inspect its scope, and keep a snapshot before applying cha
 5. Keep automatic backup enabled. Accept the acknowledgement and select **Apply repair** only for the reviewed change. Wait for the job's final result.
 6. Check a few repaired files in the relevant application's library and test playback. If results are wrong, stop and use the recorded backup manifest to restore before making another change.
 
+<!-- docs:visual scenario=symlink-tools type=image -->
+
 ```mermaid
 flowchart LR
     Open[Open service Symlinks] --> Choose[Choose playbook and affected roots]

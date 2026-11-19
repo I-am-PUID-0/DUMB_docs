@@ -63,6 +63,8 @@ The manual catalog groups services by role, with alphabetical expandable categor
 Review **Chosen by you**, **Required dependency**, and **Optional companion** separately. The historical Core/Optional catalog names do not make every core service mandatory.
 <!-- dev:end -->
 
+<!-- docs:visual scenario=onboarding-services type=image -->
+
 ### Step 2: Preflight checks
 
 The wizard checks whether DUMB can continue setup and shows any problems it finds. Read each result, correct blocking errors, then run the check again before continuing.
@@ -71,14 +73,18 @@ The wizard checks whether DUMB can continue setup and shows any problems it find
 Resolve blocking failures before continuing. A passed API response does not independently prove that a configured storage path is mounted or usable by another application.
 <!-- release:end -->
 <!-- dev:start -->
-Health, capability, and catalog failures block the next step. Storage-path inventory and embedded UI checks are advisory. Unknown storage, remote timeout, or consumer-namespace results stay **Not verified** rather than being reported as passed. Correct confirmed critical failures before starting.
+A readiness check blocks progress only when DUMB confirms a critical failure. **Not verified** and deferred checks are still unresolved; read their explanations and finish the relevant checks when the apps or connections are ready. They are not failed checks or evidence that storage works. Correct confirmed critical failures and re-run the preview before starting.
 <!-- dev:end -->
+
+<!-- docs:visual scenario=onboarding-preflight type=image -->
 
 ### Step 3: Configure provider credentials
 
 Enter the credentials requested by the selected workflow. Debrid API keys are available from the provider's account page. DUMB maps supported inputs into the selected services' configuration.
 
 An NNTP provider account and an NZB indexer account serve different purposes; supplying one does not configure the other.
+
+<!-- docs:visual scenario=onboarding-provider type=image -->
 
 ### Step 4: Choose companion services
 
@@ -91,6 +97,8 @@ Authelia appears only when the backend supports its managed integration. A newer
 | mediastorm | Use its [initial credential flow](../services/optional/mediastorm.md#initial-setup) and replace the bootstrap password |
 | AIOStreams | Set a stable public HTTPS base URL for remote clients and create its dashboard login |
 | Authelia / TPA / Cloudflared | Review public origins, DNS, and authentication routes separately from embedded UI access |
+
+<!-- docs:visual scenario=onboarding-companions type=image -->
 
 ### Step 5: Service-specific options
 
@@ -107,6 +115,8 @@ Choosing generation 2 opens its guarded installation/migration tool without acce
 
 ### Installation choices
 
+<!-- docs:visual scenario=onboarding-installation type=image -->
+
 Review the choices needed to install the selected apps, such as the InfiniDysk
 runtime and mount mode. App connections, quality profiles and libraries can be
 finished after the apps start, when their actual settings are available.
@@ -122,28 +132,32 @@ run identifier and walkthrough position/preferences, not passwords or unfinished
 credential drafts.
 <!-- dev:end -->
 
+<!-- docs:visual scenario=onboarding-options type=image -->
+
 ### Embedded service access
 
 Enable embedded UIs when offered to use proxied service tabs, split view, and direct links. This does not publish public DNS or configure an external HTTPS origin.
+
+<!-- docs:visual scenario=onboarding-embedded-uis type=image -->
 
 ### Review configuration
 
 Review selected services, dependencies, credentials, instance paths, and custom options before applying. Confirmation can install, configure, and start services.
 
-<!-- dev:start -->
-**Review your setup** summarizes the selected apps and their purposes.
-Supporting services are listed separately in a collapsed section. **What happens
-when you start** explains installation, configuration and the retained checklist;
-**Finish after the apps start** separates required connection tasks from optional
-checks.
+<!-- docs:visual scenario=onboarding-review type=image -->
 
-Review the visible blocking problems before continuing. Detailed checks, saved
-connection choices and the masked configuration payload are available in
-collapsed sections. You can return to the earlier choices without losing
+<!-- dev:start -->
+**The apps you chose** lists your selected apps and what each one does. Open **Supporting services DUMB will manage** to distinguish required dependencies from optional companions. **Apps you already run elsewhere** are connection targets; DUMB does not install them.
+
+**What happens when you start** explains installation, saved choices and the optional walkthrough. **Finish after the apps start** separates required connection tasks from optional work. Those tasks remain on the checklist when you start the apps first.
+
+Review any confirmed critical failure before continuing. An unknown or deferred check does not block starting by itself, and it does not count as a passed connection check. Required form values and a current setup preview still need to be valid. Detailed checks, saved connection choices and the masked configuration payload are available in collapsed sections. You can return to the earlier choices without losing
 entries. Choose **Start services** to apply the reviewed plan. Starting the apps
 does not mark deferred tasks or untested connections complete.
 
 ### Setup progress and retained tasks
+
+<!-- docs:visual scenario=onboarding-progress type=image -->
 
 Follow installation progress. Expand **Installation logs** when you need the
 detailed output, or choose **Show full checklist** to inspect the saved tasks.
@@ -154,6 +168,8 @@ the same checklist appears on the dashboard and matching service pages.
 Manual completion records your confirmation separately from an independently passed check. Closing the browser does not complete remaining tasks. External provider/account setup and unsupported connections remain visible as manual work.
 
 ### Connect your apps after startup
+
+<!-- docs:visual scenario=setup-connections type=image -->
 
 Once the apps are ready, choose **Walk me through setup**. From onboarding, this
 opens the separate **Connect your apps** page while retaining the saved setup and
@@ -185,6 +201,8 @@ leaves required connection tasks on the checklist.
 <!-- dev:end -->
 <!-- release:start -->
 ### Setup progress
+
+<!-- docs:visual scenario=onboarding-progress type=image -->
 
 Follow live setup logs and the reported startup result. If a service fails, inspect its error and dependency state before retrying. After the stack starts, check each application's accounts, provider/indexer settings, routes, and a representative import/playback path; process startup alone does not verify them.
 <!-- release:end -->
@@ -225,6 +243,8 @@ Plex can be claimed from its retained account task after it is ready. Use a fres
 
 Check service status, actual application configuration, and one intended end-to-end workflow. Configure [media-library protection](../features/media-library-protection.md) before unattended storage maintenance, and keep application data backed up.
 
+<!-- docs:visual scenario=onboarding-result type=image -->
+
 ## Troubleshooting
 
 | Problem | Next step |
@@ -245,3 +265,5 @@ different: correct the reported mount or access problem and refresh the preview.
 You do not need to change a service's user ID merely because DUMB owns its
 installed program files.
 <!-- dev:end -->
+
+<!-- docs:visual scenario=onboarding-error type=image -->

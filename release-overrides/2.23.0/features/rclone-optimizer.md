@@ -37,6 +37,8 @@ flowchart TD
 5. Select **Start background optimization**. Wait for the final result, then review failed samples, startup/seek measurements, provider evidence, and cleanup results.
 6. Apply a recommendation only after review; apply and rollback both interrupt the production rclone mount.
 
+<!-- docs:visual scenario=rclone-optimizer type=image -->
+
 The limits and evidence below explain what this comparison can establish.
 
 ## What the test actually reads

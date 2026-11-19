@@ -216,6 +216,7 @@ theme:
 extra_javascript:
   - assets/js/zoom.js
   - assets/js/docs.js
+  - assets/js/showcase.js
 
 extra_css:
   - assets/css/main.css

@@ -1,0 +1,1057 @@
+{
+  "channels": {
+    "dev": {
+      "backend": {
+        "commit": "90778cb260ae2d08c4aba7a064944a753607b67c",
+        "ref": "dev",
+        "repository": "https://github.com/I-am-PUID-0/DUMB",
+        "tag": null,
+        "version": "2.24.0"
+      },
+      "catalog_sha256": "4172c81beac82b5d42d38b9e89da9e215751a18d804928bcf65b20cc863d35b8",
+      "dataset_sha256": "7f52c30bd48e7c312401013a1c3d4a6388da3272df454f971c013aed7265010c",
+      "frontend": {
+        "commit": "836c92e776b0b9c12aa2c8423aad51520d9f5b5a",
+        "ref": "dev",
+        "repository": "https://github.com/nicocapalbo/dmbdb",
+        "tag": null,
+        "version": "1.92.0"
+      },
+      "package_manifest": "docs/assets/images/guides/frontend/channels/dev/90778cb260ae-836c92e776b0-6e853511d7fb/manifest.json",
+      "plan": {
+        "backend": {
+          "commit": "90778cb260ae2d08c4aba7a064944a753607b67c",
+          "ref": "dev",
+          "repository": "https://github.com/I-am-PUID-0/DUMB",
+          "tag": null,
+          "version": "2.24.0"
+        },
+        "capabilities": {
+          "ai_change_history": true,
+          "ai_deep_log_scan": true,
+          "ai_diagnostic_evidence": true,
+          "ai_diagnostic_sessions": true,
+          "ai_diagnostics": true,
+          "ai_native_diagnostics": true,
+          "ai_provider_profiles": true,
+          "api_update_check_always_on": true,
+          "api_version": "2.24.0",
+          "arr_postgres_migration": true,
+          "arr_postgres_migration_rehearsal": true,
+          "arr_postgres_migration_rollback": true,
+          "auth_hybrid": true,
+          "auth_oidc": true,
+          "authelia_integration": true,
+          "auto_update_mode": true,
+          "auto_update_start_time": true,
+          "backup_storage_kinds": [
+            "symlink_manifest",
+            "infinidysk_v2_archive",
+            "installation_backup"
+          ],
+          "backup_storage_management_protocol": 1,
+          "backup_storage_profile_management": true,
+          "backup_storage_protocol": 1,
+          "backup_storage_revalidation": true,
+          "backup_storage_selection": true,
+          "backup_storage_shared_permissions": true,
+          "commit_sha_pinning": true,
+          "commit_sha_service_keys": [
+            "audiobookshelf",
+            "cli_debrid",
+            "decypharr",
+            "dumb_frontend",
+            "infinidysk",
+            "maintainerr",
+            "neutarr",
+            "phalanx_db",
+            "profilarr",
+            "pulsarr",
+            "riven_backend",
+            "riven_frontend",
+            "seerr",
+            "tautulli",
+            "traefik_proxy_admin",
+            "zilean"
+          ],
+          "configured_source_install": true,
+          "dashboard_bulk_updates": true,
+          "database_health_metrics": true,
+          "database_health_service_keys": [
+            "aiostreams",
+            "altmount",
+            "audiobookshelf",
+            "authelia",
+            "bazarr",
+            "cli_battery",
+            "cli_debrid",
+            "decypharr",
+            "emby",
+            "infinidysk",
+            "jellyfin",
+            "lidarr",
+            "maintainerr",
+            "mediastorm",
+            "pgadmin",
+            "phalanx_db",
+            "plex",
+            "postgres",
+            "profilarr",
+            "prowlarr",
+            "pulsarr",
+            "radarr",
+            "riven_backend",
+            "seerr",
+            "sonarr",
+            "tautulli",
+            "traefik_proxy_admin",
+            "whisparr",
+            "zilean",
+            "zurg"
+          ],
+          "infinidysk_full_namespace_migration": true,
+          "infinidysk_install_info": true,
+          "infinidysk_migration": true,
+          "infinidysk_migration_cleanup": true,
+          "infinidysk_migration_jobs": true,
+          "infinidysk_migration_playback_override": true,
+          "infinidysk_v2": true,
+          "infinidysk_v2_async_preview": true,
+          "infinidysk_v2_cancel": true,
+          "infinidysk_v2_cleanup": true,
+          "infinidysk_v2_cleanup_protocol": 1,
+          "infinidysk_v2_consumer_recovery": true,
+          "infinidysk_v2_consumer_recovery_protocol": 1,
+          "infinidysk_v2_external_blob_staging": true,
+          "infinidysk_v2_low_space_migration": true,
+          "infinidysk_v2_migration": true,
+          "infinidysk_v2_migration_backup_storage": true,
+          "infinidysk_v2_migration_protocol": 1,
+          "infinidysk_v2_minimum_api_version": "2.24.0",
+          "infinidysk_v2_mount_backends": [
+            "rclone",
+            "fuse"
+          ],
+          "infinidysk_v2_postgres": true,
+          "infinidysk_v2_prepared_activation": true,
+          "infinidysk_v2_queue_omission": true,
+          "infinidysk_v2_rclone_optimizer": false,
+          "infinidysk_v2_reviewed_skips": true,
+          "install_cache_cleanup": true,
+          "install_cache_limit_settings": true,
+          "install_cache_management": true,
+          "installation_backup": true,
+          "installation_backup_cancellation": true,
+          "installation_backup_compression": true,
+          "installation_backup_direct_start": true,
+          "installation_backup_phase_progress": true,
+          "installation_backup_preview_status": true,
+          "installation_backup_protocol": 1,
+          "installation_backup_shared_permissions": true,
+          "manual_update_check": true,
+          "media_library_protection": true,
+          "media_library_protection_service_keys": [
+            "plex",
+            "jellyfin",
+            "emby"
+          ],
+          "mediastorm_initial_admin_password": true,
+          "metrics_filesystem_selection": true,
+          "metrics_history_hot_activation": true,
+          "metrics_history_storage": true,
+          "metrics_network_interface_selection": true,
+          "notifications": true,
+          "nzbdav_install_info": true,
+          "optional_only_onboarding": true,
+          "optional_service_options": true,
+          "plex_library_settings": true,
+          "plex_status_metric": true,
+          "postgres_migration": true,
+          "postgres_migration_rehearsal": true,
+          "postgres_migration_rollback": true,
+          "postgres_migration_service_keys": [
+            "altmount",
+            "bazarr",
+            "infinidysk",
+            "lidarr",
+            "prowlarr",
+            "pulsarr",
+            "radarr",
+            "seerr",
+            "sonarr",
+            "whisparr"
+          ],
+          "project_update_release_distance": true,
+          "project_update_status_persistence": true,
+          "rclone_optimizer": true,
+          "rclone_optimizer_infinidysk": true,
+          "rclone_optimizer_nzbdav": true,
+          "runtime_api_log_level": true,
+          "seerr_sync": true,
+          "service_reset": true,
+          "setup_arrangements": true,
+          "setup_infinidysk_runtime_choices": true,
+          "setup_infinidysk_runtime_protocol": 1,
+          "startup_lifecycle": true,
+          "symlink_backup_manifest_list": true,
+          "symlink_backup_schedule": true,
+          "symlink_job_latest": true,
+          "symlink_job_status": true,
+          "symlink_manifest_backup": true,
+          "symlink_manifest_backup_async": true,
+          "symlink_manifest_compare": true,
+          "symlink_manifest_file_list": true,
+          "symlink_manifest_restore": true,
+          "symlink_manifest_restore_async": true,
+          "symlink_repair": true,
+          "symlink_repair_async": true,
+          "transactional_service_installs": true,
+          "update_timing_metrics": true
+        },
+        "capability_source_sha256": "76092f56e48d340ba868cadc2710ef4c1a765c00b0e5ffe6a65149f830801065",
+        "catalog_sha256": "4172c81beac82b5d42d38b9e89da9e215751a18d804928bcf65b20cc863d35b8",
+        "channel": "dev",
+        "dataset_sha256": "7f52c30bd48e7c312401013a1c3d4a6388da3272df454f971c013aed7265010c",
+        "frontend": {
+          "commit": "836c92e776b0b9c12aa2c8423aad51520d9f5b5a",
+          "ref": "dev",
+          "repository": "https://github.com/nicocapalbo/dmbdb",
+          "tag": null,
+          "version": "1.92.0"
+        },
+        "frontend_inventory": {
+          "excluded_pages": [
+            {
+              "path": "pages/home.vue",
+              "reason": "Empty retained template; no user interface.",
+              "sha256": "8d14f74d9bf091f29516cc7a42c0d72ad3b2467c89dac4d9504ee5ffdec5e753"
+            }
+          ],
+          "pages": [
+            {
+              "path": "pages/ai.vue",
+              "scenarios": [
+                "ai-overview",
+                "ai-provider",
+                "ai-provider-openai",
+                "ai-provider-gemini"
+              ],
+              "sha256": "2d271ba267680909eee50b73ab8f6cdc28f6d34fb40430183048fc20bd5a5f56"
+            },
+            {
+              "path": "pages/index.vue",
+              "scenarios": [
+                "dashboard",
+                "disabled-services"
+              ],
+              "sha256": "7aa70b11f706ffec5ba92611609bd5329ad632f553c59bfa050200d1b95510d9"
+            },
+            {
+              "path": "pages/login.vue",
+              "scenarios": [
+                "login"
+              ],
+              "sha256": "8fa7bfa18735ae7fe160358a704c20a5ac917bc33a4b7902199aca550f82e4f3"
+            },
+            {
+              "path": "pages/metrics.vue",
+              "scenarios": [
+                "metrics"
+              ],
+              "sha256": "1c995c81c4a6d11cbab93c2003ef059eaf8f5e63fb678c6eafe8452dcad50371"
+            },
+            {
+              "path": "pages/onboarding.vue",
+              "scenarios": [
+                "onboarding-services",
+                "onboarding-preflight",
+                "onboarding-provider",
+                "onboarding-companions",
+                "onboarding-options",
+                "onboarding-embedded-uis",
+                "onboarding-installation",
+                "onboarding-review",
+                "onboarding-progress",
+                "onboarding-result",
+                "onboarding-error"
+              ],
+              "sha256": "327ef8c8a494c17d1beb20f01bb229f99e21162c8943a5aaa3662ba65d9406fe"
+            },
+            {
+              "path": "pages/rtl/index.vue",
+              "scenarios": [
+                "realtime-logs"
+              ],
+              "sha256": "56b89602347b07d3039089953cd624c73f4b935d3347a74f3be1f263cf6c2538"
+            },
+            {
+              "path": "pages/services/[serviceId]/index.vue",
+              "scenarios": [
+                "service-controls",
+                "service-logs",
+                "updates",
+                "dependencies",
+                "auto-restart",
+                "configuration",
+                "api-configuration",
+                "embedded-sonarr",
+                "database-health",
+                "library-protection",
+                "symlink-tools",
+                "rclone-optimizer",
+                "infinidysk-v2-install",
+                "infinidysk-namespace-migration",
+                "postgres-migration"
+              ],
+              "sha256": "f675192ff09b1bf6dc2a494dd72be4e5633c00c571b920f8e41f7f7a6dd705f5"
+            },
+            {
+              "path": "pages/settings.vue",
+              "scenarios": [
+                "settings-overview",
+                "settings-appearance",
+                "settings-about",
+                "settings-tokens",
+                "settings-log-timestamps",
+                "settings-embedded-uis",
+                "settings-authentication",
+                "settings-auth-provider",
+                "settings-notifications",
+                "settings-backups",
+                "settings-advanced",
+                "settings-support",
+                "settings-onboarding",
+                "settings-contributors"
+              ],
+              "sha256": "15ffa380afb608f7a3faf86b9eebe1bcfbf0ae09ce63d0d117d76b05ecf73876"
+            },
+            {
+              "path": "pages/setup-connections.vue",
+              "scenarios": [
+                "setup-connections"
+              ],
+              "sha256": "dc4f876dd0967a23b6c9bb1b96193603fbee05e6f86934b66b5ade0e673fe25c"
+            },
+            {
+              "path": "pages/setup.vue",
+              "scenarios": [
+                "account-setup"
+              ],
+              "sha256": "640797beac1f03c4529337a49e1d02a31772bf13a909ce2d7d37b90851972ed3"
+            }
+          ],
+          "settings_sections": [
+            {
+              "id": "appearance",
+              "path": "pages/settings.vue",
+              "scenarios": [
+                "settings-appearance"
+              ]
+            },
+            {
+              "id": "about",
+              "path": "pages/settings.vue",
+              "scenarios": [
+                "settings-about"
+              ]
+            },
+            {
+              "id": "onboarding",
+              "path": "pages/settings.vue",
+              "scenarios": [
+                "settings-onboarding"
+              ]
+            },
+            {
+              "id": "embedded-uis",
+              "path": "pages/settings.vue",
+              "scenarios": [
+                "settings-embedded-uis"
+              ]
+            },
+            {
+              "id": "tokens",
+              "path": "pages/settings.vue",
+              "scenarios": [
+                "settings-tokens"
+              ]
+            },
+            {
+              "id": "log-timestamp",
+              "path": "pages/settings.vue",
+              "scenarios": [
+                "settings-log-timestamps"
+              ]
+            },
+            {
+              "id": "advanced",
+              "path": "pages/settings.vue",
+              "scenarios": [
+                "settings-advanced"
+              ]
+            },
+            {
+              "id": "authentication",
+              "path": "pages/settings.vue",
+              "scenarios": [
+                "settings-authentication",
+                "settings-auth-provider"
+              ]
+            },
+            {
+              "id": "backups",
+              "path": "pages/settings.vue",
+              "scenarios": [
+                "settings-backups"
+              ]
+            },
+            {
+              "id": "support",
+              "path": "pages/settings.vue",
+              "scenarios": [
+                "settings-support"
+              ]
+            },
+            {
+              "id": "contributors",
+              "path": "pages/settings.vue",
+              "scenarios": [
+                "settings-contributors"
+              ]
+            },
+            {
+              "id": "notifications",
+              "path": "components/NotificationSettings.vue",
+              "scenarios": [
+                "settings-notifications"
+              ]
+            }
+          ]
+        },
+        "frontend_unavailable_scenarios": {},
+        "native_apps": {
+          "sonarr": {
+            "application": "Sonarr",
+            "image": "lscr.io/linuxserver/sonarr@sha256:c7d1df25e428da6c9ace05daea0d34e59522978a3843ea1944812f855af4086c",
+            "version": "4.0.20.3014"
+          }
+        },
+        "plan_sha256": "dfc05c7c0e09a7b4a80bfe8080c740af1f6f469aab9d909acd94491b2568f29d",
+        "required_scenarios": [
+          "dashboard",
+          "service-controls",
+          "service-logs",
+          "realtime-logs",
+          "updates",
+          "dependencies",
+          "auto-restart",
+          "configuration",
+          "disabled-services",
+          "metrics",
+          "settings-overview",
+          "settings-appearance",
+          "settings-about",
+          "settings-tokens",
+          "settings-log-timestamps",
+          "settings-embedded-uis",
+          "settings-authentication",
+          "settings-auth-provider",
+          "settings-notifications",
+          "settings-backups",
+          "settings-advanced",
+          "settings-support",
+          "login",
+          "account-setup",
+          "ai-overview",
+          "ai-provider",
+          "onboarding-services",
+          "onboarding-preflight",
+          "onboarding-provider",
+          "onboarding-companions",
+          "onboarding-options",
+          "onboarding-embedded-uis",
+          "onboarding-installation",
+          "onboarding-review",
+          "setup-connections",
+          "settings-onboarding",
+          "settings-contributors",
+          "api-configuration",
+          "onboarding-progress",
+          "onboarding-result",
+          "onboarding-error",
+          "ai-provider-openai",
+          "ai-provider-gemini",
+          "embedded-sonarr",
+          "database-health",
+          "library-protection",
+          "symlink-tools",
+          "rclone-optimizer",
+          "infinidysk-v2-install",
+          "infinidysk-namespace-migration",
+          "postgres-migration"
+        ],
+        "scenarios": [
+          "dashboard",
+          "service-controls",
+          "service-logs",
+          "realtime-logs",
+          "updates",
+          "dependencies",
+          "auto-restart",
+          "configuration",
+          "disabled-services",
+          "metrics",
+          "settings-overview",
+          "settings-appearance",
+          "settings-about",
+          "settings-tokens",
+          "settings-log-timestamps",
+          "settings-embedded-uis",
+          "settings-authentication",
+          "settings-auth-provider",
+          "settings-notifications",
+          "settings-backups",
+          "settings-advanced",
+          "settings-support",
+          "login",
+          "account-setup",
+          "ai-overview",
+          "ai-provider",
+          "onboarding-services",
+          "onboarding-preflight",
+          "onboarding-provider",
+          "onboarding-companions",
+          "onboarding-options",
+          "onboarding-embedded-uis",
+          "onboarding-installation",
+          "onboarding-review",
+          "setup-connections",
+          "settings-onboarding",
+          "settings-contributors",
+          "api-configuration",
+          "onboarding-progress",
+          "onboarding-result",
+          "onboarding-error",
+          "ai-provider-openai",
+          "ai-provider-gemini",
+          "embedded-sonarr",
+          "database-health",
+          "library-protection",
+          "symlink-tools",
+          "rclone-optimizer",
+          "infinidysk-v2-install",
+          "infinidysk-namespace-migration",
+          "postgres-migration"
+        ],
+        "schema_version": 1,
+        "themes": [
+          "dark",
+          "light"
+        ],
+        "tooling_sha256": "50f844af3bebb8f913b770b615a4430fb7e5810be83b8c9727f730b6b4922028",
+        "unresolved_capabilities": [
+          "installation_backup_zstd"
+        ]
+      },
+      "plan_sha256": "dfc05c7c0e09a7b4a80bfe8080c740af1f6f469aab9d909acd94491b2568f29d",
+      "showcase_manifest": "docs/assets/images/guides/showcase/channels/dev/90778cb260ae-836c92e776b0-6e853511d7fb/manifest.json",
+      "tooling_sha256": "50f844af3bebb8f913b770b615a4430fb7e5810be83b8c9727f730b6b4922028"
+    },
+    "release": {
+      "backend": {
+        "commit": "ebfdf2dec74bf451b03d81fa0659badbc53b9e14",
+        "ref": "2.23.0",
+        "repository": "https://github.com/I-am-PUID-0/DUMB",
+        "tag": "2.23.0",
+        "version": "2.23.0"
+      },
+      "catalog_sha256": "4172c81beac82b5d42d38b9e89da9e215751a18d804928bcf65b20cc863d35b8",
+      "dataset_sha256": "7f52c30bd48e7c312401013a1c3d4a6388da3272df454f971c013aed7265010c",
+      "frontend": {
+        "commit": "66c90b93ea35abe546c07cbf643dc00a184bbd7f",
+        "ref": "v1.91.0",
+        "repository": "https://github.com/nicocapalbo/dmbdb",
+        "tag": "v1.91.0",
+        "version": "1.91.0"
+      },
+      "package_manifest": "docs/assets/images/guides/frontend/channels/release/ebfdf2dec74b-66c90b93ea35-0d5a207b9a06/manifest.json",
+      "plan": {
+        "backend": {
+          "commit": "ebfdf2dec74bf451b03d81fa0659badbc53b9e14",
+          "ref": "2.23.0",
+          "repository": "https://github.com/I-am-PUID-0/DUMB",
+          "tag": "2.23.0",
+          "version": "2.23.0"
+        },
+        "capabilities": {
+          "ai_change_history": true,
+          "ai_deep_log_scan": true,
+          "ai_diagnostic_evidence": true,
+          "ai_diagnostic_sessions": true,
+          "ai_diagnostics": true,
+          "ai_native_diagnostics": true,
+          "ai_provider_profiles": true,
+          "api_update_check_always_on": true,
+          "api_version": "2.23.0",
+          "arr_postgres_migration": true,
+          "arr_postgres_migration_rehearsal": true,
+          "arr_postgres_migration_rollback": true,
+          "auth_hybrid": true,
+          "auth_oidc": true,
+          "authelia_integration": true,
+          "auto_update_mode": true,
+          "auto_update_start_time": true,
+          "commit_sha_pinning": true,
+          "commit_sha_service_keys": [
+            "cli_debrid",
+            "decypharr",
+            "dumb_frontend",
+            "infinidysk",
+            "maintainerr",
+            "neutarr",
+            "phalanx_db",
+            "profilarr",
+            "pulsarr",
+            "riven_backend",
+            "riven_frontend",
+            "seerr",
+            "tautulli",
+            "traefik_proxy_admin",
+            "zilean"
+          ],
+          "configured_source_install": true,
+          "dashboard_bulk_updates": true,
+          "database_health_metrics": true,
+          "database_health_service_keys": [
+            "aiostreams",
+            "altmount",
+            "authelia",
+            "bazarr",
+            "cli_battery",
+            "cli_debrid",
+            "decypharr",
+            "emby",
+            "infinidysk",
+            "jellyfin",
+            "lidarr",
+            "maintainerr",
+            "mediastorm",
+            "pgadmin",
+            "phalanx_db",
+            "plex",
+            "postgres",
+            "profilarr",
+            "prowlarr",
+            "pulsarr",
+            "radarr",
+            "riven_backend",
+            "seerr",
+            "sonarr",
+            "tautulli",
+            "traefik_proxy_admin",
+            "whisparr",
+            "zilean",
+            "zurg"
+          ],
+          "infinidysk_full_namespace_migration": true,
+          "infinidysk_install_info": true,
+          "infinidysk_migration": true,
+          "infinidysk_migration_cleanup": true,
+          "infinidysk_migration_jobs": true,
+          "infinidysk_migration_playback_override": true,
+          "install_cache_cleanup": true,
+          "install_cache_limit_settings": true,
+          "install_cache_management": true,
+          "manual_update_check": true,
+          "media_library_protection": true,
+          "media_library_protection_service_keys": [
+            "plex",
+            "jellyfin",
+            "emby"
+          ],
+          "mediastorm_initial_admin_password": true,
+          "metrics_filesystem_selection": true,
+          "metrics_history_hot_activation": true,
+          "metrics_history_storage": true,
+          "metrics_network_interface_selection": true,
+          "notifications": true,
+          "nzbdav_install_info": true,
+          "optional_only_onboarding": true,
+          "optional_service_options": true,
+          "plex_library_settings": true,
+          "plex_status_metric": true,
+          "postgres_migration": true,
+          "postgres_migration_rehearsal": true,
+          "postgres_migration_rollback": true,
+          "postgres_migration_service_keys": [
+            "altmount",
+            "bazarr",
+            "infinidysk",
+            "lidarr",
+            "prowlarr",
+            "pulsarr",
+            "radarr",
+            "seerr",
+            "sonarr",
+            "whisparr"
+          ],
+          "project_update_release_distance": true,
+          "project_update_status_persistence": true,
+          "rclone_optimizer": true,
+          "rclone_optimizer_infinidysk": true,
+          "rclone_optimizer_nzbdav": true,
+          "runtime_api_log_level": true,
+          "seerr_sync": true,
+          "service_reset": true,
+          "startup_lifecycle": true,
+          "symlink_backup_manifest_list": true,
+          "symlink_backup_schedule": true,
+          "symlink_job_latest": true,
+          "symlink_job_status": true,
+          "symlink_manifest_backup": true,
+          "symlink_manifest_backup_async": true,
+          "symlink_manifest_compare": true,
+          "symlink_manifest_file_list": true,
+          "symlink_manifest_restore": true,
+          "symlink_manifest_restore_async": true,
+          "symlink_repair": true,
+          "symlink_repair_async": true,
+          "transactional_service_installs": true,
+          "update_timing_metrics": true
+        },
+        "capability_source_sha256": "9cb10dce3be1d9a03d44c6b1e63ec0bb2117b7dcb365943e8c0483ff87b9fe54",
+        "catalog_sha256": "4172c81beac82b5d42d38b9e89da9e215751a18d804928bcf65b20cc863d35b8",
+        "channel": "release",
+        "dataset_sha256": "7f52c30bd48e7c312401013a1c3d4a6388da3272df454f971c013aed7265010c",
+        "frontend": {
+          "commit": "66c90b93ea35abe546c07cbf643dc00a184bbd7f",
+          "ref": "v1.91.0",
+          "repository": "https://github.com/nicocapalbo/dmbdb",
+          "tag": "v1.91.0",
+          "version": "1.91.0"
+        },
+        "frontend_inventory": {
+          "excluded_pages": [
+            {
+              "path": "pages/home.vue",
+              "reason": "Empty retained template; no user interface.",
+              "sha256": "8d14f74d9bf091f29516cc7a42c0d72ad3b2467c89dac4d9504ee5ffdec5e753"
+            }
+          ],
+          "pages": [
+            {
+              "path": "pages/ai.vue",
+              "scenarios": [
+                "ai-overview",
+                "ai-provider",
+                "ai-provider-openai",
+                "ai-provider-gemini"
+              ],
+              "sha256": "2d271ba267680909eee50b73ab8f6cdc28f6d34fb40430183048fc20bd5a5f56"
+            },
+            {
+              "path": "pages/index.vue",
+              "scenarios": [
+                "dashboard",
+                "disabled-services"
+              ],
+              "sha256": "5c28dbd8e905d379f7d8bd2dbcfb2562dff42b55d9532d5c37a4b7b333c857c7"
+            },
+            {
+              "path": "pages/login.vue",
+              "scenarios": [
+                "login"
+              ],
+              "sha256": "86b6195d572fe88f57c1d76b39823bfcb52b523ff1c02bfa4506a7348942fc30"
+            },
+            {
+              "path": "pages/metrics.vue",
+              "scenarios": [
+                "metrics"
+              ],
+              "sha256": "1c995c81c4a6d11cbab93c2003ef059eaf8f5e63fb678c6eafe8452dcad50371"
+            },
+            {
+              "path": "pages/onboarding.vue",
+              "scenarios": [
+                "onboarding-services",
+                "onboarding-preflight",
+                "onboarding-provider",
+                "onboarding-companions",
+                "onboarding-options",
+                "onboarding-embedded-uis",
+                "onboarding-installation",
+                "onboarding-review",
+                "onboarding-progress",
+                "onboarding-result",
+                "onboarding-error"
+              ],
+              "sha256": "7aa3b6606955905a6b9e35eb27c7ed656eb5370e8c5a36fe96c179d52bf21293"
+            },
+            {
+              "path": "pages/rtl/index.vue",
+              "scenarios": [
+                "realtime-logs"
+              ],
+              "sha256": "56b89602347b07d3039089953cd624c73f4b935d3347a74f3be1f263cf6c2538"
+            },
+            {
+              "path": "pages/services/[serviceId]/index.vue",
+              "scenarios": [
+                "service-controls",
+                "service-logs",
+                "updates",
+                "dependencies",
+                "auto-restart",
+                "configuration",
+                "api-configuration",
+                "embedded-sonarr",
+                "database-health",
+                "library-protection",
+                "symlink-tools",
+                "rclone-optimizer",
+                "infinidysk-v2-install",
+                "infinidysk-namespace-migration",
+                "postgres-migration"
+              ],
+              "sha256": "36153dd088b53a416745d0189f43d1234ab7bb8ed4d87c1f2653ad8f46b7e83f"
+            },
+            {
+              "path": "pages/settings.vue",
+              "scenarios": [
+                "settings-overview",
+                "settings-appearance",
+                "settings-about",
+                "settings-tokens",
+                "settings-log-timestamps",
+                "settings-embedded-uis",
+                "settings-authentication",
+                "settings-auth-provider",
+                "settings-notifications",
+                "settings-backups",
+                "settings-advanced",
+                "settings-support",
+                "settings-onboarding",
+                "settings-contributors"
+              ],
+              "sha256": "52f4a33ae9aa6f1722c13c44e79f5f91cfc11df829ffd875dec034dfc4ebac5d"
+            },
+            {
+              "path": "pages/setup.vue",
+              "scenarios": [
+                "account-setup"
+              ],
+              "sha256": "640797beac1f03c4529337a49e1d02a31772bf13a909ce2d7d37b90851972ed3"
+            }
+          ],
+          "settings_sections": [
+            {
+              "id": "appearance",
+              "path": "pages/settings.vue",
+              "scenarios": [
+                "settings-appearance"
+              ]
+            },
+            {
+              "id": "about",
+              "path": "pages/settings.vue",
+              "scenarios": [
+                "settings-about"
+              ]
+            },
+            {
+              "id": "onboarding",
+              "path": "pages/settings.vue",
+              "scenarios": [
+                "settings-onboarding"
+              ]
+            },
+            {
+              "id": "embedded-uis",
+              "path": "pages/settings.vue",
+              "scenarios": [
+                "settings-embedded-uis"
+              ]
+            },
+            {
+              "id": "tokens",
+              "path": "pages/settings.vue",
+              "scenarios": [
+                "settings-tokens"
+              ]
+            },
+            {
+              "id": "log-timestamp",
+              "path": "pages/settings.vue",
+              "scenarios": [
+                "settings-log-timestamps"
+              ]
+            },
+            {
+              "id": "advanced",
+              "path": "pages/settings.vue",
+              "scenarios": [
+                "settings-advanced"
+              ]
+            },
+            {
+              "id": "authentication",
+              "path": "pages/settings.vue",
+              "scenarios": [
+                "settings-authentication",
+                "settings-auth-provider"
+              ]
+            },
+            {
+              "id": "support",
+              "path": "pages/settings.vue",
+              "scenarios": [
+                "settings-support"
+              ]
+            },
+            {
+              "id": "contributors",
+              "path": "pages/settings.vue",
+              "scenarios": [
+                "settings-contributors"
+              ]
+            },
+            {
+              "id": "notifications",
+              "path": "components/NotificationSettings.vue",
+              "scenarios": [
+                "settings-notifications"
+              ]
+            }
+          ]
+        },
+        "frontend_unavailable_scenarios": {
+          "onboarding-installation": "Selected frontend source does not contain components/onboarding/StepArrangement.vue",
+          "settings-backups": "Selected frontend source does not contain components/InstallationBackupPanel.vue",
+          "setup-connections": "Selected frontend source does not contain pages/setup-connections.vue"
+        },
+        "native_apps": {
+          "sonarr": {
+            "application": "Sonarr",
+            "image": "lscr.io/linuxserver/sonarr@sha256:c7d1df25e428da6c9ace05daea0d34e59522978a3843ea1944812f855af4086c",
+            "version": "4.0.20.3014"
+          }
+        },
+        "plan_sha256": "44f672b92b280e6c0f44252513fd7931812e62e750b8ca1c8fa20baf07ae6be8",
+        "required_scenarios": [
+          "dashboard",
+          "service-controls",
+          "service-logs",
+          "realtime-logs",
+          "updates",
+          "dependencies",
+          "auto-restart",
+          "configuration",
+          "disabled-services",
+          "metrics",
+          "settings-overview",
+          "settings-appearance",
+          "settings-about",
+          "settings-tokens",
+          "settings-log-timestamps",
+          "settings-embedded-uis",
+          "settings-authentication",
+          "settings-auth-provider",
+          "settings-notifications",
+          "settings-advanced",
+          "settings-support",
+          "login",
+          "account-setup",
+          "ai-overview",
+          "ai-provider",
+          "onboarding-services",
+          "onboarding-preflight",
+          "onboarding-provider",
+          "onboarding-companions",
+          "onboarding-options",
+          "onboarding-embedded-uis",
+          "onboarding-review",
+          "settings-onboarding",
+          "settings-contributors",
+          "api-configuration",
+          "onboarding-progress",
+          "onboarding-result",
+          "onboarding-error",
+          "ai-provider-openai",
+          "ai-provider-gemini",
+          "embedded-sonarr",
+          "database-health",
+          "library-protection",
+          "symlink-tools",
+          "rclone-optimizer",
+          "infinidysk-namespace-migration",
+          "postgres-migration"
+        ],
+        "scenarios": [
+          "dashboard",
+          "service-controls",
+          "service-logs",
+          "realtime-logs",
+          "updates",
+          "dependencies",
+          "auto-restart",
+          "configuration",
+          "disabled-services",
+          "metrics",
+          "settings-overview",
+          "settings-appearance",
+          "settings-about",
+          "settings-tokens",
+          "settings-log-timestamps",
+          "settings-embedded-uis",
+          "settings-authentication",
+          "settings-auth-provider",
+          "settings-notifications",
+          "settings-backups",
+          "settings-advanced",
+          "settings-support",
+          "login",
+          "account-setup",
+          "ai-overview",
+          "ai-provider",
+          "onboarding-services",
+          "onboarding-preflight",
+          "onboarding-provider",
+          "onboarding-companions",
+          "onboarding-options",
+          "onboarding-embedded-uis",
+          "onboarding-installation",
+          "onboarding-review",
+          "setup-connections",
+          "settings-onboarding",
+          "settings-contributors",
+          "api-configuration",
+          "onboarding-progress",
+          "onboarding-result",
+          "onboarding-error",
+          "ai-provider-openai",
+          "ai-provider-gemini",
+          "embedded-sonarr",
+          "database-health",
+          "library-protection",
+          "symlink-tools",
+          "rclone-optimizer",
+          "infinidysk-v2-install",
+          "infinidysk-namespace-migration",
+          "postgres-migration"
+        ],
+        "schema_version": 1,
+        "themes": [
+          "dark",
+          "light"
+        ],
+        "tooling_sha256": "50f844af3bebb8f913b770b615a4430fb7e5810be83b8c9727f730b6b4922028",
+        "unresolved_capabilities": []
+      },
+      "plan_sha256": "44f672b92b280e6c0f44252513fd7931812e62e750b8ca1c8fa20baf07ae6be8",
+      "showcase_manifest": "docs/assets/images/guides/showcase/channels/release/ebfdf2dec74b-66c90b93ea35-0d5a207b9a06/manifest.json",
+      "tooling_sha256": "50f844af3bebb8f913b770b615a4430fb7e5810be83b8c9727f730b6b4922028"
+    }
+  },
+  "schema_version": 1
+}

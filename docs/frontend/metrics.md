@@ -21,12 +21,7 @@ The metrics dashboard shows:
 - **Plex cloud status** - Optional cached status for Plex-operated services
 - **System information** - Container and host details
 
-<figure class="docs-visual docs-frontend-figure" markdown="1">
-
-![DUMB Metrics page with resource gauges, history controls and process information.](../assets/images/guides/frontend/v1.91.0/tour-2/metrics.webp){ loading=lazy decoding=async }
-
-<figcaption class="docs-visual-caption">Use the gauges for a current sample and the charts to look for a sustained pattern. DUMB Frontend 1.91.0 · example data. Other versions may look different.</figcaption>
-</figure>
+<!-- docs:visual scenario=metrics type=image -->
 
 ---
 
@@ -158,6 +153,8 @@ An operational cloud status does not prove that local playback, remote access, D
 ## Database health
 
 Only services explicitly opted into Database Health monitoring appear in the **Database Health** table on the Metrics page. Supported services with monitoring disabled remain available in **Metrics → Settings** and the service page's **Database Health** panel so they can be enabled, but they are omitted from the results table. When no services are monitored, the section shows a concise empty state with a **Configure** action instead of disabled service rows.
+
+<!-- docs:visual scenario=database-health type=image -->
 
 The Database Health section appears near the bottom of the live Metrics content. When Plex Cloud Status is enabled, its card follows Database Health; **System** remains last. Select any column header to sort ascending or descending; size, WAL, signal, pressure, and probe columns sort by their underlying numeric values rather than the formatted text, and unavailable values remain last. The selected sort is retained in that browser. Click or keyboard-activate any service row to expand or collapse its full details. Expanded details match the service-page panel and include the recommendation, score reasons, database paths/names, provider metadata, filesystem capacity, inode pressure, read-only/network state, probe results, and observed log signals. Column headers, settings, status badges, and detail fields include tooltips, and the section links directly to the Database Health documentation.
 

@@ -27,6 +27,8 @@ The assistant is disabled by default. You can still use **Preview bundle** witho
 !!! tip "Keep an initial test local"
     A local endpoint can keep diagnostic content on your machine or LAN. Confirm where that endpoint actually sends requests; a local gateway can still forward them to a cloud provider.
 
+<!-- docs:visual scenario=ai-overview type=image -->
+
 ## What It Can Use
 
 | Evidence | Service AI Assist | Stack AI Assist |
@@ -120,6 +122,8 @@ If no local docs are available, DUMB fetches the matching public page from `http
 </details>
 
 ## Providers
+
+<!-- docs:visual scenario=ai-provider type=image -->
 
 Supported provider modes:
 

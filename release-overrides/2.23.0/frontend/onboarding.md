@@ -63,6 +63,8 @@ The manual catalog groups services by role, with alphabetical expandable categor
 Review **Chosen by you**, **Required dependency**, and **Optional companion** separately. The historical Core/Optional catalog names do not make every core service mandatory.
 <!-- dev:end -->
 
+<!-- docs:visual scenario=onboarding-services type=image -->
+
 ### Step 2: Preflight checks
 
 The wizard checks whether DUMB can continue setup and shows any problems it finds. Read each result, correct blocking errors, then run the check again before continuing.
@@ -74,11 +76,15 @@ Resolve blocking failures before continuing. A passed API response does not inde
 Health, capability, and catalog failures block the next step. Storage-path inventory and embedded UI checks are advisory. Unknown storage, remote timeout, or consumer-namespace results stay **Not verified** rather than being reported as passed. Correct confirmed critical failures before starting.
 <!-- dev:end -->
 
+<!-- docs:visual scenario=onboarding-preflight type=image -->
+
 ### Step 3: Configure provider credentials
 
 Enter the credentials requested by the selected workflow. Debrid API keys are available from the provider's account page. DUMB maps supported inputs into the selected services' configuration.
 
 An NNTP provider account and an NZB indexer account serve different purposes; supplying one does not configure the other.
+
+<!-- docs:visual scenario=onboarding-provider type=image -->
 
 ### Step 4: Choose companion services
 
@@ -91,6 +97,8 @@ Authelia appears only when the backend supports its managed integration. A newer
 | mediastorm | Use its [initial credential flow](../services/optional/mediastorm.md#initial-setup) and replace the bootstrap password |
 | AIOStreams | Set a stable public HTTPS base URL for remote clients and create its dashboard login |
 | Authelia / TPA / Cloudflared | Review public origins, DNS, and authentication routes separately from embedded UI access |
+
+<!-- docs:visual scenario=onboarding-companions type=image -->
 
 ### Step 5: Service-specific options
 
@@ -112,18 +120,26 @@ Choose exact application instances, authorized external services, provider-accou
 Some profiles, roots, and generated keys are available only after first start. Leave those tasks unfinished and return to them later. Existing unowned settings require a reviewed adoption before DUMB changes them.
 <!-- dev:end -->
 
+<!-- docs:visual scenario=onboarding-options type=image -->
+
 ### Embedded service access
 
 Enable embedded UIs when offered to use proxied service tabs, split view, and direct links. This does not publish public DNS or configure an external HTTPS origin.
+
+<!-- docs:visual scenario=onboarding-embedded-uis type=image -->
 
 ### Review configuration
 
 Review selected services, dependencies, credentials, instance paths, and custom options before applying. Confirmation can install, configure, and start services.
 
+<!-- docs:visual scenario=onboarding-review type=image -->
+
 <!-- dev:start -->
 The plan groups work into **DUMB will configure**, **Information you must provide**, and **Finish manually**. Choose **Start services** to apply the reviewed plan.
 
 ### Setup progress and retained tasks
+
+<!-- docs:visual scenario=onboarding-progress type=image -->
 
 Follow the checklist and live logs. Correct the relevant input, then apply, retry, or recheck that action. **Continue to dashboard** leaves the wizard without discarding unfinished work; the same checklist appears on the dashboard and matching service pages.
 
@@ -131,6 +147,8 @@ Manual completion records your confirmation separately from an independently pas
 <!-- dev:end -->
 <!-- release:start -->
 ### Setup progress
+
+<!-- docs:visual scenario=onboarding-progress type=image -->
 
 Follow live setup logs and the reported startup result. If a service fails, inspect its error and dependency state before retrying. After the stack starts, check each application's accounts, provider/indexer settings, routes, and a representative import/playback path; process startup alone does not verify them.
 <!-- release:end -->
@@ -171,6 +189,8 @@ Plex can be claimed from its retained account task after it is ready. Use a fres
 
 Check service status, actual application configuration, and one intended end-to-end workflow. Configure [media-library protection](../features/media-library-protection.md) before unattended storage maintenance, and keep application data backed up.
 
+<!-- docs:visual scenario=onboarding-result type=image -->
+
 ## Troubleshooting
 
 | Problem | Next step |
@@ -183,3 +203,5 @@ Check service status, actual application configuration, and one intended end-to-
 <!-- dev:start -->
 Refreshing loses unsaved credential drafts, but the backend's retained setup run remains. Resume its checklist rather than reinstalling successful services.
 <!-- dev:end -->
+
+<!-- docs:visual scenario=onboarding-error type=image -->

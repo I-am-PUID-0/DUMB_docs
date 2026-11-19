@@ -1,0 +1,850 @@
+{
+  "schema_version": 1,
+  "excluded_frontend_pages": [
+    {
+      "path": "pages/home.vue",
+      "reason": "Empty retained template; no user interface."
+    }
+  ],
+  "scope": "Actual packaged Nuxt frontend screens. Backend transport examples are isolated; capability-unavailable and blocked scenarios are reported explicitly.",
+  "scenarios": [
+    {
+      "id": "dashboard",
+      "route": "/",
+      "profile": "standard",
+      "features": [
+        "frontend/dashboard"
+      ],
+      "required_capabilities": [],
+      "kinds": [
+        "image"
+      ],
+      "description": "Review service health and dashboard controls.",
+      "title": "Service Dashboard"
+    },
+    {
+      "id": "service-controls",
+      "route": "/services/Sonarr",
+      "profile": "standard",
+      "features": [
+        "frontend/service-pages"
+      ],
+      "required_capabilities": [],
+      "kinds": [
+        "image"
+      ],
+      "description": "Review a service's health and lifecycle controls without operating it.",
+      "title": "Service controls"
+    },
+    {
+      "id": "service-logs",
+      "route": "/services/Sonarr",
+      "profile": "standard",
+      "features": [
+        "frontend/service-pages"
+      ],
+      "required_capabilities": [],
+      "kinds": [
+        "image",
+        "video"
+      ],
+      "description": "Open native logs, filter lines and pause refresh.",
+      "title": "Filter and pause service logs"
+    },
+    {
+      "id": "realtime-logs",
+      "route": "/rtl",
+      "profile": "realtime-logs",
+      "features": [
+        "frontend/index",
+        "frontend/service-pages"
+      ],
+      "required_capabilities": [],
+      "required_frontend_files": [
+        "pages/rtl/index.vue"
+      ],
+      "kinds": [
+        "image"
+      ],
+      "description": "Read the actual global Real-Time Logs page with explicitly labeled public example log messages.",
+      "title": "Real-Time Logs"
+    },
+    {
+      "id": "updates",
+      "route": "/services/Sonarr",
+      "profile": "standard",
+      "features": [
+        "features/auto-update"
+      ],
+      "required_capabilities": [],
+      "kinds": [
+        "image",
+        "video"
+      ],
+      "description": "Check an example available update without installing it.",
+      "title": "Check for updates"
+    },
+    {
+      "id": "dependencies",
+      "route": "/services/Sonarr",
+      "profile": "standard",
+      "features": [
+        "frontend/service-pages"
+      ],
+      "required_capabilities": [],
+      "kinds": [
+        "image",
+        "video"
+      ],
+      "description": "Read startup dependencies and switch to Flow.",
+      "title": "Review service dependencies"
+    },
+    {
+      "id": "auto-restart",
+      "route": "/services/Sonarr",
+      "profile": "standard",
+      "features": [
+        "features/auto-restart"
+      ],
+      "required_capabilities": [],
+      "kinds": [
+        "image",
+        "video"
+      ],
+      "description": "Review global and service recovery guardrails without applying them.",
+      "title": "Automatic recovery settings"
+    },
+    {
+      "id": "configuration",
+      "route": "/services/Sonarr",
+      "profile": "standard",
+      "features": [
+        "features/configuration"
+      ],
+      "required_capabilities": [],
+      "kinds": [
+        "image",
+        "video"
+      ],
+      "description": "Compare DUMB Config and Service Config without editing.",
+      "title": "DUMB and application configuration"
+    },
+    {
+      "id": "disabled-services",
+      "route": "/",
+      "profile": "standard",
+      "features": [
+        "frontend/dashboard"
+      ],
+      "required_capabilities": [],
+      "kinds": [
+        "image"
+      ],
+      "description": "Find an example disabled service using the sidebar filters.",
+      "title": "Find disabled services"
+    },
+    {
+      "id": "metrics",
+      "route": "/metrics",
+      "profile": "standard",
+      "features": [
+        "frontend/metrics"
+      ],
+      "required_capabilities": [],
+      "kinds": [
+        "image"
+      ],
+      "description": "Inspect actual sampled container CPU and memory in the real Metrics UI.",
+      "title": "Container metrics"
+    },
+    {
+      "id": "settings-overview",
+      "route": "/settings",
+      "profile": "standard",
+      "features": [
+        "frontend/settings"
+      ],
+      "required_capabilities": [],
+      "kinds": [
+        "image"
+      ],
+      "description": "Review the Settings page and its section navigation.",
+      "title": "Settings"
+    },
+    {
+      "id": "settings-appearance",
+      "route": "/settings#appearance",
+      "profile": "standard",
+      "features": [
+        "frontend/settings"
+      ],
+      "required_capabilities": [],
+      "kinds": [
+        "image",
+        "video"
+      ],
+      "description": "Review theme choices in the selected light or dark appearance.",
+      "settings_section": "appearance",
+      "settings_source": "pages/settings.vue",
+      "title": "Appearance"
+    },
+    {
+      "id": "settings-about",
+      "route": "/settings#about",
+      "profile": "standard",
+      "features": [
+        "frontend/settings"
+      ],
+      "required_capabilities": [],
+      "kinds": [
+        "image"
+      ],
+      "description": "Compare independent backend and frontend versions.",
+      "settings_section": "about",
+      "settings_source": "pages/settings.vue",
+      "title": "Application versions"
+    },
+    {
+      "id": "settings-tokens",
+      "route": "/settings#tokens",
+      "profile": "standard",
+      "features": [
+        "features/configuration"
+      ],
+      "required_capabilities": [],
+      "kinds": [
+        "image"
+      ],
+      "description": "Locate token fields; keep credentials blank.",
+      "settings_section": "tokens",
+      "settings_source": "pages/settings.vue",
+      "title": "Integration tokens"
+    },
+    {
+      "id": "settings-log-timestamps",
+      "route": "/settings#log-timestamp",
+      "profile": "standard",
+      "features": [
+        "frontend/settings",
+        "frontend/service-pages"
+      ],
+      "required_capabilities": [],
+      "kinds": [
+        "image"
+      ],
+      "description": "Review date and time formatting controls.",
+      "settings_section": "log-timestamp",
+      "settings_source": "pages/settings.vue",
+      "title": "Log timestamp format"
+    },
+    {
+      "id": "settings-embedded-uis",
+      "route": "/settings#embedded-uis",
+      "profile": "standard",
+      "features": [
+        "features/embedded-ui"
+      ],
+      "required_capabilities": [],
+      "kinds": [
+        "image"
+      ],
+      "description": "Review the real embedded-service enablement controls.",
+      "settings_section": "embedded-uis",
+      "settings_source": "pages/settings.vue",
+      "title": "Embedded UI settings"
+    },
+    {
+      "id": "settings-authentication",
+      "route": "/settings#authentication",
+      "profile": "authenticated",
+      "features": [
+        "features/authentication"
+      ],
+      "required_capabilities": [],
+      "kinds": [
+        "image"
+      ],
+      "description": "Review authentication and local-account management.",
+      "settings_section": "authentication",
+      "settings_source": "pages/settings.vue",
+      "title": "Authentication and local accounts"
+    },
+    {
+      "id": "settings-auth-provider",
+      "route": "/settings#authentication",
+      "profile": "authenticated",
+      "features": [
+        "features/authentication"
+      ],
+      "required_capabilities": [
+        "auth_oidc"
+      ],
+      "kinds": [
+        "image"
+      ],
+      "description": "Review OIDC provider settings without discovery or saving.",
+      "settings_section": "authentication",
+      "settings_source": "pages/settings.vue",
+      "required_frontend_files": [
+        "components/AuthProviderSettings.vue"
+      ],
+      "title": "Sign-in provider"
+    },
+    {
+      "id": "settings-notifications",
+      "route": "/settings#notifications",
+      "profile": "standard",
+      "features": [
+        "features/notifications"
+      ],
+      "required_capabilities": [
+        "notifications"
+      ],
+      "kinds": [
+        "image"
+      ],
+      "description": "Review notification destinations, event routing and delivery history.",
+      "settings_section": "notifications",
+      "settings_source": "components/NotificationSettings.vue",
+      "title": "Notifications"
+    },
+    {
+      "id": "settings-backups",
+      "route": "/settings#backups",
+      "profile": "standard",
+      "features": [
+        "features/installation-backups"
+      ],
+      "required_capabilities": [
+        "installation_backup"
+      ],
+      "kinds": [
+        "image"
+      ],
+      "description": "Review the real backup/restore panel without preparing or starting a backup.",
+      "settings_section": "backups",
+      "settings_source": "pages/settings.vue",
+      "required_frontend_files": [
+        "components/InstallationBackupPanel.vue"
+      ],
+      "required_protocols": {
+        "installation_backup_protocol": 1
+      },
+      "title": "Backups and restore"
+    },
+    {
+      "id": "settings-advanced",
+      "route": "/settings#advanced",
+      "profile": "standard",
+      "features": [
+        "frontend/settings"
+      ],
+      "required_capabilities": [],
+      "kinds": [
+        "image"
+      ],
+      "description": "Review available service utilities and optional diagnostics.",
+      "settings_section": "advanced",
+      "settings_source": "pages/settings.vue",
+      "title": "Service utilities"
+    },
+    {
+      "id": "settings-support",
+      "route": "/settings#support",
+      "profile": "standard",
+      "features": [
+        "frontend/settings",
+        "contributing"
+      ],
+      "required_capabilities": [],
+      "kinds": [
+        "image"
+      ],
+      "description": "Locate project support and contribution links.",
+      "settings_section": "support",
+      "settings_source": "pages/settings.vue",
+      "title": "Support the projects"
+    },
+    {
+      "id": "login",
+      "route": "/login",
+      "profile": "login",
+      "features": [
+        "features/authentication"
+      ],
+      "required_capabilities": [],
+      "kinds": [
+        "image"
+      ],
+      "description": "Show the real sign-in form with blank credentials.",
+      "title": "Sign in to DUMB"
+    },
+    {
+      "id": "account-setup",
+      "route": "/setup",
+      "profile": "account-setup",
+      "features": [
+        "features/authentication"
+      ],
+      "required_capabilities": [],
+      "kinds": [
+        "image"
+      ],
+      "description": "Show the real initial account form without submitting it.",
+      "title": "Create your first account"
+    },
+    {
+      "id": "ai-overview",
+      "route": "/ai",
+      "profile": "standard",
+      "features": [
+        "features/ai-assistant"
+      ],
+      "required_capabilities": [
+        "ai_diagnostics"
+      ],
+      "kinds": [
+        "image"
+      ],
+      "description": "Review diagnostic scope and evidence controls without provider calls.",
+      "title": "Stack AI Assist"
+    },
+    {
+      "id": "ai-provider",
+      "route": "/ai",
+      "profile": "standard",
+      "features": [
+        "features/ai-assistant"
+      ],
+      "required_capabilities": [
+        "ai_diagnostics"
+      ],
+      "kinds": [
+        "image"
+      ],
+      "description": "Review the provider form with no credential or live model call.",
+      "title": "Local AI provider settings"
+    },
+    {
+      "id": "onboarding-services",
+      "route": "/onboarding",
+      "profile": "onboarding",
+      "features": [
+        "frontend/onboarding"
+      ],
+      "required_capabilities": [],
+      "kinds": [
+        "image"
+      ],
+      "description": "Choose example services in the actual packaged onboarding wizard.",
+      "title": "Choose services"
+    },
+    {
+      "id": "onboarding-preflight",
+      "route": "/onboarding",
+      "profile": "onboarding",
+      "features": [
+        "frontend/onboarding"
+      ],
+      "required_capabilities": [],
+      "kinds": [
+        "image"
+      ],
+      "description": "Review example readiness checks and explicit unknown storage readiness.",
+      "title": "Readiness checks"
+    },
+    {
+      "id": "onboarding-provider",
+      "route": "/onboarding",
+      "profile": "onboarding",
+      "features": [
+        "frontend/onboarding"
+      ],
+      "required_capabilities": [],
+      "kinds": [
+        "image"
+      ],
+      "description": "Review a provider credential step using a visibly example value.",
+      "title": "Provider credentials (example)"
+    },
+    {
+      "id": "onboarding-companions",
+      "route": "/onboarding",
+      "profile": "onboarding",
+      "features": [
+        "frontend/onboarding"
+      ],
+      "required_capabilities": [],
+      "kinds": [
+        "image"
+      ],
+      "description": "Review optional companion service selection.",
+      "title": "Companion services"
+    },
+    {
+      "id": "onboarding-options",
+      "route": "/onboarding",
+      "profile": "onboarding",
+      "features": [
+        "frontend/onboarding"
+      ],
+      "required_capabilities": [],
+      "kinds": [
+        "image"
+      ],
+      "description": "Review selected service options.",
+      "title": "Service options"
+    },
+    {
+      "id": "onboarding-embedded-uis",
+      "route": "/onboarding",
+      "profile": "onboarding",
+      "features": [
+        "frontend/onboarding",
+        "features/embedded-ui"
+      ],
+      "required_capabilities": [],
+      "kinds": [
+        "image"
+      ],
+      "description": "Review embedded-service access in onboarding.",
+      "title": "Embedded service access"
+    },
+    {
+      "id": "onboarding-installation",
+      "route": "/onboarding",
+      "profile": "onboarding",
+      "features": [
+        "frontend/onboarding"
+      ],
+      "required_capabilities": [
+        "setup_arrangements"
+      ],
+      "kinds": [
+        "image"
+      ],
+      "description": "Review installation choices before startup.",
+      "required_frontend_files": [
+        "components/onboarding/StepArrangement.vue"
+      ],
+      "title": "Installation choices"
+    },
+    {
+      "id": "onboarding-review",
+      "route": "/onboarding",
+      "profile": "onboarding",
+      "features": [
+        "frontend/onboarding",
+        "features/setup-checklist"
+      ],
+      "required_capabilities": [],
+      "kinds": [
+        "image",
+        "video"
+      ],
+      "description": "Walk through the real wizard to its review; never click Start services.",
+      "title": "Review your setup"
+    },
+    {
+      "id": "setup-connections",
+      "route": "/setup-connections",
+      "profile": "setup-connections",
+      "features": [
+        "features/setup-checklist"
+      ],
+      "required_capabilities": [
+        "setup_arrangements"
+      ],
+      "kinds": [
+        "image"
+      ],
+      "description": "Review retained example connection tasks; no operation is claimed successful.",
+      "required_frontend_files": [
+        "pages/setup-connections.vue"
+      ],
+      "title": "Finish setup connections"
+    },
+    {
+      "id": "settings-onboarding",
+      "route": "/settings#onboarding",
+      "profile": "standard",
+      "features": [
+        "frontend/settings",
+        "frontend/onboarding"
+      ],
+      "required_capabilities": [],
+      "kinds": [
+        "image"
+      ],
+      "description": "Locate the real guided-setup launch control without resetting the installation.",
+      "settings_section": "onboarding",
+      "settings_source": "pages/settings.vue",
+      "title": "Run guided setup again"
+    },
+    {
+      "id": "settings-contributors",
+      "route": "/settings#contributors",
+      "profile": "standard",
+      "features": [
+        "frontend/settings",
+        "contributing"
+      ],
+      "required_capabilities": [],
+      "kinds": [
+        "image"
+      ],
+      "description": "Review the real contributor section; external contributor requests use an explicit empty example response.",
+      "settings_section": "contributors",
+      "settings_source": "pages/settings.vue",
+      "title": "Project contributors"
+    },
+    {
+      "id": "api-configuration",
+      "route": "/services/DUMB%20API",
+      "profile": "standard",
+      "features": [
+        "features/configuration",
+        "api/index"
+      ],
+      "required_capabilities": [],
+      "kinds": [
+        "image"
+      ],
+      "description": "Review DUMB API configuration in the actual frontend editor without saving.",
+      "title": "DUMB API configuration"
+    },
+    {
+      "id": "onboarding-progress",
+      "route": "/onboarding",
+      "profile": "onboarding-progress",
+      "features": [
+        "frontend/onboarding",
+        "features/setup-checklist"
+      ],
+      "required_capabilities": [],
+      "kinds": [
+        "image"
+      ],
+      "description": "Simulated setup progress example in the real packaged wizard; in-memory responses only, no application was installed or started.",
+      "title": "Setup progress (simulated example)"
+    },
+    {
+      "id": "onboarding-result",
+      "route": "/onboarding",
+      "profile": "onboarding-result",
+      "features": [
+        "frontend/onboarding",
+        "features/setup-checklist"
+      ],
+      "required_capabilities": [],
+      "kinds": [
+        "image"
+      ],
+      "description": "Simulated setup result example in the real packaged wizard; in-memory responses only, no application was installed or started.",
+      "title": "Setup result (simulated example)"
+    },
+    {
+      "id": "onboarding-error",
+      "route": "/onboarding",
+      "profile": "onboarding-error",
+      "features": [
+        "frontend/onboarding",
+        "features/setup-checklist"
+      ],
+      "required_capabilities": [],
+      "kinds": [
+        "image"
+      ],
+      "description": "Simulated setup error example in the real packaged wizard; in-memory responses only, no application was installed or started.",
+      "title": "Setup needs attention (simulated example)"
+    },
+    {
+      "id": "ai-provider-openai",
+      "route": "/ai",
+      "profile": "standard",
+      "features": [
+        "features/ai-assistant"
+      ],
+      "required_capabilities": [
+        "ai_diagnostics"
+      ],
+      "kinds": [
+        "image"
+      ],
+      "description": "Review the openai provider form using unsaved example values; no provider request is sent.",
+      "title": "OpenAI provider settings"
+    },
+    {
+      "id": "ai-provider-gemini",
+      "route": "/ai",
+      "profile": "standard",
+      "features": [
+        "features/ai-assistant"
+      ],
+      "required_capabilities": [
+        "ai_diagnostics"
+      ],
+      "kinds": [
+        "image"
+      ],
+      "description": "Review the gemini provider form using unsaved example values; no provider request is sent.",
+      "title": "Gemini provider settings"
+    },
+    {
+      "id": "embedded-sonarr",
+      "required_prerequisites": [
+        "sonarr"
+      ],
+      "route": "/services/Sonarr",
+      "profile": "embedded",
+      "features": [
+        "features/embedded-ui"
+      ],
+      "required_capabilities": [],
+      "kinds": [
+        "image",
+        "video"
+      ],
+      "description": "Open an actual isolated Sonarr application through the frontend, never a substitute HTML screen.",
+      "title": "Sonarr inside DUMB"
+    },
+    {
+      "id": "database-health",
+      "title": "Database health",
+      "route": "/services/Sonarr",
+      "profile": "utility-database-health",
+      "features": [
+        "features/metrics",
+        "frontend/metrics"
+      ],
+      "required_capabilities": [
+        "database_health_metrics"
+      ],
+      "required_frontend_files": [
+        "components/DatabaseHealthPanel.vue"
+      ],
+      "kinds": [
+        "image"
+      ],
+      "description": "Review passive database monitoring controls with example disabled-state evidence; do not enable monitoring or request a fresh probe."
+    },
+    {
+      "id": "library-protection",
+      "title": "Media library protection",
+      "route": "/services/Plex%20Media%20Server",
+      "profile": "utility-library-protection",
+      "features": [
+        "features/media-library-protection"
+      ],
+      "required_capabilities": [
+        "media_library_protection"
+      ],
+      "required_frontend_files": [
+        "components/MediaProtectionPanel.vue"
+      ],
+      "kinds": [
+        "image"
+      ],
+      "description": "Review example library protection and Plex settings without changing policy, scanning, or contacting Plex."
+    },
+    {
+      "id": "symlink-tools",
+      "title": "Symlink repair and snapshots",
+      "route": "/services/InfiniDysk",
+      "profile": "utility-symlink-tools",
+      "features": [
+        "features/symlinks"
+      ],
+      "required_capabilities": [
+        "symlink_repair"
+      ],
+      "kinds": [
+        "image"
+      ],
+      "description": "Open the real Symlinks panel and inspect repair, snapshot and schedule controls without running an operation."
+    },
+    {
+      "id": "rclone-optimizer",
+      "title": "Rclone streaming optimizer",
+      "route": "/services/Rclone",
+      "profile": "utility-rclone-optimizer",
+      "features": [
+        "features/rclone-optimizer"
+      ],
+      "required_capabilities": [
+        "rclone_optimizer_infinidysk"
+      ],
+      "required_frontend_files": [
+        "components/RcloneOptimizerPanel.vue"
+      ],
+      "kinds": [
+        "image"
+      ],
+      "description": "Review real optimizer safety limits and example content discovery; no benchmark, provider read, apply or rollback is requested."
+    },
+    {
+      "id": "infinidysk-v2-install",
+      "title": "InfiniDysk 2 installation review",
+      "route": "/services/InfiniDysk",
+      "profile": "utility-infinidysk-v2-install",
+      "features": [
+        "services/core/infinidysk-installation",
+        "features/infinidysk-v2-migration"
+      ],
+      "required_capabilities": [
+        "infinidysk_v2",
+        "infinidysk_v2_migration"
+      ],
+      "required_protocols": {
+        "infinidysk_v2_migration_protocol": 1
+      },
+      "required_frontend_files": [
+        "components/InfiniDyskV2Panel.vue"
+      ],
+      "minimum_api_version": "2.24.0",
+      "kinds": [
+        "image"
+      ],
+      "description": "Review fresh-install mount and backup choices in the guarded InfiniDysk 2 panel; no preview, preparation or installation starts."
+    },
+    {
+      "id": "infinidysk-namespace-migration",
+      "title": "Legacy namespace migration review",
+      "route": "/services/InfiniDysk",
+      "profile": "utility-namespace-migration",
+      "features": [
+        "services/core/infinidysk-migration"
+      ],
+      "required_capabilities": [
+        "infinidysk_migration"
+      ],
+      "required_frontend_files": [
+        "components/InfiniDyskMigrationNotice.vue"
+      ],
+      "kinds": [
+        "image"
+      ],
+      "description": "Review legacy identity and full-namespace choices using example eligibility; do not run preflight, migration, playback control or cleanup."
+    },
+    {
+      "id": "postgres-migration",
+      "title": "SQLite to PostgreSQL migration review",
+      "route": "/services/Sonarr",
+      "profile": "utility-postgres-migration",
+      "features": [
+        "features/arr-postgres-migration",
+        "services/dependent/postgres"
+      ],
+      "required_capabilities": [
+        "postgres_migration"
+      ],
+      "required_frontend_files": [
+        "components/ArrPostgresMigrationPanel.vue"
+      ],
+      "kinds": [
+        "image"
+      ],
+      "description": "Inspect the source-shaped read-only preflight and backup requirements; no rehearsal, cutover or rollback is performed."
+    }
+  ]
+}

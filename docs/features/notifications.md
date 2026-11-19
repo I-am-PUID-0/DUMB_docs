@@ -19,6 +19,8 @@ Notifications send health and operation events from the backend, including when 
 
 Use **Settings → Notifications** to configure destinations, send a test or manual message, and review history.
 
+<!-- docs:visual scenario=settings-notifications type=image -->
+
 ## Configure a destination
 
 A successful destination test is followed by a separate check of normal event delivery:

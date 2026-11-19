@@ -1,0 +1,204 @@
+name: Refresh frontend documentation media
+
+on:
+  workflow_dispatch:
+    inputs:
+      channels:
+        description: Source channels to check
+        type: choice
+        options: [both, release, dev]
+        default: both
+      force:
+        description: Recapture unchanged source pins
+        type: boolean
+        default: false
+  schedule:
+    - cron: '9 */6 * * *'
+  push:
+    branches: [master]
+    paths:
+      - docs-versions.json
+      - frontend-media.json
+      - scripts/frontend-visuals/**
+      - scripts/refresh_frontend_media.py
+      - .github/workflows/refresh-frontend-media.yml
+
+# This workflow opens a reviewable media PR. It never publishes Pages, creates a
+# release, approves a PR or changes application repositories.
+permissions:
+  contents: read
+
+concurrency:
+  group: docs-frontend-media-refresh
+  cancel-in-progress: false
+
+jobs:
+  discover:
+    if: github.repository == 'I-am-PUID-0/DUMB_docs' && github.ref == 'refs/heads/master'
+    runs-on: ubuntu-latest
+    outputs:
+      changed: ${{ steps.sources.outputs.changed }}
+      matrix: ${{ steps.sources.outputs.matrix }}
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ github.sha }}
+          persist-credentials: false
+      - uses: actions/setup-python@v6
+        with:
+          python-version: '3.11'
+      - name: Resolve immutable application sources and media drift
+        id: sources
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+          DOCS_HEAD: ${{ github.sha }}
+          CHANNELS: ${{ inputs.channels || 'both' }}
+          FORCE: ${{ inputs.force || false }}
+        run: |
+          force_args=()
+          if [ "$FORCE" = true ]; then force_args+=(--force); fi
+          python scripts/refresh_frontend_media.py discover --channels "$CHANNELS" --docs-head "$DOCS_HEAD" --out selection.json "${force_args[@]}"
+      - uses: actions/upload-artifact@v7
+        with:
+          name: media-source-selection
+          path: selection.json
+          retention-days: 7
+
+  capture:
+    needs: discover
+    if: needs.discover.outputs.changed == 'true'
+    strategy:
+      fail-fast: false
+      matrix: ${{ fromJSON(needs.discover.outputs.matrix) }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    # No release credential is available in this job, which builds changing
+    # upstream application code. All sources are public, exact SHA checkouts.
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ github.sha }}
+          persist-credentials: false
+      - uses: actions/download-artifact@v8
+        with:
+          name: media-source-selection
+          path: selection
+      - uses: actions/checkout@v7
+        with:
+          repository: nicocapalbo/dmbdb
+          ref: ${{ matrix.frontend_commit }}
+          path: sources/frontend
+          persist-credentials: false
+      - uses: actions/checkout@v7
+        with:
+          repository: I-am-PUID-0/DUMB
+          ref: ${{ matrix.backend_commit }}
+          path: sources/backend
+          persist-credentials: false
+      - uses: actions/setup-python@v6
+        with:
+          python-version: '3.11'
+      - name: Verify source versions and extract backend capabilities without execution
+        env:
+          CHANNEL: ${{ matrix.channel }}
+        run: |
+          python scripts/refresh_frontend_media.py plan --selection selection/selection.json --channel "$CHANNEL" --backend-root sources/backend --frontend-root sources/frontend --out result/plan.json
+      - uses: pnpm/action-setup@73e46992e05b19abd31f2f3c20e0e7370d762115 # v6.1.1
+        with:
+          package_json_file: sources/frontend/package.json
+          run_install: false
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version: '24'
+      - name: Build the isolated immutable frontend
+        working-directory: sources/frontend
+        run: |
+          pnpm install --frozen-lockfile
+          pnpm build
+          pnpm exec playwright install --with-deps chromium
+      - name: Install media encoders
+        run: sudo apt-get update && sudo apt-get install --yes imagemagick ffmpeg
+      - name: Test source-plan, fixture and measurement contracts
+        run: node --test scripts/frontend-visuals/capture.test.mjs
+      - name: Capture real frontend screens with isolated example responses
+        run: |
+          set -euo pipefail
+          state="$RUNNER_TEMP/docs-sonarr-state.json"
+          cleanup() { python scripts/frontend-visuals/demo-service.py stop --state "$state"; }
+          trap cleanup EXIT
+          python scripts/frontend-visuals/demo-service.py start --network-host --state "$state"
+          origin=$(python -c 'import json,sys; print(json.load(open(sys.argv[1]))["origin"])' "$state")
+          node scripts/frontend-visuals/capture.mjs --plan result/plan.json --frontend-root sources/frontend --out raw-captures --embedded-sonarr-origin "$origin"
+          node scripts/frontend-visuals/package.mjs --plan result/plan.json --captures raw-captures --out result/frontend
+          node scripts/frontend-visuals/showcase.mjs --frontend-root sources/frontend --media result/frontend --out result/showcase --theme both
+          python scripts/refresh_frontend_media.py verify --plan result/plan.json --package result/frontend
+          python scripts/refresh_frontend_media.py verify --plan result/plan.json --package result/showcase --showcase
+      - name: Retain complete media proposals
+        uses: actions/upload-artifact@v7
+        with:
+          name: frontend-media-${{ matrix.channel }}
+          path: result/
+          if-no-files-found: error
+          retention-days: 7
+      - name: Retain failure diagnostics without raw service state
+        if: failure()
+        uses: actions/upload-artifact@v7
+        with:
+          name: frontend-media-failure-${{ matrix.channel }}
+          path: raw-captures/manifest.json
+          if-no-files-found: ignore
+          retention-days: 7
+
+  propose:
+    needs: [discover, capture]
+    if: needs.discover.outputs.changed == 'true' && needs.capture.result == 'success'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      # A fresh trusted checkout validates downloaded data. No upstream source,
+      # dependency lifecycle, generated script or browser is executed here.
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ github.sha }}
+          persist-credentials: false
+      - uses: actions/setup-python@v6
+        with:
+          python-version: '3.11'
+      - uses: actions/download-artifact@v8
+        with:
+          name: media-source-selection
+          path: selection
+      - uses: actions/download-artifact@v8
+        with:
+          pattern: frontend-media-*
+          path: downloaded
+      - name: Revalidate current sources and stage only complete inventoried assets
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+          DOCS_HEAD: ${{ github.sha }}
+        run: |
+          mkdir proposals
+          for channel in release dev; do
+            if [ -d "downloaded/frontend-media-$channel" ]; then
+              mv "downloaded/frontend-media-$channel" "proposals/$channel"
+            fi
+          done
+          python scripts/refresh_frontend_media.py apply --selection selection/selection.json --artifacts proposals --expected-head "$DOCS_HEAD" --report media-refresh-summary.md
+      - name: Open or update the media review PR
+        uses: peter-evans/create-pull-request@v8
+        with:
+          token: ${{ secrets.RELEASE_PLEASE_TOKEN }}
+          base: master
+          branch: docs-frontend-media-refresh
+          delete-branch: true
+          add-paths: |
+            docs-versions.json
+            frontend-media.json
+            docs/assets/images/guides/frontend/channels/
+            docs/assets/images/guides/showcase/channels/
+          commit-message: 'docs: refresh source-pinned frontend visuals'
+          title: 'docs: refresh frontend screenshots and walkthroughs'
+          body-path: media-refresh-summary.md

@@ -1,0 +1,101 @@
+{# Rendered into Markdown by scripts/media_render.py before the site build. #}
+{% macro render_showcase(catalog, urls) -%}
+<figure id="overview" class="docs-product-showcase" data-showcase data-state="poster">
+  <div class="showcase-frame">
+    <picture data-ui-picture>
+      <source data-ui-dark media="(prefers-color-scheme: dark)" srcset="{{ urls.showcase.dark.poster | e }}">
+      <img class="showcase-poster" src="{{ urls.showcase.light.poster | e }}" width="1920" height="1280" alt="DUMB's actual dashboard, service controls and settings, shown in a short interface preview." decoding="async" fetchpriority="high">
+    </picture>
+    <video id="dumb-showcase" data-showcase-video hidden controls muted loop playsinline preload="none" poster="{{ urls.showcase.light.poster | e }}" data-light-video="{{ urls.showcase.light.video | e }}" data-dark-video="{{ urls.showcase.dark.video | e }}" data-light-poster="{{ urls.showcase.light.poster | e }}" data-dark-poster="{{ urls.showcase.dark.poster | e }}" aria-label="Inside DUMB: a short preview of the actual interface" aria-describedby="showcase-caption">
+      <source src="{{ urls.showcase.light.video | e }}" type="video/mp4">
+      {% if urls.showcase.get('captions') %}<track kind="captions" src="{{ urls.showcase.captions | e }}" srclang="en" label="English">{% endif %}
+      {% if urls.showcase.get('chapters') %}<track kind="chapters" src="{{ urls.showcase.chapters | e }}" srclang="en" label="Preview chapters">{% endif %}
+      <p><a href="{{ urls.showcase.light.video | e }}">Open the interface preview</a>.</p>
+    </video>
+  </div>
+  <figcaption id="showcase-caption">
+    <span>Real application screens · Frontend {{ catalog.frontend.version | e }} · DUMB {{ catalog.backend.version | e }} · Example data</span>
+    <a href="{{ urls.gallery | e }}">Explore the interface <span aria-hidden="true">↗</span></a>
+    <a href="{{ urls.showcase.transcript | e }}">Read preview text</a>
+    <noscript><a href="{{ urls.showcase.light.video | e }}">Play preview</a></noscript>
+    <button class="showcase-motion-control" data-showcase-toggle type="button" hidden aria-controls="dumb-showcase" aria-label="Play the interface preview">
+      <span data-showcase-icon aria-hidden="true">▶</span><span data-showcase-label>Play preview</span>
+    </button>
+  </figcaption>
+</figure>
+{%- endmacro %}
+
+{% macro render_panel(panel, urls, catalog) -%}
+<section class="ui-example-panel" id="ui-{{ panel.id | e }}">
+  <div class="ui-example-heading">
+    <h3>{{ panel.title | e }}</h3>
+    {% if urls.guides.get(panel.id) %}<a href="{{ urls.guides[panel.id] | e }}">Read the guide <span aria-hidden="true">↗</span></a>{% endif %}
+  </div>
+  <p>{{ panel.description | e }}</p>
+  <a class="ui-example-image" data-showcase-zoom href="{{ urls.screens[panel.id].light | e }}" aria-label="Open full-size image: {{ panel.title | e }}">
+    <picture data-ui-picture>
+      <source data-ui-dark media="(prefers-color-scheme: dark)" srcset="{{ urls.screens[panel.id].dark | e }}">
+      <img src="{{ urls.screens[panel.id].light | e }}" alt="{{ panel.title | e }} in the actual DUMB frontend, with example data." width="1280" height="800" loading="lazy" decoding="async">
+    </picture>
+    <span class="ui-example-enlarge" aria-hidden="true">View full size <span>↗</span></span>
+  </a>
+  <p class="ui-example-provenance">Actual frontend {{ catalog.frontend.version | e }} · DUMB {{ catalog.backend.version | e }} · Example data.{% if panel.id in ['onboarding-progress', 'onboarding-result', 'onboarding-error'] %} Installation status is illustrative; no application was installed or started.{% endif %}</p>
+</section>
+{%- endmacro %}
+
+{% macro render_gallery(catalog, urls) -%}
+{% set groups = [
+  {"id": "dashboard", "title": "The dashboard", "description": "Find your services and inspect the installation at a glance.", "ids": ["dashboard", "disabled-services", "metrics"]},
+  {"id": "applications", "title": "Inside a service", "description": "Work with the selected app's controls, settings and connections.", "ids": ["service-controls", "configuration", "api-configuration", "embedded-sonarr", "dependencies", "auto-restart"]},
+  {"id": "maintenance", "title": "Logs and updates", "description": "Find the relevant messages and review a version before making a change.", "ids": ["service-logs", "realtime-logs", "updates"]},
+  {"id": "library-tools", "title": "Library and database tools", "description": "Inspect the available controls, then follow the guide for the change you intend to make.", "ids": ["database-health", "library-protection", "symlink-tools", "rclone-optimizer", "infinidysk-v2-install", "infinidysk-namespace-migration", "postgres-migration"]},
+  {"id": "preferences", "title": "Your dashboard view", "description": "Choose how information and application pages are displayed.", "ids": ["settings-overview", "settings-appearance", "settings-log-timestamps", "settings-embedded-uis", "settings-onboarding", "settings-advanced", "settings-about", "settings-support", "settings-contributors"]},
+  {"id": "accounts", "title": "Accounts, integrations and alerts", "description": "Review the connections and access used by your installation.", "ids": ["login", "account-setup", "settings-tokens", "settings-authentication", "settings-auth-provider", "settings-notifications", "settings-backups", "ai-overview", "ai-provider", "ai-provider-openai", "ai-provider-gemini"]},
+  {"id": "first-run", "title": "First-run setup", "description": "Choose services and review their options before completing the initial setup.", "ids": ["onboarding-services", "onboarding-preflight", "onboarding-provider", "onboarding-companions", "onboarding-options", "onboarding-embedded-uis", "onboarding-installation", "onboarding-review", "onboarding-progress", "onboarding-result", "onboarding-error", "setup-connections"]}
+] %}
+{% set known = namespace(ids=[]) %}
+<div class="docs-ui-examples" data-ui-gallery>
+  <div class="ui-gallery-intro">
+    <p class="ui-gallery-eyebrow">Inside DUMB</p>
+    <h2 id="ui-examples">Explore the interface</h2>
+    <p>Actual frontend screens, organized by the task in front of you. Images follow this site's light or dark appearance. Open any image to inspect it full size.</p>
+    <p class="ui-gallery-provenance">Frontend {{ catalog.frontend.version | e }} · DUMB {{ catalog.backend.version | e }} · Example data. Features and controls depend on the installed versions.</p>
+    {% if catalog.get('notice') %}<p class="ui-gallery-notice">{{ catalog.notice | e }}</p>{% endif %}
+  </div>
+  <nav class="ui-example-nav" aria-label="Interface examples">
+    {% for group in groups %}
+      {% set present = namespace(value=false) %}
+      {% for panel in catalog.panels if panel.id in group.ids and panel.status == 'captured' %}{% set present.value = true %}{% endfor %}
+      {% if present.value %}<a href="#ui-group-{{ group.id }}">{{ group.title }}</a>{% endif %}
+    {% endfor %}
+  </nav>
+  {% for group in groups %}
+    {% set present = namespace(value=false) %}
+    {% for panel in catalog.panels if panel.id in group.ids and panel.status == 'captured' %}{% set present.value = true %}{% endfor %}
+    {% set known.ids = known.ids + group.ids %}
+    {% if present.value %}
+      <section class="ui-example-group" id="ui-group-{{ group.id }}">
+        <div class="ui-example-group-heading"><h2>{{ group.title }}</h2><p>{{ group.description }}</p></div>
+        {% for id in group.ids %}{% for panel in catalog.panels if panel.id == id and panel.status == 'captured' %}{{ render_panel(panel, urls, catalog) }}{% endfor %}{% endfor %}
+      </section>
+    {% endif %}
+  {% endfor %}
+  {% set other = namespace(value=false) %}
+  {% for panel in catalog.panels if panel.id not in known.ids and panel.status == 'captured' %}{% set other.value = true %}{% endfor %}
+  {% if other.value %}
+    <section class="ui-example-group" id="ui-group-other">
+      <div class="ui-example-group-heading"><h2>Other actual views</h2><p>More screens from the reviewed frontend.</p></div>
+      {% for panel in catalog.panels if panel.id not in known.ids and panel.status == 'captured' %}{{ render_panel(panel, urls, catalog) }}{% endfor %}
+    </section>
+  {% endif %}
+  {% set unavailable = namespace(value=false) %}
+  {% for panel in catalog.panels if panel.status == 'unavailable' %}{% set unavailable.value = true %}{% endfor %}
+  {% if unavailable.value %}
+    <section class="ui-example-availability" aria-label="Version availability">
+      <h2>Availability in these versions</h2>
+      <p>These views are unavailable in this version combination. Open the guide to check which version you need.</p>
+      <ul>{% for panel in catalog.panels if panel.status == 'unavailable' %}<li><strong>{{ panel.title | e }}.</strong> {% if panel.reason %}{{ panel.reason | e }}{% endif %} {% if urls.guides.get(panel.id) %}<a href="{{ urls.guides[panel.id] | e }}">Read the guide</a>.{% endif %}{% if panel.technical_reason %}<details class="geek-details"><summary>Technical availability details</summary><p>{{ panel.technical_reason | e }}</p></details>{% endif %}</li>{% endfor %}</ul>
+    </section>
+  {% endif %}
+</div>
+{%- endmacro %}

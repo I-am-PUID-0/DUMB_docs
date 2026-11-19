@@ -69,6 +69,8 @@ After the dependency restarts and remains healthy, the recovery journal restores
 3. Select **Save protection** and wait for **Saved**.
 4. Reopen the panel and check its current protection/activity status. Resolve **Setup required** before relying on unattended maintenance.
 
+<!-- docs:visual scenario=library-protection type=image -->
+
 ### Plex
 
 DUMB uses the Plex token it already manages for Plex integration. No second key is required.

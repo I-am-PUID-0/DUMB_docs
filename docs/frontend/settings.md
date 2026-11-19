@@ -15,6 +15,8 @@ Sections start expanded and remember their open/closed state in each browser.
 Sections start collapsed until you choose otherwise. Each browser remembers explicit open/closed choices. A direct section link opens it for that visit without replacing the saved choice.
 <!-- dev:end -->
 
+<!-- docs:visual scenario=settings-overview type=image -->
+
 ## Find a setting
 
 | Section | What to change |
@@ -38,13 +40,7 @@ The **Advanced** section also includes service utilities. **Backups and restore*
 
 Choose **System Default** to follow your operating system, or select a light/dark palette. This preference is stored in the browser and does not change backend configuration.
 
-<figure class="docs-visual docs-frontend-figure">
-<video class="docs-frontend-video" controls playsinline preload="none" poster="../../assets/images/guides/frontend/v1.91.0/tour-2/appearance.webp" aria-label="Choose a dashboard color palette" aria-describedby="appearance-demo-caption">
-  <source src="../assets/images/guides/frontend/v1.91.0/tour-2/appearance.webm" type="video/webm">
-  <p><a href="../assets/images/guides/frontend/v1.91.0/tour-2/appearance.webm">Download the demonstration</a>, or follow the written steps above.</p>
-</video>
-<figcaption id="appearance-demo-caption" class="docs-visual-caption">Watch: open Appearance and select the Light palette. This changes a browser preference. DUMB Frontend 1.91.0 · example data. Other versions may look different. <a href="../assets/images/guides/frontend/v1.91.0/tour-2/appearance.webp">Open the full-size screenshot</a>.</figcaption>
-</figure>
+<!-- docs:visual scenario=settings-appearance type=video -->
 
 ## About section
 
@@ -58,12 +54,7 @@ Dismissing a banner hides it only in that browser. The About section retains the
 Ordinary stable notices are suppressed when the installed version is equal to or newer than that release. Explicit branch, commit, and release selections remain available for review.
 <!-- dev:end -->
 
-<figure class="docs-visual docs-frontend-figure" markdown="1">
-
-![About settings showing the DUMB API and frontend versions.](../assets/images/guides/frontend/v1.91.0/tour-2/about.webp){ loading=lazy decoding=async }
-
-<figcaption class="docs-visual-caption">Check both versions before choosing the matching documentation. DUMB Frontend 1.91.0 · example data. Other versions may look different.</figcaption>
-</figure>
+<!-- docs:visual scenario=settings-about type=image -->
 
 ### Launch Onboarding
 
@@ -71,16 +62,13 @@ Choose **Launch Onboarding** and confirm to review services again. If onboarding
 
 Existing application data is retained, but the wizard can apply new settings over the current configuration. Already enabled non-instance services are not offered as new selections; use their service pages for ordinary configuration changes.
 
+<!-- docs:visual scenario=settings-onboarding type=image -->
+
 ## Embedded service UIs
 
 Select **Enable embedded service iFrames** to add embedded application tabs, direct links, and full-window controls to supported service pages. Disabling it removes dashboard access through those routes; native-port access still depends on your deployment's port mappings.
 
-<figure class="docs-visual docs-frontend-figure" markdown="1">
-
-![Embedded UIs settings with the Enable embedded service iFrames checkbox.](../assets/images/guides/frontend/v1.91.0/tour-2/embedded-ui-settings.webp){ loading=lazy decoding=async }
-
-<figcaption class="docs-visual-caption">Use Enable embedded service iFrames to control DUMB's application tabs and links. DUMB Frontend 1.91.0 · example data. Other versions may look different.</figcaption>
-</figure>
+<!-- docs:visual scenario=settings-embedded-uis type=image -->
 
 See [Embedded service UIs](../features/embedded-ui.md) for routing, application logins, and Authelia/TPA SSO exceptions.
 
@@ -99,6 +87,8 @@ Saved destination URLs and headers stay on the server. A blank secret field pres
 
 [Notifications](../features/notifications.md) documents events, startup baselining, retries, thresholds, and delivery limitations. Browser-local Metrics banners use separate settings on the Metrics page.
 
+<!-- docs:visual scenario=settings-notifications type=image -->
+
 ## Token settings
 
 | Token | Used for |
@@ -109,10 +99,14 @@ Saved destination URLs and headers stay on the server. A blank secret field pres
 A GitHub token should grant only the read access required by the selected source. Public release checks normally need no token. Enter the required token here, select **Save**, and wait for **Saved**. Retry the connection or update check that needed it. Technical deployments can also use a supported [configuration override](../features/configuration.md#configuration-precedence).
 
 
+<!-- docs:visual scenario=settings-tokens type=image -->
+
 ## UI preferences
 
 **Log Timestamp Format** controls MDY/DMY date order, 12/24-hour time, and leading zeros. It changes log presentation, not the backend's timezone or original log timestamps.
 
+
+<!-- docs:visual scenario=settings-log-timestamps type=image -->
 
 ## Advanced
 
@@ -142,6 +136,8 @@ Database Health stays opt-in per service. Geek Mode does not run repair, integri
 
 The [dependency-panel example](service-pages.md#dependency-graph-view) shows its ordinary views. Geek Mode adds the diagnostic controls listed above.
 
+<!-- docs:visual scenario=settings-advanced type=image -->
+
 ## Authentication settings
 
 ### Authentication provider
@@ -160,6 +156,8 @@ For bootstrapped DUMB-managed Authelia, **Link managed Authelia** creates/reuses
 
 Provider TLS verification stays enabled by default. **Allow private endpoint IPs** and **Allow HTTP** are explicit outbound connection exceptions for a trusted provider; changing presets resets them. The full [authentication guide](../features/authentication.md#configure-an-oidc-provider) covers claim mapping and provider restrictions.
 
+<!-- docs:visual scenario=settings-auth-provider type=image -->
+
 ### Enable/disable authentication
 
 Enable authentication before allowing untrusted network access. Disabling it exposes DUMB controls to anyone who can reach the API.
@@ -170,8 +168,12 @@ Add, disable, enable, or delete local users under Authentication. DUMB protects 
 
 Follow the [sign-in and access-check diagram](../features/authentication.md#sign-in-and-check-access) when testing an authentication change.
 
+<!-- docs:visual scenario=settings-authentication type=image -->
+
 <!-- dev:start -->
 ## Backups and restore
+
+<!-- docs:visual scenario=settings-backups type=image -->
 
 1. Register an already-mounted destination.
 2. Choose `.tar` or `.tar.zst`, then run **Preview backup**.
@@ -184,6 +186,16 @@ A fresh installation can reach restore before application onboarding after norma
 
 Use [Installation backup and restore](../features/installation-backups.md) for the complete procedure and [Backup storage](../features/backup-storage.md) for destination identity and mount checks.
 <!-- dev:end -->
+
+## Support and contributors
+
+Open **Settings → Support and Contributors** for project links and the people
+maintaining DUMB and its frontend. You can use these links without enabling
+Geek Mode.
+
+<!-- docs:visual scenario=settings-support type=image -->
+
+<!-- docs:visual scenario=settings-contributors type=image -->
 
 ## Related pages
 

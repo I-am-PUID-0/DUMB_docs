@@ -61,6 +61,8 @@ browsers and reappears after seven days.
     requires an explicit acknowledgement of this backup before it enables
     **Migrate now**.
 
+<!-- docs:visual scenario=infinidysk-namespace-migration type=image -->
+
 The available compatibility cutover changes the persisted service identity and
 managed process name to InfiniDysk. It can also rename DUMB-generated attached
 instance/process labels such as `Radarr NzbDAV` to `Radarr InfiniDysk`. Before

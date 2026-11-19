@@ -19,12 +19,7 @@ The dashboard displays service cards for each configured service, showing:
 - Auto-restart badge
 - Quick action and available-update buttons
 
-<figure class="docs-visual docs-frontend-figure" markdown="1">
-
-![Dashboard service cards showing each app's status and available controls.](../assets/images/guides/frontend/v1.91.0/tour-2/dashboard.webp){ loading=lazy decoding=async }
-
-<figcaption class="docs-visual-caption">Use the service cards to check an app and open its page. DUMB Frontend 1.91.0 · example data. Other versions may look different.</figcaption>
-</figure>
+<!-- docs:visual scenario=dashboard type=image -->
 
 ---
 
@@ -231,12 +226,7 @@ Enabled services are displayed in a grid layout, organized by:
 - **DUMB services first** - The API/frontend lead the default list
 - **Alphabetical order** - Other services follow by name until you save a custom order
 
-<figure class="docs-visual docs-frontend-figure" markdown="1">
-
-![Sidebar search for Tautulli with Show Disabled selected and its disabled entry visible.](../assets/images/guides/frontend/v1.91.0/tour-2/disabled-services.webp){ loading=lazy decoding=async }
-
-<figcaption class="docs-visual-caption">Use sidebar search with Show Disabled to find a configured service. These controls do not start it. DUMB Frontend 1.91.0 · example data. Other versions may look different.</figcaption>
-</figure>
+<!-- docs:visual scenario=disabled-services type=image -->
 
 ---
 

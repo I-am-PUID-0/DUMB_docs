@@ -62,6 +62,8 @@ flowchart LR
 
 ## First-time setup
 
+<!-- docs:visual scenario=account-setup type=image -->
+
 When DUMB starts for the first time, the frontend detects that no users exist and redirects to the setup page.
 
 ### Setup options
@@ -100,6 +102,8 @@ paths fall back to the dashboard home page.
 <!-- dev:end -->
 
 ### Local login
+
+<!-- docs:visual scenario=login type=image -->
 
 1. Navigate to the DUMB frontend
 2. Enter your username and password

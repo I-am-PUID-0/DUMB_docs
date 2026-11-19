@@ -1,0 +1,299 @@
+{
+  "schema_version": 2,
+  "label": "Public example responses for documentation captures; no live DUMB configuration or accounts.",
+  "core_services": [
+    {
+      "key": "riven_backend",
+      "name": "Riven",
+      "category": "debrid",
+      "description": "Example arrangement for finding and preparing media with a debrid provider.",
+      "dependencies": [
+        "zurg",
+        "rclone",
+        "postgres"
+      ],
+      "debrid_providers": [
+        "RealDebrid"
+      ],
+      "supports_instances": false,
+      "service_options": {
+        "zurg": {
+          "process_name": "Zurg",
+          "port": 9999
+        },
+        "rclone": {
+          "process_name": "Rclone",
+          "mount_path": "/mnt/debrid/example"
+        },
+        "riven_backend": {
+          "process_name": "Riven",
+          "port": 8080
+        },
+        "postgres": {
+          "process_name": "PostgreSQL",
+          "port": 5432
+        }
+      },
+      "service_option_descriptions": {
+        "zurg": {
+          "port": "Local WebDAV port."
+        },
+        "rclone": {
+          "mount_path": "Example mount path; storage access is not verified."
+        },
+        "riven_backend": {
+          "port": "Port used by the example application."
+        }
+      }
+    },
+    {
+      "key": "infinidysk",
+      "name": "InfiniDysk",
+      "category": "usenet",
+      "description": "Example Usenet and WebDAV arrangement.",
+      "dependencies": [
+        "rclone"
+      ],
+      "debrid_providers": [],
+      "supports_instances": false,
+      "service_options": {
+        "infinidysk": {
+          "process_name": "InfiniDysk",
+          "port": 3000
+        },
+        "rclone": {
+          "process_name": "Rclone",
+          "mount_path": "/mnt/debrid/example"
+        }
+      }
+    },
+    {
+      "key": "sonarr",
+      "name": "Sonarr",
+      "category": "library",
+      "description": "Series library automation.",
+      "dependencies": [],
+      "debrid_providers": [],
+      "supports_instances": true,
+      "service_options": {
+        "sonarr": {
+          "process_name": "Sonarr",
+          "port": 8989
+        }
+      },
+      "instance_options": {
+        "Series": {
+          "process_name": "Sonarr Series",
+          "port": 8989
+        }
+      }
+    },
+    {
+      "key": "radarr",
+      "name": "Radarr",
+      "category": "library",
+      "description": "Movie library automation.",
+      "dependencies": [],
+      "debrid_providers": [],
+      "supports_instances": true,
+      "service_options": {
+        "radarr": {
+          "process_name": "Radarr",
+          "port": 7878
+        }
+      },
+      "instance_options": {
+        "Movies": {
+          "process_name": "Radarr Movies",
+          "port": 7878
+        }
+      }
+    }
+  ],
+  "optional_services": [
+    {
+      "key": "plex",
+      "name": "Plex Media Server",
+      "description": "Example media server companion.",
+      "dependencies": [],
+      "service_options": {
+        "plex": {
+          "process_name": "Plex Media Server",
+          "port": 32400
+        }
+      }
+    },
+    {
+      "key": "prowlarr",
+      "name": "Prowlarr",
+      "description": "Example indexer management companion.",
+      "dependencies": [],
+      "service_options": {
+        "prowlarr": {
+          "process_name": "Prowlarr",
+          "port": 9696
+        }
+      }
+    }
+  ],
+  "ai_settings": {
+    "enabled": false,
+    "provider": "ollama",
+    "base_url": "http://127.0.0.1:11434",
+    "model": "example-local-model",
+    "api_key_configured": false,
+    "timeout_sec": 60,
+    "temperature": 0.2,
+    "active_profile_id": "example-local",
+    "profiles": [
+      {
+        "id": "example-local",
+        "name": "Example local provider",
+        "provider": "ollama",
+        "base_url": "http://127.0.0.1:11434",
+        "model": "example-local-model",
+        "api_key_configured": false
+      }
+    ],
+    "include_dependency_graph": true,
+    "include_docs_context": true,
+    "include_process_list": true,
+    "include_metrics": true,
+    "diagnostic_window_hours": 24,
+    "comparison_mode": "previous_period",
+    "deep_log_scan": false,
+    "max_log_scan_mb": 32
+  },
+  "notification_config": {
+    "enabled": false,
+    "destinations": [
+      {
+        "id": "example-webhook",
+        "name": "Example webhook (not connected)",
+        "type": "webhook",
+        "enabled": false,
+        "url": "https://example.com/notifications",
+        "event_types": [
+          "service_unhealthy",
+          "update_available"
+        ],
+        "services": [],
+        "rate_limit_seconds": 300
+      }
+    ],
+    "history_limit": 100
+  },
+  "setup_plan": {
+    "plan_id": "example-plan",
+    "services": [
+      {
+        "id": "riven_backend",
+        "service_key": "riven_backend",
+        "name": "Riven",
+        "selection_kind": "chosen",
+        "role": "Debrid orchestration"
+      },
+      {
+        "id": "zurg",
+        "service_key": "zurg",
+        "name": "Zurg",
+        "selection_kind": "required",
+        "required": true,
+        "role": "WebDAV support"
+      },
+      {
+        "id": "rclone",
+        "service_key": "rclone",
+        "name": "Rclone",
+        "selection_kind": "required",
+        "required": true,
+        "role": "Example mount access"
+      },
+      {
+        "id": "postgres",
+        "service_key": "postgres",
+        "name": "PostgreSQL",
+        "selection_kind": "required",
+        "required": true,
+        "role": "Riven database"
+      },
+      {
+        "id": "external-plex",
+        "service_key": "plex",
+        "name": "Example existing Plex server",
+        "selection_kind": "external",
+        "external": true,
+        "role": "Existing media server; not installed by DUMB"
+      }
+    ],
+    "actions": [
+      {
+        "id": "review-provider",
+        "service_key": "riven_backend",
+        "label": "Check the example provider connection after startup",
+        "automation": "manual",
+        "required": true,
+        "execution": "waiting_input",
+        "verification": "unchecked",
+        "reason": "Example responses do not contact providers or verify storage.",
+        "instructions": [
+          "Open the application after startup and test its provider connection."
+        ]
+      }
+    ],
+    "checks": [
+      {
+        "key": "storage",
+        "label": "Storage access",
+        "ok": null,
+        "critical": false,
+        "detail": "Example storage paths have not been probed; no files were enumerated."
+      }
+    ],
+    "arrangement_schema": {
+      "fields": []
+    },
+    "coverage": {
+      "automation": {
+        "count": 0,
+        "total": 1
+      },
+      "applied": {
+        "count": 0,
+        "total": 1
+      },
+      "verified": {
+        "count": 0,
+        "total": 1
+      }
+    }
+  },
+  "backup_status": {
+    "protocol": 1,
+    "installation_id": "example-installation",
+    "job": null,
+    "preparation": null,
+    "recovery_required": false,
+    "hold": false,
+    "warnings": [
+      "Example backup configuration only. No archive was created and no application was stopped."
+    ],
+    "scope": {
+      "includes": [
+        "DUMB configuration",
+        "Application configuration and databases"
+      ],
+      "excludes": [
+        "Media files",
+        "External provider accounts"
+      ]
+    },
+    "schedule": {
+      "enabled": false,
+      "destination_id": "",
+      "interval_hours": 24,
+      "keep_last": 7,
+      "compression": "none"
+    }
+  }
+}

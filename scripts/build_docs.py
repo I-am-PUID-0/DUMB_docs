@@ -20,10 +20,12 @@ if __package__:
     from .asset_fingerprints import fingerprint_assets
     from .docs_identity import IdentityError, agent_identity, documentation_identity
     from .markdown_fixes import repair_table_continuations
+    from .media_render import MediaRenderer, restore_site_urls, restore_urls
 else:
     from asset_fingerprints import fingerprint_assets
     from docs_identity import IdentityError, agent_identity, documentation_identity
     from markdown_fixes import repair_table_continuations
+    from media_render import MediaRenderer, restore_site_urls, restore_urls
 
 ROOT = Path(__file__).resolve().parents[1]
 MARKER = re.compile(r"<!-- (dev|release):(start|end) -->")
@@ -269,6 +271,7 @@ def build_channel(
     output = work / "site"
     shutil.copytree(ROOT / "overrides", work / "overrides")
     docs = work / "docs"
+    media_renderer = MediaRenderer(ROOT, channel, settings)
     apply_release_overrides(channel, settings["version"], docs)
     include_dev = channel == "dev" or settings.get("include_development", False)
     if channel == "release":
@@ -316,6 +319,7 @@ def build_channel(
                 "Use the documentation selector in the header to change channels. "
                 "Check your DUMB image and API version before following development instructions.\n"
             )
+        text = media_renderer.render(text, relative, for_build=True)
         # Only the release owns robots.txt and the root sitemap reference.
         path.write_text(text)
         page_path = markdown_url(relative)
@@ -323,7 +327,7 @@ def build_channel(
         if relative.as_posix() not in unavailable:
             body = text.split("---\n", 2)[2] if text.startswith("---\n") else text
             text_pages.append(
-                (str(meta.get("title", relative.stem)), page_path, body.strip())
+                (str(meta.get("title", relative.stem)), page_path, restore_urls(body.strip()))
             )
 
     # Shared UI fixes apply to both channels, independently of frozen prose.
@@ -394,6 +398,7 @@ def build_channel(
         cwd=work,
         check=True,
     )
+    restore_site_urls(output)
     if unavailable:
         sitemap = output / "sitemap.xml"
         tree = ET.parse(sitemap)

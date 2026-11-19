@@ -30,12 +30,7 @@ The metrics system provides:
 - **Optional database health** - Per-service SQL and persistent-store pressure indicators
 - **Optional Plex cloud status** - Cached public Plex service health, incidents, and maintenance
 
-<figure class="docs-visual docs-frontend-figure" markdown="1">
-
-![Metrics page showing resource gauges, recent history and process information.](../assets/images/guides/frontend/v1.91.0/tour-2/metrics.webp){ loading=lazy decoding=async }
-
-<figcaption class="docs-visual-caption">Compare current resource use with the history before deciding what to investigate. DUMB Frontend 1.91.0 · example data. Other versions may look different.</figcaption>
-</figure>
+<!-- docs:visual scenario=metrics type=image -->
 
 ---
 

@@ -19,13 +19,7 @@ Auto-restart monitors explicitly selected services and retries a restart after r
 
 An empty service list monitors nothing, even when the global switch is enabled. A deliberate manual stop disables monitoring for that service until it is started again.
 
-<figure class="docs-visual docs-frontend-figure">
-<video class="docs-frontend-video" controls playsinline preload="none" poster="../../assets/images/guides/frontend/v1.91.0/tour-2/auto-restart.webp" aria-label="Review auto-restart controls" aria-describedby="auto-restart-demo-caption">
-  <source src="../assets/images/guides/frontend/v1.91.0/tour-2/auto-restart.webm" type="video/webm">
-  <p><a href="../assets/images/guides/frontend/v1.91.0/tour-2/auto-restart.webm">Download the demonstration</a>, or follow the written steps above.</p>
-</video>
-<figcaption id="auto-restart-demo-caption" class="docs-visual-caption">Watch: find the service policy, health-check options and grace period before changing them. This tour leaves the saved policy unchanged. DUMB Frontend 1.91.0 · example data. Other versions may look different. <a href="../assets/images/guides/frontend/v1.91.0/tour-2/auto-restart.webp">Open the full-size screenshot</a>.</figcaption>
-</figure>
+<!-- docs:visual scenario=auto-restart type=video -->
 
 <details class="geek-details" markdown="1">
 <summary>Technical details: monitoring and restart lifecycle</summary>

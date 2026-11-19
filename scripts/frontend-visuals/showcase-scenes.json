@@ -1,0 +1,72 @@
+{
+  "schema_version": 1,
+  "title": "Inside DUMB",
+  "duration_seconds": 30,
+  "scenes": [
+    {
+      "id": "dashboard",
+      "scenario": "dashboard",
+      "kind": "image",
+      "label": "Your media apps. One place.",
+      "description": "Review your selected services and their status.",
+      "duration_seconds": 3.5,
+      "camera": { "from": [0, 0, 1], "to": [-3, -2, 1.012] }
+    },
+    {
+      "id": "onboarding",
+      "scenario": "onboarding-services",
+      "kind": "image",
+      "label": "Choose what you run.",
+      "description": "Select the applications for your own workflow.",
+      "duration_seconds": 3.5,
+      "camera": { "from": [-3, -2, 1.012], "to": [0, 0, 1] }
+    },
+    {
+      "id": "service",
+      "scenario": "service-controls",
+      "kind": "image",
+      "label": "Everything for one app.",
+      "description": "Open its controls, settings and application interface.",
+      "duration_seconds": 4,
+      "camera": { "from": [0, 0, 1], "to": [-3, -2, 1.012] }
+    },
+    {
+      "id": "dependencies",
+      "scenario": "dependencies",
+      "kind": "video",
+      "chapter": "Choose Dependencies",
+      "chapter_offset_seconds": 2.5,
+      "label": "See what connects.",
+      "description": "Inspect the dependencies behind a selected service.",
+      "duration_seconds": 6
+    },
+    {
+      "id": "logs",
+      "scenario": "service-logs",
+      "kind": "video",
+      "chapter": "Open Service Logs",
+      "chapter_offset_seconds": 3.4,
+      "label": "Find the useful line.",
+      "description": "Read and filter the selected service's logs.",
+      "duration_seconds": 6
+    },
+    {
+      "id": "notifications",
+      "scenario": "settings-notifications",
+      "kind": "image",
+      "label": "Keep the right alerts.",
+      "description": "Review notification destinations and event settings.",
+      "duration_seconds": 3.5,
+      "camera": { "from": [-3, -2, 1.012], "to": [0, 0, 1] }
+    },
+    {
+      "id": "metrics",
+      "scenario": "metrics",
+      "kind": "image",
+      "label": "Know how it's running.",
+      "description": "Review resource use alongside your service checks.",
+      "duration_seconds": 3.5,
+      "camera": { "from": [0, 0, 1], "to": [-3, -2, 1.012] }
+    }
+  ]
+}

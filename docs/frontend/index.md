@@ -1,6 +1,6 @@
 ---
 title: Use DUMB
-description: Use the DUMB dashboard to set up services, change settings, manage updates, read logs, and open your media applications with clear task guides.
+description: Explore actual DUMB frontend screens and follow clear guides for setup, service controls, settings, logs, updates, metrics and application access.
 icon: lucide/layout-dashboard
 ---
 
@@ -10,12 +10,8 @@ The dashboard is where you set up and manage DUMB. Open `http://<host>:3005` in 
 
 You can follow the tasks below without editing files or running API commands.
 
-<figure class="docs-visual docs-frontend-figure" markdown="1">
+[Browse the actual interface](#ui-examples) or choose a task below.
 
-![DUMB dashboard showing service cards, status badges and the sidebar.](../assets/images/guides/frontend/v1.91.0/dashboard.webp){ loading=lazy decoding=async }
-
-<figcaption class="docs-visual-caption">Select a service card to open that app's controls. DUMB Frontend 1.91.0 · example data. Other versions may look different.</figcaption>
-</figure>
 
 ## Choose a task
 
@@ -40,7 +36,7 @@ Each task guide explains the controls to use, what to save, and how to check the
 
 ## Watch a task
 
-The guides below include short recordings with time to read the menus and controls. Choose Play when you are ready; the videos do not start automatically. They show DUMB Frontend 1.91.0 with example data. Your installed version and enabled services can change which tools appear.
+The guides below include short recordings with time to read the menus and controls. Choose Play when you are ready; these task videos do not start automatically. Each caption identifies the reviewed frontend version and example data. Your installed version and enabled services can change which tools appear.
 
 | See how to… | Open the illustrated guide |
 | --- | --- |
@@ -51,6 +47,8 @@ The guides below include short recordings with time to read the menus and contro
 | Review an automatic restart policy | [Auto-restart](../features/auto-restart.md) |
 | Choose a dashboard appearance | [Settings](settings.md) |
 | Find CPU, memory and disk information | [Metrics](metrics.md) |
+
+<!-- docs:visual-gallery -->
 
 ## DUMB and application accounts are separate
 

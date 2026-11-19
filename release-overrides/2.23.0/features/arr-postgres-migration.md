@@ -154,6 +154,8 @@ The panel shows the latest persisted job for the current service, including its 
 
 Preflight does not change the service configuration.
 
+<!-- docs:visual scenario=postgres-migration type=image -->
+
 If preflight reports a recovered or incompatible source database, stop here. Preserve the original, recovered copy, and independent backup; removing a reported table does not prove the application data is sound. Resolve the reported issue before rehearsal.
 
 <details class="geek-details" markdown="1">
