@@ -1,6 +1,13 @@
 # Changelog
 
 
+## [1.25.13](https://github.com/I-am-PUID-0/DUMB_docs/compare/1.25.12...1.25.13) (2026-11-19)
+
+
+### 📖 Documentation
+
+* **onboarding:** explain the post-start setup walkthrough ([14181eb](https://github.com/I-am-PUID-0/DUMB_docs/commit/14181ebb9af744915068ce0cfde835c851f7eb1a))
+
 ## [1.25.12](https://github.com/I-am-PUID-0/DUMB_docs/compare/1.25.11...1.25.12) (2026-11-18)
 
 
