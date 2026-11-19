@@ -19,7 +19,12 @@ The dashboard displays service cards for each configured service, showing:
 - Auto-restart badge
 - Quick action and available-update buttons
 
-![Service dashboard](../assets/images/frontend/service_dashboard.png){ .shadow }
+<figure class="docs-visual docs-frontend-figure" markdown="1">
+
+![Dashboard service cards showing each app's status and available controls.](../assets/images/guides/frontend/v1.91.0/dashboard.webp){ loading=lazy decoding=async }
+
+<figcaption class="docs-visual-caption">Use the service cards to check an app and open its page. DUMB Frontend 1.91.0 · example data. Other versions may look different.</figcaption>
+</figure>
 
 ---
 

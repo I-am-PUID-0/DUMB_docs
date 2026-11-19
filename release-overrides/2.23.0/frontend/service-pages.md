@@ -32,6 +32,13 @@ Retained setup tasks are scoped to the current service and instance. Expand **Co
 
 The header shows process status, application health, and restart information. Hover a health badge for the backend's probe reason. **Starting** and **Degraded** are distinct from a restart-relevant **Unhealthy** result.
 
+<figure class="docs-visual docs-frontend-figure" markdown="1">
+
+![Service page showing its status, command bar, configuration tabs and Tools menu.](../assets/images/guides/frontend/v1.91.0/service-controls.webp){ loading=lazy decoding=async }
+
+<figcaption class="docs-visual-caption">Choose a tab for configuration, logs or the application's interface; open Tools for additional tasks. DUMB Frontend 1.91.0 · example data. Other versions may look different.</figcaption>
+</figure>
+
 Use **Start**, **Stop**, or **Restart** for the current service. The DUMB API page has no start/stop/restart buttons. A storage operation affecting a protected media server prompts for playback and scan handling before it runs. Dashboard bulk updates use safe mode; use the individual service page to review an override.
 
 **Save to File** persists a configuration. Its DUMB Config split-button also offers **Apply in Memory** for a temporary controller change. Saving configuration does not necessarily restart or reconfigure the application.
@@ -171,11 +178,22 @@ The [AI Assistant guide](../features/ai-assistant.md) covers supported models, p
 
 ## Logs
 
-Filter by text or level, choose a line limit, follow the tail, refresh, or download a snapshot. Service-aware parsing retains application timestamps/severity and groups multiline errors where supported. Traefik offers access logs; Plex offers DBRepair logs when enabled.
+1. Open **Service Logs** for the app you want to check.
+2. Choose a log level or enter search text to focus on the relevant lines.
+3. Select **Refresh now** for a new sample, or choose an interval such as **Every 5s** for repeated checks. Choose **Off** to pause those checks.
+4. Keep **Follow tail** checked to scroll to the newest lines. Download a snapshot when you need to keep it.
+
+You can also change the line limit. Service-aware parsing retains application timestamps/severity and groups multiline errors where supported. Traefik offers access logs; Plex offers DBRepair logs when enabled.
 
 DUMB applies its sensitive-data redactor to logs viewed or downloaded here. Review a download before sharing it; arbitrary application output can contain values the redactor does not recognize.
 
-![View service logs](../assets/images/frontend/view_service_logs.png){ .shadow }
+<figure class="docs-visual docs-frontend-figure">
+<video class="docs-frontend-video" controls playsinline preload="none" poster="../../assets/images/guides/frontend/v1.91.0/service-logs.webp" aria-label="Filter service logs demonstration" aria-describedby="service-logs-demo-caption">
+  <source src="../assets/images/guides/frontend/v1.91.0/service-logs.webm" type="video/webm">
+  <p><a href="../assets/images/guides/frontend/v1.91.0/service-logs.webm">Download the demonstration</a>, or follow the written steps above.</p>
+</video>
+<figcaption id="service-logs-demo-caption" class="docs-visual-caption">Watch the log filters, refresh interval and Follow tail controls. DUMB Frontend 1.91.0 · example data. Other versions may look different. <a href="../assets/images/guides/frontend/v1.91.0/service-logs.webp">Open the full-size screenshot</a>.</figcaption>
+</figure>
 
 ## Embedded UI
 

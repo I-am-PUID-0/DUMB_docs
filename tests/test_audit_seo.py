@@ -146,6 +146,64 @@ class AuditSiteTests(unittest.TestCase):
         )
         self.assertEqual(self.audit(), [])
 
+    def test_video_poster_clip_and_text_track_resolve(self):
+        for name in ("poster.webp", "demo.webm", "captions.vtt"):
+            (self.root / "assets" / name).write_bytes(b"media fixture")
+        self.write_page(
+            self.root,
+            "guide/index.html",
+            "Guide",
+            body=(
+                '<video controls playsinline preload="none" poster="../assets/poster.webp">'
+                '<source src="../assets/demo.webm" type="video/webm">'
+                '<track kind="captions" src="../assets/captions.vtt" srclang="en">'
+                "</video>"
+            ),
+        )
+        self.assertEqual(self.audit(), [])
+
+    def test_broken_video_poster_fails_even_when_the_clip_exists(self):
+        (self.root / "assets/demo.webm").write_bytes(b"clip fixture")
+        self.write_page(
+            self.root,
+            "guide/index.html",
+            "Guide",
+            body=(
+                '<video controls poster="../assets/missing.webp">'
+                '<source src="../assets/demo.webm" type="video/webm"></video>'
+            ),
+        )
+        self.assertTrue(
+            any("unresolved video poster" in error for error in self.audit())
+        )
+
+    def test_broken_video_sources_fail_with_inline_or_child_source(self):
+        for body, expected in (
+            ('<video controls src="../assets/missing.webm"></video>', "video src"),
+            (
+                '<video controls><source src="../assets/missing.webm" type="video/webm"></video>',
+                "source src",
+            ),
+        ):
+            with self.subTest(expected=expected):
+                self.write_page(self.root, "guide/index.html", "Guide", body=body)
+                self.assertTrue(
+                    any(f"unresolved {expected}" in error for error in self.audit())
+                )
+
+    def test_broken_text_track_fails_even_when_the_clip_exists(self):
+        (self.root / "assets/demo.webm").write_bytes(b"clip fixture")
+        self.write_page(
+            self.root,
+            "guide/index.html",
+            "Guide",
+            body=(
+                '<video controls src="../assets/demo.webm">'
+                '<track kind="captions" src="../assets/missing.vtt" srclang="en"></video>'
+            ),
+        )
+        self.assertTrue(any("unresolved track src" in error for error in self.audit()))
+
     def test_release_excludes_dev_subtree_and_noindex_stubs_from_sitemap(self):
         dev = self.root / "dev"
         dev.mkdir()

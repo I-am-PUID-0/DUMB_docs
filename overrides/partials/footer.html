@@ -1,0 +1,70 @@
+{# Based on Zensical's MIT-licensed footer. Keep page navigation above site links. #}
+<footer class="md-footer">
+  {% if "navigation.footer" in features %}
+    {% if page.previous_page or page.next_page %}
+      {% if page.meta and page.meta.hide %}
+        {% set hidden = "hidden" if "footer" in page.meta.hide %}
+      {% endif %}
+      <nav class="md-footer__inner md-grid" aria-label="{{ lang.t('footer') }}" {{ hidden }}>
+        {% if page.previous_page %}
+          {% set direction = lang.t("footer.previous") %}
+          <a href="{{ page.previous_page.url | url }}" class="md-footer__link md-footer__link--prev" aria-label="{{ direction }}: {{ page.previous_page.title | e }}">
+            <div class="md-footer__button md-icon">
+              {% set icon = config.theme.icon.previous or "material/arrow-left" %}
+              {% include ".icons/" ~ icon ~ ".svg" %}
+            </div>
+            <div class="md-footer__title">
+              <span class="md-footer__direction">{{ direction }}</span>
+              <div class="md-ellipsis">{{ page.previous_page.title }}</div>
+            </div>
+          </a>
+        {% endif %}
+        {% if page.next_page %}
+          {% set direction = lang.t("footer.next") %}
+          <a href="{{ page.next_page.url | url }}" class="md-footer__link md-footer__link--next" aria-label="{{ direction }}: {{ page.next_page.title | e }}">
+            <div class="md-footer__title">
+              <span class="md-footer__direction">{{ direction }}</span>
+              <div class="md-ellipsis">{{ page.next_page.title }}</div>
+            </div>
+            <div class="md-footer__button md-icon">
+              {% set icon = config.theme.icon.next or "material/arrow-right" %}
+              {% include ".icons/" ~ icon ~ ".svg" %}
+            </div>
+          </a>
+        {% endif %}
+      </nav>
+    {% endif %}
+  {% endif %}
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid docs-footer-meta">
+      <div class="docs-footer-info">
+        <nav class="docs-community-strip" aria-label="Community and maintainer support">
+          <a href="https://github.com/sponsors/I-am-PUID-0">Support the DUMB maintainer</a>
+          <a href="https://discord.gg/8dqKUBtbp5">Get help from the community</a>
+          <a href="{{ 'contributing/' | url }}">Help improve DUMB</a>
+        </nav>
+        {% if config.extra.documentation %}
+          {% set identity = config.extra.documentation %}
+          <div class="docs-build-identity" aria-label="Documentation release and build" data-docs-build-kind="{{ identity.kind | e }}">
+            {% if identity.kind == 'release' %}
+              <span>Documentation release {{ identity.version | e }}</span>
+              <a href="{{ identity.release_url | e }}">Release notes</a>
+            {% else %}
+              <span>Documentation preview {{ identity.version | e }} (unreleased)</span>
+            {% endif %}
+            {% if identity.source_url %}
+              <a href="{{ identity.source_url | e }}" title="Documentation source commit {{ identity.commit | e }}">Source {{ identity.commit[:8] }}</a>
+            {% endif %}
+            {% if identity.dirty %}<span>Local changes</span>{% endif %}
+          </div>
+        {% endif %}
+        {% if config.copyright or config.extra.generator != false %}
+          {% include "partials/copyright.html" %}
+        {% endif %}
+      </div>
+      {% if config.extra.social %}
+        {% include "partials/social.html" %}
+      {% endif %}
+    </div>
+  </div>
+</footer>

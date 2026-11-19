@@ -10,11 +10,11 @@ The dashboard is where you set up and manage DUMB. Open `http://<host>:3005` in 
 
 You can follow the tasks below without editing files or running API commands.
 
-<figure class="docs-visual" markdown="1">
+<figure class="docs-visual docs-frontend-figure" markdown="1">
 
-![Dashboard navigation: service cards open one app's controls; Metrics and Settings contain installation-wide tools.](../assets/images/guides/dashboard-map.svg)
+![DUMB dashboard showing service cards, status badges and the sidebar.](../assets/images/guides/frontend/v1.91.0/dashboard.webp){ loading=lazy decoding=async }
 
-<figcaption class="docs-visual-caption">Start on the dashboard, select a service card, then choose the task you need. This is a navigation guide rather than a screenshot.</figcaption>
+<figcaption class="docs-visual-caption">Select a service card to open that app's controls. DUMB Frontend 1.91.0 · example data. Other versions may look different.</figcaption>
 </figure>
 
 ## Choose a task

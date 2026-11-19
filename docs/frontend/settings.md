@@ -38,6 +38,13 @@ The **Advanced** section also includes service utilities. **Backups and restore*
 
 Choose **System Default** to follow your operating system, or select a light/dark palette. This preference is stored in the browser and does not change backend configuration.
 
+<figure class="docs-visual docs-frontend-figure" markdown="1">
+
+![Appearance settings with the dashboard theme choices.](../assets/images/guides/frontend/v1.91.0/appearance.webp){ loading=lazy decoding=async }
+
+<figcaption class="docs-visual-caption">Choose the palette you find easiest to read. DUMB Frontend 1.91.0 · example data. Other versions may look different.</figcaption>
+</figure>
+
 ## About section
 
 ### Version information

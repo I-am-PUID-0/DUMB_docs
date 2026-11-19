@@ -15,6 +15,14 @@ Choose how each service checks for new versions and whether it should install th
 3. Select **Install update** when you are ready for that service to restart. Review any playback or library-protection prompt before confirming.
 4. Keep the panel open while the install runs. When it completes, check the reported result, service health, and **Service Logs**. For a storage service, also test an item in your media player.
 
+<figure class="docs-visual docs-frontend-figure">
+<video class="docs-frontend-video" controls playsinline preload="none" poster="../../assets/images/guides/frontend/v1.91.0/updates.webp" aria-label="Check one service for updates demonstration" aria-describedby="updates-demo-caption">
+  <source src="../assets/images/guides/frontend/v1.91.0/updates.webm" type="video/webm">
+  <p><a href="../assets/images/guides/frontend/v1.91.0/updates.webm">Download the demonstration</a>, or follow the written steps above.</p>
+</video>
+<figcaption id="updates-demo-caption" class="docs-visual-caption">Watch: open one service's Updates panel, check for updates and review the available version. The demonstration ends before installation. DUMB Frontend 1.91.0 · example data. Other versions may look different. <a href="../assets/images/guides/frontend/v1.91.0/updates.webp">Open the full-size screenshot</a>.</figcaption>
+</figure>
+
 ```mermaid
 flowchart LR
     Open[Open service Updates] --> Check[Check for updates]

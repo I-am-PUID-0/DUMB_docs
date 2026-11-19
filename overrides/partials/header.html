@@ -9,7 +9,8 @@
       <span class="md-visually-hidden">{{ lang.t('nav') }}</span>
     </label>
     <a href="{{ nav.homepage.url | url }}" class="docs-brand" data-docs-home aria-label="DUMB home" title="DUMB home">DUMB</a>
-    <div class="md-header__title" data-md-component="header-title">
+    {# Keep the theme's instant-navigation hooks, without repeating the page title. #}
+    <div class="md-header__title" data-md-component="header-title" aria-hidden="true">
       <div class="md-header__ellipsis">
         <div class="md-header__topic docs-header-spacer" aria-hidden="true"></div>
         <div class="md-header__topic" data-md-component="header-topic">

@@ -34,6 +34,7 @@ class PageParser(HTMLParser):
         self.hrefs: list[str] = []
         self.images: list[dict[str, str | None]] = []
         self.image_sources: list[str] = []
+        self.media_sources: list[tuple[str, str]] = []
         self.ids: set[str] = set()
         self.h1_count = 0
         self.json_ld: list[str] = []
@@ -71,6 +72,10 @@ class PageParser(HTMLParser):
         elif tag == "script" and values.get("type") == "application/ld+json":
             self.in_json_ld = True
             self.json_parts = []
+        if tag == "video" and "poster" in values:
+            self.media_sources.append(("video poster", str(values["poster"] or "")))
+        if tag in {"video", "source", "track"} and "src" in values:
+            self.media_sources.append((f"{tag} src", str(values["src"] or "")))
         if tag in {"img", "source"} and values.get("srcset"):
             # A data URL can contain commas and is self-contained; ordinary
             # image candidates use a URL followed by an optional size descriptor.
@@ -294,6 +299,11 @@ def audit_site(
         for source in parser.image_sources:
             if not resolves(current_url, source):
                 errors.append(f"{relative}: unresolved image source {source}")
+        for kind, source in parser.media_sources:
+            if not source:
+                errors.append(f"{relative}: empty {kind}")
+            elif not resolves(current_url, source):
+                errors.append(f"{relative}: unresolved {kind} {source}")
 
         if relative == "404.html":
             if robots != "noindex, nofollow":

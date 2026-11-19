@@ -150,32 +150,6 @@
 
 {% block announce %}{% endblock %}
 
-{% block footer %}
-  <aside class="docs-community-strip">
-    <nav class="md-grid" aria-label="Community and maintainer support">
-      <a href="https://github.com/sponsors/I-am-PUID-0">Support the DUMB maintainer</a>
-      <a href="https://discord.gg/8dqKUBtbp5">Get help from the community</a>
-      <a href="{{ 'contributing/' | url }}">Help improve DUMB</a>
-    </nav>
-  </aside>
-  {% if config.extra.documentation %}
-    {% set identity = config.extra.documentation %}
-    <div class="docs-build-identity" aria-label="Documentation release and build" data-docs-build-kind="{{ identity.kind | e }}">
-      {% if identity.kind == 'release' %}
-        <span>Documentation release {{ identity.version | e }}</span>
-        <a href="{{ identity.release_url | e }}">Release notes</a>
-      {% else %}
-        <span>Documentation preview {{ identity.version | e }} (unreleased)</span>
-      {% endif %}
-      {% if identity.source_url %}
-        <a href="{{ identity.source_url | e }}" title="Documentation source commit {{ identity.commit | e }}">Source {{ identity.commit[:8] }}</a>
-      {% endif %}
-      {% if identity.dirty %}<span>Local changes</span>{% endif %}
-    </div>
-  {% endif %}
-  {{ super() }}
-{% endblock %}
-
 {% block content %}
   {% if page and page.canonical_url and config.extra.docs_channel %}
     <aside class="docs-channel-context" data-channel="{{ config.extra.docs_channel }}" aria-label="Documentation channel">
