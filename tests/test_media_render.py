@@ -168,6 +168,21 @@ class MediaRendererTests(unittest.TestCase):
         )
         return result
 
+    def test_share_previews_follow_the_accepted_channel_in_both_themes(self):
+        output = self.root / "site"
+        for channel in ("release", "dev"):
+            media = self.media(channel)
+            for theme in ("dark", "light"):
+                source = media["showcase_path"].parent / theme / "animated.webp"
+                source.parent.mkdir(parents=True, exist_ok=True)
+                source.write_bytes(f"{channel} {theme} accepted animation".encode())
+            self.renderer(channel, media).write_share_previews(output)
+            for theme in ("dark", "light"):
+                self.assertEqual(
+                    (output / "assets/images/guides/showcase/preview" / (theme + ".webp")).read_bytes(),
+                    f"{channel} {theme} accepted animation".encode(),
+                )
+
     def test_missing_channel_and_invalid_package_never_fall_back(self):
         del self.accepted["channels"]["dev"]
         self.write_catalog()
@@ -182,6 +197,15 @@ class MediaRendererTests(unittest.TestCase):
         ):
             with self.assertRaisesRegex(SyncError, "Partial"):
                 media_render.MediaRenderer(self.root, "release", self.settings)
+
+    def test_new_capture_scenarios_require_separate_reader_copy(self):
+        renderer = self.renderer()
+        renderer.catalog["scenarios"].append({
+            "id": "future-tool",
+            "description": "Maintainer-only capture instructions: never click Start.",
+        })
+        with self.assertRaisesRegex(ValueError, "reader-facing.*future-tool"):
+            renderer.render("<!-- docs:visual-gallery -->", Path("frontend/index.md"))
 
     def test_stable_backend_source_and_version_must_match_prose(self):
         for field, value in (("source", "c" * 40), ("version", "2.24.0")):
@@ -249,7 +273,8 @@ class MediaRendererTests(unittest.TestCase):
                 for tag, attrs in elements
             )
         )
-        self.assertIn("installation_backup", rendered)
+        self.assertIn("Not available in these versions", rendered)
+        self.assertNotIn("installation_backup", rendered)
         self.assertNotIn("<script", rendered)
         self.assertNotIn("<!-- docs:", rendered)
 
@@ -259,7 +284,10 @@ class MediaRendererTests(unittest.TestCase):
             Path("features/installation-backups.md"),
         )
         self.assertIn("unavailable", rendered)
-        self.assertIn("installation_backup", rendered)
+        self.assertIn("DUMB 2.23.0", rendered)
+        self.assertIn("frontend 1.91.0", rendered)
+        self.assertIn("See the guide for supported versions", rendered)
+        self.assertNotIn("installation_backup", rendered)
         self.assertNotIn("<img", rendered)
         self.assertNotIn("<video", rendered)
 

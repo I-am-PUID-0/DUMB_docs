@@ -14,7 +14,7 @@
     </video>
   </div>
   <figcaption id="showcase-caption">
-    <span>Real application screens · Frontend {{ catalog.frontend.version | e }} · DUMB {{ catalog.backend.version | e }} · Example data</span>
+    <span>Frontend {{ catalog.frontend.version | e }} · DUMB {{ catalog.backend.version | e }} · Example data</span>
     <a href="{{ urls.gallery | e }}">Explore the interface <span aria-hidden="true">↗</span></a>
     <a href="{{ urls.showcase.transcript | e }}">Read preview text</a>
     <noscript><a href="{{ urls.showcase.light.video | e }}">Play preview</a></noscript>
@@ -25,7 +25,7 @@
 </figure>
 {%- endmacro %}
 
-{% macro render_panel(panel, urls, catalog) -%}
+{% macro render_panel(panel, urls, catalog, show_caption=true) -%}
 <section class="ui-example-panel" id="ui-{{ panel.id | e }}">
   <div class="ui-example-heading">
     <h3>{{ panel.title | e }}</h3>
@@ -39,7 +39,7 @@
     </picture>
     <span class="ui-example-enlarge" aria-hidden="true">View full size <span>↗</span></span>
   </a>
-  <p class="ui-example-provenance">Actual frontend {{ catalog.frontend.version | e }} · DUMB {{ catalog.backend.version | e }} · Example data.{% if panel.id in ['onboarding-progress', 'onboarding-result', 'onboarding-error'] %} Installation status is illustrative; no application was installed or started.{% endif %}</p>
+  {% if show_caption %}<p class="ui-example-provenance">Frontend {{ catalog.frontend.version | e }} · DUMB {{ catalog.backend.version | e }} · {% if panel.id in ['onboarding-progress', 'onboarding-result', 'onboarding-error'] %}Example setup status.{% else %}Example data.{% endif %}</p>{% endif %}
 </section>
 {%- endmacro %}
 
@@ -58,8 +58,8 @@
   <div class="ui-gallery-intro">
     <p class="ui-gallery-eyebrow">Inside DUMB</p>
     <h2 id="ui-examples">Explore the interface</h2>
-    <p>Actual frontend screens, organized by the task in front of you. Images follow this site's light or dark appearance. Open any image to inspect it full size.</p>
-    <p class="ui-gallery-provenance">Frontend {{ catalog.frontend.version | e }} · DUMB {{ catalog.backend.version | e }} · Example data. Features and controls depend on the installed versions.</p>
+    <p>Find the screen for your task. Images match the site's light or dark theme. Open any image for a closer look.</p>
+    <p class="ui-gallery-provenance">Frontend {{ catalog.frontend.version | e }} · DUMB {{ catalog.backend.version | e }} · Example data, including setup status</p>
     {% if catalog.get('notice') %}<p class="ui-gallery-notice">{{ catalog.notice | e }}</p>{% endif %}
   </div>
   <nav class="ui-example-nav" aria-label="Interface examples">
@@ -76,7 +76,7 @@
     {% if present.value %}
       <section class="ui-example-group" id="ui-group-{{ group.id }}">
         <div class="ui-example-group-heading"><h2>{{ group.title }}</h2><p>{{ group.description }}</p></div>
-        {% for id in group.ids %}{% for panel in catalog.panels if panel.id == id and panel.status == 'captured' %}{{ render_panel(panel, urls, catalog) }}{% endfor %}{% endfor %}
+        {% for id in group.ids %}{% for panel in catalog.panels if panel.id == id and panel.status == 'captured' %}{{ render_panel(panel, urls, catalog, show_caption=false) }}{% endfor %}{% endfor %}
       </section>
     {% endif %}
   {% endfor %}
@@ -84,17 +84,17 @@
   {% for panel in catalog.panels if panel.id not in known.ids and panel.status == 'captured' %}{% set other.value = true %}{% endfor %}
   {% if other.value %}
     <section class="ui-example-group" id="ui-group-other">
-      <div class="ui-example-group-heading"><h2>Other actual views</h2><p>More screens from the reviewed frontend.</p></div>
-      {% for panel in catalog.panels if panel.id not in known.ids and panel.status == 'captured' %}{{ render_panel(panel, urls, catalog) }}{% endfor %}
+      <div class="ui-example-group-heading"><h2>More interface views</h2><p>Explore more tools and settings.</p></div>
+      {% for panel in catalog.panels if panel.id not in known.ids and panel.status == 'captured' %}{{ render_panel(panel, urls, catalog, show_caption=false) }}{% endfor %}
     </section>
   {% endif %}
   {% set unavailable = namespace(value=false) %}
   {% for panel in catalog.panels if panel.status == 'unavailable' %}{% set unavailable.value = true %}{% endfor %}
   {% if unavailable.value %}
     <section class="ui-example-availability" aria-label="Version availability">
-      <h2>Availability in these versions</h2>
-      <p>These views are unavailable in this version combination. Open the guide to check which version you need.</p>
-      <ul>{% for panel in catalog.panels if panel.status == 'unavailable' %}<li><strong>{{ panel.title | e }}.</strong> {% if panel.reason %}{{ panel.reason | e }}{% endif %} {% if urls.guides.get(panel.id) %}<a href="{{ urls.guides[panel.id] | e }}">Read the guide</a>.{% endif %}{% if panel.technical_reason %}<details class="geek-details"><summary>Technical availability details</summary><p>{{ panel.technical_reason | e }}</p></details>{% endif %}</li>{% endfor %}</ul>
+      <h2>Not available in these versions</h2>
+      <p>These screens need another DUMB or frontend version. Follow each guide for its requirements.</p>
+      <ul>{% for panel in catalog.panels if panel.status == 'unavailable' %}<li><strong>{{ panel.title | e }}.</strong> {% if urls.guides.get(panel.id) %}<a href="{{ urls.guides[panel.id] | e }}">Read the guide</a>.{% endif %}</li>{% endfor %}</ul>
     </section>
   {% endif %}
 </div>

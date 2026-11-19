@@ -399,6 +399,7 @@ def build_channel(
         check=True,
     )
     restore_site_urls(output)
+    media_renderer.write_share_previews(output)
     if unavailable:
         sitemap = output / "sitemap.xml"
         tree = ET.parse(sitemap)
