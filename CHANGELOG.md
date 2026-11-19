@@ -1,6 +1,13 @@
 # Changelog
 
 
+## [1.25.14](https://github.com/I-am-PUID-0/DUMB_docs/compare/1.25.13...1.25.14) (2026-11-19)
+
+
+### 📖 Documentation
+
+* add frontend walkthroughs and simplify site header and footer ([b526c61](https://github.com/I-am-PUID-0/DUMB_docs/commit/b526c61beae5a6b493bed44ccaeb93d512e51286))
+
 ## [1.25.13](https://github.com/I-am-PUID-0/DUMB_docs/compare/1.25.12...1.25.13) (2026-11-19)
 
 
