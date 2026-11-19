@@ -87,11 +87,21 @@ For InfiniDysk 2, review the separate runtime and mount choices. Generation 1 re
 
 Choosing generation 2 opens its guarded installation/migration tool without accepting its acknowledgements or starting a job. Finish the tool, then refresh the setup plan. Existing 1.x data needs major migration; selecting an option does not convert it. Native FUSE omits the associated rclone dependency. See [InfiniDysk 2 installation and upgrade](../features/infinidysk-v2-migration.md).
 
-### Connections and choices
+### Installation choices
 
-Choose exact application instances, authorized external services, provider-account allocations, library paths, quality profiles, languages, and default/4K request routes. **External server** and **No media server** are separate choices.
+Review the choices needed to install the selected apps, such as the InfiniDysk
+runtime and mount mode. App connections, quality profiles and libraries can be
+finished after the apps start, when their actual settings are available.
 
-Some profiles, roots, and generated keys are available only after first start. Leave those tasks unfinished and return to them later. Existing unowned settings require a reviewed adoption before DUMB changes them.
+Experienced users can open **Show connection settings before startup**. The full
+form keeps each app's section collapsed until opened. Unavailable menus explain
+what is missing; leaving a choice for later retains its setup task. It does not
+bypass confirmed installation blockers or complete an untested connection.
+
+Preparing a setup preview can send entered credentials to DUMB's protected setup
+inputs before you choose **Start services**. Browser storage remembers the setup
+run identifier and walkthrough position/preferences, not passwords or unfinished
+credential drafts.
 <!-- dev:end -->
 
 ### Embedded service access
@@ -103,13 +113,57 @@ Enable embedded UIs when offered to use proxied service tabs, split view, and di
 Review selected services, dependencies, credentials, instance paths, and custom options before applying. Confirmation can install, configure, and start services.
 
 <!-- dev:start -->
-The plan groups work into **DUMB will configure**, **Information you must provide**, and **Finish manually**. Choose **Start services** to apply the reviewed plan.
+**Review your setup** summarizes the selected apps and their purposes.
+Supporting services are listed separately in a collapsed section. **What happens
+when you start** explains installation, configuration and the retained checklist;
+**Finish after the apps start** separates required connection tasks from optional
+checks.
+
+Review the visible blocking problems before continuing. Detailed checks, saved
+connection choices and the masked configuration payload are available in
+collapsed sections. You can return to the earlier choices without losing
+entries. Choose **Start services** to apply the reviewed plan. Starting the apps
+does not mark deferred tasks or untested connections complete.
 
 ### Setup progress and retained tasks
 
-Follow the checklist and live logs. Correct the relevant input, then apply, retry, or recheck that action. **Continue to dashboard** leaves the wizard without discarding unfinished work; the same checklist appears on the dashboard and matching service pages.
+Follow installation progress. Expand **Installation logs** when you need the
+detailed output, or choose **Show full checklist** to inspect the saved tasks.
+Correct the relevant input, then apply, retry, or recheck that action.
+**Continue to dashboard** leaves the wizard without discarding unfinished work;
+the same checklist appears on the dashboard and matching service pages.
 
 Manual completion records your confirmation separately from an independently passed check. Closing the browser does not complete remaining tasks. External provider/account setup and unsupported connections remain visible as manual work.
+
+### Connect your apps after startup
+
+Once the apps are ready, choose **Walk me through setup**. From onboarding, this
+opens the separate **Connect your apps** page while retaining the saved setup and
+unfinished tasks. The dashboard and service pages also offer the guide.
+**Finish connecting your apps** presents one task at a time, with its current
+result, explanation and earlier steps it depends on.
+
+1. Review the task marked **Needed for this connection** or **Optional**.
+2. Enter the requested choices, then deliberately apply or check that task.
+   **Refresh app choices and status** retrieves newly available app settings.
+3. Use **Do this later** when an app still needs an account or other preparation.
+   Moving to another task does not mark it complete.
+4. Choose **Pause walkthrough** to leave the guide. **Resume guided setup** returns
+   to the saved task from the dashboard or the matching service page.
+
+A new app may need initial account setup before it advertises profiles,
+languages or library folders. If the list of compatible library apps itself is
+empty, select or register the intended Arr application, or leave that connection
+off; starting unrelated apps will not create that choice.
+
+**I completed this in the app** records your confirmation, not a passed automatic
+connection check. A failed check still needs attention even after that
+confirmation. Optional workflow tests require their own scope and consent;
+opening the guide does not authorize downloads, imports or scans.
+
+Use **Show full checklist** to inspect all tasks directly. Pausing the walkthrough
+does not cancel work already accepted by DUMB. Skipping the optional guide also
+leaves required connection tasks on the checklist.
 <!-- dev:end -->
 <!-- release:start -->
 ### Setup progress
@@ -164,4 +218,12 @@ Check service status, actual application configuration, and one intended end-to-
 
 <!-- dev:start -->
 Refreshing loses unsaved credential drafts, but the backend's retained setup run remains. Resume its checklist rather than reinstalling successful services.
+
+An unavailable profile or library-folder menu can be expected before an app's
+first start or account setup. Finish that preparation, then refresh its choices
+from the saved task. If the list of compatible library apps is empty, select or
+register the intended app instead. A confirmed storage or permission blocker is
+different: correct the reported mount or access problem and refresh the preview.
+You do not need to change a service's user ID merely because DUMB owns its
+installed program files.
 <!-- dev:end -->

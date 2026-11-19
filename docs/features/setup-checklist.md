@@ -21,7 +21,29 @@ Choose the complete arrangement you want. DUMB prepares the selected instance co
 
 ## Before starting
 
-**Connections and choices** collects decisions DUMB cannot safely infer:
+Onboarding first collects the apps and essential installation choices. Confirm
+runtime, mount and storage requirements, review the plan, then choose **Start
+services**. The optional **Walk me through setup** guide becomes useful after
+startup, when the apps can advertise their real choices. Experienced users can
+instead open **Show connection settings before startup**; app sections start
+collapsed and unfinished choices remain on the saved checklist.
+
+**Review your setup** shows the apps you chose, their purposes and a collapsed
+list of supporting services. It explains what DUMB will do when you start and
+counts required connection tasks separately from optional work that can wait.
+Confirmed blocking checks remain visible. Saved connection choices, technical
+checks, the detailed checklist and the masked configuration payload are collapsed
+until you choose to inspect them. The review keeps you in onboarding rather than
+sending you to an app that has not started yet.
+
+## Connect the running apps
+
+Choose **Walk me through setup** on the saved setup panel to work through one
+task at a time. From onboarding, it opens the separate **Connect your apps** page
+without discarding the saved run or unfinished work. The dashboard and service
+pages also offer the guide. **Finish connecting your apps** shows what the current
+task does, its result and any earlier steps it needs. It collects decisions DUMB
+cannot safely infer:
 
 - Exact Arr and media-server instances to connect.
 - Authorized application credentials or an explicitly selected external server.
@@ -30,15 +52,41 @@ Choose the complete arrangement you want. DUMB prepares the selected instance co
 - Provider accounts and connection allocations.
 - Whether an existing connection may be adopted into DUMB management.
 
+For example, select the Arr instance before choosing its quality profile and
+library folder. A download location is where the downloader presents completed
+files; a library folder is where the Arr application organizes the collection.
+Both paths must be meaningful to the application that uses them. Provider
+credentials retrieve content; indexer credentials find it. One does not replace
+the other.
+
+**Needed for this connection** means the task is required before that connection
+can be finished. **Optional** work can be omitted; enable **Include optional
+workflow checks** when you want to inspect the separately authorized tests.
+Neither label proves that a connection has been tested. **Show full checklist**
+lets experienced users work directly with all the saved tasks.
+
 Existing external Radarr, Sonarr, Lidarr and Whisparr servers can be registered under **Existing external services**. Give each a stable ID, its direct API base URL and an authorized API key. Select those exact references in supported connection assignments. Discovery is read-only; permission to change an external server's configuration is a separate choice. Supported tasks can configure native download clients, root folders and explicit remote-path mappings after preview and approval. You must create and authorize the actual mounts and enter paths in the correct server's namespace. DUMB does not install or restart an external server.
 
 Lists such as external servers and indexers have individual entries with guided fields. Choosing an installed indexer definition refreshes its advertised settings, including masked credential inputs. Entries omitted from a later draft do not authorize deleting native settings.
 
-Choices refresh as you select targets. Some profiles, roots or generated keys are discoverable only after first start. Leave those choices unfinished, start the services, then return to the retained task. DUMB reports missing decisions rather than treating an instance named `1080p` as a configured quality profile.
+Choices refresh as you select targets. Some profiles, roots or generated keys are
+discoverable only after first start or initial account setup. An unavailable menu
+explains what must be ready first. Use **Do this later** to retain the unfinished
+task. After the app is ready, **Recheck this step** or **Refresh app choices and
+status** retrieves its current choices and result. DUMB does not offer invented
+profiles or treat an instance named `1080p` as a configured quality profile.
+
+An empty list of compatible Arr applications requires selecting or registering
+the intended library app. If you do not want that connection, leave it off.
+Starting unrelated services does not add a missing application to this list.
+
+**See another task** lets you move through the guide without claiming the current
+task succeeded. **Pause walkthrough** closes the guide; it does not cancel work
+already accepted by DUMB. Choose **Resume guided setup** from the dashboard or a
+matching service page to continue the saved run. Skipping this optional guide
+does not complete required connection tasks.
 
 Supported Jellyfin and Emby library forms offer **Scan this new library after creation**, off by default. Review the paths before enabling it. The choice authorizes the initial scan only when DUMB creates that library; it does not rescan an existing library. An empty newly created library may need this initialization before native file-change notifications can discover its first item.
-
-**Review Configuration** shows meaningful choices with credentials masked, followed by **DUMB will configure**, **Information you must provide**, and **Finish manually**. **Start services** appears on this review step.
 
 **No media server** and **External server** are different guided decisions. DUMB carries the chosen default into the advertised connection fields for selected request and maintenance services; you can review or change each connection. External URLs must be reachable from DUMB; a hostname or path that works in your browser or on the Docker host may not work inside the container. Keep TLS certificate verification enabled unless you have reviewed the specific connection. An external private network address also requires explicit endpoint authorization.
 
@@ -54,10 +102,14 @@ Provider accounts provide Usenet access. They do not create or authenticate inde
 
 The checklist is available during setup, on the dashboard, and on matching service pages. Service pages scope tasks to the service or instance; the saved run remains the arrangement record.
 
-Each action reports automation, configuration, verification, missing input and an explanation, with service and documentation links. Last-checked and scheduled-retry times include a timezone, and attempt counts appear after work has been attempted. The open checklist refreshes results during active work and around an automatic retry's scheduled time.
+Each action reports automation, configuration, verification, missing input and an explanation. After startup, app links open in a new tab so the checklist stays available. Last-checked and scheduled-retry times include a timezone, and attempt counts appear after work has been attempted. The open checklist refreshes results during active work and around an automatic retry's scheduled time.
 
 | Control | Effect |
 |---|---|
+| **Walk me through setup** / **Resume guided setup** | Opens the optional walkthrough for the saved run. |
+| **Pause walkthrough** | Saves the walkthrough position and closes it without cancelling accepted work. |
+| **Do this later** | Retains the walkthrough task as unfinished. |
+| **Show full checklist** | Shows all retained tasks directly. |
 | **Configure this step** | Opens the advertised guided inputs. |
 | **Apply configuration** | Submits deliberate changes for that action. |
 | **Preview changes** | Inspects current settings and shows proposed field changes without applying them. |
@@ -65,12 +117,16 @@ Each action reports automation, configuration, verification, missing input and a
 | **Retry this action** | Retries only the selected action. |
 | **Recheck** / **Recheck connections** | Runs available checks and refreshes results. |
 | **Retry incomplete automatic steps** | Retries incomplete supported automatic work. |
-| **I completed this manually** | Records your confirmation; it does not mark a connection test passed. |
+| **I completed this manually** / **I completed this in the app** | Records your confirmation; it does not mark a connection test passed. |
 | **Do later** | Retains unfinished work. Deferring required work does not complete it. |
 | **View latest setup** | Loads the backend's latest saved arrangement run. |
 | **Continue to dashboard** | Leaves onboarding while retaining unfinished tasks. |
 
 There is no success timer or forced redirect. Leaving onboarding changes a navigation preference, not verification. A backend restart or browser change does not turn interrupted work into success. Correct rejected credentials in the relevant task and retry it rather than restarting unrelated applications.
+
+Manual confirmation can let you continue through the walkthrough, but it stays
+separate from verified checks. A failed connection check remains unfinished even
+after you confirm that you performed the app's setup.
 
 ### During an installation backup or recovery
 
@@ -221,7 +277,12 @@ For supported existing connections, choose **Preview changes** to inspect curren
 
 Setup is not a database migration. Use separate [SQLite-to-PostgreSQL migration](arr-postgres-migration.md), namespace migration or [reset/removal](service-reset.md) tools where required.
 
-Setup records and protected inputs live under `/config/.dumb-setup`. Include them in private configuration backups and protect them as credential-bearing data. Browser persistence retains only the run identifier, not passwords or unfinished credential drafts.
+Setup previews can send entered credentials to protected backend inputs before
+you choose **Start services**. Setup records and protected inputs live under
+`/config/.dumb-setup`; include them in private configuration backups and protect
+them as credential-bearing data. Browser persistence retains only the run
+identifier and walkthrough position/preferences, not passwords or unfinished
+credential drafts.
 
 ## Related pages
 
