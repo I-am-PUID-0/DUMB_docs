@@ -1,6 +1,13 @@
 # Changelog
 
 
+## [1.25.15](https://github.com/I-am-PUID-0/DUMB_docs/compare/1.25.14...1.25.15) (2026-11-19)
+
+
+### 📖 Documentation
+
+* add visual task guides and a captioned DUMB overview ([100477e](https://github.com/I-am-PUID-0/DUMB_docs/commit/100477e21d0a7d6cef7d063ca49f5845169d36bd))
+
 ## [1.25.14](https://github.com/I-am-PUID-0/DUMB_docs/compare/1.25.13...1.25.14) (2026-11-19)
 
 
