@@ -210,6 +210,58 @@ registered destination on a different filesystem and a supported local
 source/candidate layout. Mounted source roots or incompatible layouts block the
 preview. Generate a new preview after changing the storage choice.
 
+### Which storage choice is fastest?
+
+The quickest choice depends on the disks, the share and the source data. Saving
+local space can add transfer and verification work. The preview's **How storage
+affects migration time** comparison explains the work for the selected layout;
+it is not a benchmark or a promised finish time.
+
+There is no storage mode that is always fastest. Compare the work each one adds
+and where that work happens:
+
+| Choice | Work that differs | When it can help |
+| --- | --- | --- |
+| Reuse v1 directory | Avoids a second complete local candidate copy, but relies on additional reads of the verified recovery archive before reuse and at later acceptance boundaries. | Local copying is expensive and the separate recovery destination is fast and reliable. |
+| Keep v1 local | Reads and writes an additional complete candidate copy while keeping the original tree locally. | There is enough local capacity; the original local tree remains available for recovery. |
+| Move legacy blobs externally | Adds a separate blob transfer, readback and file checks; the importer then reads those blobs from the selected storage. | Local space is too limited for the other choices. It trades additional external work for released local space. |
+
+**Keep v1 local can be fastest when local storage is fast and the recovery
+archive is on a slow share.** **Reuse v1 directory can be faster when avoiding
+the local copy saves more time than its additional archive reads.** Reuse can
+therefore take longer even during preparation. External blob staging is primarily
+a way to make the migration fit on local storage; it also makes importer reads
+and individual file checks depend on the external storage.
+
+A fast separate disk can beat a busy local disk. An archive stored on a slow NAS
+can dominate any choice: writing it, reading it back and later rechecking it are
+separate passes. Thousands of small files can take longer than their byte count
+suggests. Reusing the source still needs room for the new local v2 database and
+does not bypass integrity checks. The comparison accounts for the selected
+workflow; source-derived byte budgets describe work, not measured disk or network
+performance.
+
+Restoring v1 changes the comparison. Reuse and external-blob modes need to read
+the recovery archive, write v1 back locally and verify the restored files. Keep
+v1 local retains that original tree. A failed attempt, a requested restore or
+the older **Test migration** flow can therefore make reuse slower overall,
+even though its preparation copies less. The comparison shows preparation and
+restoration work separately so that this tradeoff stays visible.
+
+For scale, reading **60 GiB once at a sustained 100 MiB/s takes about 10 minutes
+14 seconds**. At **12 MiB/s it takes about 1 hour 25 minutes**. Two complete
+passes take roughly twice that transfer time before file-opening, hashing,
+database and other overhead. These are arithmetic examples, not measured speeds
+for your installation. Use the job's current measured pace for its current pass.
+
+Other work is independent of the storage choice. A v1 PostgreSQL source needs
+its snapshot, independent restore and SQLite export checks. The native importer
+may need provider article reads to reconstruct older metadata; provider latency,
+missing articles and retries can dominate the conversion. None of the storage
+choices removes that work. Preparation runs the native conversion once and
+retains its result for activation; the older separate test/start workflow
+repeats conversion when the actual migration starts.
+
 ### Reuse local v1 storage
 
 **Reuse v1 directory** avoids a duplicate source tree; it does not make the
@@ -389,6 +441,37 @@ also refresh the affected services from their actual process status; if that
 read fails, their indicators become unknown until status can be confirmed.
 
 ### Progress, cancellation and recovery
+
+On supporting builds, **Migration stages** shows the required steps for this
+job in order and updates with its automatic status checks. A typical existing
+v1 preparation follows this path:
+
+1. Check the plan and available storage.
+2. Pause the affected managed applications.
+3. Capture and verify the source database, when the source uses PostgreSQL.
+4. Save and verify the v1 recovery state.
+5. Prepare the import input for the selected storage choice.
+6. Run InfiniDysk's native conversion.
+7. Validate the import and reconcile the retained evidence.
+8. Wait for your activation or restore decision.
+9. Activate the prepared candidate and verify live delivery.
+10. Resume the previously running managed applications.
+
+Fresh installations omit steps that do not apply. Optional conversion of an
+already running v2 SQLite database to PostgreSQL is a separate workflow; it is
+not the source-database step above. Older separate tests show their v1 restore
+and candidate-cleanup steps instead of an activation decision. Failure recovery
+appears as its own restore branch; restoring v1 does not complete the remaining
+v2 activation stages.
+
+Each step has a status such as queued, in progress, completed, waiting for your
+decision, failed or not run. DUMB marks a step complete only when the relevant
+work records its completion. An older retained job may have no historical step
+records; the view identifies that missing evidence instead of marking all
+earlier stages complete. A completed preview shows a plan of the stages, not
+evidence that any migration work has run. The number of completed stages is not
+a percentage of elapsed time: one import or archive check can take longer than
+several other steps combined.
 
 The displayed phase distinguishes native import, DUMB validation and source
 recovery. Progress is shown while work is running; a finished job shows its

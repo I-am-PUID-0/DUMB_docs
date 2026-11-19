@@ -214,6 +214,50 @@ leave `job.staging_cleanup_required: true` without invalidating an accepted
 import or blocking restoration from the valid archive. Preserve the warning
 and retained evidence; it does not authorize deleting a replacement directory.
 
+#### Storage work comparison
+
+Supporting previews and public jobs can expose optional `storage_work` with
+`protocol: 1`. It describes the file I/O that differs between storage choices;
+it is not an elapsed-time forecast, an eligibility result or permission to
+select a different layout. The status response can advertise
+`capabilities.migration_storage_work: true`.
+`comparison_basis: "logical_io_same_storage"` identifies this work model;
+`ranking: "not_estimated"` and null per-path `preparation_order` values explicitly
+avoid an unsupported fastest-to-slowest ordering.
+
+Source quantities `source_data_bytes`, `source_total_bytes` and
+`legacy_blob_bytes` can be null when unavailable. `archive_bytes` uses the
+retained archive's measured size when available; before that, source logical
+size is only a lower bound, identified by `archive_bytes_is_minimum`.
+Archive headers, runtime files and database snapshot artifacts can make the
+actual archive larger. `archive_storage_type` identifies `local`, `network` or
+`unknown`; it is not a speed measurement.
+
+`selected_path` identifies the selected layout. `paths` describes `keep_local`,
+`reuse_local` and `external_blobs`, with their selection and separate
+`preparation`, `activation` and `restoration` I/O legs. A leg contains an authored
+`id`, nullable `read_bytes` and `write_bytes`, `storage` of `local` or `archive`,
+an integer `passes`, and a boolean `minimum`. Read/write quantities already total
+all of that leg's passes; do not multiply them by `passes` again. A minimum is a
+lower work bound, not a promise that no further I/O occurs.
+
+Keep-local preparation copies the candidate and checks the retained local
+source. Reuse avoids that copy but adds archive verification before reuse and
+at acceptance. External blob staging adds archive checks, the blob copy and
+repeated input readback. Activation checks the retained source or archive again
+without repeating native conversion. Reuse/offload restoration needs archive
+verification, extraction and restored-source readback; the older rehearsal flow
+includes that restoration even when its test passes.
+
+Common recovery-archive creation/readback, initial source and candidate fingerprints,
+runtime verification, database snapshot/restore/export and native provider work
+are outside these comparison legs. File metadata latency, shared-disk contention
+and importer reads also prevent a byte count from establishing a fastest path.
+In particular, reuse can be slower than keeping v1 local when its archive reads
+cross a slow network. No universal preparation or finish-time ranking is
+provided. Reporting uses existing inventory and retained records; it does not
+run a speed benchmark or add a new scan.
+
 #### Background preview
 
 Use the background routes only when the strict boolean
@@ -432,6 +476,38 @@ native conversion rather than the entire validation/cutover/recovery pipeline.
 #### Job progress and evidence
 
 The outer `stage` and `message` describe the current DUMB phase.
+
+Supporting builds also expose optional `stage_progress` to describe the ordered
+workflow independently of the current phase's counters. It contains:
+
+| Field | Meaning |
+| --- | --- |
+| `protocol` | `1` for this workflow-stage contract |
+| `tracking` | `recorded` for jobs with recorded transitions; `legacy` when historical transitions are unavailable |
+| `steps` | Ordered objects containing an authored `id`, a `state`, and optional `started_at` / `completed_at` timestamps |
+| `current_step_id` | Current step identity, when available |
+
+Step states are `pending`, `running`, `completed`, `failed`, `interrupted`,
+`not_run` and `waiting`. The applicable forward-path IDs are `check_plan`,
+`pause_services`, `source_database` (PostgreSQL sources), `save_recovery`,
+`prepare_input`, `native_import`, `validate_import`, `review` (prepared
+activation), `activate` and `resume_services`. Legacy rehearsals instead include
+`restore_v1` and `cleanup_test`. A failure can add a separate `restore_v1`
+recovery step without completing the unexecuted forward path.
+
+Completion comes from recorded work milestones. Clients must not infer it from
+the step's position, native `done`, byte totals or a terminal success/failure
+label. Legacy tracking cannot prove earlier steps completed. A waiting review
+is an explicit user decision point while the affected applications remain
+paused; it is not a stalled worker. These states do not authorize activation,
+restoration or any other mutation, and step counts do not represent a weighted
+overall percentage or time estimate. Older backends and jobs can omit this
+object.
+
+The status response can advertise `capabilities.migration_stage_progress: true`.
+A preview can include `stage_plan` with the same shape and pending steps; this
+is the applicable plan, not recorded execution. Displaying either object does
+not change the existing mutation capabilities or confirmation requirements.
 
 A terminal job can expose `result.source_untouched: true` when it stopped before
 migration execution began. DUMB did not pause applications or change the source
