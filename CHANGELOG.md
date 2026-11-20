@@ -1,6 +1,13 @@
 # Changelog
 
 
+## [1.25.18](https://github.com/I-am-PUID-0/DUMB_docs/compare/1.25.17...1.25.18) (2026-11-20)
+
+
+### 📖 Documentation
+
+* **infinidysk:** explain omission review and DUMB stage retries ([c4c8555](https://github.com/I-am-PUID-0/DUMB_docs/commit/c4c85553af9869bcaaad44f04b64694aaf9ce490))
+
 ## [1.25.17](https://github.com/I-am-PUID-0/DUMB_docs/compare/1.25.16...1.25.17) (2026-11-19)
 
 
