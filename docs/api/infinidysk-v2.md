@@ -66,6 +66,7 @@ coordinates snapshots, checks, containment, activation and recovery.
 | `GET` | `/process/infinidysk-v2/jobs/{job_id}` | Retrieve one persisted job as `{"job": {...}}` |
 | `GET` | `/process/infinidysk-v2/jobs/{job_id}/report` | Read the retained native import report as plain text with `Cache-Control: no-store` |
 | `POST` | `/process/infinidysk-v2/cancel` | Request cooperative cancellation of the exact active major job and protected source recovery |
+| `POST` | `/process/infinidysk-v2/retry-stage` | Retry the current paused DUMB checkpoint while its original worker still owns the job |
 | `POST` | `/process/infinidysk-v2/rollback` | Restore the exact retained major-migration source when authorized |
 | `POST` | `/process/infinidysk-v2/retry-consumers` | Verify/restart the owned exposed v2 target and retry only retained pending consumers |
 | `POST` | `/process/infinidysk-v2/finish-consumer-recovery` | Acknowledge leaving pending consumers stopped after verified v2 delivery |
@@ -384,6 +385,59 @@ normal workers and unrelated applications. A prepared review hold alone does not
 request a restart. Retain this instruction on the completed or restored job
 instead of treating its terminal status as proof of full normal startup.
 
+#### Retry a paused DUMB checkpoint
+
+Require strict boolean `infinidysk_v2_stage_retry: true` and numeric
+`infinidysk_v2_stage_retry_protocol: 1` before opting into failed-step review.
+Send `pause_on_stage_error: true` with a new `/prepare`, `/rehearse` or `/start`
+request. Omitting the flag preserves the older automatic source-restoration
+behavior. This option does not authorize skipping integrity or ownership checks.
+
+A supported temporary I/O or database-access failure at a retryable checkpoint
+can publish `status: "stage_retry_required"`. The original worker stays alive,
+keeps migration admission and waits without automatically repeating the work.
+The job's `stage` still identifies the failed step. Its bounded `stage_retry`
+object includes `protocol`, `operation`, `stage`, `label`, `attempt`, `state`,
+`failed_at` and an operator-facing `message`. `state: "waiting"` denotes a pending
+decision. The panel must not display an old throughput or finish estimate as
+live progress while the worker is waiting.
+
+Only offer retry when the current job advertises `can_retry_stage: true` or
+`actions.retry_stage: true`. The client includes the server-issued attempt
+authorization from `confirmation_texts.retry_stage` when the user selects retry;
+the user does not need to type it. Post that value with the job identity to
+`/process/infinidysk-v2/retry-stage`:
+
+```json
+{
+  "job_id": "<paused-job-id>",
+  "confirmation": "<current-confirmation_texts.retry_stage>"
+}
+```
+
+Acceptance resumes the failed callable in the same worker and job. It does not
+repeat preceding completed steps or run another native conversion when only a
+later verification failed. The current pass may restart from its beginning;
+this is not byte-offset transfer resumption. An archive-write retry requires
+confirmed removal of the exact owned incomplete file, then restarts the transfer
+while retaining earlier source fingerprints and prepared database files.
+Uncertain cleanup or publication prevents replay. `stage_retry.state` changes to
+`"retrying"`, then `"completed"` after success. Another failure increments
+`attempt` and requires a fresh confirmation. Replayed, stale or mismatched
+confirmations cannot launch duplicate work. Continue polling the retained job.
+
+The existing cancellation control remains available when advertised and wakes
+the waiting worker to follow its guarded source-recovery path. Closing the
+panel does not cancel or retry. A controller restart cannot reconstruct this
+live continuation: the job reports `"interrupted"`, retry is unavailable, and
+the existing retained recovery actions determine what can proceed. This differs
+from the independently verified `"prepared"` activation checkpoint above.
+
+Invalid inventory, changed input, unsupported reports, uncertain helper
+termination, cancellation and lost worker ownership are not retry permission.
+Native omissions still use their separate complete-proof review and explicit
+acceptance policy; this endpoint does not retry the native importer's omissions.
+
 #### Legacy separate test and start
 
 Use this compatibility flow when prepared activation is not advertised.
@@ -639,12 +693,18 @@ and `missing_failed` counts. These diagnostics distinguish a per-attempt report
 count from actual preserved history; they do not relax identity checks.
 
 A prepared job can report `import_report.status: "review_required"` for fully
-accounted known source incompatibilities. Activating that same candidate requires
-its current `review_digest` as `skip_review_digest` and
+reconciled item-level omissions, including provider/NNTP failures, missing
+articles, source incompatibilities and unfamiliar reported reasons. The report
+must identify every omitted file uniquely and reconcile all imported and skipped
+totals with the source and actual destination. A reason alone grants no consent
+and does not establish that the item cannot be recovered. Activating that same
+candidate requires its current `review_digest` as `skip_review_digest` and
 `acknowledgements.skipped_media: true`. These values authorize only that retained
-candidate and its full verified omission evidence.
+candidate and its full verified omission evidence. The user may instead restore
+v1, resolve the reported problems and prepare again. Activation does not retry
+the omitted files or remove them from retained v1 recovery data.
 
-In the legacy flow, known incompatibilities may complete a validated rehearsal
+In the legacy flow, reconciled omissions may complete a validated rehearsal
 with `import_report.status: "review_required"`. Starting its cutover also requires
 `acknowledgements.skipped_media: true` and `skip_review_digest` matching that
 rehearsal's server-issued `review_digest`. The digest covers every omitted
@@ -658,8 +718,12 @@ The private complete census also binds referenced metadata/NZB blob contents
 while excluding volatile health scheduling. Changed source facts or stale proof
 require a fresh preparation and review, or a fresh isolated test in the legacy
 flow; public samples cannot reauthorize it.
-Unknown/provider failures, ambiguous identities and unrecognized reports remain blockers; the
-acknowledgement is not a general skip override.
+Unexplained missing files, ambiguous or changed identities, malformed or
+unrecognized report formats, missing required history, database integrity
+failures and failed containment remain blockers. A provider error or unfamiliar
+reason attached to an exactly reconciled omitted file is not itself an integrity
+failure. The acknowledgement is not a general skip override: it binds the exact
+private identity, name, path and reason evidence under the current proof policy.
 
 Only the legacy separate-test flow can record `candidate_discarded=true` after the native
 candidate/group is proven stopped and v1 plus managed consumers are restored.

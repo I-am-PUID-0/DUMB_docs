@@ -413,6 +413,38 @@ need that final restart. **Waiting for review alone does not require a restart.*
 If the prepared state cannot be confirmed, preserve its evidence and follow the
 offered recovery path.
 
+### Retry a paused DUMB step
+
+On supporting builds, a temporary storage or database-access error can pause a
+retryable DUMB step instead of immediately restoring v1. The panel identifies
+the step that stopped and offers a retry. Work completed before that step is
+kept: retrying the converted-library check, for example, uses the same converted
+database rather than repeating the native import, source capture or archive.
+A long file or archive check can restart its current pass. A failed archive
+transfer restarts that transfer after DUMB confirms removal of its incomplete
+file; earlier source capture and database preparation stay retained. Transfers
+do not continue from their last byte.
+
+Review the error, reconnect the required storage or resolve the reported access
+or free-space problem, then select **Retry this DUMB step**.
+Nothing retries automatically. A repeated failure leaves the same job paused
+for another decision. Keep DUMB and its required storage running, and keep
+the affected applications and external writers stopped while deciding.
+To abandon the attempt, use the job's cancellation control and follow the
+confirmed restoration result.
+
+Retry does not bypass changed or damaged input, an invalid report, failed
+ownership checks or uncertainty about whether a migration helper stopped.
+Those conditions still block continuation and retain the recovery path.
+The native import's reported omissions have their own
+[review and acceptance decision](#review-native-import-omissions); retrying a
+DUMB check does not ask the native importer to repair missing items.
+
+Reloading the page can reopen the paused job. **Restarting DUMB cannot resume
+this failed-step checkpoint:** the old worker is gone, so the job instead offers
+its retained recovery path. This differs from a fully prepared installation
+waiting for activation, which has its own restart-safe verification record.
+
 ### Older backend: separate test and migration
 
 A backend without prepared-activation support keeps the earlier
@@ -520,6 +552,7 @@ that the worker stopped.
 | --- | --- |
 | Cancelled before applications paused | DUMB left the source unchanged. No restore is needed. Obtain a fresh preview before another preparation. |
 | Checks failed before applications paused | Resolve the blocker and obtain a fresh preview. No source restore is needed. |
+| DUMB step paused; retry offered | Resolve the reported temporary problem, then retry that step using its current confirmation, or cancel and follow restoration. Earlier completed work stays retained. |
 | Prepared; waiting for activation | Conversion and preparation checks passed. Applications remain paused. Review this job and explicitly activate its candidate, or restore the previous setup. |
 | Preparation failed or was cancelled, with v1 restoration confirmed | v1 is available again. Resolve the reported error and obtain a fresh preview before trying again. No additional recovery action is needed. |
 | Older backend: test passed | v1 and its previous managed services were restored. Review the matching preview and start migration while its authorization remains valid. |
@@ -638,11 +671,28 @@ The job's import report distinguishes imported files, omitted files and their
 reported reasons. Omitted files are absent from v2; a completed native import does
 not establish that those files will be repaired or replaced automatically.
 
-A known, fully accounted source incompatibility can require review before
-activation. Read the reasons and affected paths, then explicitly accept the
-prepared job's omissions. Acceptance is bound to that candidate's full private
-evidence and exact report digest; the dashboard's limited path samples cannot
-replace it. Activating the prepared candidate does not run another import.
+If the importer finishes and DUMB can account for every imported and omitted
+file, the prepared installation can wait for your review. This includes items
+skipped because of missing articles, provider or connection problems, source
+incompatibilities, or another reported reason. Those reasons describe why an
+item was skipped; they do not mean it is safe to lose or cannot be recovered.
+
+1. Review the **Native import report**, including its imported and skipped
+   counts. Expand **Skipped paths and reasons**, and choose **Show full native
+   report** when the summary does not show every item.
+2. Decide whether to keep this result or try to recover the missing items.
+   Provider or connection problems may be temporary. To retry, choose
+   **Restore v1**, resolve the reported problems, then prepare again. Nothing
+   retries automatically.
+3. To keep the result, explicitly accept the listed missing items, enter the
+   displayed confirmation, then choose **Activate prepared InfiniDysk 2**.
+   Those items will be absent from the v2 library. Acceptance does not repair,
+   retry or delete them from the retained v1 recovery copy.
+
+Acceptance applies only to this candidate's complete recorded list of missing
+items and reasons. The dashboard's limited samples cannot replace that evidence.
+Activating the prepared candidate does not run another import. v1 and affected
+apps stay stopped while the prepared result waits for your decision.
 
 On the older separate test workflow, cutover can omit the same items or fewer,
 including none, when the complete
@@ -666,12 +716,12 @@ tolerance. Every required completed and failed source-history identity must
 still exist in the actual v2 database. Unsupported source states, invalid
 reserved identities and missing required history remain blockers.
 
-Provider/NNTP failures, unrecognized reasons or report formats, unexplained
-missing identities, changed names, database integrity failures and missing
-history still block migration. Review provider failures separately from known
-source exclusions: the restricted relay can recover missing metadata only when
-the configured provider permits the required reads. An acknowledgement does not
-override unavailable providers or unexplained omissions.
+An unexplained missing file, ambiguous or unrecognized report format, changed
+identity or name, database integrity failure, missing required history, or failed
+containment check still blocks migration. Accepting missing items cannot bypass
+these checks. A reported item-level reason, including a provider failure or an
+unfamiliar reason, can be reviewed only when DUMB verifies the exact missing
+files and the rest of the converted library.
 
 Supporting builds show **Provider activity** while importing and retain those
 observations after the importer stops. Provider numbers follow the captured
@@ -679,8 +729,9 @@ provider order. The counts distinguish requests, retries, article-not-found
 replies, and connection or protocol errors without showing server addresses or
 credentials. Expand **Connection and protocol errors** to see which step failed.
 An attempt can recover through a retry or another provider, so these counters
-alone do not mean a file was lost. Use the native import report to see whether
-any files remain blocked. Older jobs may not contain these observations.
+alone do not mean a file was lost. Use the native import report to see which
+files remain missing and whether the result can be reviewed. Older jobs may not
+contain these observations.
 
 The dashboard bounds its path/reason samples and identifies truncated details;
 DUMB retains the full native report privately with the migration job. The
