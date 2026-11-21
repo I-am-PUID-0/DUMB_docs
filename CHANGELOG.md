@@ -1,6 +1,18 @@
 # Changelog
 
 
+## [1.25.21](https://github.com/I-am-PUID-0/DUMB_docs/compare/1.25.20...1.25.21) (2026-11-21)
+
+
+### 🐛 Bug Fixes
+
+* **docs:** model backup service choices in frontend captures ([49fb9e8](https://github.com/I-am-PUID-0/DUMB_docs/commit/49fb9e868d3a7ea961b4512609fd652b2386a0fb))
+
+
+### 📖 Documentation
+
+* refresh source-pinned frontend visuals ([#188](https://github.com/I-am-PUID-0/DUMB_docs/issues/188)) ([9be69f7](https://github.com/I-am-PUID-0/DUMB_docs/commit/9be69f7d7d1fe48c23b2cc1deb9578a9df8958a4))
+
 ## [1.25.20](https://github.com/I-am-PUID-0/DUMB_docs/compare/1.25.19...1.25.20) (2026-11-21)
 
 
