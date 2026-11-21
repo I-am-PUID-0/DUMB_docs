@@ -1,7 +1,7 @@
 ---
 development_only: true
 title: Installation Backup and Restore
-description: Back up DUMB configuration, managed application state and databases, schedule verified archives, and restore an installation from mounted storage.
+description: Back up a whole DUMB installation or selected service instances, schedule verified archives, and restore the reviewed state from mounted storage.
 icon: lucide/archive-restore
 ---
 
@@ -16,6 +16,7 @@ backup protocol `1`; older backends continue to expose their existing tools.
 | Task | Start here |
 | --- | --- |
 | Make an archive | [Create a backup](#create-a-backup) |
+| Protect or restore individual apps | [Choose the installation or selected services](#choose-the-installation-or-selected-services) |
 | Keep a recurring archive | [Schedule backups](#schedule-backups) |
 | Recover an installation | [Restore an existing or fresh installation](#restore-an-existing-or-fresh-installation) |
 | Resolve a held startup | [Startup and private recovery state](#startup-and-private-recovery-state) |
@@ -107,6 +108,88 @@ Review the reported paths and correct the conflicting profile. A separate
 destination or a dedicated child archive directory can still be used when it
 passes the storage checks.
 
+## Choose the installation or selected services
+
+Backends supporting individual-service backups show **What would you like to
+protect?** on **Back up now** and **Schedule**:
+
+- **Entire DUMB installation** keeps the existing complete-installation flow,
+  including DUMB settings and accounts.
+- **Selected services** lets you choose one or more configured service
+  instances. For example, two Radarr instances appear separately. The archive
+  includes only their supported settings, persistent files, library-link state
+  and managed databases. It excludes other apps and DUMB accounts.
+
+Choose at least one available instance, then preview the backup. The review
+shows the exact files, managed database count and applications that may pause.
+Dependent apps can pause with a selected service so they cannot change its
+state during copying. The shared PostgreSQL server stays online; supported
+service databases use separate verified exports rather than a cluster-directory
+copy. A service archive still contains that app's credentials and private data,
+and is not encrypted.
+
+An unavailable choice explains its blocker. DUMB refuses ambiguous shared
+directories, external databases or persistence it cannot assign safely to the
+selected instance. When apps share supported application data, **Back up
+together with** identifies the other owners. Select those apps as well to create
+one bundle; DUMB does not add services silently. DUMB control-plane services,
+the shared PostgreSQL cluster, and InfiniDysk 1 using PostgreSQL require the
+complete-installation tool. Existing whole-installation archives
+remain whole-installation restores; they cannot be treated as service archives.
+
+### Restore a service bundle
+
+Select the archive on **Restore**. Its label identifies either the whole
+installation or the saved services. Choose **Preview restore**, then review and
+confirm what will be replaced.
+
+A service archive restores **exactly the instances saved together in that
+archive**. Selecting a subset of an existing bundle is not supported. The
+instances and their supported persistence paths must still match the current
+installation; recreate a removed instance's configuration before previewing its
+restore. Use a complete-installation archive to recover an entire replacement
+installation instead.
+
+A lost application data directory can be restored when its instance and path
+are still configured. A missing standalone file needs its parent directory to
+exist. DUMB does not retarget missing aliases to a different location.
+
+For an app using managed PostgreSQL, restore into its existing database server.
+If that app's database was removed, recreate it through normal managed-service
+setup before requesting a restore preview. Use a whole-installation backup to
+rebuild or recover the shared PostgreSQL server.
+
+<details class="geek-details" markdown="1">
+<summary>Technical details: PostgreSQL restore boundary</summary>
+
+Service database restore requires the recorded managed PostgreSQL cluster
+identity to match the running cluster. Its database targets must already exist
+and remain owned by the selected services. A service archive cannot recreate a
+missing database, replace the shared cluster or remap its contents to another
+cluster. Changed or unproven identity and ownership remain restore blockers.
+
+</details>
+
+DUMB preserves unrelated apps and your DUMB accounts. Only selected writers
+and affected dependent apps pause, and previously running affected apps resume
+after a successful service restore. A container restart is not normally needed
+for this flow.
+
+If the DUMB controller restarted while recovery was pending, finish the offered
+recovery action first, then follow its container-restart instruction. This lets
+normal startup safely resume the rest of the installation too.
+
+If a service restore stops before replacement commits, follow its offered
+rollback to recover the original service state. If replacement has committed
+and only cleanup or application resumption fails, **Finish service restore**
+keeps the restored data and completes that recovery. Enter the phrase DUMB
+shows; do not restart another restore or remove its retained recovery files.
+
+Use an updated dashboard and backend to create and review service archives.
+Older backends reject their new archive format. The service choice is hidden when
+the connected backend does not support it; normal installation backups remain
+available.
+
 ## Choose an archive format
 
 Uncompressed `.tar` is the default. When the backend supports Zstandard,
@@ -137,7 +220,7 @@ Plan for application downtime. Once DUMB stops managed applications, playback, i
 
 Use direct frontend/API access before starting. Managed proxies and tunnels can stop with the applications, making their public routes unavailable.
 
-1. Select a destination and archive format in **Settings → Backups and restore**.
+1. Select a destination, what to protect, and archive format in **Settings → Backups and restore**.
 2. Choose **Preview backup** to review roots, exclusions, estimated space, and blockers while applications remain running.
 3. Stop external writers, including another container sharing the same state.
 4. Review the downtime, credential-handling, and external-state acknowledgements, enter the displayed phrase, and select **Start reviewed backup**.
@@ -192,7 +275,7 @@ Seerr Sync and Metrics storage operations reserve installation persistence for t
 
 There is no fixed overall file-count or payload-size ceiling. Individual path, nesting, record, metadata, and restorable-transaction checks still apply. Local space is needed for verification ledgers and later restore staging in addition to archive capacity. A large NAS destination does not remove those requirements.
 
-Database consistency requires a stopped [PostgreSQL cluster](https://www.postgresql.org/docs/current/backup-file.html) and quiescent [SQLite databases and journals](https://sqlite.org/howtocorrupt.html#_backup_or_restore_while_a_transaction_is_active).
+Whole-installation database consistency requires a stopped [PostgreSQL cluster](https://www.postgresql.org/docs/current/backup-file.html) and quiescent [SQLite databases and journals](https://sqlite.org/howtocorrupt.html#_backup_or_restore_while_a_transaction_is_active). Selected-service backups instead use verified exports for supported managed PostgreSQL databases while the server stays online.
 
 </details>
 
@@ -298,8 +381,10 @@ into an installation archive.
 ## Schedule backups
 
 Scheduling is off by default. Enable it deliberately, choose its destination,
-interval, archive format and retention, then select **Save backup schedule**. Check the next scheduled run and use **Reload saved schedule** to verify the saved choices. The schedule
-keeps its own format choice; changing a manual backup does not change it.
+installation or service scope, interval, archive format and retention, then select
+**Save backup schedule**. Check the next scheduled run and use **Reload saved
+schedule** to verify the saved choices. The schedule keeps its own service and
+format choices; changing a manual backup does not change it.
 Each manual or scheduled run
 creates a full, standalone archive; incremental or deduplicated installation
 backups are not currently supported. Scheduled backups use the same
@@ -315,8 +400,10 @@ the schedule does not cancel an already-running job; use that job's supported
 
 Missed or blocked jobs remain visible. A schedule does not bypass startup,
 another active operation, unavailable storage or insufficient space. Retention
-applies only to verified scheduled installation archives owned by that schedule;
-manual archives and other tools' backups are retained separately.
+applies only to verified scheduled archives for the same exact service bundle
+or whole-installation scope. Changing the selected services does not remove
+another bundle's archives or whole-installation archives. Manual archives and
+other tools' backups are retained separately.
 
 ## Restore an existing or fresh installation
 

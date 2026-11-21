@@ -37,6 +37,7 @@ Paths below are relative to the API; browser requests use its `/api` proxy.
 |--------|-------|---------|
 | `GET` | `/process/installation-backups/status` | Schedule, preparation, operation/recovery state and current job |
 | `GET` | `/process/installation-backups/catalog` | Verified installation archives from the selected destination |
+| `GET` | `/process/installation-backups/services` | Eligible configured service instances and blockers when individual-service backups are supported |
 | `POST` | `/process/installation-backups/preview` | Review coverage, exclusions, destination, capacity and downtime |
 | `GET` | `/process/installation-backups/preview/status` | Reconnect to the current or selected tracked backup preview when supported |
 | `POST` | `/process/installation-backups/preview/{preview_id}/cancel` | Request cooperative cancellation of that tracked backup preview when supported |
@@ -48,6 +49,107 @@ Paths below are relative to the API; browser requests use its `/api` proxy.
 | `POST` | `/process/installation-backups/restore/preview` | Verify a selected archive and preview compatible restore targets |
 | `POST` | `/process/installation-backups/restore/start` | Start the reviewed restore with its required confirmations |
 | `POST` | `/process/installation-backups/jobs/{job_id}/rollback` | Recover the exact retained operation after its typed rollback confirmation |
+
+## Individual-service backup and restore
+
+Backends advertising both `installation_backup_services=true` and numeric
+`installation_backup_services_protocol=1` support selected-service archives.
+`GET /services` returns `protocol: 1` and `services`. Each row includes `id`,
+`key`, `instance_name`, `name`, `enabled`, strict boolean `available` and
+`blocking_reasons`. IDs identify a configured service or instance (`key` or
+`key:instance`); clients must use the backend-provided ID rather than a display
+name. An unavailable row does not authorize a partial backup.
+Optional `required_service_ids` identifies other owners of shared application
+data. Clients must require those owners to be explicitly selected too; the
+backend refuses an incomplete ownership bundle rather than expanding its scope
+silently. Optional `warning` can explain the shared-data requirement.
+
+`POST /preview`, `POST /start-direct` and `PUT /schedule` accept:
+
+```json
+{
+  "scope": "services",
+  "service_ids": ["radarr:movies"]
+}
+```
+
+These fields supplement each route's existing destination, compression,
+confirmation and schedule fields. `scope: "installation"` with an empty
+`service_ids` selects the legacy whole-installation behavior and is the default.
+Clients without the additive capability omit both fields. Service scope needs
+at least one unique eligible instance; it cannot select DUMB control-plane
+services or the shared PostgreSQL cluster. The reviewed preview binds the
+selected IDs, configuration, persistence ownership and database coverage. Start
+with the reviewed token as usual, without resending configuration or database
+credentials. Direct-start request identities also bind the selected scope.
+
+Preview, catalog and job responses add `service_scope`, either
+`{"kind":"installation"}` or:
+
+```json
+{
+  "kind": "services",
+  "service_ids": ["radarr:movies"],
+  "services": [{"id": "radarr:movies", "key": "radarr", "instance_name": "movies", "name": "Movies"}],
+  "affected_process_names": ["Movies"],
+  "database_count": 0
+}
+```
+
+An omitted field on legacy archives means complete-installation scope. Service
+archives use schema `2` so older restorers reject them instead of assuming a
+complete installation. They retain a selected configuration fragment and
+supported owned roots plus separate managed-database exports, without DUMB
+authentication or unrelated configuration. The shared PostgreSQL server stays
+online; only selected writers and their affected dependants are quiesced.
+
+During `database_backup` and `database_restore`, the optional
+`database_progress` reports `phase` (`database_records`, `database_dump` or
+`database_restore`) and measured `completed`, `total` or `bytes` when available.
+Record-check counts measure database **tables checked**, not the number of
+rows copied. Dump bytes describe the current database export. Show this work
+separately from archive counters; an earlier archive percentage does not measure
+database export or restore progress. Missing totals require indeterminate
+activity rather than an inferred percentage or finish time.
+
+Restore preview takes the normal archive reference or mounted path. The archive
+determines the exact saved bundle: no `service_ids` subset is accepted during
+restore. Existing configured instance IDs, persistence paths and compatibility
+bindings must match. Legacy schema `1` archives remain whole-installation
+restores. After service replacement commits, affected previously running
+applications resume without a normal container restart; unrelated app data and
+DUMB accounts are preserved.
+
+A missing configured application root can be restored at its recorded path.
+For a missing standalone file, its parent directory must still exist; missing
+aliases are not remapped to alternative targets. Configured instance identities,
+path ownership and compatibility checks still apply.
+
+PostgreSQL service restores are logical replacements within the existing managed
+cluster. The recorded cluster identity must match, and current targets owned by
+the selected services must already exist. If a service database was removed,
+recreate it through normal managed-service setup before restore preview. A
+service archive cannot replace or rebuild the shared PostgreSQL cluster; cluster
+recovery requires a whole-installation backup.
+
+Scheduled retention is partitioned by exact service IDs or whole-installation
+scope. Switching a schedule's bundle does not prune archives from a different
+bundle or whole-installation scope. Manual archives remain outside scheduled
+retention.
+
+If recovery is finished by a new controller process, the job instead retains
+`restart_required=true` and its exact configuration hash. Follow the instructed
+container restart to resume normal startup; the recovery-only controller does
+not launch application writers itself. Same-controller recovery resumes the
+previously running affected applications normally.
+
+If a service restore reports `service_restore_committed=true` with
+`can_rollback=true`, its existing `POST /jobs/{job_id}/rollback` route uses the
+backend-owned `rollback_confirmation_text` to **finish** cleanup and resumption
+while retaining the restored state. Clients must label that action **Finish
+service restore**, not promise restoration of the old data. Before commit, the
+existing guarded rollback recovers the original service state. Respect the
+advertised action and typed phrase in either case.
 
 ## Compression
 
