@@ -1,6 +1,13 @@
 # Changelog
 
 
+## [1.25.20](https://github.com/I-am-PUID-0/DUMB_docs/compare/1.25.19...1.25.20) (2026-11-21)
+
+
+### 🐛 Bug Fixes
+
+* **docs:** preserve media artifact paths for single-channel refreshes ([2a84fb0](https://github.com/I-am-PUID-0/DUMB_docs/commit/2a84fb08bd819766ae231ba10cc5f2928aa4f8b0))
+
 ## [1.25.19](https://github.com/I-am-PUID-0/DUMB_docs/compare/1.25.18...1.25.19) (2026-11-21)
 
 
