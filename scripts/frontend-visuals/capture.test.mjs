@@ -42,6 +42,53 @@ test('shared service polls stay read-only and valid across specialist panels', a
   assert.deepEqual(fixture.state.exampleOperations, [])
 })
 
+test('individual backup choices expose protocol-1 public identities without claiming eligibility or accepting writes', async t => {
+  const fixture = await open(t, { plan: planFor({ capabilities: {
+    installation_backup: true, installation_backup_protocol: 1,
+    installation_backup_services: true, installation_backup_services_protocol: 1,
+  } }) })
+  const pathname = '/api/process/installation-backups/services'
+  let expected
+  for (const profile of ['standard', ...utilityScenarios.map(row => row.profile)]) {
+    fixture.resetScenario(profile)
+    const response = await fetch(fixture.origin + pathname)
+    assert.equal(response.status, 200, profile)
+    const choices = await response.json()
+    assert.equal(choices.protocol, 1)
+    assert.ok(Array.isArray(choices.services) && choices.services.length > 0)
+    assert.equal(new Set(choices.services.map(row => row.id)).size, choices.services.length)
+    assert.ok(choices.services.some(row => row.id === 'sonarr' && row.name === 'Sonarr'))
+    assert.ok(!choices.services.some(row => ['dumb', 'dumb_frontend'].includes(row.id)))
+    for (const service of choices.services) {
+      assert.equal(typeof service.id, 'string')
+      assert.ok(service.id.length > 0 && service.id.length <= 128 && !/[\x00-\x1f\x7f]/.test(service.id))
+      assert.ok(typeof service.name === 'string' && service.name.trim())
+      assert.equal(service.key, service.id)
+      assert.equal(service.instance_name, null)
+      assert.equal(typeof service.enabled, 'boolean')
+      assert.equal(service.available, false, 'Example data must not claim a service is eligible for backup')
+      assert.deepEqual(service.required_service_ids, [])
+      assert.ok(service.blocking_reasons.length > 0)
+      assert.ok(service.blocking_reasons.every(reason => reason === 'Backup availability has not been checked for this example.'))
+      assert.ok(!Object.hasOwn(service, 'service_config'), 'Native configuration is not part of the public list')
+    }
+    if (expected) assert.deepEqual(choices, expected)
+    expected = choices
+  }
+  assert.deepEqual(fixture.state.unexpected, [])
+  assert.deepEqual(fixture.state.exampleOperations, [])
+  for (const suffix of ['/services', '/preview', '/start', '/restore/start']) {
+    const response = await post(fixture, '/api/process/installation-backups' + suffix, {})
+    assert.equal(response.status, 405)
+    await response.arrayBuffer()
+  }
+  const unknown = await fetch(fixture.origin + pathname + '/unknown')
+  assert.equal(unknown.status, 405)
+  await unknown.arrayBuffer()
+  assert.equal(fixture.state.unexpected.length, 5)
+  assert.deepEqual(fixture.state.exampleOperations, [])
+})
+
 test('canonical plan identity ignores key order but detects changed source and configuration', () => {
   const first = planFor({ capabilities: { z: false, a: { second: 2, first: 1 } } })
   const reordered = { ...first, capabilities: { a: { first: 1, second: 2 }, z: false } }

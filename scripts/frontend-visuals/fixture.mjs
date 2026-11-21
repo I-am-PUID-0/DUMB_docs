@@ -343,6 +343,16 @@ export async function createFixture({ WebSocketServer, WebSocket, plan, metricsT
         return send({ results: [{ process_name: 'Riven', status: 'example_only', message: 'Simulated documentation example; no installation was performed.' }] })
       }
       if (get && path === '/api/process/installation-backups/status') return send(dataset.backup_status)
+      if (get && path === '/api/process/installation-backups/services') return send({
+        protocol: 1,
+        // Public identities only, matching the protocol-1 service-choice list.
+        // A capture never checks persistence ownership or backup eligibility.
+        services: definitions.filter(([, key]) => !['dumb', 'dumb_frontend'].includes(key)).map(([name, key, , , enabled]) => ({
+          id: key, key, instance_name: null, name, enabled: enabled !== false,
+          available: false, required_service_ids: [],
+          blocking_reasons: ['Backup availability has not been checked for this example.'],
+        })),
+      })
       if (get && path === '/api/process/installation-backups/catalog') return send({ protocol: 1, archives: [], items: [] })
       if (get && path === '/api/process/installation-backups/preview/status') return send({ protocol: 1, controller_session: 'example-session', preview: null })
       if (get && path === '/api/process/backup-storage/catalog') return send({ protocol: 1, default_destination_id: '', destinations: [] })
