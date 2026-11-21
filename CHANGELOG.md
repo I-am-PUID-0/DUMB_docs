@@ -1,6 +1,13 @@
 # Changelog
 
 
+## [1.25.23](https://github.com/I-am-PUID-0/DUMB_docs/compare/1.25.22...1.25.23) (2026-11-21)
+
+
+### 📖 Documentation
+
+* explain standard InfiniDysk v2 release controls ([73e5e38](https://github.com/I-am-PUID-0/DUMB_docs/commit/73e5e38ff867d2cbf39f0bf4c52abe267433e7ce))
+
 ## [1.25.22](https://github.com/I-am-PUID-0/DUMB_docs/compare/1.25.21...1.25.22) (2026-11-21)
 
 
