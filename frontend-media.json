@@ -2,7 +2,7 @@
   "channels": {
     "dev": {
       "backend": {
-        "commit": "90778cb260ae2d08c4aba7a064944a753607b67c",
+        "commit": "65ccf3f52dc65e262f768c99089cc57a89b02d7f",
         "ref": "dev",
         "repository": "https://github.com/I-am-PUID-0/DUMB",
         "tag": null,
@@ -11,16 +11,16 @@
       "catalog_sha256": "4172c81beac82b5d42d38b9e89da9e215751a18d804928bcf65b20cc863d35b8",
       "dataset_sha256": "7f52c30bd48e7c312401013a1c3d4a6388da3272df454f971c013aed7265010c",
       "frontend": {
-        "commit": "836c92e776b0b9c12aa2c8423aad51520d9f5b5a",
+        "commit": "6bbf57d0af29fc32d12b8424d8c841ac39aa8ae7",
         "ref": "dev",
         "repository": "https://github.com/nicocapalbo/dmbdb",
         "tag": null,
         "version": "1.92.0"
       },
-      "package_manifest": "docs/assets/images/guides/frontend/channels/dev/90778cb260ae-836c92e776b0-6e853511d7fb/manifest.json",
+      "package_manifest": "docs/assets/images/guides/frontend/channels/dev/65ccf3f52dc6-6bbf57d0af29-3b87596c2fb5/manifest.json",
       "plan": {
         "backend": {
-          "commit": "90778cb260ae2d08c4aba7a064944a753607b67c",
+          "commit": "65ccf3f52dc65e262f768c99089cc57a89b02d7f",
           "ref": "dev",
           "repository": "https://github.com/I-am-PUID-0/DUMB",
           "tag": null,
@@ -137,6 +137,8 @@
           "infinidysk_v2_queue_omission": true,
           "infinidysk_v2_rclone_optimizer": false,
           "infinidysk_v2_reviewed_skips": true,
+          "infinidysk_v2_stage_retry": true,
+          "infinidysk_v2_stage_retry_protocol": 1,
           "install_cache_cleanup": true,
           "install_cache_limit_settings": true,
           "install_cache_management": true,
@@ -147,6 +149,8 @@
           "installation_backup_phase_progress": true,
           "installation_backup_preview_status": true,
           "installation_backup_protocol": 1,
+          "installation_backup_services": true,
+          "installation_backup_services_protocol": 1,
           "installation_backup_shared_permissions": true,
           "manual_update_check": true,
           "media_library_protection": true,
@@ -208,12 +212,12 @@
           "transactional_service_installs": true,
           "update_timing_metrics": true
         },
-        "capability_source_sha256": "76092f56e48d340ba868cadc2710ef4c1a765c00b0e5ffe6a65149f830801065",
+        "capability_source_sha256": "9340c40dd8e490e3577e050d9a38b28da6e4a36e345721a7cbd7600ccb6f989f",
         "catalog_sha256": "4172c81beac82b5d42d38b9e89da9e215751a18d804928bcf65b20cc863d35b8",
         "channel": "dev",
         "dataset_sha256": "7f52c30bd48e7c312401013a1c3d4a6388da3272df454f971c013aed7265010c",
         "frontend": {
-          "commit": "836c92e776b0b9c12aa2c8423aad51520d9f5b5a",
+          "commit": "6bbf57d0af29fc32d12b8424d8c841ac39aa8ae7",
           "ref": "dev",
           "repository": "https://github.com/nicocapalbo/dmbdb",
           "tag": null,
@@ -436,7 +440,7 @@
             "version": "4.0.20.3014"
           }
         },
-        "plan_sha256": "dfc05c7c0e09a7b4a80bfe8080c740af1f6f469aab9d909acd94491b2568f29d",
+        "plan_sha256": "21f740cc8162bd05f0224cef0c640f5d315548bb1e30365ab362719eb2a5c5ef",
         "required_scenarios": [
           "dashboard",
           "service-controls",
@@ -548,14 +552,14 @@
           "dark",
           "light"
         ],
-        "tooling_sha256": "50f844af3bebb8f913b770b615a4430fb7e5810be83b8c9727f730b6b4922028",
+        "tooling_sha256": "a5289f7b55b319aefa10b536ed06f3c6858adb4b4c5fd48873538aee0de11642",
         "unresolved_capabilities": [
           "installation_backup_zstd"
         ]
       },
-      "plan_sha256": "dfc05c7c0e09a7b4a80bfe8080c740af1f6f469aab9d909acd94491b2568f29d",
-      "showcase_manifest": "docs/assets/images/guides/showcase/channels/dev/90778cb260ae-836c92e776b0-6e853511d7fb/manifest.json",
-      "tooling_sha256": "50f844af3bebb8f913b770b615a4430fb7e5810be83b8c9727f730b6b4922028"
+      "plan_sha256": "21f740cc8162bd05f0224cef0c640f5d315548bb1e30365ab362719eb2a5c5ef",
+      "showcase_manifest": "docs/assets/images/guides/showcase/channels/dev/65ccf3f52dc6-6bbf57d0af29-3b87596c2fb5/manifest.json",
+      "tooling_sha256": "a5289f7b55b319aefa10b536ed06f3c6858adb4b4c5fd48873538aee0de11642"
     },
     "release": {
       "backend": {
@@ -574,7 +578,7 @@
         "tag": "v1.91.0",
         "version": "1.91.0"
       },
-      "package_manifest": "docs/assets/images/guides/frontend/channels/release/ebfdf2dec74b-66c90b93ea35-0d5a207b9a06/manifest.json",
+      "package_manifest": "docs/assets/images/guides/frontend/channels/release/ebfdf2dec74b-66c90b93ea35-1ab4472e753e/manifest.json",
       "plan": {
         "backend": {
           "commit": "ebfdf2dec74bf451b03d81fa0659badbc53b9e14",
@@ -937,7 +941,7 @@
             "version": "4.0.20.3014"
           }
         },
-        "plan_sha256": "44f672b92b280e6c0f44252513fd7931812e62e750b8ca1c8fa20baf07ae6be8",
+        "plan_sha256": "bb7a56808d2f45052f82db7b9ab385a17e1b5b5c62cf8512eec685950b64c4d8",
         "required_scenarios": [
           "dashboard",
           "service-controls",
@@ -1045,12 +1049,12 @@
           "dark",
           "light"
         ],
-        "tooling_sha256": "50f844af3bebb8f913b770b615a4430fb7e5810be83b8c9727f730b6b4922028",
+        "tooling_sha256": "a5289f7b55b319aefa10b536ed06f3c6858adb4b4c5fd48873538aee0de11642",
         "unresolved_capabilities": []
       },
-      "plan_sha256": "44f672b92b280e6c0f44252513fd7931812e62e750b8ca1c8fa20baf07ae6be8",
-      "showcase_manifest": "docs/assets/images/guides/showcase/channels/release/ebfdf2dec74b-66c90b93ea35-0d5a207b9a06/manifest.json",
-      "tooling_sha256": "50f844af3bebb8f913b770b615a4430fb7e5810be83b8c9727f730b6b4922028"
+      "plan_sha256": "bb7a56808d2f45052f82db7b9ab385a17e1b5b5c62cf8512eec685950b64c4d8",
+      "showcase_manifest": "docs/assets/images/guides/showcase/channels/release/ebfdf2dec74b-66c90b93ea35-1ab4472e753e/manifest.json",
+      "tooling_sha256": "a5289f7b55b319aefa10b536ed06f3c6858adb4b4c5fd48873538aee0de11642"
     }
   },
   "schema_version": 1
