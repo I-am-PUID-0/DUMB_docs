@@ -1,6 +1,13 @@
 # Changelog
 
 
+## [1.25.22](https://github.com/I-am-PUID-0/DUMB_docs/compare/1.25.21...1.25.22) (2026-11-21)
+
+
+### 📖 Documentation
+
+* explain native v2 embedding and post-migration updates ([902aecf](https://github.com/I-am-PUID-0/DUMB_docs/commit/902aecf238845d302e50c696062cf775c15fcbf8))
+
 ## [1.25.21](https://github.com/I-am-PUID-0/DUMB_docs/compare/1.25.20...1.25.21) (2026-11-21)
 
 
