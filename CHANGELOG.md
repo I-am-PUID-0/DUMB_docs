@@ -1,6 +1,14 @@
 # Changelog
 
 
+## [1.25.19](https://github.com/I-am-PUID-0/DUMB_docs/compare/1.25.18...1.25.19) (2026-11-21)
+
+
+### 📖 Documentation
+
+* describe post-import validation and history protection ([b787772](https://github.com/I-am-PUID-0/DUMB_docs/commit/b7877726260aa8dfabf74514d41a040522e9ed8d))
+* explain selected-service backup and recovery ([5579658](https://github.com/I-am-PUID-0/DUMB_docs/commit/557965876e7c919f9ef7026c872cf5da6b6ecdd8))
+
 ## [1.25.18](https://github.com/I-am-PUID-0/DUMB_docs/compare/1.25.17...1.25.18) (2026-11-20)
 
 
