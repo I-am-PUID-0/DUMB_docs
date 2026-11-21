@@ -1043,17 +1043,29 @@ retained state to clear a banner.
 
 Preparation, testing and recovery keep their fixed migration version. Once
 activation has completed and all required service recovery and restart work is
-finished, DUMB releases that migration pin by selecting
-`v2_release_version: latest`. Existing completed migrations receive the same
-one-time transition when normal startup or update controls next verify them.
+finished, DUMB releases that internal migration pin. The active service uses
+the same `release_version` and `release_version_enabled` controls as other DUMB
+services; `runtime_generation` selects the appropriate installer.
 
 Use the service's normal update controls to check for and install newer
 official 2.x releases. While upstream 2.x is in beta, **latest includes v2 beta
-releases**. It never selects a 1.x or 3.x release. You can deliberately pin an
-exact tag, such as `v2.0.0-beta.10`, using `v2_release_version`; the one-time
-migration transition does not undo a later deliberate pin. The retained
-`release_version` and `release_version_enabled` fields belong to the older
-source-selection path and do not select the native v2 archive.
+releases**. It never selects a 1.x or 3.x release. Leave
+`release_version_enabled: false` to follow latest. To pin an exact tag, enable
+that setting and set `release_version`, for example to `v2.0.0-beta.10`.
+An enabled value of `latest` or a blank value also follows latest. Disabled
+release selection ignores any retained value. Native v2 does not use branch or
+commit selection.
+
+Existing `v2_release_version` settings are converted automatically when DUMB
+loads the configuration; do not rename or delete the field yourself. Conversion
+preserves the selected version. A completed migration's initial beta.6 pin is
+released once, while a later deliberate pin is preserved.
+
+Historical rollback actions created with the older release-setting format are
+unavailable after this change. DUMB retains their archives and source plans; it
+does not convert those old rollback records. It may record that the migration
+pin has been released. Recovery for new native runtime updates continues to use
+the current update journal normally.
 
 Your automatic-update preference is preserved. **Check only** continues to
 notify without installing. Normal startup reuses the verified installed

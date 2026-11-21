@@ -279,10 +279,16 @@ or retaining the original 1.x data and recovery state:
 | `mount_path` | Exact consumer-visible mount path; existing paths are preserved |
 | `v2_runtime_dir` | Native program directory, normally `/opt/infinidysk-v2` |
 | `v2_data_dir` | Separate generation 2 data; blank resolves beneath `data_root` as `infinidysk-v2` |
-| `v2_release_version` | Verified native release, currently `v2.0.0-beta.6` |
+| `release_version_enabled` | Disabled follows the latest official 2.x release; enabled uses `release_version` |
+| `release_version` | An exact official 2.x tag, or `latest`; blank also follows latest |
 
-The 1.x source selection is retained for rollback. Its branch and commit selectors
-are inactive on the prepared native runtime. Do not reuse `postgres_enabled` or
+Preparation and recovery use an internal fixed migration artifact. Once activation
+and required recovery work are complete, the normal release controls select
+future native updates. Existing `v2_release_version` settings are converted
+automatically on configuration load; no manual rename is needed. Old-format
+migration rollback actions are not converted; their archives and source plans
+are retained. Branch and commit selectors are inactive on the native runtime.
+Do not reuse `postgres_enabled` or
 the 1.x `DATABASE_PROVIDER`/`DATABASE_CONNECTION_STRING` variables for generation 2;
 use its [separate native database conversion](../../features/infinidysk-v2-migration.md#native-postgresql-conversion).
 

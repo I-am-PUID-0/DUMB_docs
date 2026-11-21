@@ -71,9 +71,20 @@ Normal post-activation runtime updates require
 `infinidysk_v2_runtime_updates_protocol: 1`. They use the existing
 `POST /process/update-check` and `POST /process/update-install` routes.
 Preparation and recovery remain fixed to the migration artifact; completed
-activation can release that selector to `latest` once required recovery and
-restart work are finished. Only official v2 releases are eligible.
-An exact `v2_release_version` remains an explicit runtime pin.
+activation releases that internal pin once required recovery and restart work
+are finished. The active service uses standard `release_version` and
+`release_version_enabled` fields, with `runtime_generation: "2"` selecting the
+native installer. Disabled release selection follows latest; enabled selection
+uses the exact v2 tag, or follows latest when blank or `latest`. Only official
+v2 releases are eligible; branch and commit selectors are not native sources.
+
+Configuration loading automatically converts the older `v2_release_version`
+setting into the standard fields. New clients should submit the standard fields
+and use the normalized configuration returned by the backend. Historical major
+migration and native PostgreSQL rollback actions recorded with the old format
+are unavailable, rather than being converted. Their archives and source plans
+are retained, and DUMB may record the one-time migration-pin release. New native
+update journals retain their normal recovery behavior.
 
 A runtime update can retire historical major/provider rollback actions before
 the new binary is allowed to open the database. Retained archives are not
