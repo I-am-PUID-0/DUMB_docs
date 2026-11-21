@@ -8,6 +8,7 @@ import sys
 import tempfile
 import unittest
 from unittest.mock import patch
+import zipfile
 
 import yaml
 
@@ -652,6 +653,77 @@ class MediaRefreshTests(unittest.TestCase):
         )
         self.assertTrue((self.root / old_path).is_file())
 
+    def assert_named_workflow_artifacts_apply(self, channels):
+        workflow_path = (
+            Path(__file__).resolve().parents[1]
+            / ".github/workflows/refresh-frontend-media.yml"
+        )
+        workflow = yaml.load(workflow_path.read_text(), Loader=yaml.BaseLoader)
+        downloads = {
+            step.get("with", {}).get("name"): step["with"]
+            for step in workflow["jobs"]["propose"]["steps"]
+            if step.get("uses", "").startswith("actions/download-artifact@")
+        }
+        selection = media.discover(self.root, self.api, HEAD, list(channels))
+        for channel, pair in selection["channels"].items():
+            artifact_name = "frontend-media-" + channel
+            self.assertIn(
+                artifact_name,
+                downloads,
+                "The media proposal needs a deterministic named-artifact destination",
+            )
+            plan = {
+                "schema_version": 1,
+                "channel": channel,
+                **pair,
+                "scenarios": ["dashboard"],
+                "required_scenarios": ["dashboard"],
+                "themes": ["dark", "light"],
+                "capabilities": {},
+                "capability_source_sha256": "e" * 64,
+            }
+            plan["plan_sha256"] = media.canonical_hash(plan)
+            uploaded = self.root / "uploaded" / artifact_name
+            media.dump(uploaded / "plan.json", plan)
+            self.package(plan, uploaded / "frontend")
+            self.package(plan, uploaded / "showcase", showcase=True)
+            archive = self.root / (artifact_name + ".zip")
+            with zipfile.ZipFile(archive, "w") as artifact:
+                for filename in uploaded.rglob("*"):
+                    if filename.is_file():
+                        artifact.write(filename, filename.relative_to(uploaded))
+
+            destination = self.root / downloads[artifact_name]["path"]
+            self.assertEqual(destination, self.root / "proposals" / channel)
+            # download-artifact v8 extracts a named artifact directly into
+            # `path`, including when only one channel produced an artifact.
+            with zipfile.ZipFile(archive) as artifact:
+                artifact.extractall(destination)
+            selected_plan = media.safe_file(destination, "plan.json")
+            self.assertEqual(media.load(selected_plan), plan)
+
+        proposed = media.apply_packages(
+            self.root, selection, self.root / "proposals", self.api, HEAD
+        )
+        self.assertEqual(set(proposed["channels"]), set(channels))
+        self.assertEqual(
+            {path.name for path in (self.root / "proposals").iterdir()}, set(channels)
+        )
+        for channel in channels:
+            accepted = media.validate_channel(
+                self.root, channel, proposed["channels"][channel]
+            )
+            self.assertTrue(accepted["package"]["coverage_complete"])
+
+    def test_named_artifact_handoff_applies_release_only(self):
+        self.assert_named_workflow_artifacts_apply(("release",))
+
+    def test_named_artifact_handoff_applies_dev_only(self):
+        self.assert_named_workflow_artifacts_apply(("dev",))
+
+    def test_named_artifact_handoff_applies_both_channels(self):
+        self.assert_named_workflow_artifacts_apply(("release", "dev"))
+
     def test_renderer_rejects_changed_capture_tooling_and_cross_channel_assets(self):
         selection, plan = self.plan()
         channel = self.root / "artifacts/release"
@@ -791,6 +863,34 @@ class MediaWorkflowTests(unittest.TestCase):
         self.assertIn(
             "needs.capture.result == 'success'", self.workflow["jobs"]["propose"]["if"]
         )
+
+    def test_media_downloads_use_selected_channel_names_and_fixed_destinations(self):
+        downloads = [
+            step
+            for step in self.workflow["jobs"]["propose"]["steps"]
+            if step.get("uses", "").startswith("actions/download-artifact@")
+            and step.get("with", {}).get("name", "").startswith("frontend-media-")
+        ]
+        self.assertEqual(
+            {step["with"]["name"] for step in downloads},
+            {"frontend-media-release", "frontend-media-dev"},
+        )
+        self.assertEqual(len(downloads), 2)
+        for step in downloads:
+            values = step["with"]
+            channel = values["name"].removeprefix("frontend-media-")
+            self.assertEqual(values["path"], "proposals/" + channel)
+            self.assertEqual(values.get("digest-mismatch"), "error")
+            self.assertNotIn("pattern", values)
+            for other_run in ("run-id", "repository", "github-token"):
+                self.assertNotIn(other_run, values)
+            condition = step.get("if", "").removeprefix("${{").removesuffix("}}")
+            self.assertEqual(
+                "".join(condition.split()),
+                "contains(fromJSON(needs.discover.outputs.matrix).include.*.channel,'"
+                + channel
+                + "')",
+            )
 
     def test_proposal_only_writes_scoped_media_pr_after_trusted_revalidation(self):
         proposal = self.workflow["jobs"]["propose"]

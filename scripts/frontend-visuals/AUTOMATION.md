@@ -79,6 +79,13 @@ for the selected source, and rerun the workflow. Never mark a failed selector as
 an unavailable feature to make a run pass. A source/head race requires a new
 selection and capture; an older artifact must not be applied to newer inputs.
 
+The proposal job downloads each selected channel by its exact artifact name into
+`proposals/release` or `proposals/dev`. Keep those destinations explicit: the
+download action extracts a single matching artifact directly at its target path,
+while multiple pattern matches can introduce artifact-name subdirectories.
+Each selected channel must contain its own `plan.json`, `frontend/` and
+`showcase/` before validation. Failed or unselected channels are not substituted.
+
 The capture job has read-only repository permissions and no release credential.
 A separate job starts from the trusted documentation commit, validates downloaded
 data without executing generated scripts, and uses the existing release
