@@ -537,6 +537,19 @@ starts its own counters and estimate. These numbers do not predict the whole
 operation's finish time, and reaching the byte total does not establish
 that integrity checks or service recovery have passed.
 
+After InfiniDysk finishes conversion, DUMB shows its own record checks separately:
+reading the original and converted library and history, comparing download
+history, and verifying file records and their source details. Each pass shows
+records processed, its total when known, elapsed time and a measured pace with
+an approximate time remaining **for that pass**. Reading larger metadata files
+shows bytes read instead of counting a file as complete before it has been read.
+These checks continue after the native importer reports **done**; an import count
+alone does not establish that the converted library or history was preserved.
+
+The converted SQLite database's integrity check shows elapsed time and regular
+status updates. SQLite does not expose a useful total for that check, so DUMB
+keeps its progress indeterminate and does not invent a percentage or finish time.
+
 An unknown total, a new or stale measurement, or work exceeding an earlier
 estimate can leave time remaining unavailable. A failed or cancelled attempt can
 still need a lengthy v1 restoration. Follow the job's confirmed outcome.
@@ -715,6 +728,12 @@ A lower count in one native import report is not accepted as a history-loss
 tolerance. Every required completed and failed source-history identity must
 still exist in the actual v2 database. Unsupported source states, invalid
 reserved identities and missing required history remain blockers.
+
+During preparation, DUMB keeps InfiniDysk's automatic history cleanup paused
+until the converter stops, so older completed and failed records remain
+available for this check. After activation, InfiniDysk's normal history
+retention applies, including removal of completed and failed records older
+than 30 days.
 
 An unexplained missing file, ambiguous or unrecognized report format, changed
 identity or name, database integrity failure, missing required history, or failed
