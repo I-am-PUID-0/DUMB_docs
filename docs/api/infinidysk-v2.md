@@ -49,6 +49,40 @@ test/start workflow. InfiniDysk's native engines perform the major data-format
 conversion and the later optional v2 SQLite-to-PostgreSQL conversion; DUMB
 coordinates snapshots, checks, containment, activation and recovery.
 
+### Embedded UI metadata and normal runtime updates
+
+Embedded native UI routing requires the strict boolean
+`infinidysk_v2_embedded_ui_adapter: true` and numeric
+`infinidysk_v2_embedded_ui_protocol: 1`, alongside the runtime capability.
+`GET /config/service-ui?metadata_only=true` returns the existing
+`services` inventory without regenerating Traefik configuration. A native
+InfiniDysk row includes `runtime_generation: "2"` and
+`embedded_ui_protocol: 1`. The dashboard derives this identity from the
+authenticated backend response, not a browser-supplied service header.
+
+The adapter forwards the embedded UI through DUMB while keeping native
+sessions separate from dashboard credentials. Direct UI addresses, Public URL,
+signed playback queries and existing output files are unchanged. Password
+sign-in is available in the embedded view; external SSO requires compatible
+provider/callback configuration and may use the separate native UI instead.
+
+Normal post-activation runtime updates require
+`infinidysk_v2_runtime_updates: true` and
+`infinidysk_v2_runtime_updates_protocol: 1`. They use the existing
+`POST /process/update-check` and `POST /process/update-install` routes.
+Preparation and recovery remain fixed to the migration artifact; completed
+activation can release that selector to `latest` once required recovery and
+restart work are finished. Only official v2 releases are eligible.
+An exact `v2_release_version` remains an explicit runtime pin.
+
+A runtime update can retire historical major/provider rollback actions before
+the new binary is allowed to open the database. Retained archives are not
+removed. A retired job exposes `rollback_unavailable_reason`, and direct
+rollback requests are also refused. After a post-launch failure, update status
+uses `reason: "native_runtime_recovery"`; `can_retry_update: true` authorizes
+an explicit retry through the existing install route for the same retained
+replacement. Interrupted prelaunch work or changed evidence remains blocked.
+
 ### Major installation and upgrade
 
 | Method | Route | Purpose |

@@ -27,8 +27,11 @@ controls.
 The wizard requires DUMB API **2.24.0 or newer**, explicit InfiniDysk 2 capabilities
 and migration protocol **1**. An older, unknown or temporarily unavailable
 backend cannot start a migration. Previously discovered job identities and
-recovery information remain visible. The supported native artifact is currently
-**`v2.0.0-beta.6`**; selecting 2.x through a 1.x release or source field is refused.
+recovery information remain visible. Preparation and migration use the verified
+**`v2.0.0-beta.6`** artifact. After a fully completed activation, normal runtime
+updates can follow official **2.x** releases; see
+[updating after activation](#update-infinidysk-2-after-activation).
+Selecting 2.x through a 1.x release or source field is refused.
 
 ## Choose your path
 
@@ -465,6 +468,13 @@ The global notice reopens progress or recovery after navigation and reload.
 Only job identities are saved for browser recovery; preview authorizations and
 database passwords are not. A transport error does not prove that a job stopped.
 Refresh status before retrying, and retain an unconfirmed job's recovery evidence.
+
+After a confirmed successful completion, **Dismiss** hides that completion notice
+in this browser. The migration and database-conversion tools still retain the
+job, its results and any available rollback action. This choice is separate from
+upgrade-invitation reminders. Active or unconfirmed work, required restarts,
+unfinished service recovery and required cleanup cannot be dismissed; a new
+recovery or cleanup requirement makes the notice visible again.
 
 The migration view refreshes status automatically while visible and rechecks it
 when you return. These checks do not repeat preview, preparation, activation or legacy test
@@ -996,9 +1006,29 @@ Run a deliberate test import only after those checks and review the resulting
 Arr and media-server paths. A healthy process or a successful fixture test is
 not proof of real provider/account playback.
 
-InfiniDysk 2 uses a dedicated root URL for its UI. Use the direct local address
-or configured public portal; embedded subpath login/playback remains unavailable
-unless the backend explicitly advertises a validated adapter.
+On supporting backend and dashboard builds, **Embedded UI** displays InfiniDysk 2
+through DUMB's own address. This also works when DUMB is reached through a reverse
+proxy: the browser uses DUMB's service path, and DUMB forwards it internally.
+The adapter preserves InfiniDysk's native login and security restrictions while
+routing its pages, API calls and live updates.
+
+Direct access such as `http://server:3000/` and a dedicated reverse-proxy hostname
+such as `https://infinidysk.example.com/` remain separate options. DUMB does not
+change the native **Public URL**, existing playback URLs or the direct listener
+to enable its embedded adapter. **Open in New Tab** remains available. Older
+builds without the adapter continue to use that direct option.
+
+InfiniDysk itself still requires the root of its own address; DUMB's adapter
+provides the extra routing needed for its embedded service path. See the
+[upstream reverse-proxy guide](https://www.infinidysk.com/v2/operate/reverse-proxy/).
+
+SSO needs additional care. A provider or native callback configured for a
+different hostname may send sign-in out of DUMB, and that external session may
+not be available inside the embedded page. Use **Open in New Tab** for that
+existing sign-in flow. An embedded SSO setup needs a callback registered for
+DUMB's embedded path; changing the native callback can also change where direct
+SSO access returns. Preserve working sign-in addresses until that setup has
+been tested. Password sign-in does not require changing the native Public URL.
 
 If the job is interrupted or needs recovery, keep the original data, any exposed
 v2 target and private job evidence under `/config/migrations/infinidysk-v2`.
@@ -1008,6 +1038,43 @@ Post-cutover rollback requires accepting discarded v2 writes; those writes are
 not copied back. A failed rollback or unavailable recovery action needs
 investigation before restarting imports, scans or services. Do not delete
 retained state to clear a banner.
+
+## Update InfiniDysk 2 after activation
+
+Preparation, testing and recovery keep their fixed migration version. Once
+activation has completed and all required service recovery and restart work is
+finished, DUMB releases that migration pin by selecting
+`v2_release_version: latest`. Existing completed migrations receive the same
+one-time transition when normal startup or update controls next verify them.
+
+Use the service's normal update controls to check for and install newer
+official 2.x releases. While upstream 2.x is in beta, **latest includes v2 beta
+releases**. It never selects a 1.x or 3.x release. You can deliberately pin an
+exact tag, such as `v2.0.0-beta.10`, using `v2_release_version`; the one-time
+migration transition does not undo a later deliberate pin. The retained
+`release_version` and `release_version_enabled` fields belong to the older
+source-selection path and do not select the native v2 archive.
+
+Your automatic-update preference is preserved. **Check only** continues to
+notify without installing. Normal startup reuses the verified installed
+runtime; it does not download latest or repeat conversion on every restart.
+Active preparation, migration, provider conversion, required restarts and
+unresolved service recovery block runtime updates.
+
+DUMB verifies the official archive, published checksum, exact release and commit
+before stopping the service. Create an independent service backup before an
+update. Starting a newer binary can upgrade its database schema. At that point
+DUMB retires the old major-migration and provider-conversion rollback actions;
+their retained backups are not deleted. Later recovery should use a compatible
+backup rather than starting an older binary against a newer database.
+
+A failure before the replacement is started restores the previous program
+files. A failure after launch retains the replacement, previous program files
+and update journal, and stops automatic runtime rollback. After resolving the
+reported problem, retry **Update** to start and verify that same retained
+replacement. This retry does not download another release or repeat the major
+migration. Interrupted work before launch or changed recovery evidence needs
+inspection rather than an automatic retry.
 
 ## Retire the old v1 installation
 
