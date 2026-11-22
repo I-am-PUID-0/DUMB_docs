@@ -2,7 +2,7 @@
   "channels": {
     "dev": {
       "backend": {
-        "commit": "65ccf3f52dc65e262f768c99089cc57a89b02d7f",
+        "commit": "7660ea042e1d5b39e4832db65b27e0f1b6ac433d",
         "ref": "dev",
         "repository": "https://github.com/I-am-PUID-0/DUMB",
         "tag": null,
@@ -11,16 +11,16 @@
       "catalog_sha256": "4172c81beac82b5d42d38b9e89da9e215751a18d804928bcf65b20cc863d35b8",
       "dataset_sha256": "7f52c30bd48e7c312401013a1c3d4a6388da3272df454f971c013aed7265010c",
       "frontend": {
-        "commit": "6bbf57d0af29fc32d12b8424d8c841ac39aa8ae7",
+        "commit": "0c410216149c1424f32aa17fba3f5c6969513241",
         "ref": "dev",
         "repository": "https://github.com/nicocapalbo/dmbdb",
         "tag": null,
         "version": "1.92.0"
       },
-      "package_manifest": "docs/assets/images/guides/frontend/channels/dev/65ccf3f52dc6-6bbf57d0af29-3b87596c2fb5/manifest.json",
+      "package_manifest": "docs/assets/images/guides/frontend/channels/dev/7660ea042e1d-0c410216149c-bf55afc71043/manifest.json",
       "plan": {
         "backend": {
-          "commit": "65ccf3f52dc65e262f768c99089cc57a89b02d7f",
+          "commit": "7660ea042e1d5b39e4832db65b27e0f1b6ac433d",
           "ref": "dev",
           "repository": "https://github.com/I-am-PUID-0/DUMB",
           "tag": null,
@@ -122,6 +122,8 @@
           "infinidysk_v2_cleanup_protocol": 1,
           "infinidysk_v2_consumer_recovery": true,
           "infinidysk_v2_consumer_recovery_protocol": 1,
+          "infinidysk_v2_embedded_ui_adapter": true,
+          "infinidysk_v2_embedded_ui_protocol": 1,
           "infinidysk_v2_external_blob_staging": true,
           "infinidysk_v2_low_space_migration": true,
           "infinidysk_v2_migration": true,
@@ -133,10 +135,14 @@
             "fuse"
           ],
           "infinidysk_v2_postgres": true,
+          "infinidysk_v2_postgres_prepare_target": true,
+          "infinidysk_v2_postgres_prepare_target_protocol": 1,
           "infinidysk_v2_prepared_activation": true,
           "infinidysk_v2_queue_omission": true,
           "infinidysk_v2_rclone_optimizer": false,
           "infinidysk_v2_reviewed_skips": true,
+          "infinidysk_v2_runtime_updates": true,
+          "infinidysk_v2_runtime_updates_protocol": 1,
           "infinidysk_v2_stage_retry": true,
           "infinidysk_v2_stage_retry_protocol": 1,
           "install_cache_cleanup": true,
@@ -212,12 +218,12 @@
           "transactional_service_installs": true,
           "update_timing_metrics": true
         },
-        "capability_source_sha256": "9340c40dd8e490e3577e050d9a38b28da6e4a36e345721a7cbd7600ccb6f989f",
+        "capability_source_sha256": "94d23b5a6d63731230e754691c255729932febd468d980ed66d6c125617c53ac",
         "catalog_sha256": "4172c81beac82b5d42d38b9e89da9e215751a18d804928bcf65b20cc863d35b8",
         "channel": "dev",
         "dataset_sha256": "7f52c30bd48e7c312401013a1c3d4a6388da3272df454f971c013aed7265010c",
         "frontend": {
-          "commit": "6bbf57d0af29fc32d12b8424d8c841ac39aa8ae7",
+          "commit": "0c410216149c1424f32aa17fba3f5c6969513241",
           "ref": "dev",
           "repository": "https://github.com/nicocapalbo/dmbdb",
           "tag": null,
@@ -307,7 +313,7 @@
                 "infinidysk-namespace-migration",
                 "postgres-migration"
               ],
-              "sha256": "f675192ff09b1bf6dc2a494dd72be4e5633c00c571b920f8e41f7f7a6dd705f5"
+              "sha256": "0086a77b3e5607a629315089d8f0c6067e6ec2a1c0f737845b6c710d8a42b08e"
             },
             {
               "path": "pages/settings.vue",
@@ -440,7 +446,7 @@
             "version": "4.0.20.3014"
           }
         },
-        "plan_sha256": "21f740cc8162bd05f0224cef0c640f5d315548bb1e30365ab362719eb2a5c5ef",
+        "plan_sha256": "49560cf252e329290d5d9bacbf9c2c2fbb1931d4c12ce00c41a3a6c42e1cc254",
         "required_scenarios": [
           "dashboard",
           "service-controls",
@@ -557,8 +563,8 @@
           "installation_backup_zstd"
         ]
       },
-      "plan_sha256": "21f740cc8162bd05f0224cef0c640f5d315548bb1e30365ab362719eb2a5c5ef",
-      "showcase_manifest": "docs/assets/images/guides/showcase/channels/dev/65ccf3f52dc6-6bbf57d0af29-3b87596c2fb5/manifest.json",
+      "plan_sha256": "49560cf252e329290d5d9bacbf9c2c2fbb1931d4c12ce00c41a3a6c42e1cc254",
+      "showcase_manifest": "docs/assets/images/guides/showcase/channels/dev/7660ea042e1d-0c410216149c-bf55afc71043/manifest.json",
       "tooling_sha256": "a5289f7b55b319aefa10b536ed06f3c6858adb4b4c5fd48873538aee0de11642"
     },
     "release": {
