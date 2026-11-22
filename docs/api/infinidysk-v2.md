@@ -861,6 +861,14 @@ binding for subsequent checks; a previously unbound client needs exact managed
 identity/endpoint/category and a passing saved test before adoption. Broken,
 unknown or conflicting clients remain unchanged for review. Readiness failures
 receive bounded retries; ownership conflicts do not authorize replacement.
+Client-specific failures are reported per managed Arr instance while other
+eligible instances continue reconciliation. A temporary admission/startup guard
+is retryable within the bounded startup attempts; held migration/runtime
+recovery waits for operator input. A genuine restart renews exhausted attempts.
+An older unowned client that already fails its saved Test requires explicit
+review and a one-time correction to the configured SAB key, followed by a
+passing saved-client Test, before a later synchronization can bind it. Merely
+having matching DUMB/native keys does not authorize changing that saved client.
 External or unmanaged clients require manual review. Arr download-client
 verification does not establish native Arr-notification readiness, a successful
 import or playback. These settings and reconciliation use existing configuration
@@ -973,6 +981,24 @@ message. The dashboard then calls the separate read-only `preview` endpoint.
 Preparing a target alone never authorizes copying: review the fresh preview
 and submit the ordinary guarded start request. `preview` never creates a
 database, including when `use_managed_postgres` is true.
+
+If the current provider workflow does not admit a new conversion,
+`prepare-target` returns `409` with a specific safe blocking reason in `detail`.
+When shared lifecycle admission blocks the request, the
+`X-DUMB-Admission-Reason` response header also supplies a static reason code;
+private operation labels and credentials are not included in that code or the
+public message.
+Refresh native database-conversion status and resolve that reported condition
+before retrying preparation. An unavailable native state, competing migration
+or held recovery must not be treated as evidence that the database is missing.
+The destination guards remain enforced; the error does not authorize manual
+creation, reset or truncation of an existing database.
+
+Routine installation-only control writes, including metrics, notifications and
+Seerr synchronization history, do not reserve database-conversion admission.
+Actual service/database lifecycle operations, installation backup/restore and
+held recovery retain their guards. Installation backup and rollback still track
+both control-record writers and lifecycle reservations.
 
 Start requires that token and exact confirmation, plus
 `acknowledge_backup: true` and `acknowledge_destructive_target: true`.

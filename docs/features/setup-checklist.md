@@ -84,7 +84,7 @@ the other.
 can be finished. **Optional** work can be omitted; enable **Include optional
 workflow checks** when you want to inspect the separately authorized tests.
 Neither label proves that a connection has been tested. **Show full checklist**
-lets experienced users work directly with all the saved tasks.
+lets experienced users work directly with the saved tasks, grouped by app.
 
 Existing external Radarr, Sonarr, Lidarr and Whisparr servers can be registered under **Existing external services**. Give each a stable ID, its direct API base URL and an authorized API key. Select those exact references in supported connection assignments. Discovery is read-only; permission to change an external server's configuration is a separate choice. Supported tasks can configure native download clients, root folders and explicit remote-path mappings after preview and approval. You must create and authorize the actual mounts and enter paths in the correct server's namespace. DUMB does not install or restart an external server.
 
@@ -121,16 +121,45 @@ Provider accounts provide Usenet access. They do not create or authenticate inde
 
 ## Follow progress and finish later
 
-The checklist is available during setup, on the dashboard, and on matching service pages. Service pages scope tasks to the service or instance; the saved run remains the arrangement record.
+The checklist is available during setup, on the dashboard, and on matching
+service pages. On the dashboard and service pages, it starts as a compact setup
+summary. It shows unfinished required and optional work, checked tasks and
+separate manual confirmations. Select **Setup checklist** or **Show** to expand
+the panel. Errors and
+backup/recovery holds remain visible while it is collapsed.
 
-Each action reports automation, configuration, verification, missing input and an explanation. After startup, app links open in a new tab so the checklist stays available. Last-checked and scheduled-retry times include a timezone, and attempt counts appear after work has been attempted. The open checklist refreshes results during active work and around an automatic retry's scheduled time.
+The expanded checklist starts with **Task status → Needs attention**, focusing
+on unfinished work. Saved but unchecked choices, deferred tasks and failed
+checks remain in that view. Choose **All tasks** to include completed work, or
+**Checked or confirmed** to review checked tasks and manual confirmations.
+Manual confirmation remains distinct from a passed connection check.
+
+Tasks are grouped by app, with each app group collapsed initially. Choose an
+app from **App** to focus and open its group, or use **All apps** to browse the
+groups. Service pages already scope the checklist to that service or instance.
+Task rows show a short summary; open a task for its instructions and controls.
+Opening another task closes the previous task's details.
+
+The optional guided setup remains available from the expanded panel. Choosing
+**Show full checklist** after onboarding opens the checklist directly; it does
+not make you reopen the compact summary first. Collapsing or filtering the view
+does not cancel accepted work or change the saved setup results.
+
+Each action reports automation, configuration, verification, missing input and
+an explanation. After startup, app links open in a new tab so the checklist
+stays available. Last-checked and scheduled-retry times include a timezone, and
+attempt counts appear after work has been attempted. Status refreshes continue
+during active work and around scheduled retries even while the panel is
+collapsed.
 
 | Control | Effect |
 |---|---|
 | **Walk me through setup** / **Resume guided setup** | Opens the optional walkthrough for the saved run. |
 | **Pause walkthrough** | Saves the walkthrough position and closes it without cancelling accepted work. |
 | **Do this later** | Retains the walkthrough task as unfinished. |
-| **Show full checklist** | Shows all retained tasks directly. |
+| **Show full checklist** | Opens the retained checklist directly, grouped by app and focused on unfinished work. |
+| **Task status** | Switches between **Needs attention**, **All tasks**, and **Checked or confirmed**. |
+| **App** | Focuses one app and opens its task group; **All apps** offers all groups. |
 | **Configure this step** | Opens the advertised guided inputs. |
 | **Apply configuration** | Submits deliberate changes for that action. |
 | **Preview changes** | Inspects current settings and shows proposed field changes without applying them. |

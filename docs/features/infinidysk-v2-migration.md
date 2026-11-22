@@ -909,10 +909,15 @@ reported condition, then request and review a fresh preview:
 | --- | --- |
 | The destination database does not exist | For managed PostgreSQL, select **Prepare database and review**. For an external server, have its administrator create the dedicated empty database with the same name and role as the form. |
 | Managed PostgreSQL is not enabled or running | Enable and start PostgreSQL from its service controls, then retry preparation. Database preparation does not start or restart services. |
+| Database preparation is blocked by the current workflow | Follow the specific reason in the error. Refresh database-conversion status and resolve the reported migration, recovery, provider or native-state condition before preparing a destination. This does not mean the destination database needs to be created manually. |
 | PostgreSQL rejects the credentials | Check the configured role, password and PostgreSQL connection/authentication policy. Keep credentials out of screenshots and shared logs. |
 | Physical identity inspection is denied | Ask the database administrator to review the named permission in the destination database. Keep the identity check enabled. |
 | The destination could not be verified | Check that the server is running and listening, the address/port and database name are correct, and the connection and TLS policies permit DUMB's selected connection. |
 | The database does not satisfy DUMB's `C`-collation or emptiness checks | Prepare a different dedicated destination with the supported locale. Keep the existing database intact. |
+
+Routine metrics, notifications and Seerr synchronization history do not block
+database conversion. Active service or database changes, installation backup or
+restore, and unresolved recovery can still block it; follow the reported reason.
 
 <details class="geek-details" markdown="1">
 <summary>Technical alternative: grant a specifically denied identity-inspection function</summary>
@@ -1029,14 +1034,32 @@ verified managed client IDs. Successful migration proof becomes a retained
 binding for those later checks. Missing dependencies get bounded startup retries;
 ownership or configuration conflicts remain for review.
 
+DUMB reports client-specific review separately for each Arr instance and
+continues checking the other eligible instances. A temporary startup or guarded
+operation can defer synchronization and receive bounded retries. A migration or
+runtime recovery that needs your decision stays paused until that recovery is
+resolved. A later normal restart starts a fresh reconciliation attempt.
+
 An older completed installation without a binding can be recognized only when
 its managed instance, exact client identity, local endpoint and category match
 and its saved connection test already passes. A broken or ambiguous unowned
-client is kept intact. Review it manually rather than relying on name alone.
-External/unmanaged Arr instances also need manual review. Use the download API
-key shown in InfiniDysk 2's **Settings → Download client**, check the client's
-host and port, save it and run the Arr connection test. The native administrative
-API key is separate; do not substitute it into an Arr SAB download client.
+client is kept intact. Even when DUMB Config already contains the correct native
+key, DUMB needs your one-time review before managing that older connection:
+
+1. In InfiniDysk's **DUMB Config**, copy the private value of
+   `env.INFINIDYSK__SAB__API_KEY`.
+2. In the affected Arr's **Settings → Download Clients**, edit the existing
+   InfiniDysk client. Verify its host, port and category belong to this
+   InfiniDysk installation, then correct only its API key and save.
+3. Run **Test** on the saved client. Once that test passes, DUMB can verify and
+   remember the working connection on its next synchronization, including the
+   next normal restart of that managed Arr.
+
+Review each affected Arr separately; a working connection in one application
+does not repair another application's saved settings. External/unmanaged Arr
+instances also need manual review and remain outside automatic management. The
+native administrative API key is separate; do not substitute it into an Arr
+SAB download client.
 Updating DUMB does not rotate working native credentials back to an old key.
 
 Check any Arr notification or connection entries configured inside InfiniDysk

@@ -382,6 +382,14 @@ clients remain your responsibility. The native administrative API key is
 separate from this download-client key. For migration safeguards and the
 supported automatic repair scope, see
 [download-client credentials after migration](../../features/infinidysk-v2-migration.md#existing-arr-download-client-credentials).
+
+An older managed Arr connection with no verified ownership record and a failing
+saved connection test needs a one-time review. Edit that existing client in the
+Arr, use the key saved in **DUMB Config**, save and run **Test**. DUMB can then
+verify and remember it on the next synchronization. Each Arr keeps its own saved
+connection; DUMB reports review needs per instance while continuing other
+eligible connections. Temporary startup delays receive bounded retries, while
+held migration or runtime recovery waits for your decision.
 <!-- dev:end -->
 
 ---
