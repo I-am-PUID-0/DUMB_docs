@@ -162,7 +162,7 @@ InfiniDysk also exposes a **Usenet download client** path in Arr by emulating a 
 
 !!! danger "Protect API keys"
 
-    `FRONTEND_BACKEND_API_KEY` grants backend access. Treat it like a secret and avoid committing it to source control.
+    In InfiniDysk 1.x, `FRONTEND_BACKEND_API_KEY` grants backend access. Treat API keys like secrets and avoid committing them to source control.
 
 <details class="geek-details" markdown="1">
 <summary>Technical details: configuration reference</summary>
@@ -281,6 +281,7 @@ or retaining the original 1.x data and recovery state:
 | `v2_data_dir` | Separate generation 2 data; blank resolves beneath `data_root` as `infinidysk-v2` |
 | `release_version_enabled` | Disabled follows the latest official 2.x release; enabled uses `release_version` |
 | `release_version` | An exact official 2.x tag, or `latest`; blank also follows latest |
+| `env.INFINIDYSK__SAB__API_KEY` | Download-client key for generation 2. DUMB fills it automatically; an explicit value controls the next native launch. |
 
 Preparation and recovery use an internal fixed migration artifact. Once activation
 and required recovery work are complete, the normal release controls select
@@ -291,6 +292,10 @@ are retained. Branch and commit selectors are inactive on the native runtime.
 Do not reuse `postgres_enabled` or
 the 1.x `DATABASE_PROVIDER`/`DATABASE_CONNECTION_STRING` variables for generation 2;
 use its [separate native database conversion](../../features/infinidysk-v2-migration.md#native-postgresql-conversion).
+For DUMB-managed PostgreSQL, that tool's **Prepare database and review** button
+creates the dedicated empty destination with its required settings, then shows
+the checks for review. You do not need to create it manually. Copying and
+switching providers remain separate confirmations.
 
 InfiniDysk 2 opens at a dedicated root URL. The frontend does not embed its UI
 under `/ui/infinidysk` unless a validated adapter is explicitly advertised.
@@ -336,18 +341,48 @@ Candidate builds and data preservation are documented in the [source-build updat
 * `WEBDAV_USER`: Override the WebDAV username (defaults to `admin`).
 * `WEBDAV_PASSWORD`: Override the WebDAV password.
 * `CONFIG_PATH`: Override the InfiniDysk config path (defaults to `config_dir`).
-* `FRONTEND_BACKEND_API_KEY`: Backend API key shared with the frontend.
+* `FRONTEND_BACKEND_API_KEY`: Generation 1 backend API key shared with the frontend.
   DUMB generates and saves it when missing, then preserves it across configure
   runs and configuration reloads.
 * `ASPNETCORE_URLS`: Backend bind address (defaults to `http://+:<backend_port>`).
 * `PORT`: Frontend port (defaults to `frontend_port`).
 * `BACKEND_URL`: Frontend-to-backend URL (defaults to `http://127.0.0.1:<backend_port>`).
 
-The frontend/backend key and the API key shown in InfiniDysk's settings may
-differ; upstream accepts both. If a running instance rejects DUMB's configured
-key with HTTP 401, DUMB can retry once using the API key from that instance's
+In generation 1, the frontend/backend key and the API key shown in InfiniDysk's
+settings may differ; that runtime accepts both. If a running 1.x instance rejects
+DUMB's configured key with HTTP 401, DUMB can retry once using the API key from that instance's
 active database. This does not rotate the saved frontend/backend key or fall
 back to a retained SQLite database when PostgreSQL is active.
+
+<!-- dev:start -->
+Generation 2 uses its own environment settings. `INFINIDYSK__SAB__API_KEY`
+is saved under InfiniDysk's `env` object in **DUMB Config**. Keep an existing
+nonblank value to use that key. When the setting is blank or missing, DUMB leaves
+the native key unchanged at launch, then adopts and saves its effective value
+after the first successful native startup. A prepared candidate's verified key
+is saved at activation. A fresh installation creates its key once; the saved key
+is reused across starts and restarts. DUMB does not rotate a working
+installation's key or require you to look it up manually. An explicit leaf
+setting takes precedence at the next native launch. Do not copy the old
+`FRONTEND_BACKEND_API_KEY` into this field automatically: v2 does not accept
+that variable as an additional download-client key.
+
+Once the key is saved, **DUMB Config** is its managed source. To deliberately
+change it, edit `env.INFINIDYSK__SAB__API_KEY`, select **Save to File**, then
+restart InfiniDysk. A key adopted after startup becomes an environment override
+on the next start; the already running process keeps the settings it launched
+with. The prepared migration's key is already supplied on first activation.
+
+DUMB checks enabled, linked managed Arr instances after InfiniDysk or an Arr
+starts. Verified managed download clients follow the same configured key, with
+their IDs and all other settings preserved. Startup readiness is retried for a
+bounded period; unavailable dependencies or unknown client ownership require
+review rather than an unsafe overwrite. External or independently configured
+clients remain your responsibility. The native administrative API key is
+separate from this download-client key. For migration safeguards and the
+supported automatic repair scope, see
+[download-client credentials after migration](../../features/infinidysk-v2-migration.md#existing-arr-download-client-credentials).
+<!-- dev:end -->
 
 ---
 

@@ -42,6 +42,11 @@ Clients require a valid `api_version >= 2.24.0`, explicit boolean
 protocols disable mutations. Retained job/recovery displays remain independent
 of those new-operation controls.
 
+Managed PostgreSQL destination preparation additionally requires strict boolean
+`infinidysk_v2_postgres_prepare_target: true` and numeric
+`infinidysk_v2_postgres_prepare_target_protocol: 1`. This grants the explicit
+preparation action only; a destination preview remains read-only.
+
 The strict boolean `infinidysk_v2_prepared_activation: true` selects the default
 prepare-once workflow. Clients prepare and review one candidate, then explicitly
 activate that same job. With the capability absent, retain the legacy separate
@@ -54,11 +59,21 @@ coordinates snapshots, checks, containment, activation and recovery.
 Embedded native UI routing requires the strict boolean
 `infinidysk_v2_embedded_ui_adapter: true` and numeric
 `infinidysk_v2_embedded_ui_protocol: 1`, alongside the runtime capability.
-`GET /config/service-ui?metadata_only=true` returns the existing
-`services` inventory without regenerating Traefik configuration. A native
-InfiniDysk row includes `runtime_generation: "2"` and
-`embedded_ui_protocol: 1`. The dashboard derives this identity from the
-authenticated backend response, not a browser-supplied service header.
+The embedded proxy looks up one enabled service through
+`GET /config/embedded-ui-routing/{normalized_service}`. This read-only endpoint
+does not require dashboard authentication: an iframe request cannot attach the
+dashboard's browser-stored bearer token. Its response contains only `name`,
+`config_key`, `runtime_generation` and `embedded_ui_protocol`; it exposes no
+addresses, ports, paths, credentials or full service inventory. The dashboard
+server fetches this metadata directly from DUMB, rather than trusting a
+browser-supplied service header, and expires each service result after five
+seconds. Failed refreshes cannot reuse an expired routing decision.
+
+The separate `GET /config/service-ui?metadata_only=true` inventory remains
+protected by dashboard authentication and does not regenerate Traefik
+configuration. Both backend and dashboard need the matching embedded-routing
+implementation; an older backend without the minimal endpoint cannot enable
+the new adapter.
 
 The adapter forwards the embedded UI through DUMB while keeping native
 sessions separate from dashboard credentials. Direct UI addresses, Public URL,
@@ -804,6 +819,53 @@ exact `confirmation_texts.retry_consumers` as `confirmation` to
 provider/mount before retrying only the exact retained pending consumers in
 dependency order. It does not repeat native import or restore v1.
 
+New major migrations also retain private proof of existing download clients for
+affected, running DUMB-managed Radarr, Sonarr, Lidarr and Whisparr instances.
+Before quiescence, DUMB binds each client to its exact Arr and resource IDs and
+settings fingerprints and requires a passing test of its saved configuration.
+After v2 exposure and consumer resumption, DUMB uses the effective native SAB
+key to verify the same client. Any repair changes only its API-key field on the
+same ID and must pass both the candidate and saved-client tests. It does not
+create clients or adopt resources by name. Failed checks retain consumer
+recovery; the existing retry action can repeat them without another import or
+v1 rollback. Missing proof, ambiguous identities or changed resources require
+review. Keys and raw resources are private and are not added to public job
+responses. This is part of the existing major/consumer-recovery workflow, with
+no additional endpoint or protocol.
+
+InfiniDysk 1.x can accept its stored API key and the legacy
+`FRONTEND_BACKEND_API_KEY` separately. Native v2 accepts its single SAB key,
+including a supported `INFINIDYSK__SAB__API_KEY` override; its administrative key
+is separate. The major migration removes the obsolete frontend/backend variable
+from the active target environment while preserving the v1 source environment.
+
+For normal generation 2 launches, `infinidysk.env.INFINIDYSK__SAB__API_KEY` is
+the persisted configured download-client key. A nonblank leaf value is preserved
+and takes precedence at launch. A blank or missing leaf leaves the native key
+unchanged during normal launch. Bounded post-startup reconciliation reads the
+authenticated effective native key and saves it after the first successful
+startup. Prepared migration/fresh-install activation adopts the verified
+candidate key before committing activation. A fresh installation creates its
+key once. This does not use the obsolete
+`FRONTEND_BACKEND_API_KEY` as a v2 rekey instruction, rotate an existing native
+key or substitute the administrative credential.
+Once adopted, the DUMB configuration is the managed source. A post-startup
+adopted leaf becomes a native environment override on the next launch; it does
+not retroactively change the running process's environment. Explicit key edits
+therefore require saving configuration and restarting the native service.
+
+Native and enabled core-linked Arr startup/restart hooks schedule bounded
+reconciliation. The effective native key must match the configured key before
+updating exact durable client bindings. Successful migration proof promotes a
+binding for subsequent checks; a previously unbound client needs exact managed
+identity/endpoint/category and a passing saved test before adoption. Broken,
+unknown or conflicting clients remain unchanged for review. Readiness failures
+receive bounded retries; ownership conflicts do not authorize replacement.
+External or unmanaged clients require manual review. Arr download-client
+verification does not establish native Arr-notification readiness, a successful
+import or playback. These settings and reconciliation use existing configuration
+and lifecycle routes; no new key-management endpoint is introduced.
+
 Finishing requires both `can_finish_consumer_recovery: true` and `ready: true`.
 After reviewing the remaining stopped consumers, post `job_id`, the exact
 `confirmation_texts.finish_consumer_recovery` as `confirmation`, and
@@ -876,13 +938,14 @@ native engine.
 | Method | Route | Purpose |
 |--------|-------|---------|
 | `GET` | `/process/infinidysk-v2/postgres/status` | Reconcile native provider/job state and advertise guarded actions |
+| `POST` | `/process/infinidysk-v2/postgres/prepare-target` | Explicitly create or verify a managed empty destination with the required locale and owner |
 | `POST` | `/process/infinidysk-v2/postgres/preview` | Verify a dedicated empty destination and its physical identity |
 | `POST` | `/process/infinidysk-v2/postgres/start` | Retain recovery state and start native copy/synchronization |
 | `POST` | `/process/infinidysk-v2/postgres/cutover` | Switch only the current synchronized job to PostgreSQL |
 | `POST` | `/process/infinidysk-v2/postgres/cancel` | Cancel the current native job after destination identity checks |
 | `POST` | `/process/infinidysk-v2/postgres/rollback` | Restore the retained SQLite snapshot when its guards permit |
 
-Managed destination preview:
+Managed destination preparation and preview use the same request body:
 
 ```json
 {"target": {"use_managed_postgres": true, "database": "infinidysk_v2"}}
@@ -894,8 +957,22 @@ mode. Passwords and connection URLs remain private and are not returned in
 public status. Preview returns the current/target summaries, physical
 `target_identity` (`system_identifier`, `database_oid`, `schema`), checks and a
 short-lived `preview_token`/`confirmation_text`.
-Provision the dedicated empty database with `C` collation and its role before previewing; choosing
-`use_managed_postgres` selects DUMB's connection settings, not database creation.
+
+An explicit `prepare-target` request requires the configured, running managed
+PostgreSQL service. It creates a new database from `template0`, with UTF-8,
+`C` collation and the existing configured owner role. An existing compatible
+empty database is checked and reused; a nonempty or incompatible database is
+refused without modification. System databases and databases configured for
+other services cannot be selected. It does not start or restart services, alter
+roles, copy library data or change the active provider. External destinations
+must be provisioned by their administrator; this action does not accept them.
+
+Preparation returns `protocol: 1`, `ready: true`, `created: true` for a new
+database (`false` for reuse), the public `target`, `target_identity` and a
+message. The dashboard then calls the separate read-only `preview` endpoint.
+Preparing a target alone never authorizes copying: review the fresh preview
+and submit the ordinary guarded start request. `preview` never creates a
+database, including when `use_managed_postgres` is true.
 
 Start requires that token and exact confirmation, plus
 `acknowledge_backup: true` and `acknowledge_destructive_target: true`.
