@@ -1,6 +1,13 @@
 # Changelog
 
 
+## [1.25.28](https://github.com/I-am-PUID-0/DUMB_docs/compare/1.25.27...1.25.28) (2026-11-22)
+
+
+### 📖 Documentation
+
+* **infinidysk:** explain approval before PostgreSQL cutover ([7f2b761](https://github.com/I-am-PUID-0/DUMB_docs/commit/7f2b7613916498f4c17e73a868d60b37cab51f0a))
+
 ## [1.25.27](https://github.com/I-am-PUID-0/DUMB_docs/compare/1.25.26...1.25.27) (2026-11-22)
 
 
