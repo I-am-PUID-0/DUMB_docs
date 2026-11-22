@@ -986,6 +986,8 @@ mode. Passwords and connection URLs remain private and are not returned in
 public status. Preview returns the current/target summaries, physical
 `target_identity` (`system_identifier`, `database_oid`, `schema`), checks and a
 short-lived `preview_token`/`confirmation_text`.
+Supporting builds also return an opaque `preview_id`, retained on the admitted
+job. It identifies the reviewed request without granting mutation authority.
 
 An explicit `prepare-target` request requires the configured, running managed
 PostgreSQL service. It creates a new database from `template0`, with UTF-8,
@@ -1023,6 +1025,24 @@ both control-record writers and lifecycle reservations.
 
 Start requires that token and exact confirmation, plus
 `acknowledge_backup: true` and `acknowledge_destructive_target: true`.
+Supporting builds durably record and return a `starting` job before running
+destination revalidation, SQLite backup, integrity validation and fingerprinting
+in a background worker. `GET /postgres/status` discovers that job independently
+of the Start response and remains available during preparation. A lost response
+must be reconciled through read-only status, never by automatically repeating
+Start. The dashboard retains only opaque job/pending-request identities across
+reload and uses a matching new job's `preview_id` to confirm a lost admission.
+
+Optional job `progress` is scoped to its current `stage`. Snapshot copying can
+report `unit: "pages"`, fingerprinting `unit: "bytes"`, and native copying
+`unit: "rows"`. `done`/`total` count that pass or the current native `table`,
+not the whole conversion. Native `pending_changes` is separate; null or absent
+counts remain unknown. `elapsed_seconds`, `rate_per_second`,
+`bytes_per_second` and `eta_seconds` are optional measurements. Validation may
+report elapsed time without a measurable total or ETA. Clients must suppress
+estimates when observations are stale or unconfirmed and must not interpret a
+completed table as permission to cut over.
+
 Subsequent cutover/cancel/rollback requests use the **current `job_id`**, exact
 text from `status.confirmation_texts[action]` and both acknowledgements. They
 do not reuse an expired initial preview token after a long synchronization.

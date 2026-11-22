@@ -468,8 +468,9 @@ prove that its target is eligible and will not overwrite existing data.
 
 Closing the panel or visiting another page does not cancel the backend job.
 The global notice reopens progress or recovery after navigation and reload.
-Only job identities are saved for browser recovery; preview authorizations and
-database passwords are not. A transport error does not prove that a job stopped.
+Only opaque job and pending database-request identities are saved for browser
+recovery; preview authorizations and database passwords are not. A transport
+error does not prove that a job stopped.
 Refresh status before retrying, and retain an unconfirmed job's recovery evidence.
 
 After a confirmed successful completion, **Dismiss** hides that completion notice
@@ -831,6 +832,22 @@ not DUMB's generation 1 SQLite-to-PostgreSQL adapter.
 4. Wait for the backend to advertise **cutover**. Review and confirm that action
    separately. The native restart may retain its process ID; wait for confirmed
    provider state and service health.
+
+Supporting builds save a visible job before preparing the SQLite recovery
+snapshot. The panel shows destination checks, snapshot copying, snapshot
+validation and fingerprinting, then native copying and synchronization. Large
+snapshots can take time before any records reach PostgreSQL. Where available,
+it shows snapshot pages or bytes, the current database table's copied rows and
+changes waiting to synchronize. A table reaching its total does not mean the
+whole conversion has finished; remaining-time estimates cover only the current
+phase and are omitted when its work cannot be measured reliably.
+
+If **Start** times out, keep the panel open or reopen it. Automatic read-only
+checks discover the saved job after navigation or reload. **Refresh status**
+also works while a request is pending and reports whether the latest check
+succeeded. An uncertain Start is retained without its token or credentials;
+DUMB does not automatically send another Start. Keep checking status instead
+of starting a second copy. Cutover still requires its separate confirmation.
 
 ### Prepare a PostgreSQL destination
 
