@@ -1,6 +1,15 @@
 # Changelog
 
 
+## [1.25.25](https://github.com/I-am-PUID-0/DUMB_docs/compare/1.25.24...1.25.25) (2026-11-22)
+
+
+### 📖 Documentation
+
+* clarify setup checklists and InfiniDysk recovery ([33448b4](https://github.com/I-am-PUID-0/DUMB_docs/commit/33448b47906810bdaa9d863f376b1dc46c48764b))
+* merge reviewed frontend media refresh ([#191](https://github.com/I-am-PUID-0/DUMB_docs/issues/191)) ([6bd6ce4](https://github.com/I-am-PUID-0/DUMB_docs/commit/6bd6ce4a7f465740c3152af22d057fb88b4c5e1d))
+* refresh source-pinned frontend visuals ([b0843b4](https://github.com/I-am-PUID-0/DUMB_docs/commit/b0843b481398d10bb282346b4d9f357b67a6172b))
+
 ## [1.25.24](https://github.com/I-am-PUID-0/DUMB_docs/compare/1.25.23...1.25.24) (2026-11-22)
 
 
