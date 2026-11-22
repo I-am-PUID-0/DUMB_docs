@@ -1,6 +1,13 @@
 # Changelog
 
 
+## [1.25.24](https://github.com/I-am-PUID-0/DUMB_docs/compare/1.25.23...1.25.24) (2026-11-22)
+
+
+### 📖 Documentation
+
+* **infinidysk:** explain managed database preparation and client keys ([c490ea7](https://github.com/I-am-PUID-0/DUMB_docs/commit/c490ea711853717c9911c4177bdd4e99b2c76989))
+
 ## [1.25.23](https://github.com/I-am-PUID-0/DUMB_docs/compare/1.25.22...1.25.23) (2026-11-21)
 
 
