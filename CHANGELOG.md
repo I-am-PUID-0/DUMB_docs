@@ -1,6 +1,13 @@
 # Changelog
 
 
+## [1.25.26](https://github.com/I-am-PUID-0/DUMB_docs/compare/1.25.25...1.25.26) (2026-11-22)
+
+
+### 📖 Documentation
+
+* **infinidysk:** clarify fresh v2 releases and startup recovery ([75b5329](https://github.com/I-am-PUID-0/DUMB_docs/commit/75b53294330f9410f11448b2857c6d529b7de47f))
+
 ## [1.25.25](https://github.com/I-am-PUID-0/DUMB_docs/compare/1.25.24...1.25.25) (2026-11-22)
 
 
