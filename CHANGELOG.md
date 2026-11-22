@@ -1,6 +1,13 @@
 # Changelog
 
 
+## [1.25.27](https://github.com/I-am-PUID-0/DUMB_docs/compare/1.25.26...1.25.27) (2026-11-22)
+
+
+### 📖 Documentation
+
+* **infinidysk:** explain observable native database conversion ([eb5aed0](https://github.com/I-am-PUID-0/DUMB_docs/commit/eb5aed0ea5db382fa215a023edb05c21affb078b))
+
 ## [1.25.26](https://github.com/I-am-PUID-0/DUMB_docs/compare/1.25.25...1.25.26) (2026-11-22)
 
 
