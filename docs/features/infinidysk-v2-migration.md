@@ -829,9 +829,16 @@ not DUMB's generation 1 SQLite-to-PostgreSQL adapter.
    one. External destinations use **Check destination and review**.
 3. Confirm backups and the destination reset acknowledgement, type the exact
    confirmation, then start native copying and synchronization.
-4. Wait for the backend to advertise **cutover**. Review and confirm that action
-   separately. The native restart may retain its process ID; wait for confirmed
-   provider state and service health.
+4. Wait for **Ready to switch — awaiting your approval**. SQLite continues
+   serving your library until you review the backup and destination
+   acknowledgements, type the exact switch confirmation and confirm the switch
+   to PostgreSQL. DUMB never switches automatically. The native restart may
+   retain its process ID; wait for confirmed provider state and service health.
+
+The ready notice requires a current, confirmed status check permitting the
+switch for this job. If a check fails or a blocker appears, refresh status and
+resolve it before switching. Zero pending changes or a completed table alone
+does not authorize the switch.
 
 Supporting builds save a visible job before preparing the SQLite recovery
 snapshot. The panel shows destination checks, snapshot copying, snapshot
