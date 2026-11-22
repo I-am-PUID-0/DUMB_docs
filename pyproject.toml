@@ -1,6 +1,6 @@
 [project]
 name = "dumb-docs"
-version = "1.25.24"
+version = "1.25.25"
 description = "Documentation for the Distributed Unlimited Media Bridge media automation platform"
 authors = [
     {name = "I-am-PUID-0",email = "36779668+I-am-PUID-0@users.noreply.github.com"}
