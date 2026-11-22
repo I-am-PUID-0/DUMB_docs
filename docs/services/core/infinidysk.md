@@ -188,9 +188,11 @@ InfiniDysk also exposes a **Usenet download client** path in Arr by emulating a 
     belong to the upstream `v1` maintenance line before installation.
 
     Generation 2 is an explicit opt-in through the separate wizard and requires
-    DUMB API 2.24.0 or newer plus the advertised protocol 1 capabilities. This
-    integration currently accepts only the verified `v2.0.0-beta.6` native
-    artifact. It does not fall back to a source build or silently replace 1.x.
+    DUMB API 2.24.0 or newer plus the advertised protocol 1 capabilities.
+    Existing 1.x data uses the verified `v2.0.0-beta.6` importer. An eligible
+    fresh v2 installation uses the saved official 2.x release selection,
+    defaulting to latest, including v2 beta releases. Neither path falls back
+    to a source build or silently replaces 1.x.
     Existing data requires a guarded major migration; changing the generation
     field does not convert a database. See the
     [upgrade guide](../../features/infinidysk-v2-migration.md) for eligibility,
@@ -283,10 +285,16 @@ or retaining the original 1.x data and recovery state:
 | `release_version` | An exact official 2.x tag, or `latest`; blank also follows latest |
 | `env.INFINIDYSK__SAB__API_KEY` | Download-client key for generation 2. DUMB fills it automatically; an explicit value controls the next native launch. |
 
-Preparation and recovery use an internal fixed migration artifact. Once activation
-and required recovery work are complete, the normal release controls select
-future native updates. Existing `v2_release_version` settings are converted
-automatically on configuration load; no manual rename is needed. Old-format
+Existing-source migration preparation and recovery use an internal fixed
+importer. Fresh installation uses the normal release controls above. Once
+activation and required recovery work are complete, use those controls in
+**DUMB Config** and the service's **Updates** tool to select and install future
+native updates. Normal startup reuses the exact verified installed release;
+after a container rebuild, DUMB restores that same release even if ordinary
+settings such as an API key have changed. An unfinished runtime update still
+requires its guarded recovery before normal startup can continue.
+Existing `v2_release_version` settings are converted automatically on
+configuration load; no manual rename is needed. Old-format
 migration rollback actions are not converted; their archives and source plans
 are retained. Branch and commit selectors are inactive on the native runtime.
 Do not reuse `postgres_enabled` or

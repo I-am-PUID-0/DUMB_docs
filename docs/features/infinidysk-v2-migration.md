@@ -27,9 +27,12 @@ controls.
 The wizard requires DUMB API **2.24.0 or newer**, explicit InfiniDysk 2 capabilities
 and migration protocol **1**. An older, unknown or temporarily unavailable
 backend cannot start a migration. Previously discovered job identities and
-recovery information remain visible. Preparation and migration use the verified
-**`v2.0.0-beta.6`** artifact. After a fully completed activation, normal runtime
-updates can follow official **2.x** releases; see
+recovery information remain visible. Migration of existing 1.x data uses the
+verified **`v2.0.0-beta.6`** importer. An eligible fresh installation uses the
+saved official **2.x** release selection, which defaults to **latest** and
+includes v2 beta releases.
+After a fully completed activation, normal runtime updates can follow official
+**2.x** releases; see
 [updating after activation](#update-infinidysk-2-after-activation).
 Selecting 2.x through a 1.x release or source field is refused.
 
@@ -1163,7 +1166,12 @@ the current update journal normally.
 
 Your automatic-update preference is preserved. **Check only** continues to
 notify without installing. Normal startup reuses the verified installed
-runtime; it does not download latest or repeat conversion on every restart.
+runtime; it does not resolve latest or repeat conversion on every restart.
+DUMB retains the exact installed release separately from ordinary settings.
+If a container rebuild removes its program files, DUMB reinstalls that same
+verified release. Changes to an API key or other ordinary settings do not
+invalidate this record or select another release. Use **Updates** to install a
+different release; a fresh installation or a requested update resolves latest.
 Active preparation, migration, provider conversion, required restarts and
 unresolved service recovery block runtime updates.
 
@@ -1179,8 +1187,10 @@ files. A failure after launch retains the replacement, previous program files
 and update journal, and stops automatic runtime rollback. After resolving the
 reported problem, retry **Update** to start and verify that same retained
 replacement. This retry does not download another release or repeat the major
-migration. Interrupted work before launch or changed recovery evidence needs
-inspection rather than an automatic retry.
+migration. The installed-release record cannot bypass an unfinished update:
+its retained configuration and recovery evidence must still pass the stricter
+recovery checks. Interrupted work before launch or changed recovery evidence
+needs inspection rather than an automatic retry.
 
 ## Retire the old v1 installation
 

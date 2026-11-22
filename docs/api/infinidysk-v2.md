@@ -85,13 +85,28 @@ Normal post-activation runtime updates require
 `infinidysk_v2_runtime_updates: true` and
 `infinidysk_v2_runtime_updates_protocol: 1`. They use the existing
 `POST /process/update-check` and `POST /process/update-install` routes.
-Preparation and recovery remain fixed to the migration artifact; completed
-activation releases that internal pin once required recovery and restart work
-are finished. The active service uses standard `release_version` and
+Existing-source migration preparation and recovery remain fixed to the verified
+`v2.0.0-beta.6` importer. Fresh installation uses the saved official v2 release
+selection, defaulting to latest. Completed migration activation releases its
+internal pin once required recovery and restart work are finished. The active
+service uses standard `release_version` and
 `release_version_enabled` fields, with `runtime_generation: "2"` selecting the
 native installer. Disabled release selection follows latest; enabled selection
 uses the exact v2 tag, or follows latest when blank or `latest`. Only official
 v2 releases are eligible; branch and commit selectors are not native sources.
+
+A separate private installed-release record retains the exact verified artifact
+for the installed runtime and resolved data location. It is recorded after
+initial installation, activation and successful updates. Routine startup reuses
+that release; if a container rebuild removes the program directory, restoration
+uses its recorded release and hashes rather than resolving latest. Ordinary
+configuration or environment edits do not invalidate this record. Legacy
+completed update receipts can also authorize exact-release restoration despite
+ordinary configuration or selector changes. Neither path bypasses an unfinished
+update's stricter recovery checks. Latest is resolved for a fresh installation
+or a requested update, not for ordinary startup.
+Existing native data without either release record is retained and requires
+review of its previous installed release; it is not treated as a fresh install.
 
 Configuration loading automatically converts the older `v2_release_version`
 setting into the standard fields. New clients should submit the standard fields
@@ -147,7 +162,13 @@ Preview body:
 `mount_backend` is `rclone` or explicit `fuse`. The initial major workflow accepts
 only `import_strategy: "preserve"`; it does not regenerate existing outputs.
 The exact consumer-visible mount path is retained. Generation 2 uses separate
-runtime/data directories and the verified beta artifact.
+runtime/data directories. `mode: "migrate"` uses the fixed verified beta.6
+importer; `mode: "fresh"` uses the saved `release_version` and
+`release_version_enabled` controls. These release controls belong to the service
+configuration, not the preview body. Disabled selection, or enabled blank or
+`latest`, selects the latest official v2 release, including beta releases; an
+enabled exact v2 tag selects that release. Preparation retains the selected
+artifact for activation rather than resolving latest again.
 
 #### Queued-download policy
 
