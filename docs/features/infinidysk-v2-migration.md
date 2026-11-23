@@ -1017,7 +1017,11 @@ file remains blocked for investigation.
 
 After confirmed PostgreSQL cutover, `infinidysk.sqlite.pre-postgres` is the
 SQLite rollback copy. Keep it until you have a verified PostgreSQL backup and
-deliberately choose to give up SQLite rollback. The separate
+deliberately choose to give up SQLite rollback. After that decision, the old
+SQLite database is not a permanent startup requirement. DUMB checks the saved
+PostgreSQL selection in InfiniDysk's database journal (`database.toml`) against
+the effective provider, with no unfinished conversion. Removing the rollback
+copy does not switch the provider back to SQLite or repeat the migration. The separate
 `before-native-copy.sqlite` snapshot can lack writes accepted during conversion.
 Do not remove `metrics.sqlite` or `warden.db` as conversion leftovers; they
 remain separate live stores.
