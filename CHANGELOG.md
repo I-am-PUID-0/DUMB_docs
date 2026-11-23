@@ -1,6 +1,13 @@
 # Changelog
 
 
+## [1.25.32](https://github.com/I-am-PUID-0/DUMB_docs/compare/1.25.31...1.25.32) (2026-11-23)
+
+
+### 🐛 Bug Fixes
+
+* **infinidysk:** document automatic recovery for older v2 installs ([28528cf](https://github.com/I-am-PUID-0/DUMB_docs/commit/28528cf0c4ed7f81d27da010e299974ce091e150))
+
 ## [1.25.31](https://github.com/I-am-PUID-0/DUMB_docs/compare/1.25.30...1.25.31) (2026-11-23)
 
 
