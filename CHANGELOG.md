@@ -1,6 +1,13 @@
 # Changelog
 
 
+## [1.25.31](https://github.com/I-am-PUID-0/DUMB_docs/compare/1.25.30...1.25.31) (2026-11-23)
+
+
+### 📖 Documentation
+
+* explain InfiniDysk log filters and SQLite retention ([0f93909](https://github.com/I-am-PUID-0/DUMB_docs/commit/0f939096cde70681279937dcfce1cdbf67259d0c))
+
 ## [1.25.30](https://github.com/I-am-PUID-0/DUMB_docs/compare/1.25.29...1.25.30) (2026-11-23)
 
 
