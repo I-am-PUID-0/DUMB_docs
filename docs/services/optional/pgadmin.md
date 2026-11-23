@@ -90,6 +90,27 @@ Backing up pgAdmin's local data alone does not back up the databases it administ
 
 The configured database role determines what pgAdmin can change. The default shared DUMB role can administer the registered application databases, so keep access restricted and disable pgAdmin when it is no longer needed.
 
+<!-- dev:start -->
+## If pgAdmin stays on the loading screen
+
+A working login page can still belong to an incomplete pgAdmin installation.
+In the browser's Network panel, JavaScript or stylesheet requests under
+`/static/js/generated/` returning `404` or HTML can identify missing web files.
+If those files also fail at pgAdmin's direct address, inspect the installed
+runtime before changing proxy settings.
+
+DUMB image builds keep the selected pgAdmin version and check its compiled
+JavaScript and stylesheets. Complete packages need no repair. If web files are
+missing, the image build verifies the same version's official source archive
+and publisher signature, then builds its web assets using that release's
+locked dependencies. Failed verification, compilation or completeness checks
+stop the image build. DUMB does not downgrade pgAdmin to replace missing files.
+
+Use a new or rebuilt DUMB image containing the corrected pgAdmin runtime.
+Keep existing pgAdmin accounts, server registrations and persistent data.
+Proxy adjustments and database resets cannot replace missing runtime files.
+<!-- dev:end -->
+
 ## More info
 
 - [pgAdmin FAQ and backup examples](../../faq/pgadmin.md)
