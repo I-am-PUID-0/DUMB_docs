@@ -1,6 +1,13 @@
 # Changelog
 
 
+## [1.25.33](https://github.com/I-am-PUID-0/DUMB_docs/compare/1.25.32...1.25.33) (2026-11-23)
+
+
+### 🐛 Bug Fixes
+
+* **infinidysk:** clarify startup after retiring SQLite rollback data ([9eb8fc9](https://github.com/I-am-PUID-0/DUMB_docs/commit/9eb8fc9f5b159d14731580d387d5346f4fdb0400))
+
 ## [1.25.32](https://github.com/I-am-PUID-0/DUMB_docs/compare/1.25.31...1.25.32) (2026-11-23)
 
 
