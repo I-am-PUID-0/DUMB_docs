@@ -849,6 +849,18 @@ changes waiting to synchronize. A table reaching its total does not mean the
 whole conversion has finished; remaining-time estimates cover only the current
 phase and are omitted when its work cannot be measured reliably.
 
+The recovery copy uses a consistent point-in-time view while InfiniDysk keeps
+accepting writes. This requires SQLite's write-ahead log (WAL) mode and enough
+free space for the snapshot and the active write log. DUMB monitors storage
+headroom; an unsafe mode or insufficient space stops preparation before native
+conversion. It does not change the source database's journal mode.
+
+If a snapshot copy restarts, its page count can go backward. The panel shows
+the restart count and hides the phase's pace and remaining-time estimate.
+Counts describe the current pass. A recent status check does not make an old
+work measurement current; estimates require recent, reliable measurements.
+Older backends without that evidence still show counts and elapsed time.
+
 If **Start** times out, keep the panel open or reopen it. Automatic read-only
 checks discover the saved job after navigation or reload. **Refresh status**
 also works while a request is pending and reports whether the latest check

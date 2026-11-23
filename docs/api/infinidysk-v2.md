@@ -1043,6 +1043,24 @@ report elapsed time without a measurable total or ETA. Clients must suppress
 estimates when observations are stale or unconfirmed and must not interpret a
 completed table as permission to cut over.
 
+Supporting builds distinguish job observation from actual work measurements:
+`progress.updated_at` is the measurement time in epoch seconds,
+`progress.estimate_reliable` is a strict boolean, and `progress.restarts` is a
+nonnegative restart count for the current phase. A counter rewind or changed
+total invalidates pace and ETA; do not clamp the visible count to its previous
+maximum. A new phase starts its own counters and restart count. The dashboard
+requires recent confirmed measurements, `estimate_reliable: true`, zero
+restarts and its measurement warmup before showing pace or ETA. Job/status
+heartbeats cannot refresh the measurement time. Older responses without this
+evidence retain counts and elapsed time without an unproven estimate.
+
+Online snapshot preparation pins a consistent read-only SQLite view in WAL
+mode while native writers continue. It releases that view immediately after
+copying, before snapshot integrity checks and fingerprinting. DUMB monitors
+source/destination storage headroom, including room for WAL growth. Non-WAL
+mode or insufficient headroom stops preparation before native conversion;
+the source journal mode is not changed.
+
 Subsequent cutover/cancel/rollback requests use the **current `job_id`**, exact
 text from `status.confirmation_texts[action]` and both acknowledgements. They
 do not reuse an expired initial preview token after a long synchronization.
