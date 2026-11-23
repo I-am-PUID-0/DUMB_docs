@@ -1015,6 +1015,13 @@ is delayed, retrying verifies that same SQLite file and its health without
 restoring over writes accepted since the first restart. A missing or replaced
 file remains blocked for investigation.
 
+After confirmed PostgreSQL cutover, `infinidysk.sqlite.pre-postgres` is the
+SQLite rollback copy. Keep it until you have a verified PostgreSQL backup and
+deliberately choose to give up SQLite rollback. The separate
+`before-native-copy.sqlite` snapshot can lack writes accepted during conversion.
+Do not remove `metrics.sqlite` or `warden.db` as conversion leftovers; they
+remain separate live stores.
+
 ## Existing Arr download-client credentials
 
 InfiniDysk 1.x could accept both the API key stored in its settings and the

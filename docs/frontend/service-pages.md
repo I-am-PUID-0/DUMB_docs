@@ -182,6 +182,15 @@ The [AI Assistant guide](../features/ai-assistant.md) covers supported models, p
 
 You can also change the line limit. Service-aware parsing retains application timestamps/severity and groups multiline errors where supported. Traefik offers access logs; Plex offers DBRepair logs when enabled.
 
+<!-- dev:start -->
+InfiniDysk supports both its older bracketed logs and the 2.x tracing format.
+The viewer prefers InfiniDysk's own timestamp, removes terminal color codes,
+and preserves query text and module/operation context within each InfiniDysk
+message. Use **INFO**, **WARNING**, **ERROR** and **DEBUG**
+filters as usual: native `WARN` appears as **WARNING**, and `TRACE` appears
+under **DEBUG**.
+<!-- dev:end -->
+
 DUMB applies its sensitive-data redactor to logs viewed or downloaded here. Review a download before sharing it; arbitrary application output can contain values the redactor does not recognize.
 
 <!-- docs:visual scenario=service-logs type=video -->
