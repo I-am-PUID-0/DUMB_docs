@@ -1,6 +1,13 @@
 # Changelog
 
 
+## [1.25.29](https://github.com/I-am-PUID-0/DUMB_docs/compare/1.25.28...1.25.29) (2026-11-23)
+
+
+### 📖 Documentation
+
+* **infinidysk:** explain stable snapshots and progress estimates ([ea9d7e8](https://github.com/I-am-PUID-0/DUMB_docs/commit/ea9d7e8323f46a63d83502591b2a05dca1213876))
+
 ## [1.25.28](https://github.com/I-am-PUID-0/DUMB_docs/compare/1.25.27...1.25.28) (2026-11-22)
 
 
