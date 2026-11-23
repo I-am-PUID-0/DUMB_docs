@@ -1,6 +1,13 @@
 # Changelog
 
 
+## [1.25.30](https://github.com/I-am-PUID-0/DUMB_docs/compare/1.25.29...1.25.30) (2026-11-23)
+
+
+### 📖 Documentation
+
+* explain same-version pgAdmin asset repair ([5c4131b](https://github.com/I-am-PUID-0/DUMB_docs/commit/5c4131bbfa48c88102ebb51a17d97b5273fa9f77))
+
 ## [1.25.29](https://github.com/I-am-PUID-0/DUMB_docs/compare/1.25.28...1.25.29) (2026-11-23)
 
 
