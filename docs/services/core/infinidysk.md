@@ -293,6 +293,10 @@ native updates. Normal startup reuses the exact verified installed release;
 after a container rebuild, DUMB restores that same release even if ordinary
 settings such as an API key have changed. An unfinished runtime update still
 requires its guarded recovery before normal startup can continue.
+Older 2.x installations without a release record recover their missing program
+using the configured release selection, then save their own record. This applies
+to both fresh and migrated 2.x installations; no migration history is required.
+An existing release record takes precedence over a retained older version pin.
 Existing `v2_release_version` settings are converted automatically on
 configuration load; no manual rename is needed. Old-format
 migration rollback actions are not converted; their archives and source plans

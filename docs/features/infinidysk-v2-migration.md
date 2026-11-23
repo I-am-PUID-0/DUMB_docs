@@ -1218,6 +1218,16 @@ different release; a fresh installation or a requested update resolves latest.
 Active preparation, migration, provider conversion, required restarts and
 unresolved service recovery block runtime updates.
 
+Early 2.x installations may not have saved this record. At normal startup,
+DUMB restores their missing program files using the existing configured release
+selection, then saves an independent installed-release record. This works for
+both migrated and fresh 2.x installations; no migration history or repeated
+major migration is needed. Later container rebuilds restore the exact recorded
+release. An existing installed-release or completed-update record takes
+precedence over the configured selection, even if it contains an older pin.
+Invalid records and unfinished updates still require their guarded recovery;
+they do not fall back to the configured selection.
+
 DUMB verifies the official archive, published checksum, exact release and commit
 before stopping the service. Create an independent service backup before an
 update. Starting a newer binary can upgrade its database schema. At that point

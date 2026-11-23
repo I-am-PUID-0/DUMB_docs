@@ -103,10 +103,14 @@ uses its recorded release and hashes rather than resolving latest. Ordinary
 configuration or environment edits do not invalidate this record. Legacy
 completed update receipts can also authorize exact-release restoration despite
 ordinary configuration or selector changes. Neither path bypasses an unfinished
-update's stricter recovery checks. Latest is resolved for a fresh installation
-or a requested update, not for ordinary startup.
-Existing native data without either release record is retained and requires
-review of its previous installed release; it is not treated as a fresh install.
+update's stricter recovery checks. Once this release evidence is recorded,
+latest is resolved for a requested update, not for ordinary startup.
+For legacy installations without either record, ordinary startup restores missing
+program files using the configured official v2 release selection, then records
+the verified installed release. This compatibility path applies to both migrated
+and fresh v2 installations; major-migration history is not required and conversion
+does not repeat. Present invalid records and unfinished updates remain blocked;
+they cannot fall through to configured-release restoration.
 
 Configuration loading automatically converts the older `v2_release_version`
 setting into the standard fields. New clients should submit the standard fields
