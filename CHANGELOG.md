@@ -1,6 +1,13 @@
 # Changelog
 
 
+## [1.25.34](https://github.com/I-am-PUID-0/DUMB_docs/compare/1.25.33...1.25.34) (2026-11-24)
+
+
+### 🐛 Bug Fixes
+
+* stop pinging updates role in docs announcements ([ac0f0fd](https://github.com/I-am-PUID-0/DUMB_docs/commit/ac0f0fdf7f38cbe10447a58f3a86dd040f09440c))
+
 ## [1.25.33](https://github.com/I-am-PUID-0/DUMB_docs/compare/1.25.32...1.25.33) (2026-11-23)
 
 
