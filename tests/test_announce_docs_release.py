@@ -16,7 +16,6 @@ from scripts import announce_docs_release as announce
 TAG = "1.25.1"
 SHA = "1" * 40
 OLD = "2" * 40
-ROLE = "<@&123>"
 WEBHOOK = "https://discord.com/api/webhooks/456/test-token"
 URL = f"https://github.com/{announce.DOCS}/releases/tag/{TAG}"
 IDENTITY = {"version": TAG, "commit": SHA, "release_id": 101}
@@ -75,7 +74,7 @@ class FakeGitHub:
 
 class AnnouncementTests(unittest.TestCase):
     def invoke(self, api):
-        return announce.announce(api, TAG, SHA, WEBHOOK, ROLE)
+        return announce.announce(api, TAG, SHA, WEBHOOK)
 
     def test_new_receipt_is_claimed_before_send_and_confirmed_without_discord_ids(self):
         api = FakeGitHub()
@@ -205,7 +204,7 @@ class PayloadAndTransportTests(unittest.TestCase):
     def test_long_unicode_notes_keep_both_links_and_stay_within_utf16_budget(self):
         for body in ("x" * 5000, "🚀" * 5000, "x🚀" * 5000):
             with self.subTest(character=body[:1]):
-                message = announce.payload(PUBLISHED, body, ROLE)
+                message = announce.payload(PUBLISHED, body)
                 self.assertLessEqual(
                     len(message["content"].encode("utf-16-le")) // 2, 2000
                 )
@@ -216,12 +215,14 @@ class PayloadAndTransportTests(unittest.TestCase):
                 self.assertIn(URL, message["content"])
                 self.assertEqual(message["flags"], 4)
 
-    def test_only_the_configured_role_is_mentionable(self):
-        message = announce.payload(PUBLISHED, "@everyone @here <@789> <@&789>", ROLE)
-        self.assertEqual(message["allowed_mentions"], {"parse": [], "roles": ["123"]})
-        for role in ("@everyone", "<@123>", "<@&123> <@&456>", "", ROLE + "\n"):
-            with self.subTest(role=role), self.assertRaises(announce.SyncError):
-                announce.payload(PUBLISHED, "notes", role)
+    def test_no_mentions_are_added_or_allowed_in_release_notes(self):
+        notes = "@everyone @here <@789> <@!789> <@&123> <@&789>"
+        message = announce.payload(PUBLISHED, notes)
+        self.assertTrue(
+            message["content"].startswith(f"**DUMB documentation {TAG} is live**\n\n")
+        )
+        self.assertIn(notes, message["content"])
+        self.assertEqual(message["allowed_mentions"], {"parse": []})
 
     def test_webhook_url_is_discord_only_and_forces_wait_without_losing_query(self):
         for path in (
@@ -288,7 +289,6 @@ class AnnouncementCLITests(unittest.TestCase):
             "DOCS_ANNOUNCE_RELEASE": "true",
             "GITHUB_TOKEN": "test-publishing-token",
             "DISCORD_WEBHOOK_URL": WEBHOOK,
-            "DISCORD_RELEASE_MENTION": ROLE,
         }
 
     def test_missing_authorization_or_secrets_stops_before_api_or_discord(self):
@@ -309,7 +309,7 @@ class AnnouncementCLITests(unittest.TestCase):
                 sender.assert_not_called()
                 self.assertNotIn(WEBHOOK, errors.getvalue())
 
-    def test_explicit_request_uses_publishing_token_and_reports_no_private_values(self):
+    def test_explicit_request_without_role_secret_reports_no_private_values(self):
         environment = self.environment()
         with (
             patch.dict(os.environ, environment, clear=True),
@@ -319,8 +319,8 @@ class AnnouncementCLITests(unittest.TestCase):
         ):
             self.assertEqual(announce.main(["--tag", TAG, "--expected-head", SHA]), 0)
         api.assert_called_once_with(environment["GITHUB_TOKEN"])
-        deliver.assert_called_once_with(api.return_value, TAG, SHA, WEBHOOK, ROLE)
-        for private in (ROLE, WEBHOOK, environment["GITHUB_TOKEN"]):
+        deliver.assert_called_once_with(api.return_value, TAG, SHA, WEBHOOK)
+        for private in (WEBHOOK, environment["GITHUB_TOKEN"]):
             self.assertNotIn(private, output.getvalue())
 
 

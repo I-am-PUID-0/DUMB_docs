@@ -58,11 +58,8 @@ def webhook_url(value: str) -> str:
     raise SyncError("A valid HTTPS Discord webhook execution URL is required.")
 
 
-def payload(identity: dict, body: str, mention: str) -> dict:
-    role = re.fullmatch(r"<@&([0-9]+)>", mention)
-    if not role:
-        raise SyncError("The release mention must identify exactly one Discord role.")
-    prefix = f"{mention} **DUMB documentation {identity['version']} is live**\n\n"
+def payload(identity: dict, body: str) -> dict:
+    prefix = f"**DUMB documentation {identity['version']} is live**\n\n"
     suffix = f"\n\nRelease notes: {identity['release_url']}\nDocumentation: {SITE}"
 
     # Discord's character accounting must also fit astral Unicode characters.
@@ -85,7 +82,7 @@ def payload(identity: dict, body: str, mention: str) -> dict:
     return {
         "content": prefix + notes + suffix,
         "flags": 4,
-        "allowed_mentions": {"parse": [], "roles": [role[1]]},
+        "allowed_mentions": {"parse": []},
     }
 
 
@@ -159,9 +156,7 @@ def send_discord(url: str, message: dict) -> None:
         ) from None
 
 
-def announce(
-    api: GitHub, tag: str, expected_head: str, webhook: str, mention: str
-) -> str:
+def announce(api: GitHub, tag: str, expected_head: str, webhook: str) -> str:
     url = webhook_url(webhook)
     identity = resolve_latest(api, tag, expected_head)
     release = api.request(f"/repos/{DOCS}/releases/tags/{quote(tag, safe='')}")
@@ -176,7 +171,7 @@ def announce(
         or (release.get("body") is not None and not isinstance(release["body"], str))
     ):
         raise SyncError("The canonical release announcement details are invalid.")
-    message = payload(identity, release.get("body") or "", mention)
+    message = payload(identity, release.get("body") or "")
     receipt = {
         "version": identity["version"],
         "commit": identity["commit_sha"],
@@ -206,7 +201,6 @@ def main(argv: list[str] | None = None) -> int:
             or os.environ.get("DOCS_ANNOUNCE_RELEASE") != "true"
             or not os.environ.get("GITHUB_TOKEN")
             or not os.environ.get("DISCORD_WEBHOOK_URL")
-            or not os.environ.get("DISCORD_RELEASE_MENTION")
         ):
             raise SyncError(
                 "Announcement requires explicit canonical Actions authorization and configured secrets."
@@ -216,7 +210,6 @@ def main(argv: list[str] | None = None) -> int:
             args.tag,
             args.expected_head,
             os.environ["DISCORD_WEBHOOK_URL"],
-            os.environ["DISCORD_RELEASE_MENTION"],
         )
         print(f"Documentation release announcement: {result}.")
         return 0

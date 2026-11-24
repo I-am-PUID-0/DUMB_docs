@@ -31,10 +31,7 @@ class AnnouncementWorkflowTests(unittest.TestCase):
             "${{ secrets.DISCORD_WEBHOOK_URL }}",
         )
         self.assertEqual(delivery[0]["env"]["DOCS_ANNOUNCE_RELEASE"], "true")
-        self.assertEqual(
-            delivery[0]["env"]["DISCORD_RELEASE_MENTION"],
-            "${{ secrets.DISCORD_RELEASE_MENTION }}",
-        )
+        self.assertNotIn("DISCORD_RELEASE_MENTION", delivery[0]["env"])
 
     def test_ordinary_rebuilds_do_not_send_announcements(self):
         inputs = self.workflow["on"]["workflow_dispatch"]["inputs"]

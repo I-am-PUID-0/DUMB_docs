@@ -140,9 +140,10 @@ Documentation publishing does not publish a DUMB image.
 
 New stable docs releases request a Discord announcement after both Pages and
 the legacy mirror deploy successfully. The workflow uses the existing
-`DISCORD_WEBHOOK_URL` secret and the original release-role mention, stored in
-the `DISCORD_RELEASE_MENTION` repository secret. Release notes come from the
-verified GitHub release; long notes are shortened with a link to the full text.
+`DISCORD_WEBHOOK_URL` secret. Documentation announcements do not mention the
+updates opt-in role, and Discord mention parsing is disabled for the entire
+message. Release notes come from the verified GitHub release; long notes are
+shortened with a link to the full text.
 
 Scheduled rebuilds and ordinary manual publication do not post messages. For a
 delivery retry, run **Publish documentation release** with the exact latest tag

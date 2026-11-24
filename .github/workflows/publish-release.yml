@@ -186,7 +186,6 @@ jobs:
           # repository variable. No webhook credential or Discord ID is logged.
           GITHUB_TOKEN: ${{ secrets.RELEASE_PLEASE_TOKEN }}
           DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
-          DISCORD_RELEASE_MENTION: ${{ secrets.DISCORD_RELEASE_MENTION }}
           DOCS_ANNOUNCE_RELEASE: 'true'
           DOCS_RELEASE_TAG: ${{ needs.resolve.outputs.tag }}
           DOCS_RELEASE_SHA: ${{ needs.resolve.outputs.commit_sha }}
