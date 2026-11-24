@@ -1,6 +1,13 @@
 # Changelog
 
 
+## [1.25.35](https://github.com/I-am-PUID-0/DUMB_docs/compare/1.25.34...1.25.35) (2026-11-24)
+
+
+### 📖 Documentation
+
+* prefer GHCR for DUMB image references ([bf85215](https://github.com/I-am-PUID-0/DUMB_docs/commit/bf85215f706715d8cc94ebb2a0a0481c8a4757f6))
+
 ## [1.25.34](https://github.com/I-am-PUID-0/DUMB_docs/compare/1.25.33...1.25.34) (2026-11-24)
 
 
