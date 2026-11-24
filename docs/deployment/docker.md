@@ -74,10 +74,16 @@ Open `docker-compose.yml` and review:
 | Host volume paths | Replace `/home/username/docker/DUMB` with the absolute directory created above |
 | `PUID`, `PGID` | The nonzero values returned by `id -u` and `id -g` |
 | `TZ` | A time zone such as `Etc/UTC` |
-| Image | `iampuid0/dumb:latest` for the stable channel; see [documentation versions](../reference/doc-versions.md) for development |
+| Image | `ghcr.io/i-am-puid-0/dumb:latest` for the stable channel; see [documentation versions](../reference/doc-versions.md) for development |
 | Ports | Keep `3005:3005` for normal dashboard/API access |
 | `/dev/dri` | Keep for supported GPU acceleration; remove this device mapping if the host has no such device |
 | `/dev/fuse`, `SYS_ADMIN`, AppArmor option | Required by workflows that create FUSE/rclone mounts |
+
+These guides use GitHub Container Registry (GHCR). Docker Hub remains available
+as `iampuid0/dumb:<tag>`. To move an existing deployment to GHCR, change the
+`image` reference and keep its tag, persistent mounts, and other settings. Pull
+the image with `sudo docker compose pull`, then recreate the container with
+`sudo docker compose up -d`.
 
 For example, the environment section can use:
 

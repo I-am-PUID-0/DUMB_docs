@@ -17,8 +17,8 @@ problem. A local or pull-request preview is labelled **unreleased** instead.
 
 | Choose | When to use it |
 | --- | --- |
-| **Latest release** | You run a stable DUMB image, such as `iampuid0/dumb:latest` or a numbered stable tag. |
-| **Development** | You run `iampuid0/dumb:dev`, or you want to read about work awaiting a stable release. |
+| **Latest release** | You run a stable DUMB image, such as `ghcr.io/i-am-puid-0/dumb:latest` or a numbered stable tag. |
+| **Development** | You run `ghcr.io/i-am-puid-0/dumb:dev`, or you want to read about work awaiting a stable release. |
 
 Switching keeps you on the same guide where it exists. A feature that has not
 shipped shows an availability page in the release channel with a link to its

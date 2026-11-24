@@ -93,7 +93,7 @@ mounts will propagate.
 
 ## Update and recover
 
-- Pull `iampuid0/dumb:latest`, then recreate/redeploy the application.
+- Pull `ghcr.io/i-am-puid-0/dumb:latest`, then recreate/redeploy the application.
 - Preserve `/share/Container/DUMB/config`, `data`, `log`, and `mnt/debrid`.
 - Use Container Station logs first; then review [Troubleshooting](../faq/dumb.md)
   and [Service ports](../reference/ports.md).

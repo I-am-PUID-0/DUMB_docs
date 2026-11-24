@@ -36,7 +36,7 @@ The retained [setup checklist](features/setup-checklist.md) shows automatic, man
 | Backend and container source | [I-am-PUID-0/DUMB](https://github.com/I-am-PUID-0/DUMB) |
 | Dashboard source | [nicocapalbo/dmbdb](https://github.com/nicocapalbo/dmbdb) |
 | Documentation source | [I-am-PUID-0/DUMB_docs](https://github.com/I-am-PUID-0/DUMB_docs) |
-| Container images | [Docker Hub](https://hub.docker.com/r/iampuid0/dumb) |
+| Container images | [GitHub Container Registry](https://github.com/I-am-PUID-0/DUMB/pkgs/container/dumb); also available on [Docker Hub](https://hub.docker.com/r/iampuid0/dumb) |
 | Bugs and feature requests | [GitHub issues](https://github.com/I-am-PUID-0/DUMB/issues) |
 | Community support | [Discord](https://discord.gg/8dqKUBtbp5) |
 | Financial support | [GitHub Sponsors](https://github.com/sponsors/I-am-PUID-0) |

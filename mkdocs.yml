@@ -228,7 +228,7 @@ extra:
     - icon: fontawesome/brands/discord
       link: https://discord.gg/8dqKUBtbp5
     - icon: fontawesome/brands/docker
-      link: https://hub.docker.com/r/iampuid0/dumb
+      link: https://github.com/I-am-PUID-0/DUMB/pkgs/container/dumb
       
   generator: false
 

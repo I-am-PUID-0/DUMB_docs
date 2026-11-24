@@ -60,7 +60,7 @@ The resulting storage and port section should resemble:
 ```yaml
 services:
   DUMB:
-    image: iampuid0/dumb:latest
+    image: ghcr.io/i-am-puid-0/dumb:latest
     container_name: DUMB
     volumes:
       - /opt/dumb/config:/config
